@@ -1,0 +1,2029 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <script>
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="TMA TSA - tài liệu, lịch thi, khóa học tư duy và luyện đề TSA."
+    >
+    <meta name="theme-color" content="#a91518">
+    <link rel="icon" href="assets/logo.png">
+    <title>TMA TSA</title>
+    <style>
+      :root {
+        --red: #a91518;
+        --red-dark: #8f1013;
+        --red-bright: #e30613;
+        --footer-red: #a82420;
+        --text: #111111;
+        --muted: #5f5f5f;
+        --paper: #f4f4f4;
+        --soft: #fff5f6;
+        --blue-doc: #0a5eb8;
+        --shadow: 0 22px 58px rgba(120, 30, 34, 0.14);
+        --header-height: 60px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        font-synthesis: none;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      strong,
+      b {
+        font-weight: 600;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      ::selection {
+        background: #d10b1f;
+        color: #ffffff;
+      }
+
+      ::-moz-selection {
+        background: #d10b1f;
+        color: #ffffff;
+      }
+
+      img {
+        -webkit-user-drag: none;
+        -webkit-user-select: none;
+        display: block;
+        user-drag: none;
+        user-select: none;
+      }
+
+      .container {
+        width: min(100% - 44px, 1360px);
+        margin: 0 auto;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        background: var(--red);
+        color: #ffffff;
+        box-shadow: 0 8px 22px rgba(58, 0, 0, 0.18);
+      }
+
+      .site-header .container {
+        width: calc(100% - 52px);
+        max-width: none;
+      }
+
+      .header-inner {
+        display: flex;
+        min-height: var(--header-height);
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .brand img {
+        width: 104px;
+        height: 36px;
+        object-fit: contain;
+      }
+
+      .main-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px 30px;
+      }
+
+      .main-nav a {
+        display: inline-flex;
+        min-height: 34px;
+        align-items: center;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition:
+          color 160ms ease,
+          transform 160ms ease;
+      }
+
+      .main-nav a:hover,
+      .main-nav a:focus-visible {
+        color: #ffe4df;
+        outline: none;
+        transform: translateY(-1px);
+      }
+
+      .register-link {
+        border-radius: 5px;
+        background: #ff705e;
+        padding: 0 15px;
+        font-weight: 700 !important;
+      }
+
+      .register-link:hover,
+      .register-link:focus-visible {
+        background: #ff5944;
+        color: #ffffff !important;
+      }
+
+      .hero {
+        min-height: calc(100vh - var(--header-height));
+        overflow: hidden;
+        background: #f8efe6;
+        scroll-margin-top: var(--header-height);
+      }
+
+      .hero img {
+        width: 100%;
+        height: calc(100vh - var(--header-height));
+        min-height: 640px;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .hero h1 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      .section {
+        scroll-margin-top: calc(var(--header-height) + 24px);
+      }
+
+      .teacher-section {
+        background: #f4f4f4;
+        padding: 82px 0 96px;
+      }
+
+      .teacher-layout {
+        display: grid;
+        grid-template-columns: minmax(300px, 360px) minmax(0, 760px);
+        gap: 56px;
+        align-items: center;
+        width: min(100% - 44px, 1150px);
+        margin: 0 auto;
+      }
+
+      .teacher-poster {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 28px 70px rgba(42, 42, 42, 0.15);
+      }
+
+      .teacher-profile {
+        padding: 0;
+      }
+
+      .section-kicker {
+        margin: 0 0 14px;
+        color: var(--red-bright);
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .teacher-name-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .teacher-title {
+        margin: 0;
+        color: #111111;
+        font-size: clamp(34px, 4.2vw, 50px);
+        font-weight: 650;
+        letter-spacing: 0;
+        line-height: 1.08;
+      }
+
+      .verified-badge {
+        display: inline-grid;
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        place-items: center;
+        border-radius: 50%;
+        background: #28b85d;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .teacher-subtitle {
+        margin: 10px 0 10px;
+        color: var(--red-bright);
+        font-size: 19px;
+        font-weight: 650;
+      }
+
+      .teacher-bio {
+        max-width: 680px;
+        margin: 0 0 16px;
+        color: #4c4c4c;
+        font-size: 15.5px;
+        font-weight: 450;
+        line-height: 1.55;
+      }
+
+      .teacher-list {
+        display: grid;
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        color: #555555;
+        font-size: 15.5px;
+        font-weight: 450;
+        line-height: 1.5;
+      }
+
+      .teacher-list li {
+        position: relative;
+        padding-left: 24px;
+      }
+
+      .teacher-list li::before {
+        position: absolute;
+        top: 0.75em;
+        left: 4px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--red-bright);
+        content: "";
+      }
+
+      .teacher-quote {
+        margin: 20px 0 0;
+        border-left: 4px solid var(--red-bright);
+        color: #111111;
+        padding: 2px 0 2px 18px;
+        font-size: 16.5px;
+        font-weight: 560;
+        font-style: italic;
+        line-height: 1.5;
+      }
+
+      .tsa-register {
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(rgba(255, 241, 243, 0.88), rgba(255, 241, 243, 0.88)),
+          url("assets/nen.png") center / cover no-repeat;
+        padding: 76px 0 78px;
+      }
+
+      .tsa-register::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 19px;
+        background:
+          radial-gradient(circle, #ffffff 0 3px, transparent 4px) 0 7px / 44px 8px repeat-x,
+          linear-gradient(90deg, #c50000, #f04a4a, #c50000);
+        content: "";
+      }
+
+      .tsa-register-logo {
+        width: min(100%, 330px);
+        margin: 10px auto 16px;
+      }
+
+      .register-panel {
+        width: min(100% - 44px, 780px);
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 6px;
+        background: #ffffff;
+        box-shadow: 0 16px 42px rgba(79, 28, 32, 0.12);
+      }
+
+      .register-panel-head {
+        display: flex;
+        min-height: 68px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 0 24px;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      .register-panel-head h2 {
+        margin: 0;
+        color: #151515;
+        font-size: 28px;
+        font-weight: 500;
+      }
+
+      .student-access {
+        color: #313131;
+        font-size: 15px;
+        font-weight: 450;
+      }
+
+      .student-access a {
+        color: #c31924;
+        text-decoration: none;
+      }
+
+      .exam-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        background: #f5f5f5;
+        padding: 20px;
+      }
+
+      .exam-card {
+        overflow: hidden;
+        border-radius: 6px;
+        background: #ffffff;
+      }
+
+      .exam-card h3 {
+        margin: 0;
+        border-bottom: 1px solid #eeeeee;
+        color: #151515;
+        padding: 18px 18px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .exam-card dl {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 18px;
+      }
+
+      .exam-card dl div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .exam-card dt {
+        color: #81838e;
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .exam-card dd {
+        margin: 0;
+        color: #222222;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: right;
+      }
+
+      .exam-tag {
+        display: inline-flex;
+        min-height: 24px;
+        align-items: center;
+        border: 1px solid #ffd3d3;
+        border-radius: 6px;
+        background: #fff5f5;
+        color: #e33b50;
+        padding: 0 10px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .exam-card footer {
+        display: flex;
+        min-height: 58px;
+        align-items: center;
+        justify-content: flex-end;
+        border-top: 1px solid #eeeeee;
+        padding: 10px 18px;
+      }
+
+      .exam-card button {
+        min-height: 32px;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        background: #f7f7f7;
+        color: #c5c5c5;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .exam-card button.primary {
+        border-color: #d0021b;
+        background: #d0021b;
+        color: #ffffff;
+      }
+
+      .documents-section {
+        background: #ffffff;
+        padding: 62px 0 78px;
+      }
+
+      .documents-title {
+        width: min(100% - 44px, 1180px);
+        margin: 0 auto 36px;
+        color: #b00000;
+        font-size: clamp(34px, 4vw, 52px);
+        font-weight: 650;
+        line-height: 1.12;
+        text-align: left;
+      }
+
+      .materials-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 62px 54px;
+        width: min(100% - 44px, 1180px);
+        margin: 0 auto;
+      }
+
+      .material-card {
+        position: relative;
+        color: var(--red);
+        background: transparent;
+        box-sizing: border-box;
+        transition: transform 0.2s ease;
+      }
+
+      .material-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .document-preview {
+        position: relative;
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+        aspect-ratio: 1 / 1.414;
+        overflow: hidden;
+        border: 1.5px dashed #dddddd;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .material-card.has-drive .document-preview {
+        border-color: var(--red-bright);
+      }
+
+      .material-card:hover .document-preview {
+        box-shadow: 0 12px 30px rgba(193, 18, 31, 0.12);
+      }
+
+      .document-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #ffffff;
+        display: block;
+      }
+
+      .document-preview.is-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #fdfdfd;
+        color: #888888;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        border: 1.5px dashed #cccccc;
+        gap: 12px;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .document-preview.is-empty::before {
+        content: "📄";
+        font-size: 54px;
+        opacity: 0.5;
+      }
+
+      .document-preview.is-empty::after {
+        content: "Tài liệu chưa được gắn link";
+        font-weight: 500;
+        color: #999999;
+      }
+
+      .goal-section {
+        background: #ffffff;
+        padding: 78px 0 88px;
+      }
+
+      .goal-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(390px, 600px);
+        gap: 72px;
+        width: min(100% - 44px, 1200px);
+        margin: 0 auto;
+        align-items: start;
+      }
+
+      .goal-title {
+        margin: 0;
+        color: #111111;
+        font-size: clamp(38px, 4.7vw, 58px);
+        font-weight: 650;
+        line-height: 1.08;
+      }
+
+      .goal-text {
+        margin: 28px 0 0;
+        color: #242424;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .goal-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .goal-card {
+        min-height: 142px;
+        border-radius: 6px;
+        background: #ffffff;
+        box-shadow: 0 18px 46px rgba(95, 32, 37, 0.08);
+        padding: 24px 24px;
+      }
+
+      .goal-card h3 {
+        margin: 0 0 12px;
+        color: var(--red);
+        font-size: 20px;
+        font-weight: 650;
+      }
+
+      .goal-card p {
+        margin: 0;
+        color: #3b3b3b;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.48;
+      }
+
+      .logo-carousel {
+        display: grid;
+        grid-template-columns: 44px 1fr 44px;
+        gap: 18px;
+        align-items: center;
+        width: min(100% - 44px, 1200px);
+        margin: 60px auto 0;
+      }
+
+      .logo-arrow {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 0;
+        background: transparent;
+        color: var(--red);
+        font-size: 54px;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .logo-track {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+        gap: 40px;
+        align-items: center;
+        justify-items: center;
+      }
+
+      .school-logo {
+        display: grid;
+        min-height: 180px;
+        place-items: center;
+      }
+
+      .school-logo img {
+        max-width: 140px;
+        max-height: 140px;
+        object-fit: contain;
+      }
+
+      .school-logo span {
+        margin-top: 14px;
+        color: var(--red);
+        font-size: 18px;
+        font-weight: 650;
+        text-align: center;
+      }
+
+      .featured-section {
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+        padding: 76px 0 92px;
+      }
+
+
+
+      .featured-rule {
+        position: relative;
+        width: min(100% - 44px, 760px);
+        height: 3px;
+        margin: 0 auto 48px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, #ff3d4d, #a91518, transparent);
+        box-shadow: 0 8px 18px rgba(227, 6, 19, 0.2);
+      }
+
+      .featured-title {
+        position: relative;
+        margin: 0 0 12px;
+        color: #c91525;
+        font-size: clamp(30px, 4vw, 46px);
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        line-height: 1.12;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .featured-lead {
+        position: relative;
+        width: min(100% - 44px, 740px);
+        margin: 0 auto 34px;
+        color: #4a4a4a;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.58;
+        text-align: center;
+      }
+
+      /* ─── Course Grid ─── */
+      .course-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        width: min(100% - 44px, 1180px);
+        margin: 0 auto;
+      }
+
+      /* ─── Course Card (new design) ─── */
+      .course-card {
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 0;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        animation: courseRise 680ms ease both;
+        animation-delay: var(--delay, 0ms);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+      }
+
+      .course-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
+      }
+
+      /* Ảnh nằm riêng, không có chữ đè lên */
+      .course-hero {
+        width: 100%;
+        height: 190px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-bottom: 1px solid #f1f1f1;
+      }
+
+      .course-body {
+        padding: 18px 22px 22px;
+      }
+
+      .course-name {
+        font-size: 20px;
+        line-height: 1.25;
+        font-weight: 900;
+        color: #1f2937;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+
+      .course-desc {
+        font-size: 15px;
+        color: #6b7280;
+        font-weight: 500;
+        margin-bottom: 18px;
+      }
+
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: #edf0f4;
+        margin-bottom: 14px;
+      }
+
+      .course-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .lesson-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: #6b7280;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .book-icon {
+        width: 16px;
+        height: 16px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ef3340' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      /* Nút gaming */
+      .enter-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 38px;
+        padding: 0 18px;
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+        background:
+          linear-gradient(135deg, #ff1738 0%, #c9001e 48%, #111827 100%);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        clip-path: polygon(
+          10px 0,
+          100% 0,
+          100% calc(100% - 10px),
+          calc(100% - 10px) 100%,
+          0 100%,
+          0 10px
+        );
+        box-shadow:
+          0 0 0 2px rgba(239, 51, 64, 0.12),
+          0 8px 18px rgba(225, 29, 46, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        overflow: hidden;
+        transition: 0.22s ease;
+        flex-shrink: 0;
+      }
+
+      .enter-btn::before {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        clip-path: polygon(
+          8px 0,
+          100% 0,
+          100% calc(100% - 8px),
+          calc(100% - 8px) 100%,
+          0 100%,
+          0 8px
+        );
+        pointer-events: none;
+      }
+
+      .enter-btn::after {
+        content: "";
+        position: absolute;
+        width: 35px;
+        height: 80px;
+        left: -55px;
+        top: -20px;
+        background: rgba(255, 255, 255, 0.45);
+        transform: rotate(22deg);
+        transition: 0.35s ease;
+      }
+
+      .enter-btn:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow:
+          0 0 0 2px rgba(239, 51, 64, 0.15),
+          0 12px 24px rgba(225, 29, 46, 0.4),
+          0 0 18px rgba(255, 23, 56, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .enter-btn:hover::after {
+        left: 120%;
+      }
+
+      @keyframes courseRise {
+        from { opacity: 0; transform: translateY(22px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .site-footer {
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(118deg, rgba(227, 6, 19, 0.16), transparent 32%),
+          linear-gradient(135deg, #1b0507 0%, #110304 58%, #080101 100%);
+        color: #ffffff;
+        padding: 46px 0 0;
+      }
+
+      .site-footer::before,
+      .site-footer::after {
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: linear-gradient(135deg, rgba(227, 6, 19, 0.8), rgba(114, 16, 26, 0.65));
+        content: "";
+        transform: rotate(45deg);
+      }
+
+      .site-footer::before {
+        top: 26px;
+        left: -168px;
+      }
+
+      .site-footer::after {
+        right: -152px;
+        bottom: 18px;
+      }
+
+      .footer-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 58px;
+        width: min(100% - 44px, 1180px);
+        margin: 0 auto;
+        align-items: center;
+      }
+
+      .footer-grid::before {
+        position: absolute;
+        top: -18px;
+        right: 0;
+        left: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 65, 82, 0.9), transparent);
+        content: "";
+      }
+
+      .footer-brand {
+        display: grid;
+        gap: 14px;
+        align-content: center;
+        min-height: 176px;
+      }
+
+      .footer-brand img {
+        width: 252px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .footer-slogan {
+        max-width: 280px;
+        margin: 0;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      .footer-panel {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr 1fr;
+        gap: 26px;
+        align-items: start;
+      }
+
+      .footer-title {
+        margin: 0 0 12px;
+        color: #ffffff;
+        font-size: 19px;
+        font-weight: 650;
+      }
+
+      .footer-list {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .footer-list li,
+      .footer-list a {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.45;
+      }
+
+      .footer-list span {
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .contact-row {
+        display: block;
+      }
+
+      .contact-icon {
+        display: none;
+      }
+
+      .social-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .social-row a {
+        display: inline-grid;
+        min-width: 38px;
+        height: 36px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        padding: 0 13px;
+        font-size: 13px;
+        font-weight: 500;
+        transition:
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .social-row a:hover,
+      .social-row a:focus-visible {
+        background: rgba(227, 6, 19, 0.8);
+        outline: none;
+        transform: translateY(-2px);
+      }
+
+      .social-row a.tiktok {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .copyright {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        margin: 34px auto 0;
+        background: #243746;
+        color: #ffffff;
+        padding: 13px 22px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 400;
+      }
+
+      .teacher-entry {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        padding: 0 2px;
+      }
+
+      .teacher-entry:hover,
+      .teacher-entry:focus-visible {
+        color: #ffffff;
+        outline: none;
+      }
+
+      .teacher-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(14, 2, 4, 0.64);
+        padding: 22px;
+      }
+
+      .teacher-modal.is-open {
+        display: flex;
+      }
+
+      .teacher-dialog {
+        width: min(100%, 760px);
+        max-height: min(86vh, 760px);
+        overflow: auto;
+        border: 1px solid rgba(227, 6, 19, 0.2);
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34);
+      }
+
+      .teacher-dialog-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        border-bottom: 1px solid #f0d4d6;
+        padding: 18px 22px;
+      }
+
+      .teacher-dialog-head h2 {
+        margin: 0;
+        color: var(--red);
+        font-size: 24px;
+        font-weight: 650;
+      }
+
+      .teacher-close {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: #fff1f2;
+        color: var(--red);
+        font-size: 22px;
+      }
+
+      .teacher-dialog-body {
+        padding: 22px;
+      }
+
+      .teacher-login,
+      .teacher-panel {
+        display: grid;
+        gap: 14px;
+      }
+
+      .teacher-panel[hidden],
+      .teacher-login[hidden] {
+        display: none;
+      }
+
+      .teacher-dialog label {
+        display: grid;
+        gap: 7px;
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .teacher-dialog input {
+        min-height: 42px;
+        border: 1px solid #ead2d4;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #111111;
+        padding: 0 13px;
+        font-size: 15px;
+        outline: none;
+      }
+
+      .teacher-dialog input:focus {
+        border-color: #e30613;
+        box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.1);
+      }
+
+      .teacher-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .teacher-actions button,
+      .teacher-save {
+        min-height: 40px;
+        border: 1px solid #e30613;
+        border-radius: 8px;
+        background: #e30613;
+        color: #ffffff;
+        padding: 0 16px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .teacher-actions .ghost,
+      .teacher-save.ghost {
+        background: #ffffff;
+        color: #b00000;
+      }
+
+      .teacher-materials {
+        display: grid;
+        gap: 12px;
+      }
+
+      .teacher-material-row {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 10px;
+        align-items: end;
+        border: 1px solid #f0dddd;
+        border-radius: 10px;
+        background: #fffafa;
+        padding: 12px;
+      }
+
+      .teacher-status {
+        min-height: 20px;
+        color: var(--red);
+        font-size: 14px;
+      }
+
+      @media (max-width: 1050px) {
+        .header-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 12px 0;
+        }
+
+        .teacher-layout,
+        .goal-layout,
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .teacher-poster {
+          width: min(100%, 360px);
+        }
+
+        .materials-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .course-grid {
+          grid-template-columns: 1fr;
+          max-width: 980px;
+        }
+
+        .course-card.is-wide {
+          grid-column: auto;
+        }
+
+        .exam-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        :root {
+          --header-height: 118px;
+        }
+
+        .container,
+        .teacher-layout,
+        .goal-layout,
+        .materials-grid,
+        .logo-carousel,
+        .course-grid,
+        .featured-rule,
+        .footer-grid,
+        .copyright {
+          width: min(100% - 28px, 1200px);
+        }
+
+        .main-nav {
+          justify-content: flex-start;
+          gap: 6px 16px;
+        }
+
+        .main-nav a {
+          font-size: 14px;
+        }
+
+        .hero img {
+          min-height: 520px;
+        }
+
+        .teacher-section,
+        .goal-section,
+        .documents-section,
+        .featured-section {
+          padding: 52px 0;
+        }
+
+        .teacher-name-row {
+          align-items: flex-start;
+        }
+
+        .teacher-title {
+          font-size: clamp(30px, 11vw, 42px);
+        }
+
+        .materials-grid,
+        .goal-cards,
+        .logo-track {
+          grid-template-columns: 1fr;
+        }
+
+        .logo-carousel {
+          grid-template-columns: 34px 1fr 34px;
+        }
+
+
+
+        .footer-list li,
+        .footer-list a {
+          font-size: 15px;
+        }
+
+        .course-grid {
+          grid-template-columns: 1fr;
+          max-width: 460px;
+        }
+
+        .course-card,
+        .course-card.is-wide {
+          display: block;
+          grid-column: span 1;
+        }
+
+        .course-cover,
+        .course-card.is-wide .course-cover {
+          min-height: 190px;
+        }
+
+        .footer-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-brand img {
+          width: 220px;
+        }
+
+        .teacher-material-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#trang-chu" data-route="home" aria-label="TMA TSA">
+          <img src="assets/logo.png" alt="TMA TSA">
+        </a>
+
+        <nav class="main-nav" aria-label="Điều hướng chính">
+          <a href="#giang-vien">Giảng viên</a>
+          <a href="#dang-ky-thi">Lịch thi TSA 2026</a>
+          <a href="#tai-lieu">Tài liệu học tập</a>
+          <a href="#khoa-hoc-noi-bat">Khóa học</a>
+          <a href="login.html">Đăng nhập</a>
+          <a class="register-link" href="login.html#register">Đăng ký</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero section" id="trang-chu" aria-label="Trang chủ TMA TSA">
+        <h1>TMA TSA</h1>
+        <img src="assets/anhnen.png" alt="Đại học Bách khoa Hà Nội">
+      </section>
+
+      <section class="teacher-section section" id="giang-vien" aria-label="Giảng viên">
+        <div class="teacher-layout">
+          <img class="teacher-poster" src="assets/giangvien.png" alt="Thầy Nghiêm Xuân Tân">
+          <div class="teacher-profile">
+            <p class="section-kicker">Giảng viên</p>
+            <div class="teacher-name-row">
+              <h2 class="teacher-title">Thầy Nghiêm Xuân Tân</h2>
+              <span class="verified-badge" title="Hồ sơ đã xác thực">✓</span>
+            </div>
+            <p class="teacher-subtitle">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
+            <p class="teacher-bio">
+              Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
+            </p>
+            <ul class="teacher-list">
+              <li>Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
+              <li>Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
+              <li>Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
+              <li>Cựu học sinh hệ Kỹ sư tài năng Đại học Bách Khoa Hà Nội.</li>
+              <li>Chủ đề giảng dạy tiêu biểu: Vật lý 12, mô hình chủ đề du lịch, bài toán dao động điều hòa.</li>
+            </ul>
+            <blockquote class="teacher-quote">
+              “Nghề giáo là nghề cao quý nhất trong các nghề cao quý. Một thầy giáo tuyệt vời cũng chính là một nghệ sĩ tuyệt vời; dạy học là nghệ thuật vĩ đại nhất vì đó là sự kết hợp giữa lý trí và tinh thần.”
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <section class="tsa-register section" id="dang-ky-thi" aria-label="Đăng ký thi TSA">
+        <img class="tsa-register-logo" src="assets/tsa.png" alt="TSA Đại học Bách khoa Hà Nội">
+        <div class="register-panel">
+          <div class="register-panel-head">
+            <h2>Đăng ký thi</h2>
+            <div class="student-access">♙ Thí sinh <a href="login.html">Đăng nhập</a></div>
+          </div>
+          <div class="exam-grid">
+            <article class="exam-card">
+              <h3>Bài thi TSA 2026 chính thức - Đợt 3</h3>
+              <dl>
+                <div><dt>Hình thức thi:</dt><dd><span class="exam-tag">Thi tại địa điểm thi</span></dd></div>
+                <div><dt>Thời gian đăng ký:</dt><dd>05/04/2026 - 15/04/2026</dd></div>
+                <div><dt>Lệ phí:</dt><dd><strong>500.000 đ</strong></dd></div>
+                <div><dt>Thời gian thi:</dt><dd>16/05/2026 - 17/05/2026</dd></div>
+              </dl>
+              <footer><button type="button" disabled>Hết hạn đăng ký</button></footer>
+            </article>
+
+            <article class="exam-card">
+              <h3>Bài thi TSA 2026 chính thức - Đợt 2</h3>
+              <dl>
+                <div><dt>Hình thức thi:</dt><dd><span class="exam-tag">Thi tại địa điểm thi</span></dd></div>
+                <div><dt>Thời gian đăng ký:</dt><dd>05/02/2026 - 15/02/2026</dd></div>
+                <div><dt>Lệ phí:</dt><dd><strong>500.000 đ</strong></dd></div>
+                <div><dt>Thời gian thi:</dt><dd>14/03/2026 - 15/03/2026</dd></div>
+              </dl>
+              <footer><button type="button" disabled>Hết hạn đăng ký</button></footer>
+            </article>
+
+            <article class="exam-card">
+              <h3>Bài thi TSA 2026 chính thức - Đợt 1</h3>
+              <dl>
+                <div><dt>Hình thức thi:</dt><dd><span class="exam-tag">Thi tại địa điểm thi</span></dd></div>
+                <div><dt>Thời gian đăng ký:</dt><dd>05/12/2025 - 15/12/2025</dd></div>
+                <div><dt>Lệ phí:</dt><dd><strong>500.000 đ</strong></dd></div>
+                <div><dt>Thời gian thi:</dt><dd>24/01/2026 - 25/01/2026</dd></div>
+              </dl>
+              <footer><button type="button" disabled>Hết hạn đăng ký</button></footer>
+            </article>
+
+            <article class="exam-card">
+              <h3>Thi thử Bài thi Đánh giá tư duy</h3>
+              <dl>
+                <div><dt>Hình thức thi:</dt><dd><span class="exam-tag">Thi trực tuyến</span></dd></div>
+                <div><dt>Thời gian đăng ký:</dt><dd>11/11/2024 - 11/11/2026</dd></div>
+                <div><dt>Lệ phí:</dt><dd><strong>Mã thi thử</strong></dd></div>
+                <div><dt>Thời gian thi:</dt><dd>11/11/2024 - 11/11/2026</dd></div>
+              </dl>
+              <footer><button class="primary" type="button" data-go-exam="confirm.html?subject=math">Đăng ký</button></footer>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="documents-section section" id="tai-lieu" aria-labelledby="documents-title">
+        <h2 class="documents-title" id="documents-title">Tài liệu tham khảo</h2>
+        <div class="materials-grid" id="materials-grid">
+        <!-- Sample document cards -->
+        <article class="material-card">
+          <a href="#" style="display: block;">
+            <div class="document-preview">
+              <img src="assets/placeholder.png" alt="Preview">
+            </div>
+          </a>
+        </article>
+        <article class="material-card">
+          <a href="#" style="display: block;">
+            <div class="document-preview">
+              <img src="assets/placeholder.png" alt="Preview">
+            </div>
+          </a>
+        </article>
+        <article class="material-card">
+          <a href="#" style="display: block;">
+            <div class="document-preview">
+              <img src="assets/placeholder.png" alt="Preview">
+            </div>
+          </a>
+        </article>
+      </div>
+      </section>
+
+      <section class="goal-section section" id="muc-tieu" aria-label="Mục tiêu khóa học">
+        <div class="goal-layout">
+          <div>
+            <p class="section-kicker">Mục đích khóa học</p>
+            <h2 class="goal-title">Nâng cao tư duy, học sâu bản chất</h2>
+            <p class="goal-text">
+              Khóa học giúp học sinh hiểu vì sao công thức hoạt động, biết nhìn bài theo bản chất thay vì học vẹt. Từ nền tảng đó, học sinh rèn tư duy phân tích, tốc độ đọc đề, kỹ năng xử lý dữ kiện và luyện đề có chiến thuật để tự tin chinh phục TSA, HSA, THPT cùng các bài kiểm tra quan trọng.
+            </p>
+          </div>
+
+          <div class="goal-cards">
+            <article class="goal-card">
+              <h3>Nâng tư duy</h3>
+              <p>Rèn cách phân tích dữ kiện, nhận ra mấu chốt và xử lý câu hỏi nhiều bước.</p>
+            </article>
+            <article class="goal-card">
+              <h3>Học bản chất</h3>
+              <p>Hiểu hiện tượng, công thức và phương pháp để không bị phụ thuộc vào mẹo nhớ.</p>
+            </article>
+            <article class="goal-card">
+              <h3>Dạy dễ hiểu</h3>
+              <p>Giải thích từ gốc, ví dụ gần gũi, đi từng bước để cả phần khó cũng dễ tiếp cận.</p>
+            </article>
+            <article class="goal-card">
+              <h3>Luyện đề có nhịp</h3>
+              <p>Học xong áp dụng ngay, luyện đề đều tay và sửa lỗi rõ ràng sau từng dạng bài.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="logo-carousel" aria-label="Logo trường tham khảo">
+          <button class="logo-arrow" type="button" data-logo-prev aria-label="Logo trước">‹</button>
+          <div class="logo-track" id="logo-track">
+            <div class="school-logo">
+              <img src="assets/logo-hust.png" alt="Đại học Bách khoa Hà Nội">
+              <span>Bách Khoa Hà Nội</span>
+            </div>
+            <div class="school-logo">
+              <img src="assets/logo-neu.png" alt="Đại học Kinh tế Quốc dân">
+              <span>Kinh tế Quốc dân</span>
+            </div>
+            <div class="school-logo">
+              <img src="assets/logo-ftu.png" alt="Đại học Ngoại thương">
+              <span>Ngoại thương</span>
+            </div>
+            <div class="school-logo">
+              <img src="assets/logo-vnu.png" alt="Đại học Quốc gia Hà Nội">
+              <span>ĐHQGHN</span>
+            </div>
+          </div>
+          <button class="logo-arrow" type="button" data-logo-next aria-label="Logo sau">›</button>
+        </div>
+      </section>
+
+      <section class="featured-section section" id="khoa-hoc-noi-bat" aria-labelledby="featured-title">
+        <div class="featured-rule" aria-hidden="true"></div>
+        <h2 class="featured-title" id="featured-title">Các khóa học nổi bật</h2>
+        <p class="featured-lead">
+          Lộ trình do thầy Nghiêm Xuân Tân phụ trách, đi từ nền tảng đến luyện đề, phù hợp cho học sinh muốn chắc bản chất và bứt tốc trước kì thi.
+        </p>
+                                <div class="course-grid">
+          <!-- CARD 1: NỀN TẢNG TOÁN TSA -->
+          <article class="course-card" style="--delay:0ms" data-course-id="idx-toan-tsa" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Nền tảng Toán TSA">
+            <div class="course-hero" style="background-image:url('assets/anhnen.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">NỀN TẢNG TOÁN TSA</h3>
+              <p class="course-desc">Toán Tư Duy</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 2: NỀN TẢNG VẬT LÝ THPT -->
+          <article class="course-card" style="--delay:80ms" data-course-id="idx-vatly-thpt" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Nền tảng Vật lý THPT">
+            <div class="course-hero" style="background-image:url('assets/ly.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">NỀN TẢNG VẬT LÝ THPT</h3>
+              <p class="course-desc">Vật lý</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 3: TỔNG ÔN TSA -->
+          <article class="course-card" style="--delay:160ms" data-course-id="idx-tong-on-tsa" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Tổng ôn TSA">
+            <div class="course-hero" style="background-image:url('assets/anhnen.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">TỔNG ÔN TSA</h3>
+              <p class="course-desc">TSA Core</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 4: VỀ ĐÍCH TSA ĐỢT 1 -->
+          <article class="course-card" style="--delay:240ms" data-course-id="idx-ve-dich-dot-1" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Về đích TSA đợt 1">
+            <div class="course-hero" style="background-image:url('assets/anhnen.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">VỀ ĐÍCH TSA ĐỢT 1</h3>
+              <p class="course-desc">Sprint 1</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 5: VỀ ĐÍCH TSA ĐỢT 2 -->
+          <article class="course-card" style="--delay:320ms" data-course-id="idx-ve-dich-dot-2" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Về đích TSA đợt 2">
+            <div class="course-hero" style="background-image:url('assets/anhnen.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">VỀ ĐÍCH TSA ĐỢT 2</h3>
+              <p class="course-desc">Sprint 2</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 6: VỀ ĐÍCH TSA ĐỢT 3 -->
+          <article class="course-card" style="--delay:400ms" data-course-id="idx-ve-dich-dot-3" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="Về đích TSA đợt 3">
+            <div class="course-hero" style="background-image:url('assets/anhnen.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">VỀ ĐÍCH TSA ĐỢT 3</h3>
+              <p class="course-desc">Sprint 3</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 7: 14 NGÀY VẬT LÝ THPT -->
+          <article class="course-card" style="--delay:480ms" data-course-id="idx-14-ngay-vatly" onclick="location.href='login.html'" tabindex="0" role="link" aria-label="14 ngày Vật lý THPT">
+            <div class="course-hero" style="background-image:url('assets/thpt.png')"></div>
+            <div class="course-body">
+              <h3 class="course-name">14 NGÀY VẬT LÝ THPT</h3>
+              <p class="course-desc">14 days</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>33 bài học</span>
+                </div>
+                <a href="login.html" class="enter-btn">Vào học</a>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="featured-rule bottom" aria-hidden="true"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="lien-he">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo.png" alt="TMA TSA">
+          <p class="footer-slogan">Tài liệu, khóa học và cộng đồng ôn luyện tư duy cho học sinh muốn học chắc hơn mỗi ngày.</p>
+        </div>
+
+        <div class="footer-panel">
+          <div>
+            <h2 class="footer-title">Liên hệ</h2>
+            <ul class="footer-list">
+              <li><span>Admin:</span> Nguyễn Văn Hải</li>
+              <li><span>Địa chỉ:</span> Hà Nội</li>
+              <li><span>Email:</span> hainguyen22102007@gmail.com</li>
+              <li><span>SĐT:</span> 0866.638.963</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="footer-title">Fanpage</h2>
+            <ul class="footer-list">
+              <li><span>Tên:</span> TMA TSA - luyện thi đại học</li>
+              <li><span>Nội dung:</span> Tài liệu, khóa học và hỗ trợ học sinh</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="footer-title">Group</h2>
+            <ul class="footer-list">
+              <li><span>Nhóm:</span> Học hỏi & trao đổi TSA / HSA</li>
+              <li><span>Hoạt động:</span> Ôn luyện tư duy cùng TMA TSA</li>
+            </ul>
+            <div class="social-row" aria-label="Liên kết mạng xã hội">
+              <a href="#" data-social-link="zalo">Zalo</a>
+              <a href="#" data-social-link="facebook">Facebook</a>
+              <a class="tiktok" href="#" data-social-link="tiktok">TikTok</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright"><button class="teacher-entry" type="button" data-teacher-entry aria-label="Mở chế độ giáo viên">©</button> TMA TSA - Bản quyền thuộc về Nguyễn Văn Hải · Điều khoản sử dụng</div>
+    </footer>
+
+    <script>
+      (() => {
+        const MATERIAL_LINKS_KEY = "tmaTsaDriveLinks";
+        const TEACHER_ACCOUNT = { username: "giaovien", password: "182201" };
+        const materials = Array.from({ length: 6 }, (_, index) => ({
+          title: `Đề TSA số ${index + 1}`,
+        }));
+
+        function lockImageDragging(root = document) {
+          root.querySelectorAll("img").forEach((image) => {
+            image.draggable = false;
+            image.setAttribute("draggable", "false");
+          });
+        }
+
+        function loadMaterialLinks() {
+          try {
+            const saved = JSON.parse(localStorage.getItem(MATERIAL_LINKS_KEY) || "{}");
+            return saved && typeof saved === "object" ? saved : {};
+          } catch {
+            return {};
+          }
+        }
+
+        function saveMaterialLinks(links) {
+          localStorage.setItem(MATERIAL_LINKS_KEY, JSON.stringify(links));
+        }
+
+        function getDrivePreviewUrl(url) {
+          const value = String(url || "").trim();
+          if (!value) return "";
+
+          const fileMatch = value.match(/\/file\/d\/([^/]+)/) || value.match(/[?&]id=([^&]+)/);
+          if (fileMatch?.[1]) return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+
+          const docsMatch = value.match(/docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/([^/]+)/);
+          if (docsMatch?.[1]) return value.replace(/\/(?:edit|view).*$/, "/preview");
+
+          return value;
+        }
+
+        function getDriveThumbnailUrl(url) {
+          const value = String(url || "").trim();
+          if (!value) return "";
+
+          const fileMatch = value.match(/\/file\/d\/([^/]+)/) || value.match(/[?&]id=([^&]+)/);
+          if (fileMatch?.[1]) {
+            return `https://drive.google.com/thumbnail?id=${fileMatch[1]}&sz=w800`;
+          }
+
+          const docsMatch = value.match(/docs\.google\.com\/(?:document|presentation|spreadsheets)\/d\/([^/]+)/);
+          if (docsMatch?.[1]) {
+            return `https://drive.google.com/thumbnail?id=${docsMatch[1]}&sz=w800`;
+          }
+
+          return "";
+        }
+
+        function createMaterialPreview(driveUrl, index) {
+          const preview = document.createElement("div");
+          preview.className = "document-preview";
+
+          const thumbnailUrl = getDriveThumbnailUrl(driveUrl);
+          if (thumbnailUrl) {
+            const img = document.createElement("img");
+            img.src = thumbnailUrl;
+            img.alt = `Đề TSA số ${String(index + 1).padStart(2, "0")}`;
+            img.loading = "lazy";
+            img.addEventListener("error", () => {
+              preview.innerHTML = "";
+              preview.classList.add("is-empty");
+            });
+            preview.appendChild(img);
+            return preview;
+          }
+
+          preview.classList.add("is-empty");
+          preview.setAttribute("aria-label", "Giáo viên chưa gắn link Drive");
+          return preview;
+        }
+
+        function renderMaterials() {
+          const grid = document.getElementById("materials-grid");
+          if (!grid) return;
+          grid.textContent = "";
+          const driveLinks = loadMaterialLinks();
+
+          materials.forEach((material, index) => {
+            const driveUrl = String(driveLinks[index] || "").trim();
+            const card = document.createElement("article");
+            card.className = "material-card";
+            if (driveUrl) card.classList.add("has-drive");
+
+            const link = document.createElement("a");
+            link.style.display = "block";
+            link.href = driveUrl || "#";
+            link.target = driveUrl ? "_blank" : "";
+            link.rel = driveUrl ? "noopener" : "";
+            link.addEventListener("click", (event) => {
+              if (!driveUrl) {
+                event.preventDefault();
+                alert("Giáo viên chưa gắn link Drive cho tài liệu này.");
+              }
+            });
+
+            const preview = createMaterialPreview(driveUrl, index);
+            link.appendChild(preview);
+            card.appendChild(link);
+            grid.appendChild(card);
+          });
+        }
+
+        function createTeacherModal() {
+          const modal = document.createElement("div");
+          modal.className = "teacher-modal";
+          modal.innerHTML = `
+            <div class="teacher-dialog" role="dialog" aria-modal="true" aria-labelledby="teacher-title">
+              <div class="teacher-dialog-head">
+                <h2 id="teacher-title">Chế độ giáo viên</h2>
+                <button class="teacher-close" type="button" data-teacher-close aria-label="Đóng">×</button>
+              </div>
+              <div class="teacher-dialog-body">
+                <form class="teacher-login" data-teacher-login>
+                  <label>
+                    Tài khoản
+                    <input name="username" autocomplete="username" placeholder="giaovien">
+                  </label>
+                  <label>
+                    Mật khẩu
+                    <input name="password" type="password" autocomplete="current-password" placeholder="182201">
+                  </label>
+                  <div class="teacher-actions">
+                    <button type="submit">Đăng nhập</button>
+                  </div>
+                  <div class="teacher-status" data-teacher-status></div>
+                </form>
+
+                <form class="teacher-panel" data-teacher-panel hidden>
+                  <div class="teacher-materials" data-teacher-materials></div>
+                  <div class="teacher-actions">
+                    <button type="submit">Lưu link Drive</button>
+                    <button class="ghost" type="button" data-clear-drive>Xóa toàn bộ link</button>
+                  </div>
+                  <div class="teacher-status" data-panel-status></div>
+                </form>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+          return modal;
+        }
+
+        function setupTeacherMode() {
+          const entry = document.querySelector("[data-teacher-entry]");
+          if (!entry) return;
+
+          const modal = createTeacherModal();
+          const closeButton = modal.querySelector("[data-teacher-close]");
+          const loginForm = modal.querySelector("[data-teacher-login]");
+          const panel = modal.querySelector("[data-teacher-panel]");
+          const materialBox = modal.querySelector("[data-teacher-materials]");
+          const loginStatus = modal.querySelector("[data-teacher-status]");
+          const panelStatus = modal.querySelector("[data-panel-status]");
+          const clearButton = modal.querySelector("[data-clear-drive]");
+
+          function escapeAttribute(value) {
+            return String(value || "")
+              .replace(/&/g, "&amp;")
+              .replace(/"/g, "&quot;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+          }
+
+          function fillTeacherRows() {
+            const links = loadMaterialLinks();
+            materialBox.textContent = "";
+            materials.forEach((material, index) => {
+              const row = document.createElement("div");
+              row.className = "teacher-material-row";
+              row.innerHTML = `
+                <strong>${material.title}</strong>
+                <label>
+                  Link Google Drive
+                  <input data-drive-index="${index}" value="${escapeAttribute(links[index])}" placeholder="Dán link file Drive tại đây">
+                </label>
+              `;
+              materialBox.appendChild(row);
+            });
+          }
+
+          function openModal() {
+            modal.classList.add("is-open");
+            loginForm.hidden = false;
+            panel.hidden = true;
+            loginForm.reset();
+            loginStatus.textContent = "";
+            panelStatus.textContent = "";
+            loginForm.querySelector("input")?.focus();
+          }
+
+          function closeModal() {
+            modal.classList.remove("is-open");
+          }
+
+          entry.addEventListener("click", openModal);
+          closeButton.addEventListener("click", closeModal);
+          modal.addEventListener("click", (event) => {
+            if (event.target === modal) closeModal();
+          });
+
+          loginForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const form = new FormData(loginForm);
+            const username = String(form.get("username") || "").trim();
+            const password = String(form.get("password") || "").trim();
+            if (username !== TEACHER_ACCOUNT.username || password !== TEACHER_ACCOUNT.password) {
+              loginStatus.textContent = "Sai tài khoản hoặc mật khẩu.";
+              return;
+            }
+            loginForm.hidden = true;
+            panel.hidden = false;
+            fillTeacherRows();
+            panel.querySelector("input")?.focus();
+          });
+
+          panel.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const links = {};
+            panel.querySelectorAll("[data-drive-index]").forEach((input) => {
+              const value = input.value.trim();
+              if (value) links[input.dataset.driveIndex] = value;
+            });
+            saveMaterialLinks(links);
+            renderMaterials();
+            panelStatus.textContent = "Đã lưu link Drive và cập nhật tài liệu tham khảo.";
+          });
+
+          clearButton.addEventListener("click", () => {
+            saveMaterialLinks({});
+            fillTeacherRows();
+            renderMaterials();
+            panelStatus.textContent = "Đã xóa toàn bộ link Drive.";
+          });
+        }
+
+        function setupLogoCarousel() {
+          const track = document.getElementById("logo-track");
+          if (!track) return;
+          const prev = document.querySelector("[data-logo-prev]");
+          const next = document.querySelector("[data-logo-next]");
+          const rotate = (direction) => {
+            if (direction > 0) {
+              track.appendChild(track.firstElementChild);
+            } else {
+              track.insertBefore(track.lastElementChild, track.firstElementChild);
+            }
+          };
+          prev?.addEventListener("click", () => rotate(-1));
+          next?.addEventListener("click", () => rotate(1));
+        }
+
+        function scrollToHash(hash, smooth = true) {
+          if (!hash || hash === "#trang-chu") {
+            window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+            return;
+          }
+          const target = document.querySelector(hash);
+          if (target) {
+            target.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+          }
+        }
+
+
+        document.addEventListener("click", (event) => {
+          const hashLink = event.target.closest('a[href^="#"]');
+          if (!hashLink) return;
+          const hash = hashLink.getAttribute("href");
+          if (!hash || hash === "#") return;
+          event.preventDefault();
+          history.pushState(null, "", hash);
+          scrollToHash(hash, true);
+        });
+
+        document.querySelectorAll("[data-go-exam]").forEach((button) => {
+          button.addEventListener("click", () => {
+            window.location.href = button.dataset.goExam;
+          });
+        });
+
+        document.addEventListener("dragstart", (event) => {
+          if (event.target?.closest?.("img")) event.preventDefault();
+        });
+
+        function checkStudentSession() {
+          let studentInfo = null;
+          try {
+            studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
+          } catch (e) {
+            studentInfo = null;
+          }
+          if (studentInfo) {
+            const mainNav = document.querySelector(".main-nav");
+            if (mainNav) {
+              const loginLinks = mainNav.querySelectorAll('a[href^="login.html"]');
+              loginLinks.forEach(link => link.remove());
+              
+              if (!mainNav.querySelector('.continue-course-nav')) {
+                const continueLink = document.createElement("a");
+                continueLink.href = "select.html";
+                continueLink.className = "register-link continue-course-nav";
+                continueLink.textContent = "Tiếp tục khóa học";
+                mainNav.appendChild(continueLink);
+              }
+            }
+            const studentAccess = document.querySelector(".student-access");
+            if (studentAccess) {
+              studentAccess.innerHTML = '♙ <a href="select.html" style="color: #c31924; font-weight: 600;">Tiếp tục khóa học</a>';
+            }
+          }
+        }
+
+        lockImageDragging();
+        renderMaterials();
+        setupLogoCarousel();
+        setupTeacherMode();
+        checkStudentSession();
+
+        if (location.hash && location.hash !== "#trang-chu") {
+          history.replaceState(null, "", "#trang-chu");
+        }
+        window.scrollTo({ top: 0, behavior: "auto" });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+/* style.css – Unified design for TMA TSA */
+:root {
+  --accent: #E50914; /* red primary */
+  --blue-deep: #090909;
+  --blue: #E50914; /* alias */
+  --yellow: #E50914; /* same hue for gradient */
+  --white: #ffffff;
+  --paper: #f5f5f5;
+  --text: #111111;
+  --muted: #666666;
+  --line: rgba(229, 9, 20, 0.16);
+  --shadow: 0 12px 30px rgba(0, 0, 0, .1);
+  --radius: 24px;
+  --header-height: 102px;
+}
+
+[data-theme="dark"] {
+  --paper: #111111;
+  --text: #eeeeee;
+  --accent: #ff4d4d; /* lighter red for dark */
+}
+
+/* Global resets */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: text;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--paper);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button { cursor: pointer; border: none; }
+
+/* Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+.header-inner { display: flex; justify-content: space-between; align-items: center; min-height: var(--header-height); gap: 28px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo { width: 68px; height: 68px; object-fit: contain; }
+.brand-text { display: grid; gap: 4px; }
+.brand-name { font-size: 24px; font-weight: 800; }
+.brand-subtitle { font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.76); }
+.main-nav { display: flex; gap: 16px; }
+.main-nav a { font-weight: 800; font-size: 16px; color: var(--blue-deep); transition: color .18s, transform .18s; }
+.main-nav a:hover, .main-nav a:focus-visible { color: var(--accent); transform: translateY(-1px); }
+.login-nav { border-radius: 999px; background: var(--accent); color: var(--white) !important; padding: 11px 16px; box-shadow: 0 10px 22px rgba(0,0,0,.18); }
+.login-nav:hover, .login-nav:focus-visible { background: var(--blue-deep); }
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  background: var(--blue-deep);
+}
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/nenlogin.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+.hero::before { animation: heroOne 16s ease-in-out infinite; }
+.hero::after { opacity: 0; transform: scale(1.04); animation: heroTwo 16s ease-in-out infinite; }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.28), rgba(229,9,20,.1)); z-index: -1; }
+@keyframes heroOne { 0%,44%{opacity:1;transform:scale(1);}56%,90%{opacity:0;transform:scale(1.035);}100%{opacity:1;transform:scale(1);} }
+@keyframes heroTwo { 0%,44%{opacity:0;transform:scale(1.04);}56%,90%{opacity:1;transform:scale(1.012);}100%{opacity:0;transform:scale(1.04);} }
+.hero-inner { max-width: 1180px; margin: 0 auto; display: grid; gap: 48px; padding: 100px 0 130px; }
+.hero-title { font-size: clamp(2.5rem,5vw,4rem); font-weight: 800; line-height:1.1; }
+.btn { display: inline-block; padding: 10px 20px; border-radius: 999px; background: var(--accent); color: var(--white); font-weight: 800; transition: filter .2s; }
+.btn:hover { filter: brightness(.9); }
+
+/* Courses grid */
+.courses { display: grid; gap: 24px; padding: 24px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
+.card { background: rgba(255,255,255,.12); backdrop-filter: blur(8px); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 24px 50px rgba(0,0,0,.12); }
+.card h3 { font-size: 1.2rem; margin-bottom: 8px; }
+
+/* Footer */
+.site-footer { background: var(--paper); padding: 20px 0; text-align: center; font-size: 0.9rem; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .header-inner { flex-direction: column; height:auto; padding:12px; }
+  .hero-inner { padding: 80px 0 100px; }
+}

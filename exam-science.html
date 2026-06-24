@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phòng thi</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/exam-room.css">
+  </head>
+  <body class="exam-page" data-subject="science">
+    <div class="exam-app">
+      <!-- MAIN LEFT COLUMN -->
+      <div class="exam-left-pane">
+        <!-- HEADER -->
+        <header class="exam-header">
+          <div class="header-left">
+            <!-- Logo image at the top left of the header -->
+            <img src="assets/logo1.png" class="exam-logo" alt="TMA TSA Logo">
+            <span class="exam-title-text" id="header-exam-title"></span>
+            <span class="header-candidate-id" id="header-candidate-id"></span>
+          </div>
+        </header>
+
+        <!-- QUESTION AREA -->
+        <main class="question-pane" aria-label="Nội dung câu hỏi">
+          <div class="question-card">
+            <!-- Question content layout: split style for science -->
+            <div class="question-layout-row">
+              <div class="question-number-circle" id="question-number"></div>
+              
+              <div class="question-reading-split">
+                <!-- Left column: Passage/Data block -->
+                <div class="passage-pane" id="passage-pane"></div>
+                
+                <!-- Draggable divider -->
+                <div class="split-divider" id="split-divider">
+                  <div class="split-divider-line"></div>
+                </div>
+                
+                <!-- Right column: Question text and options -->
+                <div class="question-text-content" id="question-text-content">
+                  <div class="question-body" id="question-body"></div>
+                  <form class="answer-area" id="answer-area"></form>
+                </div>
+              </div>
+
+              <div class="question-action-column">
+                <button class="bookmark-button" type="button" data-action="bookmark" aria-label="Đánh dấu câu chưa chắc chắn">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+                    <path fill="currentColor" d="m19 18 2 1V3c0-1.1-.9-2-2-2H8.99C7.89 1 7 1.9 7 3h10c1.1 0 2 .9 2 2zM15 5H5c-1.1 0-2 .9-2 2v16l7-3 7 3V7c0-1.1-.9-2-2-2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="exam-footer">
+          <div class="footer-left">
+            <button class="nav-button nav-button-outline" type="button" data-action="previous" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left" aria-hidden="true">
+                <path d="m15 18-6-6 6-6"></path>
+              </svg>
+            </button>
+            <button class="nav-button nav-button-primary" type="button" data-action="next">
+              <span class="button-label">Câu tiếp</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </button>
+            
+            <!-- Timer is now positioned adjacent to nav controls -->
+            <div class="footer-timer">
+              <span class="footer-timer-label">Thời gian làm câu hiện tại</span>
+              <span id="question-time" class="footer-timer-value">00:00</span>
+            </div>
+          </div>
+          
+          <div class="footer-right" style="display: flex; align-items: center;">
+            <!-- Test Countdown clock in Footer -->
+            <div class="footer-timer" style="margin-right: 24px; margin-left: 0;">
+              <span class="footer-timer-label">Thời gian còn lại</span>
+              <strong id="countdown" class="footer-timer-value" style="color: #0f172a; font-size: 24px;"></strong>
+            </div>
+            <!-- Red Open Menu / Submit button -->
+            <button class="nav-button" type="button" id="open-submit-menu-btn">
+              <span>‹ Mở menu / Nộp bài</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- SUBMIT DRAWER OVERLAY (Slide-in Submit Menu) -->
+    <div class="submit-menu-overlay" id="submit-menu-overlay"></div>
+    <div class="submit-menu-drawer" id="submit-menu-drawer">
+      <div class="drawer-content">
+        <!-- Header -->
+        <div class="drawer-header">
+          <h2 class="drawer-header-title">Thông tin thí sinh</h2>
+          <button class="drawer-close-btn" id="close-submit-menu-btn" type="button" aria-label="Đóng">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Candidate Info Rows -->
+        <div class="drawer-info-row">
+          <span class="drawer-info-label">Họ tên</span>
+          <span class="drawer-info-value" id="submit-candidate-name"></span>
+        </div>
+        <div class="drawer-info-row">
+          <span class="drawer-info-label">Mã dự thi</span>
+          <span class="drawer-info-value uppercase" id="submit-candidate-id"></span>
+        </div>
+
+        <!-- Timer and Final Submit -->
+        <div class="drawer-timer-row">
+          <div class="drawer-timer-box">
+            <span class="drawer-timer-label">Thời gian còn lại</span>
+            <span class="drawer-timer-value" id="submit-countdown"></span>
+          </div>
+          <button class="drawer-submit-btn" id="final-submit-btn" type="button">Nộp bài</button>
+        </div>
+
+        <!-- Color Legend -->
+        <div class="drawer-legend-row">
+          <span class="drawer-legend-label">Chỉ thị màu sắc:</span>
+          <div class="drawer-legend-badges">
+            <span class="drawer-legend-badge is-unanswered" id="submit-stats-unanswered"></span>
+            <span class="drawer-legend-badge is-answered" id="submit-stats-answered">0</span>
+            <span class="drawer-legend-badge is-flagged" id="submit-stats-flagged">0</span>
+          </div>
+        </div>
+
+        <!-- Question Grid Scroll -->
+        <div class="drawer-grid-container">
+          <div class="drawer-grid" id="submit-question-grid"></div>
+        </div>
+
+        <!-- Progress block at bottom -->
+        <div class="drawer-bottom-progress">
+          <div class="drawer-progress-info">
+            <span class="drawer-progress-title">Bạn đã hoàn thành</span>
+            <span class="drawer-progress-count"><strong id="submit-progress-done-count">0</strong>/<span id="submit-progress-total-count"></span> câu</span>
+          </div>
+          <div class="drawer-progress-row">
+            <div class="drawer-progress-bar-track">
+              <div class="drawer-progress-bar-fill" id="submit-progress-bar" style="width: 0%"></div>
+            </div>
+            <span class="drawer-progress-percent" id="submit-progress-label">0%</span>
+          </div>
+          <div class="drawer-connection-status">
+            <div class="drawer-status-dot-wrapper">
+              <span class="drawer-status-dot-ping"></span>
+              <span class="drawer-status-dot"></span>
+            </div>
+            <span class="drawer-status-text">Đã kết nối máy chủ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true
+        },
+        options: {
+          ignoreHtmlClass: 'tex2jax_ignore',
+          processHtmlClass: 'tex2jax_process'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="js/question-renderers.js"></script>
+    <script src="js/question-graders.js"></script>
+    <script src="js/exam-room.js"></script>
+  </body>
+</html>

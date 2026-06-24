@@ -1,0 +1,442 @@
+/* CSS for the Exam Select Lobby Page (waiting.html) */
+
+:root {
+  --brand-red: #c1121f;
+  --brand-red-dark: #9f0f1a;
+  --brand-red-light: #fff1f2;
+  --page-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --radius: 16px;
+  --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.confirm-page {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf2f3 60%, #fecdd3 100%);
+  background-image: url("../assets/nen.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.confirm-shell {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Custom spinning dots loading overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf2f3 60%, #fecdd3 100%);
+  background-image: url("../assets/nen.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-card-spinner {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.4s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.loading-card-spinner .logo-wrapper {
+  margin-bottom: 20px;
+}
+
+.loading-card-spinner .lobby-logo {
+  height: 36px;
+  object-fit: contain;
+}
+
+.loading-card-spinner .loading-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #1e293b;
+  margin: 8px 0 28px;
+}
+
+/* 4 rotating pink dots spinner */
+.spinner-dots {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 24px;
+  animation: spin 1.5s linear infinite;
+}
+
+.spinner-dots .dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(225, 29, 72, 0.7); /* Pinkish and translucent */
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(225, 29, 72, 0.5); /* Soft glowing/blurry effect */
+}
+
+/* Position dots in a diamond/cross shape */
+.spinner-dots .dot:nth-child(1) { top: 0; left: 11px; }
+.spinner-dots .dot:nth-child(2) { right: 0; top: 11px; }
+.spinner-dots .dot:nth-child(3) { bottom: 0; left: 11px; }
+.spinner-dots .dot:nth-child(4) { left: 0; top: 11px; }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.tray-icon-wrapper {
+  margin-bottom: 12px;
+  color: #94a3b8;
+}
+
+.loading-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 2. LOBBY CARD */
+.lobby-card {
+  display: none; /* Shown after loading completes */
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 36px 44px;
+  box-sizing: border-box;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.lobby-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.lobby-logo {
+  height: 48px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.lobby-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+
+.lobby-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.badge-free {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.badge-open {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+/* Student Information Panel */
+.student-info-box {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.info-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #334155;
+}
+
+.badge-premium {
+  background: var(--brand-red-light);
+  color: var(--brand-red);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(193, 18, 31, 0.15);
+}
+
+/* Sections/Parts List */
+.sections-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 16px;
+  text-transform: none;
+}
+
+.sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.section-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.section-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  transform: translateY(-1px);
+}
+
+.section-left {
+  flex: 1;
+  min-width: 0;
+  padding-right: 16px;
+}
+
+.section-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-red);
+  margin-bottom: 6px;
+}
+
+.section-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.section-meta-item {
+  line-height: 1.4;
+}
+
+.section-meta-item strong {
+  color: #334155;
+  font-weight: 500;
+}
+
+.section-status-tag {
+  font-weight: 600;
+}
+
+.status-not-started {
+  color: #10b981; /* Green: Chưa thi */
+}
+
+.status-completed {
+  color: #64748b; /* Grey: Đã thi */
+}
+
+.section-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.section-btn-primary {
+  background: var(--brand-red);
+  color: #ffffff;
+  border: 1px solid var(--brand-red);
+  box-shadow: 0 2px 4px rgba(193, 18, 31, 0.15);
+}
+
+.section-btn-primary:hover {
+  background: var(--brand-red-dark);
+  border-color: var(--brand-red-dark);
+}
+
+.section-btn-outline {
+  background: #ffffff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.section-btn-outline:hover {
+  background: #eff6ff;
+}
+
+.section-btn-completed {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Footer Section */
+.lobby-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+.btn-footer {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  padding: 4px 8px;
+}
+
+.btn-footer-back {
+  color: #64748b;
+}
+
+.btn-footer-back:hover {
+  color: var(--brand-red);
+}
+
+.btn-footer-submit {
+  color: var(--brand-red);
+}
+
+.btn-footer-submit:hover {
+  color: var(--brand-red-dark);
+  font-weight: 700;
+}
+
+.btn-footer svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 3. KEYFRAME ANIMATIONS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Rules */
+@media (max-width: 600px) {
+  .lobby-card {
+    padding: 24px 20px;
+  }
+  .student-info-box {
+    padding: 12px 14px;
+  }
+  .section-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .section-btn {
+    width: 100%;
+  }
+}

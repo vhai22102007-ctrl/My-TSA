@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận thông tin dự thi</title>
+    <link rel="icon" href="assets/tsa.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/confirm-page.css">
+  </head>
+  <body class="confirm-page">
+    <!-- Custom 1.5s spinning dots loading overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="loading-card-spinner">
+        <div class="logo-wrapper">
+          <img src="assets/tma-tsa.png" class="lobby-logo" alt="TMA TSA Logo">
+        </div>
+        <div class="loading-title" id="loading-title-text">Xác nhận thông tin dự thi</div>
+        
+        <div class="spinner-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        
+        <div class="tray-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+          </svg>
+        </div>
+        <p class="loading-subtitle">Đang tải dữ liệu...</p>
+      </div>
+    </div>
+
+    <main class="confirm-shell">
+      <section class="confirm-card" aria-labelledby="confirm-title">
+        <div class="confirm-logo-slot" aria-label="Logo hệ thống">
+          <img src="assets/tma-tsa.png" alt="TMA TSA Logo">
+        </div>
+        <h1 id="confirm-title">Xác nhận thông tin dự thi</h1>
+
+        <dl class="confirm-information">
+          <div class="confirm-row">
+            <dt>Họ tên</dt>
+            <dd id="student-name"></dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Mã dự thi</dt>
+            <dd id="candidate-id"></dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Kíp thi</dt>
+            <dd id="exam-title"></dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Phần thi</dt>
+            <dd id="section-title" style="color: var(--brand-red); font-weight: 700;"></dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Thời gian làm bài</dt>
+            <dd id="exam-duration"></dd>
+          </div>
+          <div class="confirm-row">
+            <dt>Số lượng câu hỏi</dt>
+            <dd id="total-questions"></dd>
+          </div>
+        </dl>
+
+        <p class="confirm-notice">
+          Lưu ý: Bằng việc nhấn nút <strong>"Bắt đầu làm bài"</strong> hệ thống sẽ bắt đầu tính giờ cho bài thi của bạn
+        </p>
+
+        <button class="start-button" type="button" data-action="start">Bắt đầu làm bài</button>
+
+        <section class="checking-panel" aria-live="polite" hidden>
+          <p>Đang kiểm tra thông tin bài thi ...</p>
+          <div class="checking-track" aria-hidden="true">
+            <span class="checking-bar"></span>
+          </div>
+        </section>
+
+        <footer class="confirm-footer">
+          <button class="confirm-link" type="button" data-action="back">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 19-7-7 7-7"></path>
+              <path d="M19 12H5"></path>
+            </svg>
+            Quay lại
+          </button>
+          <a class="confirm-link" href="#" data-action="guide">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+            Hướng dẫn
+          </a>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      const PROGRESS_DURATION_MS = 500;
+      const session = window.demoExamSession || {
+        exam: {
+          title: "Đề thi thử TSA - Công khai lần 1 (BỘ ĐỀ SHIBA)"
+        },
+        student: {
+          name: "Nguyễn Văn Hải",
+          code: "TMA507905"
+        },
+        subjects: {
+          math: {
+            name: "Tư duy Toán học",
+            duration: 45,
+            totalQuestions: 6
+          },
+          reading: {
+            name: "Tư duy Đọc hiểu",
+            duration: 45,
+            totalQuestions: 6
+          },
+          science: {
+            name: "Tư duy Khoa học & Giải quyết vấn đề",
+            duration: 45,
+            totalQuestions: 6
+          }
+        }
+      };
+      const params = new URLSearchParams(window.location.search);
+      const subjectKey = params.get("subject") || "math";
+      const selectedSubject = session.subjects[subjectKey] || session.subjects.math;
+      
+      const elements = {
+        candidateId: document.getElementById("candidate-id"),
+        checkingPanel: document.querySelector(".checking-panel"),
+        examDuration: document.getElementById("exam-duration"),
+        examTitle: document.getElementById("exam-title"),
+        sectionTitle: document.getElementById("section-title"),
+        startButton: document.querySelector('[data-action="start"]'),
+        studentName: document.getElementById("student-name"),
+        totalQuestions: document.getElementById("total-questions")
+      };
+
+      function renderExamInformation() {
+        const storedTitle = sessionStorage.getItem("currentExamTitle");
+        elements.studentName.textContent = session.student.name;
+        elements.candidateId.textContent = session.student.code;
+        elements.examTitle.textContent = storedTitle || session.exam.title;
+        elements.sectionTitle.textContent = selectedSubject.name;
+        elements.examDuration.textContent = `${selectedSubject.duration} phút`;
+        elements.totalQuestions.textContent = `${selectedSubject.totalQuestions} câu`;
+      }
+
+      function setSessionItemSafely(key, value) {
+        try {
+          sessionStorage.setItem(key, value);
+        } catch (error) {
+          console.warn("Session storage blocked:", error);
+        }
+      }
+
+      function isFullscreenActive() {
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+          return true;
+        }
+
+        try {
+          const parentDocument = window.parent && window.parent !== window ? window.parent.document : null;
+          return Boolean(
+            parentDocument &&
+            (parentDocument.fullscreenElement || parentDocument.webkitFullscreenElement || parentDocument.msFullscreenElement)
+          );
+        } catch (error) {
+          return false;
+        }
+      }
+
+      async function enterFullscreenSafely() {
+        setSessionItemSafely("tsaShouldFullscreen", "1");
+
+        try {
+          const el = document.documentElement;
+          if (!isFullscreenActive()) {
+            if (el.requestFullscreen) await el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+            else if (el.msRequestFullscreen) await el.msRequestFullscreen();
+          }
+          if (isFullscreenActive()) {
+            setSessionItemSafely("tsaFullscreenStarted", "1");
+          }
+        } catch (error) {
+          console.warn("Fullscreen blocked:", error);
+        }
+      }
+
+      // Page load loading overlay handler
+      const overlay = document.getElementById("loading-overlay");
+      const loadingTitleText = document.getElementById("loading-title-text");
+
+      setTimeout(() => {
+        if (overlay) {
+          overlay.classList.add("fade-out");
+        }
+      }, PROGRESS_DURATION_MS);
+
+      async function startExamWithFullscreen(url) {
+        try {
+          sessionStorage.removeItem("tsaFullscreenStarted");
+        } catch (error) {
+          console.warn("Session storage blocked:", error);
+        }
+        // Vào thẳng phòng thi — không hiện lại overlay
+        await enterFullscreenSafely();
+        window.location.href = url;
+      }
+
+      elements.startButton.addEventListener("click", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete('subject');
+        const searchStr = urlParams.toString();
+        const destUrl = searchStr ? `exam-${subjectKey}.html?${searchStr}` : `exam-${subjectKey}.html`;
+
+        // Ẩn nút, hiện panel
+        elements.startButton.hidden = true;
+        const panel = elements.checkingPanel;
+        const bar = panel.querySelector('.checking-bar');
+        panel.classList.remove('is-running');
+        panel.hidden = false;
+
+        // Reset width về 0, xóa mọi animation cũ
+        bar.style.animation = 'none';
+        bar.style.width = '0%';
+        bar.offsetWidth; // force reflow
+        bar.style.animation = '';   // xóa inline style để CSS class hoạt động
+
+        // Dùng rAF để chắc chắn browser đã paint xong trước khi kích animation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            panel.classList.add('is-running');
+          });
+        });
+
+        // Chuyển trang sau khi thanh chạy xong (2600ms)
+        setTimeout(() => {
+          startExamWithFullscreen(destUrl);
+        }, 2600);
+      });
+
+      document.querySelector('[data-action="back"]').addEventListener("click", () => {
+        window.location.href = "waiting.html";
+      });
+
+      document.querySelector('[data-action="guide"]').addEventListener("click", (event) => {
+        event.preventDefault();
+        window.alert("Vui lòng đọc kỹ thông tin phần thi và bấm 'Bắt đầu làm bài' để bắt đầu tính giờ.");
+      });
+
+      renderExamInformation();
+    </script>
+  </body>
+</html>

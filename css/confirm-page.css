@@ -1,0 +1,352 @@
+.confirm-page {
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.confirm-page button,
+.confirm-page input,
+.confirm-page textarea {
+  font-family: inherit;
+}
+
+.confirm-shell {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 8px;
+  background-color: #fdf2f3;
+  background-image: url("../assets/nen.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.confirm-card {
+  display: flex;
+  width: 100%;
+  max-width: 480px; /* Reduced width for a more compact size */
+  min-height: 420px; /* Reduced min-height */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px 36px; /* Reduced padding */
+  border-radius: 16px; /* Slightly more rounded corners to match other dialogs */
+  background: #ffffff;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
+}
+
+.confirm-logo-slot {
+  width: 100%;
+  height: 40px; /* Reduced height */
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirm-logo-slot img {
+  height: 36px; /* Reduced logo size */
+  object-fit: contain;
+}
+
+.confirm-card h1 {
+  width: 100%;
+  margin: 8px 0 20px;
+  color: #000000;
+  font-size: 22px; /* Slightly smaller font */
+  font-weight: 600;
+  line-height: 30px;
+  text-align: center;
+}
+
+.confirm-information {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.confirm-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  color: #4b5563;
+  font-size: 15px; /* Slightly smaller font */
+  line-height: 22px;
+}
+
+.confirm-row dt {
+  width: 176px;
+  flex: 0 0 176px;
+  white-space: nowrap;
+}
+
+.confirm-row dd {
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  padding-right: 8px;
+  color: #1f2937;
+  font-weight: 500;
+  text-align: right;
+}
+
+.confirm-notice {
+  width: 100%;
+  margin: 0 0 20px;
+  color: #4b5563;
+  font-size: 14.5px; /* Slightly smaller font */
+  font-style: italic;
+  line-height: 22px;
+  text-align: left;
+}
+
+.confirm-notice strong {
+  font-weight: 700;
+}
+
+.start-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 10px 16px; /* Compact padding */
+  border: 0;
+  border-radius: 8px; /* Slightly more rounded */
+  background: #cd1627; /* Unified TMA red */
+  color: #ffffff;
+  font-size: 16px; /* Slightly smaller button font */
+  font-weight: 600;
+  line-height: 24px;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.start-button:hover {
+  background: #b71c1c;
+}
+
+.start-button[hidden],
+.checking-panel[hidden] {
+  display: none;
+}
+
+.checking-panel {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 4px 0 12px;
+}
+
+.checking-panel p {
+  margin: 0 0 12px;
+  color: #d8232a;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: center;
+}
+
+.checking-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f1c4c7;
+}
+
+.checking-bar {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: #cd1627;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+}
+
+/* shimmer sáng chạy trên thanh */
+.checking-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.35) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: bar-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes bar-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.checking-panel.is-running .checking-bar {
+  animation: checking-progress 2500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.confirm-footer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.confirm-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #cd1627; /* Unified TMA red */
+  font-size: 16px; /* Slightly smaller link font */
+  line-height: 24px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.confirm-link:hover {
+  text-decoration: underline;
+}
+
+.confirm-link svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+@keyframes checking-progress {
+  0%   { width: 0%; }
+  60%  { width: 75%; }
+  85%  { width: 88%; }
+  100% { width: 100%; }
+}
+
+/* Custom spinning dots loading overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf2f3 60%, #fecdd3 100%);
+  background-image: url("../assets/nen.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-card-spinner {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.4s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.loading-card-spinner .logo-wrapper {
+  margin-bottom: 20px;
+}
+
+.loading-card-spinner .lobby-logo {
+  height: 36px;
+  object-fit: contain;
+}
+
+.loading-card-spinner .loading-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 8px 0 28px;
+}
+
+/* 4 rotating pink dots spinner — copy từ waiting.html */
+.spinner-dots {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 24px;
+  animation: spin 1.5s linear infinite;
+}
+
+.spinner-dots .dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #e21d26;
+  border-radius: 50%;
+}
+
+/* Position dots in a diamond/cross shape */
+.spinner-dots .dot:nth-child(1) { top: 0; left: 10px; }
+.spinner-dots .dot:nth-child(2) { right: 0; top: 10px; }
+.spinner-dots .dot:nth-child(3) { bottom: 0; left: 10px; }
+.spinner-dots .dot:nth-child(4) { left: 0; top: 10px; }
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tray-icon-wrapper {
+  margin-bottom: 12px;
+  color: #94a3b8;
+}
+
+.loading-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+}
+
