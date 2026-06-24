@@ -1,12 +1,15 @@
 <!doctype html>
 <html lang="vi">
 <head>
+    <script src="js/custom-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Quản trị viên và Bộ soạn đề TSA dành cho giáo viên.">
   <meta name="theme-color" content="#c1121f">
   <link rel="icon" href="assets/tsa.png">
   <link rel="stylesheet" href="css/exam-room.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
   <title>TMA TSA | Quản trị & Bộ soạn đề giáo viên</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,6 +45,11 @@
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 13px;
       -webkit-font-smoothing: antialiased;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      height: auto !important;
+      width: auto !important;
+      user-select: auto !important;
     }
 
     button, input, select, textarea { color: inherit; font: inherit; }
@@ -278,7 +286,6 @@
     .main {
       min-width: 0;
       padding: 24px;
-      overflow-y: auto;
     }
 
     .topbar {
@@ -1327,6 +1334,7 @@
                 <button class="btn btn-primary" type="button" id="download-exam-button">Tải JSON đề</button>
                 <button class="btn btn-outline" type="button" id="download-index-button">Tải index.json</button>
                 <button class="btn btn-soft" type="button" id="save-project-button">Lưu vào thư mục dự án</button>
+                <button class="btn btn-primary" style="background-color: #15803d; border-color: #15803d;" type="button" id="upload-supabase-button">Lưu lên Supabase Cloud</button>
               </div>
               <div class="hero-note" style="margin-top:16px;">
                 Nếu trình duyệt không hỗ trợ ghi thư mục, hãy tải file JSON rồi đặt thủ công:
@@ -1481,22 +1489,22 @@
       }
     }
 
-    function rejectStudent(id) {
+    async function rejectStudent(id) {
       var idx = pendingStudents.findIndex(function(s) { return s.id === id; });
       if (idx !== -1) {
         var student = pendingStudents[idx];
-        if (confirm(`Bạn có chắc muốn từ chối đăng ký của học sinh: ${student.name}?`)) {
+        if (await showCustomConfirm(`Bạn có chắc muốn từ chối đăng ký của học sinh: ${student.name}?`)) {
           pendingStudents.splice(idx, 1);
           renderStudents();
         }
       }
     }
 
-    function kickStudent(id) {
+    async function kickStudent(id) {
       var idx = approvedStudents.findIndex(function(s) { return s.id === id; });
       if (idx !== -1) {
         var student = approvedStudents[idx];
-        if (confirm(`Bạn có chắc muốn kích học sinh: ${student.name} ra khỏi khóa học?`)) {
+        if (await showCustomConfirm(`Bạn có chắc muốn kích học sinh: ${student.name} ra khỏi khóa học?`)) {
           approvedStudents.splice(idx, 1);
           renderStudents();
         }
@@ -1840,6 +1848,12 @@
   <script>
     (function () {
       "use strict";
+
+      // Khởi tạo Supabase Client từ cấu hình dùng chung
+      var supabaseClient = null;
+      if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
+        supabaseClient = supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey);
+      }
 
       var QUESTION_TYPES = [
         ["single_choice", "Trắc nghiệm 1 đáp án"],
@@ -2399,8 +2413,8 @@
         if (form) form.scrollIntoView({ behavior: "smooth" });
       }
 
-      function deleteQuestion(sectionId, index) {
-        if (!confirm("Bạn chắc chắn muốn xóa câu hỏi này?")) return;
+      async function deleteQuestion(sectionId, index) {
+        if (!await showCustomConfirm("Bạn chắc chắn muốn xóa câu hỏi này?")) return;
         ensureSchema();
         var targetSection = getSection(sectionId);
         var qList = sectionId === "math" ? targetSection.questions : (getActiveGroup(sectionId)?.questions || []);
@@ -2479,8 +2493,8 @@
         renderAll();
       }
 
-      function deleteGroup(sectionId, id) {
-        if (!confirm("Xóa ngữ liệu này sẽ xóa TOÀN BỘ các câu hỏi đi kèm bên trong. Bạn chắc chắn?")) return;
+      async function deleteGroup(sectionId, id) {
+        if (!await showCustomConfirm("Xóa ngữ liệu này sẽ xóa TOÀN BỘ các câu hỏi đi kèm bên trong. Bạn chắc chắn?")) return;
         var section = getSection(sectionId);
         var idx = section.groups.findIndex(function (g) { return g.group_id === id; });
         if (idx !== -1) {
@@ -2773,11 +2787,71 @@
           title: exam.title,
           status: exam.status,
           duration_minutes: exam.duration_minutes,
+          subject: (function() {
+            if (exam.exam_code.includes("_MATH_")) return "math";
+            if (exam.exam_code.includes("_READING_")) return "reading";
+            if (exam.exam_code.includes("_SCIENCE_")) return "science";
+            if (exam.exam_code.includes("_FULL_")) return "tong-hop";
+            return "math";
+          })(),
           file: "data/exams/" + exam.exam_code + ".json"
         };
         if (idx === -1) draftList.push(meta);
         else draftList[idx] = meta;
         return draftList;
+      }
+
+      async function saveToSupabaseCloud() {
+        if (!supabaseClient) {
+          window.alert("Thư viện Supabase chưa được nhúng hoặc bị lỗi kết nối.");
+          return;
+        }
+
+        var btn = $("#upload-supabase-button");
+        var originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Đang lưu lên Cloud...";
+
+        try {
+          // 1. Lưu file JSON đề: [exam_code].json
+          var examJsonStr = JSON.stringify(exam, null, 2);
+          var examBlob = new Blob([examJsonStr], { type: "application/json" });
+          
+          var examFileName = exam.exam_code + ".json";
+          var { data: uploadExamData, error: uploadExamError } = await supabaseClient.storage
+            .from('exams')
+            .upload(examFileName, examBlob, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadExamError) throw uploadExamError;
+
+          // 2. Lưu file mục lục: index.json
+          var indexList = getIndexListWithCurrent();
+          var indexJsonStr = JSON.stringify(indexList, null, 2);
+          var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
+
+          var { data: uploadIndexData, error: uploadIndexError } = await supabaseClient.storage
+            .from('exams')
+            .upload('index.json', indexBlob, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadIndexError) throw uploadIndexError;
+
+          // Lưu index vào localStorage của giáo viên luôn để đồng bộ giao diện quản trị
+          localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
+
+          window.alert("✓ Đã tải đề thi lên Supabase Cloud thành công!\nĐề thi hiện đã sẵn sàng phục vụ học sinh.");
+        } catch (error) {
+          console.error(error);
+          window.alert("Lỗi khi tải đề lên Supabase:\n" + (error.message || error));
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
       }
 
       async function saveToProjectFolder() {
@@ -2988,6 +3062,15 @@
             saveToProjectFolder().catch(function (error) {
               console.error(error);
               window.alert("Không lưu được vào thư mục dự án. Bạn vẫn có thể tải JSON rồi đặt file thủ công.");
+            });
+          });
+        }
+        var uploadCloudBtn = $("#upload-supabase-button");
+        if (uploadCloudBtn) {
+          uploadCloudBtn.addEventListener("click", function () {
+            saveToSupabaseCloud().catch(function (error) {
+              console.error(error);
+              window.alert("Lỗi không mong muốn: " + error);
             });
           });
         }

@@ -1,11 +1,14 @@
 <!doctype html>
 <html lang="vi">
 <head>
+    <script src="js/custom-dialogs.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#ffffff" />
   <title>TMA | Cổng học tập học sinh</title>
   <link rel="icon" href="assets/tsa.png" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -5198,7 +5201,7 @@
                   <th>Hành động</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="history-table-body">
                 <tr>
                   <td style="font-weight: 600;">Đề khảo sát Toán tư duy TSA #1</td>
                   <td>18/06/2026</td>
@@ -6201,6 +6204,16 @@
       }
       initCalendar();
 
+      // Khởi tạo Supabase Client từ cấu hình dùng chung
+      let supabaseClient = null;
+      let supabaseUrl = '';
+      let supabaseStorageUrl = '';
+      if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
+        supabaseUrl = window.SUPABASE_CONFIG.url;
+        supabaseClient = supabase.createClient(supabaseUrl, window.SUPABASE_CONFIG.anonKey);
+        supabaseStorageUrl = `${supabaseUrl}/storage/v1/object/public/exams/`;
+      }
+
       let studentInfo = null;
       try {
         studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
@@ -6761,13 +6774,13 @@
 
         // Attach event listeners to buttons inside cards
         grid.querySelectorAll(".register-course-btn").forEach((btn) => {
-          btn.addEventListener("click", (e) => {
+          btn.addEventListener("click", async (e) => {
             e.stopPropagation();
             const courseId = btn.getAttribute("data-course-id");
             const course = COURSES_DATA.find(c => c.id === courseId);
-            if (confirm(`Bạn có chắc chắn muốn đăng ký khóa học "${course.title}"?`)) {
+            if (await showCustomConfirm(`Bạn có chắc chắn muốn đăng ký khóa học "${course.title}"?`)) {
               registerCourse(courseId);
-              alert(`Đăng ký khóa học "${course.title}" thành công!`);
+              await showCustomAlert(`Đăng ký khóa học "${course.title}" thành công!`);
             }
           });
         });
@@ -7460,10 +7473,10 @@
           console.warn("localStorage read error:", e);
         }
         
-        // Fallback: fetch file tĩnh (cần server)
-        fetch("data/exams/index.json")
+        // Tải danh sách đề từ Supabase Storage trước
+        fetch(`${supabaseStorageUrl}index.json`, { cache: "no-store" })
           .then(res => {
-            if (!res.ok) throw new Error("Failed to fetch");
+            if (!res.ok) throw new Error("Failed to fetch from Supabase");
             return res.json();
           })
           .then(data => {
@@ -7477,12 +7490,30 @@
             }
           })
           .catch(err => {
-            console.error("Error loading exams index:", err);
-            fetchError = window.EXAMS_LIST.length === 0;
-            const activePanel = document.querySelector(".tab-panel.active");
-            if (activePanel && activePanel.id === "tab-practice") {
-              renderPracticeRoom();
-            }
+            console.warn("Không tải được danh sách đề từ Supabase Storage, thử tải offline/local...");
+            fetch("data/exams/index.json")
+              .then(res => {
+                if (!res.ok) throw new Error("Failed to fetch local index");
+                return res.json();
+              })
+              .then(data => {
+                window.EXAMS_LIST = data;
+                try {
+                  localStorage.setItem('tma_tsa_exam_index', JSON.stringify(data));
+                } catch (e) {}
+                const activePanel = document.querySelector(".tab-panel.active");
+                if (activePanel && activePanel.id === "tab-practice") {
+                  renderPracticeRoom();
+                }
+              })
+              .catch(localErr => {
+                console.error("Error loading exams index:", localErr);
+                fetchError = window.EXAMS_LIST.length === 0;
+                const activePanel = document.querySelector(".tab-panel.active");
+                if (activePanel && activePanel.id === "tab-practice") {
+                  renderPracticeRoom();
+                }
+              });
           });
       })();
 
@@ -7550,9 +7581,15 @@
 
            // Generate exactly 10 exams for selected TSA subtab
           for (let i = 1; i <= 10; i++) {
-            const numStr = String(i).padStart(2, "0");
-            const examCodeToCheck = "TSA" + numStr;
-            const hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck && e.subject === currentTsaPracticeSubtab);
+            const numStr3 = String(i).padStart(3, "0");
+            const numStr2 = String(i).padStart(2, "0");
+            const numStr = numStr2;
+            let examCodeToCheck = "TSA" + numStr3;
+            if (category === "TSA") {
+              // Các phần đơn môn (Toán, Đọc hiểu, Khoa học) đều đọc chung từ đề tổng hợp FULL để tránh tạo nhiều file thừa
+              examCodeToCheck = "TSA_PRACTICE_FULL_" + numStr2;
+            }
+            const hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck);
             const hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
             const isUploaded = (i === 1) || hasExamInList || hasLocalDraft;
 
@@ -7562,7 +7599,7 @@
             let duration = currentTsaPracticeSubtab === "tong-hop" ? "150 phút" : "45 phút";
             let qCount = currentTsaPracticeSubtab === "tong-hop" ? "85 câu" : "6 câu";
 
-            const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck && e.subject === currentTsaPracticeSubtab);
+            const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck);
             if (matchingExam) {
               if (matchingExam.duration_minutes) duration = matchingExam.duration_minutes + " phút";
               if (matchingExam.question_count) qCount = matchingExam.question_count + " câu";
@@ -7584,7 +7621,7 @@
             if (currentTsaPracticeSubtab === "tong-hop") {
               examTitle = `Đề tổng hợp số ${numStr}`;
               subjectText = "Toán học, Đọc hiểu, Khoa học";
-              redirectUrl = "waiting.html?exam=TSA_FULL_MOCK";
+              redirectUrl = "waiting.html?exam=" + examCodeToCheck;
             } else if (currentTsaPracticeSubtab === "math") {
               examTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
               subjectText = "Tư duy Toán học";
@@ -7936,6 +7973,7 @@
         if (isPracticeRoom) updatePracticeRoomUI();
         if (isExamList) renderExams();
         if (isDocumentsRoom) updateDocumentsUI();
+        if (tabId === 'history') renderExamHistory();
 
         window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -8369,6 +8407,123 @@
 
       // Initial render of cutoff table
       renderCutoffTable();
+
+      async function renderExamHistory() {
+        const tbody = document.getElementById("history-table-body");
+        if (!tbody) return;
+
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">
+              <span class="spinner" style="display:inline-block;width:16px;height:16px;border:2px solid #dc2626;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;"></span>
+              Đang tải lịch sử từ máy chủ...
+            </td>
+          </tr>
+        `;
+
+        if (!supabaseClient) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px; color: #ef4444; font-weight: 600;">
+                Không có kết nối với Supabase (Offline)
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        // Get student info
+        let studentCode = "TMA507905";
+        try {
+          const cached = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cached) {
+            studentCode = cached.code || cached.phone || studentCode;
+          }
+        } catch (e) {}
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('exam_results')
+            .select('*')
+            .eq('user_email', studentCode)
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 30px; color: #64748b;">
+                  Bạn chưa thực hiện bài thi nào. Lịch sử làm bài sẽ hiển thị tại đây sau khi bạn nộp bài.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          tbody.innerHTML = "";
+          data.forEach(row => {
+            // Find exam title
+            let examTitle = row.exam_code;
+            if (window.EXAMS_LIST) {
+              const examMeta = window.EXAMS_LIST.find(e => e.exam_code === row.exam_code);
+              if (examMeta) {
+                examTitle = examMeta.title;
+              }
+            }
+
+            // Format date
+            const dateStr = (function(iso) {
+              const d = new Date(iso);
+              if (isNaN(d.getTime())) return iso;
+              const pad = (n) => String(n).padStart(2, '0');
+              return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            })(row.created_at);
+
+            // Calculate duration label
+            let durationLabel = "45 phút";
+            if (window.EXAMS_LIST) {
+              const examMeta = window.EXAMS_LIST.find(e => e.exam_code === row.exam_code);
+              if (examMeta && examMeta.duration_minutes) {
+                durationLabel = examMeta.duration_minutes + " phút";
+              }
+            }
+
+            // Calculate scale 100 score
+            const totalQ = row.total_questions || 1;
+            const score100 = Math.round((row.score / totalQ) * 100);
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td style="font-weight: 600;">${examTitle}</td>
+              <td>${dateStr}</td>
+              <td>${durationLabel}</td>
+              <td>${row.correct_count}/${row.total_questions}</td>
+              <td style="font-weight: 700; color: var(--brand-red); font-size: 14px;">${score100}/100</td>
+              <td><button class="btn btn-outline btn-xs view-detail-btn" style="cursor: pointer; font-weight: 600; padding: 4px 8px; border-radius: 4px;">Xem chi tiết</button></td>
+            `;
+
+            // Bind click to detail button
+            tr.querySelector(".view-detail-btn").addEventListener("click", () => {
+              showCustomAlert(
+                `• Đề thi: ${examTitle}\n• Mã đề: ${row.exam_code}\n• Học sinh: ${row.student_name} (${row.user_email})\n• Ngày nộp: ${dateStr}\n• Số câu đúng: ${row.correct_count}/${row.total_questions} câu\n• Điểm số quy đổi: ${score100}/100\n• Điểm số gốc: ${row.score.toFixed(1)} / ${row.total_questions.toFixed(1)}`,
+                "Chi tiết kết quả thi"
+              );
+            });
+
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error("Lỗi khi tải lịch sử:", err);
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px; color: #ef4444;">
+                Gặp lỗi khi tải lịch sử từ máy chủ: ${err.message || err}
+              </td>
+            </tr>
+          `;
+        }
+      }
 
       // Hash routing
       const currentHash = window.location.hash.substring(1);

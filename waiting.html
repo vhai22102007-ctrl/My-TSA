@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="vi">
 <head>
+    <script src="js/custom-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phòng chờ thi | TMA TSA</title>
@@ -850,7 +851,7 @@
       window.location.href = `confirm.html?${params.toString()}`;
     };
 
-    elements.btnSubmitSession.addEventListener("click", () => {
+    elements.btnSubmitSession.addEventListener("click", async () => {
       let completed = {};
 
       try {
@@ -863,13 +864,13 @@
       const completedCount = Object.keys(completed).filter(k => completed[k]).length;
 
       if (completedCount < totalSubjects) {
-        const confirmSubmit = window.confirm(
+        const confirmSubmit = await showCustomConfirm(
           `Bạn chưa hoàn thành tất cả các phần thi (${completedCount}/${totalSubjects}). Bạn có chắc chắn muốn nộp kíp thi và kết thúc không?`
         );
 
         if (!confirmSubmit) return;
       } else {
-        const confirmSubmit = window.confirm(
+        const confirmSubmit = await showCustomConfirm(
           "Bạn có chắc chắn muốn hoàn thành kíp thi này không? Điểm số của bạn sẽ được lưu lại."
         );
 
@@ -882,7 +883,7 @@
         console.warn("Local storage blocked:", error);
       }
 
-      alert("Kíp thi đã được nộp thành công! Chúc mừng bạn đã hoàn tất kỳ thi thử.");
+      await showCustomAlert("Kíp thi đã được nộp thành công! Chúc mừng bạn đã hoàn tất kỳ thi thử.");
 
       window.location.href = "select.html";
     });

@@ -154,6 +154,28 @@
     code: "TMA507905"
   };
 
+  try {
+    const cachedStudent = JSON.parse(localStorage.getItem("studentInfo"));
+    if (cachedStudent) {
+      studentInfo.name = cachedStudent.name || cachedStudent.username || cachedStudent.email || studentInfo.name;
+      studentInfo.code = cachedStudent.code || cachedStudent.phone || studentInfo.code;
+    }
+  } catch (e) {
+    console.warn("Lỗi đọc studentInfo từ localStorage:", e);
+  }
+
+  // Khởi tạo Supabase Client từ cấu hình dùng chung
+  let supabaseClient = null;
+  let supabaseUrl = '';
+  let supabaseStorageUrl = '';
+  if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
+    supabaseUrl = window.SUPABASE_CONFIG.url;
+    supabaseClient = supabase.createClient(supabaseUrl, window.SUPABASE_CONFIG.anonKey);
+    supabaseStorageUrl = `${supabaseUrl}/storage/v1/object/public/exams/`;
+  } else {
+    console.error("Supabase config or library not loaded!");
+  }
+
   let examData = null;
   let currentQuestionIndex = 0;
   let answers = {};
@@ -162,6 +184,7 @@
   let questionElapsedSeconds = 0;
   let isSubmitted = false;
   let timerInterval = null;
+  let renderedGroupId = null;
 
   const storageKey = `exam_answers_${examCode}_${subject}`;
   const flaggedKey = `exam_flagged_${examCode}_${subject}`;
@@ -356,9 +379,11 @@
     let no = 1;
     (section.groups || []).forEach((group) => {
       (group.questions || []).forEach((question) => {
+        const qNo = Number(question.question_no) || no;
+        no = qNo + 1;
         normalized.questions.push({
           ...question,
-          question_no: no++,
+          question_no: qNo,
           original_question_no: question.question_no,
           group_id: group.group_id,
           group_title: group.title,
@@ -381,14 +406,24 @@
   async function loadRawExam() {
     let examsList = readLocalJson("tma_tsa_exam_index");
 
+    // Tải index từ Supabase Storage trước
     try {
-      const fetchedIndex = await fetchJson("data/exams/index.json");
-      if (Array.isArray(fetchedIndex)) {
+      const fetchedIndex = await fetchJson(`${supabaseStorageUrl}index.json`);
+      if (Array.isArray(fetchedIndex) && fetchedIndex.length > 0) {
         examsList = fetchedIndex;
         writeLocalJson("tma_tsa_exam_index", fetchedIndex);
       }
     } catch (error) {
-      // Khi mở file:/// fetch có thể lỗi; localStorage là fallback.
+      console.warn("Không tải được index.json từ Supabase Storage, thử tải từ file cục bộ...");
+      try {
+        const fetchedIndex = await fetchJson("data/exams/index.json");
+        if (Array.isArray(fetchedIndex)) {
+          examsList = fetchedIndex;
+          writeLocalJson("tma_tsa_exam_index", fetchedIndex);
+        }
+      } catch (e) {
+        // Fallback sang localStorage nếu chạy offline hoàn toàn
+      }
     }
 
     const examMeta = Array.isArray(examsList)
@@ -396,11 +431,18 @@
       : null;
 
     let rawExam = null;
+
+    // Tải đề từ Supabase Storage
     if (examMeta && examMeta.file) {
+      const filename = examMeta.file.split('/').pop();
       try {
-        rawExam = await fetchJson(examMeta.file);
-      } catch (e) {}
+        rawExam = await fetchJson(`${supabaseStorageUrl}${encodeURIComponent(filename)}`);
+      } catch (e) {
+        console.warn("Không tải được đề thi từ Supabase Storage, thử tải cục bộ...");
+      }
     }
+
+    // Fallback tải cục bộ hoặc localStorage
     if (!rawExam) {
       try {
         rawExam = await fetchJson(`data/exams/${encodeURIComponent(examCode)}.json`);
@@ -409,7 +451,7 @@
     if (!rawExam) {
       rawExam = readLocalJson(`tma_tsa_exam_${examCode}`) || readLocalJson(`tma_tsa_teacher_draft_${examCode}`);
     }
-    if (!rawExam && (examCode === "TSA001" || examCode === "TSA_PRACTICE_MATH_01")) {
+    if (!rawExam && (examCode === "TSA001" || examCode.startsWith("TSA_PRACTICE_"))) {
       rawExam = fallbackMathExam;
     }
 
@@ -544,9 +586,11 @@
     }
   }
 
-  function showQuestionFeedback(question) {
-    const container = $("#answer-area");
+  function showQuestionFeedback(question, targetContainer) {
+    const container = targetContainer || $("#answer-area");
     if (!container) return;
+
+    if (container.querySelector(".feedback-box")) return;
 
     const ans = answers[question.question_no];
     const isCorrect = typeof gradeQuestion === "function" && gradeQuestion(question, ans);
@@ -635,8 +679,90 @@
           <div style="font-size:18px;font-weight:800;margin-top:4px;color:var(--text);">${examData.questions.length ? Math.round((correctCount / examData.questions.length) * 100) : 0}%</div>
         </div>
       </div>
-      <div style="margin-top:12px;font-size:12px;color:#166534;line-height:1.45;">Bản này chấm điểm ngay trên trình duyệt, chưa gửi Supabase.</div>
+      <div id="supabase-save-status" style="margin-top:12px;font-size:12px;color:#1e293b;line-height:1.45;display:flex;align-items:center;gap:6px;">
+        <span class="spinner" style="display:inline-block;width:10px;height:10px;border:2px solid #0284c7;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;"></span>
+        <span>Đang gửi kết quả lên máy chủ Supabase...</span>
+      </div>
     `;
+
+    // Định nghĩa animation quay nếu chưa có
+    if (!document.getElementById("supabase-spin-style")) {
+      const style = document.createElement("style");
+      style.id = "supabase-spin-style";
+      style.textContent = "@keyframes spin { to { transform: rotate(360deg); } }";
+      document.head.appendChild(style);
+    }
+
+    // Gửi điểm số lên Supabase
+    saveResultToSupabase(correctCount, totalPoints, scoredPoints);
+  }
+
+  async function saveResultToSupabase(correctCount, totalPoints, scoredPoints) {
+    const statusEl = document.getElementById("supabase-save-status");
+    if (!supabaseClient) {
+      if (statusEl) {
+        statusEl.style.color = "#475569";
+        statusEl.innerHTML = "• Bản này chạy offline (không có Supabase CDN), chưa lưu điểm.";
+      }
+      return;
+    }
+
+    try {
+      const { data, error } = await supabaseClient
+        .from('exam_results')
+        .insert([
+          {
+            user_email: studentInfo.code,
+            student_name: studentInfo.name,
+            exam_code: examCode,
+            correct_count: correctCount,
+            total_questions: examData.questions.length,
+            score: Number(scoredPoints.toFixed(1))
+          }
+        ]);
+
+      if (error) throw error;
+
+      if (statusEl) {
+        statusEl.style.color = "#166534";
+        statusEl.innerHTML = "✓ Đã lưu kết quả thi lên hệ thống Supabase!";
+      }
+    } catch (err) {
+      console.error("Lỗi khi lưu kết quả lên Supabase:", err);
+      if (statusEl) {
+        statusEl.style.color = "#991b1b";
+        statusEl.innerHTML = "✗ Không thể lưu điểm lên Supabase (Vui lòng kiểm tra kết nối mạng).";
+      }
+    }
+  }
+
+  function setActiveQuestionInGroup(qNo) {
+    const idx = examData.questions.findIndex(q => q.question_no === qNo);
+    if (idx !== -1 && idx !== currentQuestionIndex) {
+      currentQuestionIndex = idx;
+      questionElapsedSeconds = 0;
+      
+      // Update active row class
+      document.querySelectorAll(".split-question-row").forEach((row) => {
+        const rowQNo = Number(row.dataset.qNo);
+        row.classList.toggle("is-active-row", rowQNo === qNo);
+      });
+      
+      // Update grid selection in sidebar/drawer
+      updateGridSelection();
+      
+      // Enable/disable navigation buttons based on new currentQuestionIndex
+      const prevBtn = $('[data-action="previous"]');
+      const nextBtn = $('[data-action="next"]');
+      if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+      if (nextBtn) {
+        const labelSpan = nextBtn.querySelector(".button-label");
+        if (labelSpan) labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
+      }
+      
+      // Update timer display immediately
+      setText("#question-time", formatTime(questionElapsedSeconds));
+    }
   }
 
   function renderActiveQuestion() {
@@ -646,22 +772,164 @@
     }
 
     const question = examData.questions[currentQuestionIndex];
-    setText("#question-number", question.question_no);
 
-    const bookmarkBtn = $('[data-action="bookmark"]');
-    if (bookmarkBtn) bookmarkBtn.classList.toggle("is-active", Boolean(flagged[question.question_no]));
+    // For Math, run original single-question rendering
+    if (subject === "math") {
+      setText("#question-number", question.question_no);
+      const bookmarkBtn = $('[data-action="bookmark"]');
+      if (bookmarkBtn) bookmarkBtn.classList.toggle("is-active", Boolean(flagged[question.question_no]));
+      
+      const savedAnswer = answers[question.question_no];
+      renderQuestion(question, savedAnswer, (newVal) => {
+        if (isSubmitted) return;
+        if (hasAnswer(newVal)) answers[question.question_no] = newVal;
+        else delete answers[question.question_no];
+        saveLocalState();
+        updateSidebarStats();
+      });
 
+      const prevBtn = $('[data-action="previous"]');
+      const nextBtn = $('[data-action="next"]');
+      if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+      if (nextBtn) {
+        const labelSpan = nextBtn.querySelector(".button-label");
+        if (labelSpan) labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
+      }
+
+      updateGridSelection();
+      if (isSubmitted) showQuestionFeedback(question);
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise().catch(() => {});
+      }
+      return;
+    }
+
+    // For Reading and Science: Grouped scrolling view
+    // Hide the global question number circle and global bookmark column
+    const globalQNum = $("#question-number");
+    if (globalQNum) globalQNum.style.display = "none";
+    const globalActionCol = $(".question-action-column");
+    if (globalActionCol) globalActionCol.style.display = "none";
+
+    const currentGroupId = question.group_id;
+    const groupQuestions = examData.questions.filter(q => q.group_id === currentGroupId);
+
+    // Render the passage/stimulus
     renderPassage(question);
 
-    const savedAnswer = answers[question.question_no];
-    renderQuestion(question, savedAnswer, (newVal) => {
-      if (isSubmitted) return;
-      if (hasAnswer(newVal)) answers[question.question_no] = newVal;
-      else delete answers[question.question_no];
-      saveLocalState();
-      updateSidebarStats();
-    });
+    const questionTextContent = $("#question-text-content");
+    if (questionTextContent) {
+      if (renderedGroupId !== currentGroupId) {
+        renderedGroupId = currentGroupId;
+        questionTextContent.innerHTML = "";
 
+        // Build list of questions for this group
+        groupQuestions.forEach((q) => {
+          const qRow = document.createElement("div");
+          qRow.className = "split-question-row";
+          qRow.dataset.qNo = q.question_no;
+          if (q.question_no === question.question_no) {
+            qRow.classList.add("is-active-row");
+          }
+
+          // Question header row
+          const qHeader = document.createElement("div");
+          qHeader.className = "split-q-header";
+
+          // Question number circle/badge (on the left)
+          const qNumBox = document.createElement("div");
+          qNumBox.className = "split-q-num-box";
+          qNumBox.textContent = q.question_no;
+
+          // Question body
+          const qBody = document.createElement("div");
+          qBody.className = "question-body";
+          qBody.id = `q-body-${q.question_no}`;
+
+          // Bookmark action box (right)
+          const qActionBox = document.createElement("div");
+          qActionBox.className = "split-q-action-box";
+
+          const qBookmarkBtn = document.createElement("button");
+          qBookmarkBtn.type = "button";
+          qBookmarkBtn.className = "bookmark-button";
+          qBookmarkBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+              <path fill="currentColor" d="m19 18 2 1V3c0-1.1-.9-2-2-2H8.99C7.89 1 7 1.9 7 3h10c1.1 0 2 .9 2 2zM15 5H5c-1.1 0-2 .9-2 2v16l7-3 7 3V7c0-1.1-.9-2-2-2"></path>
+            </svg>
+          `;
+          qBookmarkBtn.classList.toggle("is-active", Boolean(flagged[q.question_no]));
+          qBookmarkBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent changing active row on flag click
+            flagged[q.question_no] = !flagged[q.question_no];
+            if (!flagged[q.question_no]) delete flagged[q.question_no];
+            qBookmarkBtn.classList.toggle("is-active", Boolean(flagged[q.question_no]));
+            saveLocalState();
+            updateSidebarStats();
+          });
+          qActionBox.appendChild(qBookmarkBtn);
+
+          qHeader.appendChild(qNumBox);
+          qHeader.appendChild(qBody);
+          qHeader.appendChild(qActionBox);
+
+          // Answer form (bottom)
+          const qAns = document.createElement("form");
+          qAns.className = "answer-area";
+          qAns.id = `q-ans-${q.question_no}`;
+
+          qRow.appendChild(qHeader);
+          qRow.appendChild(qAns);
+
+          // Handle click to set active question
+          qRow.addEventListener("click", () => {
+            setActiveQuestionInGroup(q.question_no);
+          });
+
+          questionTextContent.appendChild(qRow);
+
+          // Render options and contents
+          const savedAnswer = answers[q.question_no];
+          renderQuestionTo(q, savedAnswer, (newVal) => {
+            if (isSubmitted) return;
+            if (hasAnswer(newVal)) answers[q.question_no] = newVal;
+            else delete answers[q.question_no];
+            saveLocalState();
+            updateSidebarStats();
+          }, qBody, qAns, { typeset: false });
+
+          if (isSubmitted) {
+            showQuestionFeedback(q, qAns);
+          }
+        });
+
+        // Trigger mathjax typesetting
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([questionTextContent]).catch(() => {});
+        }
+      } else {
+        // Just update classes of rows
+        document.querySelectorAll(".split-question-row").forEach((row) => {
+          const qNo = Number(row.dataset.qNo);
+          row.classList.toggle("is-active-row", qNo === question.question_no);
+          
+          // Sync bookmark buttons
+          const bookmarkBtn = row.querySelector(".bookmark-button");
+          if (bookmarkBtn) {
+            bookmarkBtn.classList.toggle("is-active", Boolean(flagged[qNo]));
+          }
+        });
+      }
+
+      // Scroll active row into view
+      const activeRow = questionTextContent.querySelector(`.split-question-row[data-q-no="${question.question_no}"]`);
+      if (activeRow) {
+        activeRow.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    // Navigation and Grid
     const prevBtn = $('[data-action="previous"]');
     const nextBtn = $('[data-action="next"]');
     if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
@@ -671,11 +939,6 @@
     }
 
     updateGridSelection();
-    if (isSubmitted) showQuestionFeedback(question);
-
-    if (window.MathJax && window.MathJax.typesetPromise) {
-      window.MathJax.typesetPromise().catch(() => {});
-    }
   }
 
   function startTimer() {
@@ -719,7 +982,7 @@
     window.location.href = "select.html";
   }
 
-  function autoSubmitExam() {
+  async function autoSubmitExam() {
     isSubmitted = true;
     saveLocalState();
     clearInterval(timerInterval);
@@ -738,19 +1001,19 @@
       }
     });
 
-    alert(`Hết giờ làm bài! Bài thi đã tự động được nộp.\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+    await showCustomAlert(`Hết giờ làm bài! Bài thi đã tự động được nộp.\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
     leaveExamRoom();
   }
 
-  function submitExam() {
+  async function submitExam() {
     if (!examData) return;
     if (isSubmitted) {
-      alert("Bạn đã nộp bài này rồi.");
+      await showCustomAlert("Bạn đã nộp bài này rồi.");
       return;
     }
 
     const answeredCount = examData.questions.filter((q) => hasAnswer(answers[q.question_no])).length;
-    if (!confirm(`Bạn đã làm ${answeredCount}/${examData.questions.length} câu. Bạn chắc chắn muốn nộp bài?`)) return;
+    if (!await showCustomConfirm(`Bạn đã làm ${answeredCount}/${examData.questions.length} câu. Bạn chắc chắn muốn nộp bài?`)) return;
 
     isSubmitted = true;
     saveLocalState();
@@ -770,7 +1033,7 @@
       }
     });
 
-    alert(`Nộp bài thành công!\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+    await showCustomAlert(`Nộp bài thành công!\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
     leaveExamRoom();
   }
 
