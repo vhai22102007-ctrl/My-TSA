@@ -1738,6 +1738,70 @@
       if (examTitle) examTitle.textContent = info[0];
       if (examDesc) examDesc.textContent = info[1];
 
+      if (currentExamCategory.toLowerCase() === "tsa") {
+        let indexList = [];
+        try {
+          var raw = localStorage.getItem("tma_tsa_exam_index");
+          if (raw) indexList = JSON.parse(raw);
+        } catch {}
+        if (!Array.isArray(indexList)) indexList = [];
+
+        let openStatus = {};
+        try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
+        for (let i = 1; i <= 10; i++) {
+          const numStr = String(i).padStart(2, "0");
+          const examCode = "TSA_EXAM_" + numStr;
+          const examTitleStr = `Đề thi thử TSA số ${numStr}`;
+
+          const inList = indexList.find(e => e.exam_code === examCode);
+          const hasExam = !!inList;
+          const isOpen = inList && (inList.is_open === true || openStatus[examCode] === true);
+
+          var card = document.createElement("div");
+          card.className = "exam-card";
+          card.innerHTML = `
+            <header class="exam-card-header">
+              <h3 style="text-transform:none;">${examTitleStr}</h3>
+            </header>
+            <div class="exam-card-body">
+              <div class="exam-info-row">
+                <span class="info-label">Mã đề:</span>
+                <span class="info-value font-bold">${examCode}</span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Trạng thái soạn đề:</span>
+                <span class="${hasExam ? 'badge-green' : 'badge-red'}" style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                  ${hasExam ? 'ĐÃ CÓ ĐỀ' : 'CHƯA CÓ ĐỀ'}
+                </span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Trạng thái phòng thi:</span>
+                <span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">
+                  ${isOpen ? 'Đang mở đề' : 'Đang đóng đề'}
+                </span>
+              </div>
+            </div>
+            <footer class="exam-card-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+              <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="startEditingExam('${examTitleStr}', '${examCode}')">
+                Chỉnh sửa
+              </button>
+              ${isOpen ? `
+                <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border-color: #ef4444; color: #fff;" onclick="toggleExamOpen('${examCode}', false)">
+                  Đóng đề
+                </button>
+              ` : `
+                <button class="btn btn-sm" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #16a34a; border-color: #16a34a; color: #fff; cursor: ${hasExam ? 'pointer' : 'not-allowed'}; opacity: ${hasExam ? 1 : 0.6};" ${hasExam ? '' : 'disabled'} onclick="toggleExamOpen('${examCode}', true)">
+                  Mở đề
+                </button>
+              `}
+            </footer>
+          `;
+          grid.appendChild(card);
+        }
+        return;
+      }
+
       var filtered = EXAMS_DATA_MOCK.filter(function(item) {
         return item.category.toLowerCase() === currentExamCategory.toLowerCase();
       });
@@ -2144,12 +2208,26 @@
           '<div class="field"><label>Số câu</label><input class="input" id="' + sectionId + '-q-no" type="number" min="1" value="' + attr(q.question_no || 1) + '"></div>' +
           '<div class="field"><label>Mẫu câu hỏi</label><select class="select" id="' + sectionId + '-q-type">' + typeOptions(q.question_type) + '</select></div>' +
           '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Có thể nhập LaTeX dạng \\( \\frac{1}{2} \\)">' + esc(q.question || "") + '</textarea></div>' +
-          '<div class="field full"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
+          '<div class="field full" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 0;">' +
+            '<div style="flex: 1; min-width: 250px;"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
+            '<div style="width: 200px;"><label>Kích thước ảnh: <span id="' + sectionId + '-q-image-width-val">' + (q.image_width || 100) + '</span>%</label>' +
+              '<input type="range" class="slider" id="' + sectionId + '-q-image-width" min="10" max="100" value="' + (q.image_width || 100) + '" style="width: 100%; margin-top: 8px;">' +
+            '</div>' +
+          '</div>' +
           '<div class="field full" id="' + sectionId + '-type-fields"></div>' +
           '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || "") + '</textarea></div>' +
           '<div class="field"><label>Điểm</label><input class="input" id="' + sectionId + '-q-points" type="number" step="0.1" min="0" value="' + attr(q.points == null ? 1 : q.points) + '"></div>' +
           '</div>';
         renderTypeFields(sectionId, q);
+        
+        var slider = $("#" + sectionId + "-q-image-width");
+        var indicator = $("#" + sectionId + "-q-image-width-val");
+        if (slider && indicator) {
+          slider.addEventListener("input", function () {
+            indicator.textContent = this.value;
+          });
+        }
+
         $("#" + sectionId + "-q-type").addEventListener("change", function () {
           var current = collectBaseQuestion(sectionId, false);
           current.question_type = this.value;
@@ -2303,6 +2381,7 @@
           question_type: $("#" + sectionId + "-q-type")?.value || "single_choice",
           question: $("#" + sectionId + "-q-text")?.value || "",
           image_url: $("#" + sectionId + "-q-image")?.value || "",
+          image_width: Number($("#" + sectionId + "-q-image-width")?.value) || 100,
           explanation: $("#" + sectionId + "-q-explanation")?.value || "",
           points: Number($("#" + sectionId + "-q-points")?.value) || 1
         };
@@ -2477,10 +2556,13 @@
         var titleInp = $("#" + sectionId + "-g-title");
         var textInp = $("#" + sectionId + "-g-text");
         var imgInp = $("#" + sectionId + "-g-image");
+        var imgWidthInp = $("#" + sectionId + "-g-image-width");
 
         if (titleInp) group.title = titleInp.value.trim() || "Chủ đề ngữ liệu";
+        if (!group.stimulus) group.stimulus = {};
         if (textInp) group.stimulus.content = textInp.value || "";
         if (imgInp) group.stimulus.image_url = imgInp.value.trim() || "";
+        if (imgWidthInp) group.stimulus.image_width = Number(imgWidthInp.value) || 100;
 
         saveDraft();
         renderAll();
@@ -2605,12 +2687,35 @@
         var group = getActiveGroup(sectionId);
         if (!group) return;
 
+        var groupImgWidth = group.stimulus?.image_width || 100;
         form.innerHTML =
           '<div class="form-grid">' +
           '<div class="field full"><label>Tiêu đề ngữ liệu</label><input class="input" id="' + sectionId + '-g-title" value="' + attr(group.title) + '"></div>' +
           '<div class="field full"><label>Nội dung văn bản / dữ liệu</label><textarea class="textarea" id="' + sectionId + '-g-text" style="min-height:160px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
-          '<div class="field full"><label>Đường dẫn ảnh ngữ liệu nếu có</label><input class="input" id="' + sectionId + '-g-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
+          '<div class="field full" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 0;">' +
+            '<div style="flex: 1; min-width: 250px;"><label>Đường dẫn ảnh ngữ liệu nếu có</label><input class="input" id="' + sectionId + '-g-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
+            '<div style="width: 200px;"><label>Kích thước ảnh: <span id="' + sectionId + '-g-image-width-val">' + groupImgWidth + '</span>%</label>' +
+              '<input type="range" class="slider" id="' + sectionId + '-g-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; margin-top: 8px;">' +
+            '</div>' +
+          '</div>' +
           '</div>';
+
+        var slider = $("#" + sectionId + "-g-image-width");
+        var indicator = $("#" + sectionId + "-g-image-width-val");
+        if (slider && indicator) {
+          slider.addEventListener("input", function() {
+            indicator.textContent = this.value;
+            updatePreview(sectionId);
+          });
+        }
+        var titleInp = $("#" + sectionId + "-g-title");
+        var textInp = $("#" + sectionId + "-g-text");
+        var imgInp = $("#" + sectionId + "-g-image");
+        [titleInp, textInp, imgInp].forEach(function(inp) {
+          if (inp) {
+            inp.addEventListener("input", function() { updatePreview(sectionId); });
+          }
+        });
       }
 
       function updatePreview(sectionId) {
@@ -2629,7 +2734,9 @@
           if (stimEl && group) {
             stimEl.innerHTML = '<div class="stimulus-card"><h3>' + esc(group.title) + '</h3><div class="stimulus-content">' + esc(group.stimulus?.content || "") + '</div></div>';
             if (group.stimulus?.image_url) {
-              stimEl.innerHTML += '<div class="question-image-wrap"><img src="' + esc(group.stimulus.image_url) + '" alt="Group Image"></div>';
+              var gWidth = group.stimulus?.image_width || 100;
+              var widthStyle = 'style="width:' + gWidth + '%;max-width:100%;height:auto;"';
+              stimEl.innerHTML += '<div class="question-image-wrap" style="text-align:center;"><img src="' + esc(group.stimulus.image_url) + '" alt="Group Image" ' + widthStyle + '></div>';
             }
           }
         }
@@ -2782,16 +2889,20 @@
         if (!Array.isArray(draftList)) draftList = [];
 
         var idx = draftList.findIndex(function (e) { return e.exam_code === exam.exam_code; });
+        var existingMeta = idx !== -1 ? draftList[idx] : null;
+        var isOpen = existingMeta ? (existingMeta.is_open === true) : false;
+
         var meta = {
           exam_code: exam.exam_code,
           title: exam.title,
           status: exam.status,
           duration_minutes: exam.duration_minutes,
+          is_open: isOpen,
           subject: (function() {
             if (exam.exam_code.includes("_MATH_")) return "math";
             if (exam.exam_code.includes("_READING_")) return "reading";
             if (exam.exam_code.includes("_SCIENCE_")) return "science";
-            if (exam.exam_code.includes("_FULL_")) return "tong-hop";
+            if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_")) return "tong-hop";
             return "math";
           })(),
           file: "data/exams/" + exam.exam_code + ".json"
@@ -2800,6 +2911,42 @@
         else draftList[idx] = meta;
         return draftList;
       }
+
+      async function toggleExamOpen(examCode, open) {
+        let openStatus = {};
+        try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+        openStatus[examCode] = open;
+        localStorage.setItem("tma_exam_open_status", JSON.stringify(openStatus));
+
+        let indexList = [];
+        try {
+          var raw = localStorage.getItem("tma_tsa_exam_index");
+          if (raw) indexList = JSON.parse(raw);
+        } catch {}
+        if (!Array.isArray(indexList)) indexList = [];
+
+        var examMeta = indexList.find(function (e) { return e.exam_code === examCode; });
+        if (examMeta) {
+          examMeta.is_open = open;
+          localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
+        }
+
+        if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+          try {
+            var indexJsonStr = JSON.stringify(indexList, null, 2);
+            var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
+            await supabaseClient.storage.from('exams').upload('index.json', indexBlob, {
+              cacheControl: '3600',
+              upsert: true
+            });
+          } catch (err) {
+            console.warn("Failed to sync index.json to Supabase:", err);
+          }
+        }
+
+        renderExamsList();
+      }
+      window.toggleExamOpen = toggleExamOpen;
 
       async function saveToSupabaseCloud() {
         if (!supabaseClient) {

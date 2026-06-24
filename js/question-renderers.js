@@ -22,9 +22,10 @@
     if (node) node.innerHTML = "";
   }
 
-  function createImage(url, altText) {
+  function createImage(url, altText, widthPercent) {
     var holder = document.createElement("div");
     holder.className = "question-image-wrap";
+    holder.style.textAlign = "center"; // Center align by default
 
     var img = document.createElement("img");
     img.src = url;
@@ -32,6 +33,15 @@
     img.loading = "lazy";
     img.decoding = "async";
     img.draggable = false;
+
+    if (widthPercent) {
+      img.style.width = widthPercent + "%";
+      img.style.maxWidth = "100%";
+      img.style.height = "auto";
+    } else {
+      img.style.maxWidth = "100%";
+      img.style.height = "auto";
+    }
 
     img.addEventListener("error", function () {
       img.remove();
@@ -79,7 +89,7 @@
     bodyEl.appendChild(lead);
 
     if (question && question.image_url) {
-      bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || "")));
+      bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || ""), question.image_width));
     }
   }
 
@@ -584,7 +594,7 @@
     box.appendChild(content);
 
     if (group && group.stimulus && group.stimulus.image_url) {
-      box.appendChild(createImage(group.stimulus.image_url, group.title || "Ảnh ngữ liệu"));
+      box.appendChild(createImage(group.stimulus.image_url, group.title || "Ảnh ngữ liệu", group.stimulus.image_width));
     }
 
     if (options.target) {
