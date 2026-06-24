@@ -252,7 +252,14 @@
       });
 
       document.querySelector('[data-action="back"]').addEventListener("click", () => {
-        window.location.href = "waiting.html";
+        const params = new URLSearchParams(window.location.search);
+        const examCode = params.get("exam") || "";
+        const isSingle = params.get("single") === "true";
+        if (examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingle) {
+          window.location.href = `waiting.html?exam=${examCode}`;
+        } else {
+          window.location.href = "select.html";
+        }
       });
 
       document.querySelector('[data-action="guide"]').addEventListener("click", (event) => {
@@ -260,7 +267,59 @@
         window.alert("Vui lòng đọc kỹ thông tin phần thi và bấm 'Bắt đầu làm bài' để bắt đầu tính giờ.");
       });
 
+      async function loadRealExamDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const examCode = params.get("exam") || "TSA001";
+        const subjectKey = params.get("subject") || "math";
+        
+        let targetCode = examCode;
+        const tsaMatch = examCode.match(/^TSA(\d+)$/i);
+        if (tsaMatch) {
+          const num = parseInt(tsaMatch[1], 10);
+          const numStr = String(num).padStart(2, "0");
+          targetCode = `TSA_PRACTICE_FULL_${numStr}`;
+        }
+        
+        try {
+          const response = await fetch(`data/exams/${targetCode}.json`);
+          if (response.ok) {
+            const rawExam = await response.json();
+            let qCount = 0;
+            let duration = rawExam.duration_minutes || 45;
+            
+            if (Array.isArray(rawExam.sections)) {
+              const section = rawExam.sections.find(s => s.section_id === subjectKey);
+              if (section) {
+                if (subjectKey === "math") {
+                  qCount = Array.isArray(section.questions) ? section.questions.length : 0;
+                } else {
+                  if (Array.isArray(section.groups)) {
+                    section.groups.forEach(g => {
+                      if (Array.isArray(g.questions)) {
+                        qCount += g.questions.length;
+                      }
+                    });
+                  }
+                }
+              }
+            } else {
+              if (Array.isArray(rawExam.questions)) {
+                qCount = rawExam.questions.length;
+              }
+            }
+            
+            if (qCount > 0) {
+              elements.examDuration.textContent = `${duration} phút`;
+              elements.totalQuestions.textContent = `${qCount} câu`;
+            }
+          }
+        } catch (e) {
+          console.warn("Could not fetch real exam details for confirm screen:", e);
+        }
+      }
+
       renderExamInformation();
+      loadRealExamDetails();
     </script>
   </body>
 </html>

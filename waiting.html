@@ -738,16 +738,19 @@
       elements.sectionsList.innerHTML = "";
 
       const subjectKeys = Object.keys(session.subjects);
-      let hasFoundActive = false;
       let renderedCount = 0;
 
-      subjectKeys.forEach((key) => {
+      subjectKeys.forEach((key, index) => {
         const subj = session.subjects[key];
-        const isDone = !!completed[key];
+        const isCompleted = !!completed[key];
 
-        // Skip completed subjects
-        if (isDone) {
-          return;
+        let isUnlocked = false;
+        if (index === 0) {
+          isUnlocked = !isCompleted;
+        } else {
+          const prevKey = subjectKeys[index - 1];
+          const isPrevCompleted = !!completed[prevKey];
+          isUnlocked = isPrevCompleted && !isCompleted;
         }
 
         renderedCount++;
@@ -756,12 +759,29 @@
 
         let statusText = "Chưa thi";
         let statusClass = "status-not-started";
-        let btnClass = "section-btn-outline";
+        let btnClass = "section-btn-completed";
         let btnLabel = "Tiếp tục";
+        let btnDisabledAttr = "disabled";
 
-        if (!hasFoundActive) {
+        if (isCompleted) {
+          statusText = "Đã hoàn thành";
+          statusClass = "status-completed";
+          btnClass = "section-btn-completed";
+          btnLabel = "Đã làm";
+          btnDisabledAttr = "disabled";
+        } else if (isUnlocked) {
+          statusText = "Chưa thi";
+          statusClass = "status-not-started";
           btnClass = "section-btn-primary";
-          hasFoundActive = true;
+          btnLabel = "Tiếp tục";
+          btnDisabledAttr = "";
+        } else {
+          // Locked
+          statusText = "Chưa thi";
+          statusClass = "status-not-started";
+          btnClass = "section-btn-completed";
+          btnLabel = "Tiếp tục";
+          btnDisabledAttr = "disabled";
         }
 
         card.innerHTML = `
@@ -791,6 +811,7 @@
           <button
             class="section-btn ${btnClass}"
             type="button"
+            ${btnDisabledAttr}
             onclick="startSubjectPart('${key}')"
           >
             ${btnLabel}
@@ -885,7 +906,23 @@
 
       await showCustomAlert("Kíp thi đã được nộp thành công! Chúc mừng bạn đã hoàn tất kỳ thi thử.");
 
-      window.location.href = "select.html";
+      leaveLobby();
+    });
+
+    function leaveLobby() {
+      const inIframe = (function() {
+        try { return window.self !== window.top; } catch (e) { return true; }
+      })();
+      if (inIframe) {
+        window.parent.postMessage({ type: "tsa-exam-finished" }, "*");
+      } else {
+        window.location.href = "select.html";
+      }
+    }
+
+    elements.btnBack.addEventListener("click", (e) => {
+      e.preventDefault();
+      leaveLobby();
     });
 
     renderLobbyData();

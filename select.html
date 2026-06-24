@@ -7625,16 +7625,16 @@
             } else if (currentTsaPracticeSubtab === "math") {
               examTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
               subjectText = "Tư duy Toán học";
-              redirectUrl = `exam-math.html?exam=${examCodeToCheck}`;
+              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=math&single=true`;
             } else if (currentTsaPracticeSubtab === "reading") {
               examTitle = `Đề TSA số ${numStr} - Đọc hiểu`;
               subjectText = "Đọc hiểu";
-              redirectUrl = `exam-reading.html?exam=${examCodeToCheck}`;
+              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=reading&single=true`;
             } else if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") {
               // fallback or science
               examTitle = `Đề TSA số ${numStr} - Khoa học`;
               subjectText = "Khoa học";
-              redirectUrl = `exam-science.html?exam=${examCodeToCheck}`;
+              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=science&single=true`;
             }
 
             const card = document.createElement("div");

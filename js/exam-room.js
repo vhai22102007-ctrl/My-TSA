@@ -142,6 +142,7 @@
   const urlParams = new URLSearchParams(window.location.search);
   const examCode = (urlParams.get("exam") || "TSA001").trim() || "TSA001";
   const subject = document.body.dataset.subject || "math";
+  const isSingleSubject = urlParams.get("single") === "true";
 
   const SECTION_LABELS = {
     math: "Tư duy Toán học",
@@ -177,6 +178,8 @@
   }
 
   let examData = null;
+  let rawExamData = null;
+  let examMetaGlobal = null;
   let currentQuestionIndex = 0;
   let answers = {};
   let flagged = {};
@@ -346,29 +349,29 @@
     };
   }
 
-  function normalizeExamForSubject(rawExam, examMeta) {
+  function normalizeExamForSubject(rawExam, examMeta, subj = subject) {
     if (!rawExam || !Array.isArray(rawExam.sections)) {
       const legacy = normalizeFlatLegacyExam(rawExam || {});
-      if (legacy.subject && legacy.subject !== subject && legacy.subject !== "tsa") {
+      if (legacy.subject && legacy.subject !== subj && legacy.subject !== "tsa") {
         legacy.questions = [];
       }
       return legacy;
     }
 
-    const section = findSection(rawExam, subject);
+    const section = findSection(rawExam, subj);
     const title = rawExam.title || (examMeta && examMeta.title) || examCode;
     const normalized = {
       exam_code: rawExam.exam_code || examCode,
-      title: `${title} - ${SECTION_LABELS[subject] || subject}`,
-      subject: subject,
-      subject_label: section?.section_label || SECTION_LABELS[subject] || subject,
+      title: `${title} - ${SECTION_LABELS[subj] || subj}`,
+      subject: subj,
+      subject_label: section?.section_label || SECTION_LABELS[subj] || subj,
       duration_minutes: rawExam.duration_minutes || (examMeta && examMeta.duration_minutes) || 45,
       questions: []
     };
 
     if (!section) return normalized;
 
-    if (subject === "math") {
+    if (subj === "math") {
       normalized.questions = (section.questions || []).map((question, index) => ({
         ...question,
         question_no: Number(question.question_no) || index + 1
@@ -426,8 +429,19 @@
       }
     }
 
+    // Ánh xạ mã đề thi đơn lẻ TSAxx sang đề thi ghép TSA_PRACTICE_FULL_xx
+    let targetFetchCode = examCode;
+    const tsaMatch = examCode.match(/^TSA(\d+)$/i);
+    if (tsaMatch) {
+      const num = parseInt(tsaMatch[1], 10);
+      const numStr = String(num).padStart(2, "0");
+      targetFetchCode = `TSA_PRACTICE_FULL_${numStr}`;
+    }
+
     const examMeta = Array.isArray(examsList)
-      ? examsList.find((item) => item.exam_code === examCode) || examsList.find((item) => item.exam_code === "TSA001")
+      ? examsList.find((item) => item.exam_code === targetFetchCode) ||
+        examsList.find((item) => item.exam_code === examCode) ||
+        examsList.find((item) => item.exam_code === "TSA001")
       : null;
 
     let rawExam = null;
@@ -440,10 +454,20 @@
       } catch (e) {
         console.warn("Không tải được đề thi từ Supabase Storage, thử tải cục bộ...");
       }
+    } else {
+      // Thử tải trực tiếp theo targetFetchCode.json từ Supabase Storage
+      try {
+        rawExam = await fetchJson(`${supabaseStorageUrl}${encodeURIComponent(targetFetchCode + ".json")}`);
+      } catch (e) {}
     }
 
     // Fallback tải cục bộ hoặc localStorage
     if (!rawExam) {
+      try {
+        rawExam = await fetchJson(`data/exams/${encodeURIComponent(targetFetchCode)}.json`);
+      } catch (e) {}
+    }
+    if (!rawExam && targetFetchCode !== examCode) {
       try {
         rawExam = await fetchJson(`data/exams/${encodeURIComponent(examCode)}.json`);
       } catch (e) {}
@@ -988,21 +1012,101 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
-    let correctCount = 0;
-    let totalPoints = 0;
-    let scoredPoints = 0;
+    const isComposite = examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingleSubject;
 
-    examData.questions.forEach((q) => {
-      const pts = Number(q.points == null ? 1 : q.points);
-      totalPoints += pts;
-      if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
-        correctCount++;
-        scoredPoints += pts;
+    if (isComposite) {
+      let completed = {};
+      try {
+        completed = JSON.parse(localStorage.getItem("tsaCompletedSubjects") || "{}") || {};
+      } catch (e) {
+        completed = {};
       }
-    });
+      completed[subject] = true;
+      localStorage.setItem("tsaCompletedSubjects", JSON.stringify(completed));
+      sessionStorage.setItem("tsaSubmittedSubject", "1");
 
-    await showCustomAlert(`Hết giờ làm bài! Bài thi đã tự động được nộp.\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
-    leaveExamRoom();
+      if (subject === "math" || subject === "reading") {
+        await showCustomAlert(`Hết giờ làm bài phần ${SECTION_LABELS[subject]}! Hệ thống tự động nộp bài phần này.`);
+        window.location.href = `waiting.html?exam=${examCode}`;
+        return;
+      } else if (subject === "science") {
+        let totalCorrect = 0;
+        let totalQuestionsCount = 0;
+        let totalPoints = 0;
+        let totalScoredPoints = 0;
+
+        const mathAnswers = readLocalJson(`exam_answers_${examCode}_math`) || {};
+        const readingAnswers = readLocalJson(`exam_answers_${examCode}_reading`) || {};
+        const scienceAnswers = answers;
+
+        let mathData = { questions: [] };
+        let readingData = { questions: [] };
+        let scienceData = { questions: [] };
+
+        if (rawExamData) {
+          mathData = normalizeExamForSubject(rawExamData, examMetaGlobal, "math");
+          readingData = normalizeExamForSubject(rawExamData, examMetaGlobal, "reading");
+          scienceData = normalizeExamForSubject(rawExamData, examMetaGlobal, "science");
+        } else {
+          scienceData = examData;
+        }
+
+        mathData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, mathAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        readingData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, readingAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        scienceData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, scienceAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        await showCustomAlert(`Hết giờ làm bài phần Khoa học!\nTổng điểm cả kíp thi (Toán, Đọc hiểu, Khoa học):\n- Số câu đúng: ${totalCorrect}/${totalQuestionsCount}\n- Điểm số: ${totalScoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+        await saveResultToSupabase(totalCorrect, totalPoints, totalScoredPoints);
+        try {
+          localStorage.removeItem("tsaCompletedSubjects");
+        } catch (e) {}
+        leaveExamRoom();
+        return;
+      }
+    } else {
+      let correctCount = 0;
+      let totalPoints = 0;
+      let scoredPoints = 0;
+
+      examData.questions.forEach((q) => {
+        const pts = Number(q.points == null ? 1 : q.points);
+        totalPoints += pts;
+        if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
+          correctCount++;
+          scoredPoints += pts;
+        }
+      });
+
+      await showCustomAlert(`Hết giờ làm bài! Bài thi đã tự động được nộp.\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+      saveResultToSupabase(correctCount, totalPoints, scoredPoints);
+      leaveExamRoom();
+    }
   }
 
   async function submitExam() {
@@ -1020,26 +1124,107 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
-    let correctCount = 0;
-    let totalPoints = 0;
-    let scoredPoints = 0;
+    const isComposite = examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingleSubject;
 
-    examData.questions.forEach((q) => {
-      const pts = Number(q.points == null ? 1 : q.points);
-      totalPoints += pts;
-      if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
-        correctCount++;
-        scoredPoints += pts;
+    if (isComposite) {
+      let completed = {};
+      try {
+        completed = JSON.parse(localStorage.getItem("tsaCompletedSubjects") || "{}") || {};
+      } catch (e) {
+        completed = {};
       }
-    });
+      completed[subject] = true;
+      localStorage.setItem("tsaCompletedSubjects", JSON.stringify(completed));
+      sessionStorage.setItem("tsaSubmittedSubject", "1");
 
-    await showCustomAlert(`Nộp bài thành công!\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
-    leaveExamRoom();
+      if (subject === "math" || subject === "reading") {
+        window.location.href = `waiting.html?exam=${examCode}`;
+        return;
+      } else if (subject === "science") {
+        let totalCorrect = 0;
+        let totalQuestionsCount = 0;
+        let totalPoints = 0;
+        let totalScoredPoints = 0;
+
+        const mathAnswers = readLocalJson(`exam_answers_${examCode}_math`) || {};
+        const readingAnswers = readLocalJson(`exam_answers_${examCode}_reading`) || {};
+        const scienceAnswers = answers;
+
+        let mathData = { questions: [] };
+        let readingData = { questions: [] };
+        let scienceData = { questions: [] };
+
+        if (rawExamData) {
+          mathData = normalizeExamForSubject(rawExamData, examMetaGlobal, "math");
+          readingData = normalizeExamForSubject(rawExamData, examMetaGlobal, "reading");
+          scienceData = normalizeExamForSubject(rawExamData, examMetaGlobal, "science");
+        } else {
+          scienceData = examData;
+        }
+
+        mathData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, mathAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        readingData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, readingAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        scienceData.questions.forEach((q) => {
+          const pts = Number(q.points == null ? 1 : q.points);
+          totalPoints += pts;
+          totalQuestionsCount++;
+          if (typeof gradeQuestion === "function" && gradeQuestion(q, scienceAnswers[q.question_no])) {
+            totalCorrect++;
+            totalScoredPoints += pts;
+          }
+        });
+
+        await showCustomAlert(`Nộp bài thành công!\nTổng điểm cả kíp thi (Toán, Đọc hiểu, Khoa học):\n- Số câu đúng: ${totalCorrect}/${totalQuestionsCount}\n- Điểm số: ${totalScoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+        await saveResultToSupabase(totalCorrect, totalPoints, totalScoredPoints);
+        try {
+          localStorage.removeItem("tsaCompletedSubjects");
+        } catch (e) {}
+        leaveExamRoom();
+        return;
+      }
+    } else {
+      let correctCount = 0;
+      let totalPoints = 0;
+      let scoredPoints = 0;
+
+      examData.questions.forEach((q) => {
+        const pts = Number(q.points == null ? 1 : q.points);
+        totalPoints += pts;
+        if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
+          correctCount++;
+          scoredPoints += pts;
+        }
+      });
+
+      await showCustomAlert(`Nộp bài thành công!\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+      saveResultToSupabase(correctCount, totalPoints, scoredPoints);
+      leaveExamRoom();
+    }
   }
 
   async function loadExamData() {
     try {
       const loaded = await loadRawExam();
+      rawExamData = loaded.rawExam;
+      examMetaGlobal = loaded.examMeta;
       examData = normalizeExamForSubject(loaded.rawExam, loaded.examMeta);
       remainingSeconds = Number(examData.duration_minutes || 45) * 60;
 
