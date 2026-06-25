@@ -1012,7 +1012,7 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
-    const isComposite = examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingleSubject;
+    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingleSubject;
 
     if (isComposite) {
       let completed = {};
@@ -1124,7 +1124,7 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
-    const isComposite = examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingleSubject;
+    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingleSubject;
 
     if (isComposite) {
       let completed = {};

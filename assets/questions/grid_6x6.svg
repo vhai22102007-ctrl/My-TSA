@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="100%" height="100%">
+  <style>
+    .grid-line { stroke: #000; stroke-width: 1.5; fill: none; }
+    .cell-shaded { fill: #3b82f6; stroke: #000; stroke-width: 1.5; }
+    .cell-white { fill: #ffffff; stroke: #000; stroke-width: 1.5; }
+  </style>
+
+  <!-- 6x6 Grid cells -->
+  <!-- Row 1 -->
+  <rect x="10" y="10" width="40" height="40" class="cell-white" />
+  <rect x="50" y="10" width="40" height="40" class="cell-white" />
+  <rect x="90" y="10" width="40" height="40" class="cell-white" />
+  <rect x="130" y="10" width="40" height="40" class="cell-white" />
+  <rect x="170" y="10" width="40" height="40" class="cell-white" />
+  <rect x="210" y="10" width="40" height="40" class="cell-white" />
+
+  <!-- Row 2 -->
+  <rect x="10" y="50" width="40" height="40" class="cell-white" />
+  <rect x="50" y="50" width="40" height="40" class="cell-white" />
+  <rect x="90" y="50" width="40" height="40" class="cell-white" />
+  <rect x="130" y="50" width="40" height="40" class="cell-white" />
+  <rect x="170" y="50" width="40" height="40" class="cell-white" />
+  <rect x="210" y="50" width="40" height="40" class="cell-white" />
+
+  <!-- Row 3 -->
+  <rect x="10" y="90" width="40" height="40" class="cell-white" />
+  <rect x="50" y="90" width="40" height="40" class="cell-white" />
+  <rect x="90" y="90" width="40" height="40" class="cell-white" />
+  <rect x="130" y="90" width="40" height="40" class="cell-shaded" /> <!-- Col 4, Row 3 shaded -->
+  <rect x="170" y="90" width="40" height="40" class="cell-white" />
+  <rect x="210" y="90" width="40" height="40" class="cell-white" />
+
+  <!-- Row 4 -->
+  <rect x="10" y="130" width="40" height="40" class="cell-white" />
+  <rect x="50" y="130" width="40" height="40" class="cell-white" />
+  <rect x="90" y="130" width="40" height="40" class="cell-white" />
+  <rect x="130" y="130" width="40" height="40" class="cell-white" />
+  <rect x="170" y="130" width="40" height="40" class="cell-white" />
+  <rect x="210" y="130" width="40" height="40" class="cell-white" />
+
+  <!-- Row 5 -->
+  <rect x="10" y="170" width="40" height="40" class="cell-white" />
+  <rect x="50" y="170" width="40" height="40" class="cell-white" />
+  <rect x="90" y="170" width="40" height="40" class="cell-white" />
+  <rect x="130" y="170" width="40" height="40" class="cell-white" />
+  <rect x="170" y="170" width="40" height="40" class="cell-shaded" /> <!-- Col 5, Row 5 shaded -->
+  <rect x="210" y="170" width="40" height="40" class="cell-white" />
+
+  <!-- Row 6 -->
+  <rect x="10" y="210" width="40" height="40" class="cell-white" />
+  <rect x="50" y="210" width="40" height="40" class="cell-white" />
+  <rect x="90" y="210" width="40" height="40" class="cell-white" />
+  <rect x="130" y="210" width="40" height="40" class="cell-white" />
+  <rect x="170" y="210" width="40" height="40" class="cell-white" />
+  <rect x="210" y="210" width="40" height="40" class="cell-white" />
+</svg>
