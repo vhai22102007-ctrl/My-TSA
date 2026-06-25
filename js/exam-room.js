@@ -384,7 +384,8 @@
       // Re-index sequentially from 1 so grid always starts at 1
       normalized.questions = filledQs.map((question, index) => ({
         ...question,
-        question_no: index + 1
+        question_no: index + 1,
+        original_question_no: question.question_no
       }));
       return normalized;
     }
@@ -417,6 +418,11 @@
   }
 
   async function loadRawExam() {
+    if (urlParams.get("preview") === "true") {
+      const draft = readLocalJson(`tma_tsa_teacher_draft_${examCode}`) || readLocalJson(`tma_tsa_exam_${examCode}`);
+      if (draft) return { rawExam: draft, examMeta: null };
+    }
+
     let examsList = readLocalJson("tma_tsa_exam_index");
 
     // Tải index từ Supabase Storage trước
@@ -1236,6 +1242,48 @@
       rawExamData = loaded.rawExam;
       examMetaGlobal = loaded.examMeta;
       examData = normalizeExamForSubject(loaded.rawExam, loaded.examMeta);
+
+      const previewQNo = urlParams.get("preview_qno");
+      if (previewQNo) {
+        const targetQNo = Number(previewQNo);
+        const filteredQ = examData.questions.find(q => q.original_question_no === targetQNo || q.question_no === targetQNo);
+        if (filteredQ) {
+          const previewQ = Object.assign({}, filteredQ, { question_no: 1 });
+          examData.questions = [previewQ];
+        } else if (loaded.rawExam) {
+          const section = Array.isArray(loaded.rawExam.sections)
+            ? loaded.rawExam.sections.find(s => s.section_id === subject)
+            : null;
+          if (section) {
+            let foundRaw = null;
+            if (subject === "math") {
+              foundRaw = (section.questions || []).find(q => q.question_no === targetQNo);
+            } else {
+              (section.groups || []).forEach(g => {
+                const found = (g.questions || []).find(q => q.question_no === targetQNo);
+                if (found) {
+                  foundRaw = Object.assign({}, found, {
+                    question_no: 1,
+                    original_question_no: targetQNo,
+                    group_id: g.group_id,
+                    group_title: g.title,
+                    passage: g.stimulus?.content || "",
+                    passage_image_url: g.stimulus?.image_url || "",
+                    stimulus: g.stimulus || null
+                  });
+                }
+              });
+            }
+            if (foundRaw) {
+              if (subject === "math") {
+                foundRaw = Object.assign({}, foundRaw, { question_no: 1, original_question_no: targetQNo });
+              }
+              examData.questions = [foundRaw];
+            }
+          }
+        }
+      }
+
       remainingSeconds = Number(examData.duration_minutes || 45) * 60;
 
       loadLocalState();

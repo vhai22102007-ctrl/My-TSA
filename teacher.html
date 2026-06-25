@@ -1015,6 +1015,335 @@
       .topbar { align-items: flex-start; flex-direction: column; }
       .practice-grid-dynamic { grid-template-columns: 1fr; }
     }
+
+    /* --- COMPACT EDITOR STYLES --- */
+    .question-number-circle {
+      width: 36px;
+      height: 36px;
+      background-color: var(--brand);
+      color: #ffffff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 2px 4px rgba(193, 18, 31, 0.16);
+    }
+    #math-question-form, #reading-question-form, #science-question-form,
+    #reading-group-form, #science-group-form {
+      padding: 0;
+    }
+    #math-question-form .form-grid, #reading-question-form .form-grid, #science-question-form .form-grid,
+    #reading-group-form .form-grid, #science-group-form .form-grid {
+      gap: 12px 14px !important;
+    }
+    #math-question-form .field, #reading-question-form .field, #science-question-form .field,
+    #reading-group-form .field, #science-group-form .field {
+      gap: 6px !important;
+    }
+    #math-question-form label, #reading-question-form label, #science-question-form label,
+    #reading-group-form label, #science-group-form label {
+      font-size: 12.5px !important;
+      font-weight: 750 !important;
+      color: #374151 !important;
+      margin-bottom: 2px !important;
+    }
+    #math-question-form .input, #reading-question-form .input, #science-question-form .input,
+    #math-question-form .select, #reading-question-form .select, #science-question-form .select,
+    #reading-group-form .input, #science-group-form .input,
+    #reading-group-form .select, #science-group-form .select {
+      min-height: 38px !important;
+      height: 38px !important;
+      padding: 0 16px !important;
+      border-radius: 10px !important;
+      font-size: 13.5px !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    #math-question-form .textarea, #reading-question-form .textarea, #science-question-form .textarea {
+      min-height: 120px !important;
+      height: 120px !important;
+      padding: 10px 16px !important;
+      border-radius: 10px !important;
+      font-size: 13.5px !important;
+      line-height: 1.5 !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    #reading-group-form .textarea, #science-group-form .textarea {
+      min-height: 180px !important;
+      height: 180px !important;
+      padding: 10px 12px !important;
+      border-radius: 10px !important;
+      font-size: 13.5px !important;
+      line-height: 1.5 !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    /* Choices grid layout: 2x2 container */
+    #math-question-form .choices-container, #reading-question-form .choices-container, #science-question-form .choices-container {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px 14px !important;
+      margin-top: 6px !important;
+    }
+    /* Clean choice item style matching student side */
+    #math-question-form .choice-item, #reading-question-form .choice-item, #science-question-form .choice-item {
+      padding: 0 !important;
+      margin-bottom: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      min-height: 38px !important;
+      height: 38px !important;
+      align-items: center !important;
+      gap: 12px !important;
+      box-shadow: none !important;
+    }
+    /* Style choice-item's ::before pseudo-element on teacher side */
+    #math-question-form .choice-item::before,
+    #reading-question-form .choice-item::before,
+    #science-question-form .choice-item::before {
+      border-radius: 50% !important; /* Circular for single choice */
+      width: 32px !important;
+      height: 32px !important;
+    }
+    #math-question-form .is-multiple-choice .choice-item::before,
+    #reading-question-form .is-multiple-choice .choice-item::before,
+    #science-question-form .is-multiple-choice .choice-item::before {
+      border-radius: 8px !important; /* Rounded square for multiple choice */
+    }
+    #math-question-form .choice-item.is-selected::before,
+    #reading-question-form .choice-item.is-selected::before,
+    #science-question-form .choice-item.is-selected::before {
+      background-color: var(--brand) !important;
+    }
+    /* Style for the text input next to the bubble */
+    .choice-item .choice-input-field {
+      flex: 1;
+      height: 38px;
+      padding: 0 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background-color: #ffffff;
+      outline: none;
+      font-size: 13.5px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .choice-item .choice-input-field:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.12);
+    }
+
+    /* True/False table statements matching student side */
+    #math-question-form .statement-table, 
+    #reading-question-form .statement-table, 
+    #science-question-form .statement-table {
+      background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0 !important;
+      margin-top: 6px !important;
+    }
+    #math-question-form .statement-row, 
+    #reading-question-form .statement-row, 
+    #science-question-form .statement-row {
+      padding: 0 !important;
+      margin-bottom: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      border-bottom: 1px solid #cbd5e1 !important;
+      min-height: 42px !important;
+      height: 42px !important;
+      display: grid !important;
+      grid-template-columns: 1fr 82px 82px 82px !important;
+      gap: 0 !important;
+      background: #ffffff !important;
+    }
+    #math-question-form .statement-row:last-child, 
+    #reading-question-form .statement-row:last-child, 
+    #science-question-form .statement-row:last-child {
+      border-bottom: none !important;
+    }
+    /* Cell styling */
+    #math-question-form .statement-cell-text,
+    #reading-question-form .statement-cell-text,
+    #science-question-form .statement-cell-text {
+      padding: 0 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      min-width: 0 !important;
+    }
+    #math-question-form .statement-cell-btn,
+    #reading-question-form .statement-cell-btn,
+    #science-question-form .statement-cell-btn {
+      border-left: 1px solid #cbd5e1 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+    }
+    #math-question-form .statement-row .input-inline-editor, 
+    #reading-question-form .statement-row .input-inline-editor, 
+    #science-question-form .statement-row .input-inline-editor {
+      font-size: 13.5px !important;
+      border: none !important;
+      background: transparent !important;
+      outline: none !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    /* Buttons in cells */
+    #math-question-form .statement-btn, 
+    #reading-question-form .statement-btn, 
+    #science-question-form .statement-btn {
+      width: 26px !important;
+      height: 26px !important;
+      background-color: #e9ecef !important;
+      border: none !important;
+      border-radius: 50% !important;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      box-shadow: none !important;
+      margin: 0 !important;
+    }
+    #math-question-form .statement-btn.is-active, 
+    #reading-question-form .statement-btn.is-active, 
+    #science-question-form .statement-btn.is-active {
+      background-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
+    #math-question-form .statement-btn:hover, 
+    #reading-question-form .statement-btn:hover, 
+    #science-question-form .statement-btn:hover {
+      background-color: #dedede !important;
+    }
+    #math-question-form .statement-btn.is-active:hover, 
+    #reading-question-form .statement-btn.is-active:hover, 
+    #science-question-form .statement-btn.is-active:hover {
+      background-color: #3578e5 !important;
+    }
+    /* Header styling */
+    #math-question-form .statement-header-outside, 
+    #reading-question-form .statement-header-outside, 
+    #science-question-form .statement-header-outside {
+      margin-top: 10px !important;
+      margin-bottom: 4px !important;
+      display: grid !important;
+      grid-template-columns: 1fr 82px 82px 82px !important;
+      gap: 0 !important;
+      width: 100% !important;
+    }
+    #math-question-form .statement-header-label, 
+    #reading-question-form .statement-header-label, 
+    #science-question-form .statement-header-label {
+      font-size: 12.5px !important;
+      font-weight: 750 !important;
+      text-align: center !important;
+      color: #374151 !important;
+    }
+    /* Style for Xóa button cell */
+    .statement-delete-cell {
+      border-left: 1px solid #cbd5e1 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .statement-delete-btn {
+      background: transparent !important;
+      border: none !important;
+      color: #ef4444 !important;
+      font-weight: 700 !important;
+      font-size: 12px !important;
+      cursor: pointer !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      min-height: 24px !important;
+      height: 24px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .statement-delete-btn:hover {
+      color: #dc2626 !important;
+      text-decoration: underline !important;
+    }
+
+    /* Drag Drop forms */
+    #math-question-form #drag-body, #reading-question-form #drag-body, #science-question-form #drag-body {
+      min-height: 100px !important;
+      height: 100px !important;
+    }
+
+    /* Tab styles overrides */
+    #tab-math .card-body, #tab-reading .card-body, #tab-science .card-body {
+      padding: 20px 24px !important;
+    }
+    #tab-math .card, #tab-reading .card, #tab-science .card {
+      margin-bottom: 20px !important;
+    }
+    #tab-math .btn, #tab-reading .btn, #tab-science .btn {
+      min-height: 38px !important;
+      height: 38px !important;
+      padding: 0 16px !important;
+      font-size: 13.5px !important;
+      border-radius: 10px !important;
+    }
+    #tab-math .btn-row, #tab-reading .btn-row, #tab-science .btn-row {
+      margin-top: 14px !important;
+      gap: 10px !important;
+    }
+    #tab-reading table th, #tab-reading table td,
+    #tab-science table th, #tab-science table td {
+      padding: 8px 12px !important;
+      font-size: 13px !important;
+    }
+    #tab-reading .mini-list, #tab-science .mini-list {
+      gap: 10px !important;
+      margin-top: 16px !important;
+    }
+    #tab-reading .mini-item, #tab-science .mini-item {
+      padding: 12px 14px !important;
+      border-radius: 10px !important;
+    }
+    #tab-reading .mini-item h4, #tab-science .mini-item h4 {
+      margin-bottom: 6px !important;
+      font-size: 13.5px !important;
+    }
+    #tab-reading .mini-item p, #tab-science .mini-item p {
+      font-size: 12px !important;
+    }
+    .main:has(#tab-math.active),
+    .main:has(#tab-reading.active),
+    .main:has(#tab-science.active) {
+      padding: 16px 20px !important;
+    }
+    .math-split-layout {
+      display: grid;
+      grid-template-columns: 1fr 270px;
+      gap: 20px;
+      align-items: stretch;
+    }
+    @media (max-width: 1080px) {
+      .math-split-layout {
+        grid-template-columns: 1fr;
+    }
+    #tab-reading .passage-layout > div:first-child {
+      border-right: 1px solid var(--line);
+      padding-right: 28px;
+    }
+    .table-row-active {
+      background-color: var(--brand-soft) !important;
+    }
+    .table-row-active td {
+      color: var(--brand) !important;
+      font-weight: 600;
+    }
   </style>
   <script>
     window.MathJax = {
@@ -1487,7 +1816,7 @@
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 16px;">
-            <button class="btn btn-primary" type="button" onclick="previewInStudentRoom()" style="background-color: #1769d8; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: #fff; border: none; cursor: pointer;">Xem giao diện HS</button>
+            <button class="btn btn-primary" type="button" id="header-preview-btn" onclick="previewInStudentRoom()" style="background-color: #1769d8; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: #fff; border: none; cursor: pointer;">Xem giao diện học sinh</button>
             <div class="autosave" id="autosave-status">Chưa lưu nháp</div>
           </div>
         </header>
@@ -1537,59 +1866,46 @@
         </section>
 
         <section class="tab-panel" id="tab-math">
-          <article class="card">
-            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <h2>Toán</h2>
-                <p>Nhập tối đa 40 câu Toán. Mỗi câu có thể chọn một trong 6 mẫu câu hỏi.</p>
-              </div>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('math')" style="margin:0; padding:6px 12px; font-size:12px; font-weight:700;">Xóa tất cả câu hỏi</button>
-              </div>
+          <div class="math-split-layout">
+            <!-- Left Column: Form -->
+            <div>
+              <form id="math-question-form" onsubmit="return false;"></form>
             </div>
-            <div class="card-body">
-              <!-- Wizard Navigation Grid -->
-              <div class="math-wizard-wrapper" style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <span style="font-weight: 700; color: var(--text); font-size: 14px;">Chọn câu hỏi để soạn:</span>
-                  <span id="math-wizard-progress" style="font-size: 13px; font-weight: 700; color: var(--brand);">Tiến độ: 0/40 câu đã soạn</span>
-                </div>
-                <div id="math-wizard-grid" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px;">
-                  <!-- Generated dynamically -->
-                </div>
-              </div>
 
-              <div class="editor-layout" style="grid-template-columns: 1fr;">
-                <div>
-                  <form id="math-question-form" onsubmit="return false;"></form>
-                  <div class="btn-row" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px;">
-                    <button class="btn btn-outline" type="button" onclick="navigateMathWizard(-1)" id="math-wizard-prev" style="flex: 1; padding: 10px 16px; font-weight: 700;">← Câu trước</button>
-                    <button class="btn btn-outline" type="button" onclick="saveMathWizardQuestion(false)" id="math-wizard-save-only" style="flex: 1; padding: 10px 16px; font-weight: 700;">Lưu câu này</button>
-                    <button class="btn btn-primary" type="button" onclick="saveMathWizardQuestion(true)" id="math-wizard-save-next" style="flex: 2; padding: 10px 16px; background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff;">Lưu &amp; Câu tiếp →</button>
-                  </div>
+            <!-- Right Column: Wizard Navigation -->
+            <div class="math-wizard-wrapper" style="border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: #ffffff; display: flex; flex-direction: column; height: 100%; box-shadow: var(--shadow);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px;">
+                <span style="font-weight: 700; color: var(--text); font-size: 13px;">Câu hỏi:</span>
+                <span id="math-wizard-progress" style="font-size: 11.5px; font-weight: 700; color: var(--brand);">Tiến độ: 0/40 câu</span>
+              </div>
+              <div id="math-wizard-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 14px;">
+                <!-- Generated dynamically -->
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" type="button" onclick="navigateMathWizard(-1)" id="math-wizard-prev" style="flex: 1; font-weight: 700;">← Câu trước</button>
+                  <button class="btn btn-outline" type="button" onclick="saveMathWizardQuestion(false)" id="math-wizard-save-only" style="flex: 1; font-weight: 700;">Lưu câu này</button>
                 </div>
+                <button class="btn btn-primary" type="button" onclick="saveMathWizardQuestion(true)" id="math-wizard-save-next" style="width: 100%; background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff;">Lưu &amp; Câu tiếp →</button>
+                <button class="btn" type="button" onclick="previewInStudentRoom()" style="width: 100%; background-color: #1769d8; border-color: #1769d8; font-weight: 700; color: #fff; margin-top: 4px;">Xem giao diện học sinh</button>
               </div>
             </div>
-          </article>
+          </div>
         </section>
 
         <section class="tab-panel" id="tab-reading">
           <article class="card">
-            <div class="card-header">
-              <div>
-                <h2>Đọc hiểu</h2>
-                <p>Bên trái nhập ngữ liệu, bên phải nhập các câu hỏi đi kèm ngữ liệu đó.</p>
-              </div>
-            </div>
+
             <div class="card-body passage-layout">
               <div>
                 <div class="eyebrow">Cột trái: ngữ liệu</div>
                 <form id="reading-group-form" onsubmit="return false;"></form>
-                <div class="btn-row">
+                <div class="btn-row" style="display: none;">
                   <button class="btn btn-outline" type="button" data-new-group="reading">Thêm ngữ liệu</button>
                   <button class="btn btn-primary" type="button" data-save-group="reading">Lưu ngữ liệu</button>
                 </div>
-                <div class="mini-list" id="reading-group-list" style="margin-top:16px;"></div>
+                <div class="mini-list" id="reading-group-list" style="display: none; margin-top:16px;"></div>
               </div>
               <div>
                 <div class="eyebrow">Cột phải: câu hỏi của ngữ liệu</div>
@@ -1599,7 +1915,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
                   <span style="font-weight:600; font-size:14px; color:#475569;">Câu hỏi đi kèm:</span>
-                  <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('reading')" style="margin:0; padding:4px 8px; font-size:11px; font-weight:700;">Xóa tất cả câu hỏi</button>
+                  <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('reading')" style="display: none; margin:0; padding:4px 8px; font-size:11px; font-weight:700;">Xóa tất cả câu hỏi</button>
                 </div>
                 <div class="table-wrap" style="margin-top:8px;">
                   <table>
@@ -1614,12 +1930,7 @@
 
         <section class="tab-panel" id="tab-science">
           <article class="card">
-            <div class="card-header">
-              <div>
-                <h2>Khoa học</h2>
-                <p>Nhập dữ liệu, kịch bản, bảng hoặc thông tin thí nghiệm ở cột trái; câu hỏi ở cột phải.</p>
-              </div>
-            </div>
+
             <div class="card-body passage-layout">
               <div>
                 <div class="eyebrow">Cột trái: dữ liệu khoa học</div>
@@ -2500,13 +2811,13 @@
                 mathQuestions.push({
                   question_no: i,
                   question_type: "single_choice",
-                  question: "Nội dung câu hỏi " + i + " chưa được nhập.",
+                  question: "",
                   image_url: "",
                   options: [
-                    { "key": "A", "text": "Đáp án A" },
-                    { "key": "B", "text": "Đáp án B" },
-                    { "key": "C", "text": "Đáp án C" },
-                    { "key": "D", "text": "Đáp án D" }
+                    { "key": "A", "text": "" },
+                    { "key": "B", "text": "" },
+                    { "key": "C", "text": "" },
+                    { "key": "D", "text": "" }
                   ],
                   correct_answer: "A",
                   explanation: "",
@@ -2531,19 +2842,34 @@
           mathSec.questions.push({
             question_no: nextNo,
             question_type: "single_choice",
-            question: "Nội dung câu hỏi " + nextNo + " chưa được nhập.",
+            question: "",
             image_url: "",
             options: [
-              { "key": "A", "text": "Đáp án A" },
-              { "key": "B", "text": "Đáp án B" },
-              { "key": "C", "text": "Đáp án C" },
-              { "key": "D", "text": "Đáp án D" }
+              { "key": "A", "text": "" },
+              { "key": "B", "text": "" },
+              { "key": "C", "text": "" },
+              { "key": "D", "text": "" }
             ],
             correct_answer: "A",
             explanation: "",
             points: 1
           });
         }
+
+        // Clean placeholders from existing questions and option values
+        mathSec.questions.forEach(function (q) {
+          var qText = (q.question || "").trim();
+          if (qText.indexOf("Nội dung câu hỏi") === 0 && qText.indexOf("chưa được nhập.") !== -1) {
+            q.question = "";
+          }
+          if (Array.isArray(q.options)) {
+            q.options.forEach(function (opt) {
+              if (opt.text === "Đáp án A" || opt.text === "Đáp án B" || opt.text === "Đáp án C" || opt.text === "Đáp án D") {
+                opt.text = "";
+              }
+            });
+          }
+        });
 
         // Keep sorted by question no
         mathSec.questions.sort(function (a, b) {
@@ -2558,6 +2884,93 @@
         ["reading", "science"].forEach(function (id) {
           if (!Array.isArray(getSection(id).groups)) getSection(id).groups = [];
         });
+
+        // Enforce Reading Section Schema (exactly 2 groups, 10 questions each)
+        var readingSec = getSection("reading");
+        if (readingSec) {
+          if (!Array.isArray(readingSec.groups)) readingSec.groups = [];
+          
+          // Keep only g1 and g2
+          readingSec.groups = readingSec.groups.filter(function(g) {
+            return g.group_id === "g1" || g.group_id === "g2";
+          });
+          
+          // Check/Create Group 1 (g1)
+          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
+          if (!g1) {
+            g1 = {
+              group_id: "g1",
+              title: "Ngữ liệu Đọc hiểu số 01",
+              stimulus: { type: "text", content: "Nhập nội dung ngữ liệu 1 ở đây...", image_url: "", image_width: 100 },
+              questions: []
+            };
+            readingSec.groups.push(g1);
+          }
+          if (!Array.isArray(g1.questions)) g1.questions = [];
+          while (g1.questions.length < 10) {
+            var nextNo = g1.questions.length + 1;
+            g1.questions.push({
+              question_no: nextNo,
+              question_type: "single_choice",
+              question: "",
+              image_url: "",
+              options: [
+                { key: "A", text: "" },
+                { key: "B", text: "" },
+                { key: "C", text: "" },
+                { key: "D", text: "" }
+              ],
+              correct_answer: "A",
+              explanation: "",
+              points: 1
+            });
+          }
+          // Sort and assign question numbers 1 to 10
+          g1.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+          for (var i = 0; i < g1.questions.length; i++) {
+            g1.questions[i].question_no = i + 1;
+          }
+
+          // Check/Create Group 2 (g2)
+          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+          if (!g2) {
+            g2 = {
+              group_id: "g2",
+              title: "Ngữ liệu Đọc hiểu số 02",
+              stimulus: { type: "text", content: "Nhập nội dung ngữ liệu 2 ở đây...", image_url: "", image_width: 100 },
+              questions: []
+            };
+            readingSec.groups.push(g2);
+          }
+          if (!Array.isArray(g2.questions)) g2.questions = [];
+          while (g2.questions.length < 10) {
+            var nextNo = g2.questions.length + 11; // 11 to 20
+            g2.questions.push({
+              question_no: nextNo,
+              question_type: "single_choice",
+              question: "",
+              image_url: "",
+              options: [
+                { key: "A", text: "" },
+                { key: "B", text: "" },
+                { key: "C", text: "" },
+                { key: "D", text: "" }
+              ],
+              correct_answer: "A",
+              explanation: "",
+              points: 1
+            });
+          }
+          // Sort and assign question numbers 11 to 20
+          g2.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+          for (var i = 0; i < g2.questions.length; i++) {
+            g2.questions[i].question_no = i + 11;
+          }
+          
+          if (!activeGroupIds["reading"]) {
+            activeGroupIds["reading"] = "g1";
+          }
+        }
       }
 
       function getSection(id) {
@@ -2669,6 +3082,41 @@
           export: "Lưu và xuất đề"
         };
         $("#page-title").textContent = titles[tab] || "Bộ soạn đề TSA";
+
+        // Hide/show topbar title/subtitle, autosave, and summary grid on math, reading, science tabs
+        var isSubjectTab = (tab === "math" || tab === "reading" || tab === "science");
+        var titleWrapper = document.querySelector("#editor-container .topbar > div > div");
+        var autosaveStatus = document.getElementById("autosave-status");
+        var summaryGrid = document.getElementById("summary-grid");
+        var topbar = document.querySelector("#editor-container .topbar");
+
+        if (isSubjectTab) {
+          if (titleWrapper) titleWrapper.style.display = "none";
+          if (autosaveStatus) autosaveStatus.style.display = "none";
+          if (summaryGrid) summaryGrid.style.display = "none";
+          if (topbar) {
+            topbar.style.marginBottom = "0px";
+            topbar.style.paddingBottom = "0px";
+          }
+        } else {
+          if (titleWrapper) titleWrapper.style.display = "block";
+          if (autosaveStatus) autosaveStatus.style.display = "block";
+          if (summaryGrid) summaryGrid.style.display = "grid";
+          if (topbar) {
+            topbar.style.marginBottom = "18px";
+            topbar.style.paddingBottom = "";
+          }
+        }
+
+        var previewBtn = document.getElementById("header-preview-btn");
+        if (previewBtn) {
+          if (tab === "math") {
+            previewBtn.style.display = "none";
+          } else {
+            previewBtn.style.display = "block";
+          }
+        }
+
         renderAll();
       }
 
@@ -2712,6 +3160,15 @@
             q.question_no = activeMathQuestionNo; // always align displayed number with slot
             editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: q };
           }
+        } else if (sectionId === "reading") {
+          ensureSchema();
+          if (!editingQuestion["reading"] || editingQuestion["reading"].index === -1) {
+            var readingSec = getSection("reading");
+            var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
+            var q = g1 && g1.questions && g1.questions[0] ? clone(g1.questions[0]) : defaultQuestion("reading");
+            editingQuestion["reading"] = { index: 0, question: q };
+            activeGroupIds["reading"] = "g1";
+          }
         } else {
           if (!editingQuestion[sectionId]) editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
         }
@@ -2735,19 +3192,23 @@
         var form = $("#" + sectionId + "-question-form");
         if (!form) return;
         form.innerHTML =
-          '<div class="form-grid">' +
-          '<div class="field"><label>Số câu</label><input class="input" id="' + sectionId + '-q-no" type="number" min="1" value="' + attr(q.question_no || 1) + '"></div>' +
-          '<div class="field"><label>Mẫu câu hỏi</label><select class="select" id="' + sectionId + '-q-type">' + typeOptions(q.question_type) + '</select></div>' +
+          '<div class="form-grid" style="grid-template-columns: 50px 1fr; gap: 10px; align-items: center; margin-bottom: 8px;">' +
+          '<div style="display: flex; justify-content: center; align-items: center;">' +
+            '<div class="question-number-circle">' + attr(q.question_no || 1) + '</div>' +
+            '<input type="hidden" id="' + sectionId + '-q-no" value="' + attr(q.question_no || 1) + '">' +
+          '</div>' +
+          '<div>' +
+            '<select class="select" id="' + sectionId + '-q-type" style="width: 100%; height: 36px !important; min-height: 36px !important; font-size: 13.5px !important; border-radius: 8px !important;">' + typeOptions(q.question_type) + '</select>' +
+          '</div>' +
           '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Có thể nhập LaTeX dạng \\( \\frac{1}{2} \\)">' + esc(q.question || "") + '</textarea></div>' +
-          '<div class="field full" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 0;">' +
-            '<div style="flex: 1; min-width: 250px;"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
-            '<div style="width: 200px;"><label>Kích thước ảnh: <span id="' + sectionId + '-q-image-width-val">' + (q.image_width || 100) + '</span>%</label>' +
-              '<input type="range" class="slider" id="' + sectionId + '-q-image-width" min="10" max="100" value="' + (q.image_width || 100) + '" style="width: 100%; margin-top: 8px;">' +
+          '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
+            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
+            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh: <span id="' + sectionId + '-q-image-width-val">' + (q.image_width || 100) + '</span>%</label>' +
+              '<input type="range" class="slider" id="' + sectionId + '-q-image-width" min="10" max="100" value="' + (q.image_width || 100) + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
             '</div>' +
           '</div>' +
           '<div class="field full" id="' + sectionId + '-type-fields"></div>' +
           '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || "") + '</textarea></div>' +
-          '<div class="field"><label>Điểm</label><input class="input" id="' + sectionId + '-q-points" type="number" step="0.1" min="0" value="' + attr(q.points == null ? 1 : q.points) + '"></div>' +
           '</div>';
         renderTypeFields(sectionId, q);
         
@@ -2771,6 +3232,15 @@
           input.addEventListener("input", function () { updatePreview(sectionId); });
           input.addEventListener("change", function () { updatePreview(sectionId); });
         });
+
+        var saveBtn = document.querySelector('button[data-save-question="' + sectionId + '"]');
+        if (saveBtn) {
+          if (sectionId === "reading") {
+            saveBtn.textContent = "Lưu câu hỏi";
+          } else {
+            saveBtn.textContent = (editingQuestion[sectionId]?.index === -1) ? "Thêm vào ngữ liệu" : "Lưu câu hỏi";
+          }
+        }
       }
 
       function applyTypeDefaults(q) {
@@ -2805,6 +3275,80 @@
         return found ? found.text : "";
       }
 
+      function renderChoicesForm(q, isMulti) {
+        var options = q.options || [];
+        var ans = q.correct_answer || (isMulti ? [] : "A");
+        var containerClass = isMulti ? "is-multiple-choice" : "is-single-choice";
+        var html = '<div class="choices-container ' + containerClass + '">';
+        options.forEach(function (opt) {
+          var isSelected = false;
+          if (isMulti) {
+            isSelected = Array.isArray(ans) ? ans.includes(opt.key) : false;
+          } else {
+            isSelected = ans === opt.key;
+          }
+          var selectedClass = isSelected ? " is-selected" : "";
+          var inputType = isMulti ? "checkbox" : "radio";
+          var checkedAttr = isSelected ? " checked" : "";
+          
+          html += '<div class="choice-item' + selectedClass + '" onclick="toggleTeacherChoiceSelection(this, \'' + opt.key + '\', ' + isMulti + ')">' +
+            '<input type="' + inputType + '" name="choice-correct" value="' + opt.key + '"' + checkedAttr + ' style="display:none;">' +
+            '<input class="choice-input-field" data-choice-key="' + opt.key + '" value="' + attr(opt.text || "") + '" placeholder="Nhập đáp án..." onclick="event.stopPropagation();">' +
+            '</div>';
+        });
+        html += '</div>';
+        return html;
+      }
+
+      function renderNumericForm(q) {
+        return '<div class="form-grid">' +
+          '<div class="field"><label>Đáp án số chính xác</label><input class="input" type="number" step="any" id="num-answer" value="' + attr(q.correct_answer || "") + '" placeholder="Nhập đáp án số"></div>' +
+          '<div class="field"><label>Sai số cho phép (Tolerance)</label><input class="input" type="number" step="any" id="num-tolerance" value="' + attr(q.tolerance || 0) + '" placeholder="Ví dụ: 0.01"></div>' +
+          '</div>';
+      }
+
+      function renderTrueFalseForm(q, sectionId) {
+        var list = q.statements || [];
+        var ans = q.correct_answer || {};
+        
+        var html = '<div class="statement-header-outside">';
+        html += '<div></div>';
+        html += '<div class="statement-header-label">Đúng</div>';
+        html += '<div class="statement-header-label">Sai</div>';
+        html += '<div></div>';
+        html += '</div>';
+
+        html += '<div class="statement-table">';
+        list.forEach(function (item) {
+          var id = item.id;
+          var textVal = item.text || "";
+          var isTrue = ans[id] === true;
+          var isFalse = ans[id] === false;
+          
+          var trueActive = isTrue ? " is-active" : "";
+          var falseActive = isFalse ? " is-active" : "";
+
+          html +=
+            '<div class="statement-row">' +
+            '<div class="statement-cell-text"><input class="input-inline-editor" data-tf-id="' + id + '" value="' + attr(textVal) + '" placeholder="Nhập nhận định..."></div>' +
+            '<div class="statement-cell-btn">' +
+            '<button type="button" class="statement-btn' + trueActive + '" onclick="toggleTeacherTfSelection(\'' + id + '\', true, this)"></button>' +
+            '<input type="radio" name="tf-correct-' + id + '" value="T"' + (isTrue ? " checked" : "") + ' style="display:none;">' +
+            '</div>' +
+            '<div class="statement-cell-btn">' +
+            '<button type="button" class="statement-btn' + falseActive + '" onclick="toggleTeacherTfSelection(\'' + id + '\', false, this)"></button>' +
+            '<input type="radio" name="tf-correct-' + id + '" value="F"' + (isFalse ? " checked" : "") + ' style="display:none;">' +
+            '</div>' +
+            '<div class="statement-cell-btn">' +
+            '<button type="button" class="btn btn-danger" style="margin: 0; padding: 4px 8px; font-size: 11px; font-weight: 700; min-height: 24px; height: 24px; border-radius: 6px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;" onclick="removeTfStatement(\'' + sectionId + '\', \'' + id + '\')">Xóa</button>' +
+            '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+        html += '<button type="button" class="btn btn-outline" style="margin-top: 6px; font-weight: 700; min-height: 24px; height: 24px; padding: 0 8px; font-size: 11px; border-radius: 6px;" onclick="addTfStatement(\'' + sectionId + '\')">+ Thêm nhận định</button>';
+        return html;
+      }
+
       function renderTypeFields(sectionId, q) {
         var box = $("#" + sectionId + "-type-fields");
         var type = q.question_type || "single_choice";
@@ -2817,77 +3361,10 @@
         } else if (type === "fill_blank") {
           box.innerHTML = renderShortAnswerForm(q);
         } else if (type === "numeric_answer") {
-          box.innerHTML =
-            '<div class="form-grid">' +
-            '<div class="field"><label>Đáp án số đúng</label><input class="input" id="num-answer" type="number" step="any" value="' + attr(q.correct_answer || 0) + '"></div>' +
-            '<div class="field"><label>Sai số cho phép (Tolerance)</label><input class="input" id="num-tolerance" type="number" step="any" value="' + attr(q.tolerance || 0) + '"></div>' +
-            '</div>';
+          box.innerHTML = renderNumericForm(q);
         } else if (type === "drag_drop") {
           box.innerHTML = renderDragDropForm(q);
         }
-      }
-
-      function renderChoicesForm(q, isMulti) {
-        var opts = q.options || [];
-        var html = '<div class="choices-container" style="margin-top: 10px; pointer-events: auto;">';
-        ["A", "B", "C", "D"].forEach(function (key) {
-          var val = optionByKey(opts, key);
-          var checked = false;
-          if (isMulti) checked = Array.isArray(q.correct_answer) && q.correct_answer.indexOf(key) !== -1;
-          else checked = q.correct_answer === key;
-          var inputType = isMulti ? "checkbox" : "radio";
-          var selectedClass = checked ? " is-selected" : "";
-          
-          html +=
-            '<div class="choice-item' + selectedClass + '" onclick="toggleTeacherChoiceSelection(this, \'' + key + '\', ' + isMulti + ')" style="padding: 10px 14px; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer;">' +
-            '<input type="' + inputType + '" name="choice-correct" value="' + key + '"' + (checked ? " checked" : "") + ' class="choice-input" style="display:none;">' +
-            '<input class="input-inline-editor" data-choice-key="' + key + '" value="' + attr(val) + '" placeholder="Nhập lựa chọn ' + key + '..." style="border: none !important; background: transparent !important; width: 100% !important; outline: none !important; font-size: 14px; font-family: inherit; margin: 0; padding: 0;" onclick="event.stopPropagation();">' +
-            '</div>';
-        });
-        html += "</div>";
-        return html;
-      }
-
-      function renderTrueFalseForm(q, sectionId) {
-        var list = q.statements || [];
-        var ans = q.correct_answer || {};
-        
-        var html = '<div class="statement-header-outside" style="margin-top: 12px; display: grid; grid-template-columns: 1fr 60px 60px 60px; gap: 8px;">';
-        html += '<div></div>';
-        html += '<div class="statement-header-label" style="text-align: center;">Đúng</div>';
-        html += '<div class="statement-header-label" style="text-align: center;">Sai</div>';
-        html += '<div></div>';
-        html += '</div>';
-
-        html += '<div class="statement-table" style="margin-top: 0; border: none; background: transparent; display: flex; flex-direction: column; gap: 8px;">';
-        list.forEach(function (item) {
-          var id = item.id;
-          var textVal = item.text || "";
-          var isTrue = ans[id] === true;
-          var isFalse = ans[id] === false;
-          
-          var trueActive = isTrue ? " is-active" : "";
-          var falseActive = isFalse ? " is-active" : "";
-
-          html +=
-            '<div class="statement-row" style="display: grid; grid-template-columns: 1fr 60px 60px 60px; gap: 8px; align-items: center; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #fff; padding: 8px 12px; margin: 0;">' +
-            '<div class="statement-cell-text" style="border: none; padding: 0;"><input class="input-inline-editor" data-tf-id="' + id + '" value="' + attr(textVal) + '" placeholder="Nhập nhận định..." style="border: none !important; background: transparent !important; width: 100% !important; outline: none !important; font-size: 14px; font-family: inherit; margin: 0; padding: 0;"></div>' +
-            '<div class="statement-cell-btn" style="border: none; padding: 0; display: flex; justify-content: center;">' +
-            '<button type="button" class="statement-btn' + trueActive + '" onclick="toggleTeacherTfSelection(\'' + id + '\', true, this)"></button>' +
-            '<input type="radio" name="tf-correct-' + id + '" value="T"' + (isTrue ? " checked" : "") + ' style="display:none;">' +
-            '</div>' +
-            '<div class="statement-cell-btn" style="border: none; padding: 0; display: flex; justify-content: center;">' +
-            '<button type="button" class="statement-btn' + falseActive + '" onclick="toggleTeacherTfSelection(\'' + id + '\', false, this)"></button>' +
-            '<input type="radio" name="tf-correct-' + id + '" value="F"' + (isFalse ? " checked" : "") + ' style="display:none;">' +
-            '</div>' +
-            '<div style="display: flex; justify-content: center;">' +
-            '<button type="button" class="btn btn-sm btn-danger" style="margin: 0; padding: 4px 8px; font-size: 11px; font-weight: 700;" onclick="removeTfStatement(\'' + sectionId + '\', \'' + id + '\')">Xóa</button>' +
-            '</div>' +
-            '</div>';
-        });
-        html += '</div>';
-        html += '<button type="button" class="btn btn-sm btn-outline" style="margin-top: 8px; font-weight: 700;" onclick="addTfStatement(\'' + sectionId + '\')">+ Thêm nhận định</button>';
-        return html;
       }
 
       function addTfStatement(sectionId) {
@@ -2936,9 +3413,9 @@
           return block.type === "blank" ? "[" + block.id + "]" : block.content;
         }).join("");
         var corrVal = Object.keys(q.correct_answer || {}).map(function (k) { return k + "=" + q.correct_answer[k]; }).join(" | ");
-        return '<div style="display:grid;gap:12px;">' +
+        return '<div style="display:grid;gap:10px;">' +
           '<div class="field"><label>Các nhãn thẻ kéo (Ngăn cách bởi dấu |)</label><input class="input" id="drag-items" value="' + attr(itemsVal) + '" placeholder="nhãn 1 | nhãn 2"></div>' +
-          '<div class="field"><label>Nội dung chứa ô trống. Dùng [o1], [o2] làm vị trí ô trống. Có thể xuống dòng thoải mái.</label><textarea class="textarea" id="drag-body" style="min-height: 100px;" placeholder="Ví dụ:\n- Ban đầu: [o1]\n- Lúc sau: [o2]">' + esc(bodyVal) + '</textarea></div>' +
+          '<div class="field"><label>Nội dung chứa ô trống. Dùng [o1], [o2] làm vị trí ô trống.</label><textarea class="textarea" id="drag-body" style="min-height: 100px;" placeholder="Ví dụ: Ban đầu: [o1] | Lúc sau: [o2]">' + esc(bodyVal) + '</textarea></div>' +
           '<div class="field"><label>Đáp án đúng từng ô (Dạng: o1=nhãn1 | o2=nhãn2)</label><input class="input" id="drag-correct" value="' + attr(corrVal) + '" placeholder="Ví dụ: o1=5 | o2=8"></div>' +
           '</div>';
       }
@@ -2951,7 +3428,7 @@
           image_url: $("#" + sectionId + "-q-image")?.value || "",
           image_width: Number($("#" + sectionId + "-q-image-width")?.value) || 100,
           explanation: $("#" + sectionId + "-q-explanation")?.value || "",
-          points: Number($("#" + sectionId + "-q-points")?.value) || 1
+          points: 1
         };
         var type = base.question_type;
         if (type === "single_choice" || type === "multiple_choice") {
@@ -3041,7 +3518,11 @@
           qList[idx] = base;
         }
         saveDraft();
-        resetQuestion(sectionId);
+        if (sectionId === "reading") {
+          editingQuestion[sectionId].question = clone(base);
+        } else {
+          resetQuestion(sectionId);
+        }
         renderAll();
       }
 
@@ -3060,8 +3541,16 @@
           var isFilled = false;
           if (q) {
             var qText = (q.question || "").trim();
-            var defaultPlaceholder = "Nội dung câu hỏi " + i + " chưa được nhập.";
-            if (qText !== "" && qText !== defaultPlaceholder) {
+            var hasImage = (q.image_url || "").trim() !== "";
+            var hasText = qText !== "" && qText !== ("Nội dung câu hỏi " + i + " chưa được nhập.");
+            var hasOptions = false;
+            if (Array.isArray(q.options)) {
+              hasOptions = q.options.some(function (opt) {
+                var oText = (opt.text || "").trim();
+                return oText !== "" && oText !== "Đáp án A" && oText !== "Đáp án B" && oText !== "Đáp án C" && oText !== "Đáp án D";
+              });
+            }
+            if (hasText || hasImage || hasOptions) {
               isFilled = true;
             }
           }
@@ -3071,13 +3560,14 @@
           
           var isActive = i === activeMathQuestionNo;
           
-          var styleStr = "display: flex; align-items: center; justify-content: center; height: 38px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;";
-          if (isActive) {
+          var styleStr = "display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
+          if (isFilled) {
             styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
-          } else if (isFilled) {
-            styleStr += " background: var(--brand-soft); border: 1.5px solid var(--brand); color: var(--brand-dark);";
           } else {
             styleStr += " background: #fff; border: 1.5px solid var(--line); color: var(--muted);";
+          }
+          if (isActive) {
+            styleStr += " box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--brand); z-index: 1; font-weight: 800;";
           }
           
           var btnHtml = '<button type="button" style="' + styleStr + '" onclick="selectMathWizardQuestion(' + i + ')">' + i + '</button>';
@@ -3343,6 +3833,58 @@
         if (!tbody) return;
         tbody.innerHTML = "";
         ensureSchema();
+
+        if (sectionId === "reading") {
+          var readingSec = getSection("reading");
+          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
+          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+          
+          var html = "";
+          
+          // Render group 1 header
+          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-bottom: 1.5px solid var(--line);">Ngữ liệu 1 (Câu 1 - 10)</td></tr>';
+          var g1List = g1 ? (g1.questions || []) : [];
+          if (!g1List.length) {
+            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu 1.</td></tr>';
+          } else {
+            html += g1List.map(function (q, index) {
+              var label = (QUESTION_TYPES.find(function (t) { return t[0] === q.question_type; }) || ["", "Khác"])[1];
+              var isActive = activeGroupIds["reading"] === "g1" && editingQuestion["reading"]?.index === index;
+              return '<tr class="' + (isActive ? 'table-row-active' : '') + '">' +
+                '<td class="table-main" style="text-align:center;">' + q.question_no + '</td>' +
+                '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question || "Nội dung trống") + '</td>' +
+                '<td><span class="status type">' + label + '</span></td>' +
+                '<td><div class="actions">' +
+                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'g1\', ' + index + ')">Sửa</button>' +
+                '</div></td>' +
+                '</tr>';
+            }).join("");
+          }
+          
+          // Render group 2 header
+          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-top: 12px solid transparent; border-bottom: 1.5px solid var(--line);">Ngữ liệu 2 (Câu 11 - 20)</td></tr>';
+          var g2List = g2 ? (g2.questions || []) : [];
+          if (!g2List.length) {
+            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu 2.</td></tr>';
+          } else {
+            html += g2List.map(function (q, index) {
+              var label = (QUESTION_TYPES.find(function (t) { return t[0] === q.question_type; }) || ["", "Khác"])[1];
+              var isActive = activeGroupIds["reading"] === "g2" && editingQuestion["reading"]?.index === index;
+              return '<tr class="' + (isActive ? 'table-row-active' : '') + '">' +
+                '<td class="table-main" style="text-align:center;">' + q.question_no + '</td>' +
+                '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question || "Nội dung trống") + '</td>' +
+                '<td><span class="status type">' + label + '</span></td>' +
+                '<td><div class="actions">' +
+                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'g2\', ' + index + ')">Sửa</button>' +
+                '</div></td>' +
+                '</tr>';
+            }).join("");
+          }
+          
+          tbody.innerHTML = html;
+          return;
+        }
+
         var targetSection = getSection(sectionId);
         var list = sectionId === "math" ? targetSection.questions : (getActiveGroup(sectionId)?.questions || []);
 
@@ -3365,6 +3907,13 @@
             '</tr>';
         }).join("");
       }
+
+      function editReadingQuestion(groupId, index) {
+        ensureSchema();
+        activeGroupIds["reading"] = groupId;
+        editQuestion("reading", index);
+      }
+      window.editReadingQuestion = editReadingQuestion;
 
       function renderGroupList(sectionId) {
         var listEl = $("#" + sectionId + "-group-list");
@@ -3396,18 +3945,75 @@
         var form = $("#" + sectionId + "-group-form");
         if (!form) return;
         form.innerHTML = "";
+        
+        if (sectionId === "reading") {
+          ensureSchema();
+          var readingSec = getSection("reading");
+          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
+          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+          
+          form.innerHTML = 
+            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 20px; background: #fff;">' +
+              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu 1 (Câu 1 - 10)' +
+              '</h3>' +
+              '<div class="form-grid" style="gap: 12px 14px;">' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu 1</label><input class="input" id="reading-g1-title" value="' + attr(g1?.title || "") + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu 1</label><textarea class="textarea" id="reading-g1-text" style="min-height:140px;">' + esc(g1?.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="btn-row" style="margin-top: 8px;">' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'g1\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu 1</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #fff;">' +
+              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu 2 (Câu 11 - 20)' +
+              '</h3>' +
+              '<div class="form-grid" style="gap: 12px 14px;">' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu 2</label><input class="input" id="reading-g2-title" value="' + attr(g2?.title || "") + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu 2</label><textarea class="textarea" id="reading-g2-text" style="min-height:140px;">' + esc(g2?.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="btn-row" style="margin-top: 8px;">' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'g2\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu 2</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+            
+          ["g1", "g2"].forEach(function(gId) {
+            var titleInp = $("#reading-" + gId + "-title");
+            var textInp = $("#reading-" + gId + "-text");
+            [titleInp, textInp].forEach(function(inp) {
+              if (inp) {
+                inp.addEventListener("input", function() {
+                  var readingSec = getSection("reading");
+                  var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+                  if (group) {
+                    if (inp.id.includes("title")) {
+                      group.title = inp.value;
+                    } else {
+                      if (!group.stimulus) group.stimulus = {};
+                      group.stimulus.content = inp.value;
+                    }
+                  }
+                  updatePreview("reading");
+                });
+              }
+            });
+          });
+          return;
+        }
+
         var group = getActiveGroup(sectionId);
         if (!group) return;
 
         var groupImgWidth = group.stimulus?.image_width || 100;
         form.innerHTML =
-          '<div class="form-grid">' +
+          '<div class="form-grid" style="gap: 12px 14px;">' +
           '<div class="field full"><label>Tiêu đề ngữ liệu</label><input class="input" id="' + sectionId + '-g-title" value="' + attr(group.title) + '"></div>' +
-          '<div class="field full"><label>Nội dung văn bản / dữ liệu</label><textarea class="textarea" id="' + sectionId + '-g-text" style="min-height:160px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
-          '<div class="field full" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 0;">' +
-            '<div style="flex: 1; min-width: 250px;"><label>Đường dẫn ảnh ngữ liệu nếu có</label><input class="input" id="' + sectionId + '-g-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
-            '<div style="width: 200px;"><label>Kích thước ảnh: <span id="' + sectionId + '-g-image-width-val">' + groupImgWidth + '</span>%</label>' +
-              '<input type="range" class="slider" id="' + sectionId + '-g-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; margin-top: 8px;">' +
+          '<div class="field full"><label>Nội dung văn bản / dữ liệu</label><textarea class="textarea" id="' + sectionId + '-g-text" style="min-height:180px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+          '<div class="field full" style="display: grid; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
+            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh ngữ liệu nếu có</label><input class="input" id="' + sectionId + '-g-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
+            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh: <span id="' + sectionId + '-g-image-width-val">' + groupImgWidth + '</span>%</label>' +
+              '<input type="range" class="slider" id="' + sectionId + '-g-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; display: block; height: 38px; margin: 0; padding: 0; cursor: pointer;">' +
             '</div>' +
           '</div>' +
           '</div>';
@@ -3429,6 +4035,23 @@
           }
         });
       }
+
+      function saveReadingGroupDirect(gId) {
+        ensureSchema();
+        var readingSec = getSection("reading");
+        var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+        if (!group) return;
+        var titleInp = $("#reading-" + gId + "-title");
+        var textInp = $("#reading-" + gId + "-text");
+        if (titleInp) group.title = titleInp.value.trim() || "Chủ đề ngữ liệu";
+        if (!group.stimulus) group.stimulus = {};
+        if (textInp) group.stimulus.content = textInp.value || "";
+        
+        saveDraft();
+        renderAll();
+        window.alert("Đã lưu nội dung " + (gId === "g1" ? "ngữ liệu 1" : "ngữ liệu 2") + " thành công!");
+      }
+      window.saveReadingGroupDirect = saveReadingGroupDirect;
 
       function updatePreview(sectionId) {
         var bodyEl = $("#" + sectionId + "-preview-body");
@@ -3991,14 +4614,40 @@
       }
 
       function previewInStudentRoom() {
+        // Collect and save active question state to draft before previewing
+        if (activeEditorTab === "math") {
+          var currentVal = collectBaseQuestion("math", false);
+          currentVal.question_no = activeMathQuestionNo;
+          ensureSchema();
+          getSection("math").questions[activeMathQuestionNo - 1] = currentVal;
+        } else if (activeEditorTab === "reading" || activeEditorTab === "science") {
+          var currentVal = collectBaseQuestion(activeEditorTab, false);
+          var idx = editingQuestion[activeEditorTab].index;
+          var group = getActiveGroup(activeEditorTab);
+          if (group) {
+            if (idx === -1) {
+              group.questions.push(currentVal);
+              editingQuestion[activeEditorTab].index = group.questions.length - 1;
+            } else {
+              group.questions[idx] = currentVal;
+            }
+          }
+        }
         saveDraft();
+
         var link = "";
+        var qNo = 1;
         if (activeEditorTab === "reading") {
-          link = "exam-reading.html?exam=" + exam.exam_code + "&preview=true";
+          var q = editingQuestion["reading"] ? editingQuestion["reading"].question : null;
+          qNo = q ? q.question_no : 1;
+          link = "exam-reading.html?exam=" + exam.exam_code + "&preview=true&preview_qno=" + qNo;
         } else if (activeEditorTab === "science") {
-          link = "exam-science.html?exam=" + exam.exam_code + "&preview=true";
+          var q = editingQuestion["science"] ? editingQuestion["science"].question : null;
+          qNo = q ? q.question_no : 1;
+          link = "exam-science.html?exam=" + exam.exam_code + "&preview=true&preview_qno=" + qNo;
         } else {
-          link = "exam-math.html?exam=" + exam.exam_code + "&preview=true";
+          qNo = activeMathQuestionNo;
+          link = "exam-math.html?exam=" + exam.exam_code + "&preview=true&preview_qno=" + qNo;
         }
         window.open(link, "_blank");
       }
