@@ -147,6 +147,7 @@
       width: 100%;
       min-height: 40px;
       align-items: center;
+      justify-content: flex-start !important;
       gap: 10px;
       border: 0;
       border-radius: 10px;
@@ -186,7 +187,7 @@
     .editor-step-list {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 4px;
       margin: 4px 0 12px;
     }
 
@@ -195,40 +196,21 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 9px 10px;
-      border-radius: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.18s ease, color 0.18s ease;
-      color: #64748b;
-      font-weight: 600;
-      font-size: 13px;
+      transition: all 0.15s ease;
+      color: #374151;
+      font-weight: 650;
+      font-size: 13.5px;
       border: none;
       background: transparent;
       width: 100%;
       text-align: left;
     }
 
-    .editor-step:hover {
-      background: #f8fafc;
-      color: var(--brand);
-    }
-
-    .editor-step.active {
+    .editor-step:hover, .editor-step.active {
       background: var(--brand-soft);
-      color: var(--brand);
-    }
-
-    .editor-step.active .step-icon-wrap {
-      background: var(--brand);
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(193,18,31,0.15);
-    }
-
-    .editor-step.active .step-icon-wrap svg {
-      stroke: #fff;
-    }
-
-    .editor-step.active .step-num {
       color: var(--brand);
     }
 
@@ -236,51 +218,73 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
+      width: 20px;
+      height: 20px;
       flex-shrink: 0;
-      border-radius: 10px;
-      background: #f1f5f9;
-      border: 1.5px solid #e2e8f0;
-      transition: all 0.18s ease;
+      background: transparent;
+      border: none;
+      transition: all 0.15s ease;
     }
 
     .step-icon-wrap svg {
-      width: 17px;
-      height: 17px;
-      stroke: #64748b;
-      stroke-width: 1.8;
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: stroke 0.18s ease;
-    }
-
-    .editor-step:hover .step-icon-wrap {
-      background: var(--brand-soft);
-      border-color: var(--brand);
-    }
-
-    .editor-step:hover .step-icon-wrap svg {
-      stroke: var(--brand);
+      transition: stroke 0.15s ease;
     }
 
     .step-label { flex: 1; }
 
     .step-num {
-      font-size: 10px;
-      font-weight: 800;
-      color: #94a3b8;
-      letter-spacing: 0.03em;
-      transition: color 0.18s ease;
+      display: none;
     }
 
     .step-connector {
-      width: 2px;
-      height: 10px;
-      background: linear-gradient(to bottom, #e2e8f0, #cbd5e1);
-      border-radius: 2px;
-      margin: 0 0 0 27px;
+      display: none;
+    }
+
+    /* Style for Ngữ liệu 1 and Ngữ liệu 2 tabs */
+    .reading-tabs-nav, .science-tabs-nav {
+      display: flex;
+      gap: 24px;
+      border-bottom: 1.5px solid var(--line);
+      margin-bottom: 20px;
+      padding-left: 8px;
+      flex-wrap: wrap;
+    }
+    .reading-tab-btn, .science-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 10px 4px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .reading-tab-btn:hover, .science-tab-btn:hover {
+      color: var(--brand);
+    }
+    .reading-tab-btn.active, .science-tab-btn.active {
+      color: var(--brand);
+    }
+    .reading-tab-btn.active::after, .science-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1.5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--brand);
+      border-radius: 99px;
     }
 
     /* ── SIDEBAR NESTED ACCORDION STYLES ── */
@@ -351,15 +355,9 @@
       position: relative;
     }
 
-    /* Vertical line of the tree branch */
+    /* Vertical line of the tree branch - Removed */
     .submenu-inner::before {
-      content: "";
-      position: absolute;
-      left: 16px;
-      top: 0;
-      bottom: 18px;
-      width: 1.5px;
-      background: #cbd5e1;
+      display: none;
     }
 
     .submenu-item {
@@ -376,15 +374,9 @@
       position: relative;
     }
 
-    /* Horizontal branch connector line */
+    /* Horizontal branch connector line - Removed */
     .submenu-item::before {
-      content: "";
-      position: absolute;
-      left: -12px;
-      top: 50%;
-      width: 12px;
-      height: 1.5px;
-      background: #cbd5e1;
+      display: none;
     }
 
     .submenu-item:hover {
@@ -396,11 +388,6 @@
       background: var(--brand-soft);
       color: var(--brand);
       font-weight: 600;
-    }
-
-    /* Change branch lines color when item is active */
-    .submenu-item.active::before {
-      background: var(--brand);
     }
 
     .sub-icon svg {
@@ -941,7 +928,7 @@
       display: none !important;
     }
     /* Old nav-button collapsed (dashboard nav) */
-    .teacher-shell.sidebar-collapsed .nav-button span:not(.nav-number) {
+    .teacher-shell.sidebar-collapsed .nav-button span:not(.nav-number):not(.menu-icon) {
       display: none !important;
     }
     .teacher-shell.sidebar-collapsed .nav-button {
@@ -1344,6 +1331,51 @@
       color: var(--brand) !important;
       font-weight: 600;
     }
+
+    /* Sidebar nav-button styling consistency override */
+    body .teacher-shell:not(.sidebar-collapsed) #sidebar-normal-nav .nav-button {
+      justify-content: flex-start !important;
+      padding: 10px 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+    
+    body .teacher-shell #sidebar-normal-nav .nav-button {
+      font-size: 13.5px !important;
+      font-weight: 650 !important;
+      min-height: 40px !important;
+      border-radius: 10px !important;
+      color: #374151 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      border: none !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button:hover,
+    body .teacher-shell #sidebar-normal-nav .nav-button.active {
+      background: var(--brand-soft) !important;
+      color: var(--brand) !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button .menu-icon {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 20px !important;
+      height: 20px !important;
+      flex-shrink: 0 !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button .menu-icon svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke: currentColor !important;
+      stroke-width: 1.8 !important;
+      fill: none !important;
+      display: block !important;
+    }
   </style>
   <script>
     window.MathJax = {
@@ -1389,65 +1421,44 @@
             <div class="submenu-inner">
               <a class="submenu-item active" href="javascript:void(0)" onclick="selectCategoryTab('practice', 'tsa', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá tư duy - TSA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('practice', 'hsa', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - HSA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('practice', 'vact', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - VACT</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('practice', 'qda', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 3v18h18" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="m18.5 7.5-5.5 5.5-3-3-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - QDA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('practice', 'thpt', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>THPTQG</span>
@@ -1476,65 +1487,44 @@
             <div class="submenu-inner">
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'tsa', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá tư duy - TSA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'hsa', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - HSA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'vact', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - VACT</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'qda', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 3v18h18" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="m18.5 7.5-5.5 5.5-3-3-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - QDA</span>
               </a>
               <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'thpt', this)">
                 <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" stroke="currentColor">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke-linecap="round" stroke-linejoin="round"></path>
                   </svg>
                 </span>
                 <span>THPTQG</span>
@@ -1544,80 +1534,99 @@
         </div>
 
         <div class="nav-label">Học sinh</div>
-        <button class="nav-button" type="button" data-tab-target="approve-students"><span>Duyệt học sinh</span></button>
-        <button class="nav-button" type="button" data-tab-target="manage-students"><span>Quản lý học sinh</span></button>
-        <button class="nav-button" type="button" data-tab-target="manage-documents"><span>Quản lý Tài liệu</span></button>
+        <button class="nav-button" type="button" data-tab-target="approve-students">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span>Duyệt học sinh</span>
+        </button>
+        <button class="nav-button" type="button" data-tab-target="manage-students">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="10" r="3"></circle>
+              <path d="M7 20c0-2.5 2-4.5 5-4.5s5 2 5 4.5"></path>
+            </svg>
+          </span>
+          <span>Quản lý học sinh</span>
+        </button>
+        <button class="nav-button" type="button" data-tab-target="manage-documents">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 12h8"></path>
+              <path d="M8 8h8"></path>
+              <path d="M8 16h4"></path>
+            </svg>
+          </span>
+          <span>Quản lý Tài liệu</span>
+        </button>
       </div>
 
       <!-- Navigation for Exam Editor (Visible when editing) -->
       <div id="sidebar-editor-nav" style="display: none;">
         <div class="sidebar-scrollable">
           <div class="nav-label">Luồng soạn đề</div>
-
-        <div class="editor-step-list">
-
-          <!-- 01 Tạo đề -->
-          <button class="editor-step active" type="button" data-editor-tab-target="setup">
-            <span class="step-icon-wrap">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="11" y2="16"/></svg>
-            </span>
-            <span class="step-label">Tạo đề</span>
-            <span class="step-num">01</span>
-          </button>
-
-          <div class="step-connector"></div>
-
+          <div class="editor-step-list">
+            <!-- 01 Tạo đề -->
+            <button class="editor-step active" type="button" data-editor-tab-target="setup">
+              <span class="step-icon-wrap">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="11" y2="16"/></svg>
+              </span>
+              <span class="step-label">Tạo đề</span>
+            </button>
+ 
+            <div class="step-connector"></div>
+ 
           <!-- 02 Toán -->
           <button class="editor-step" type="button" data-editor-tab-target="math">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="15" y1="9" x2="15" y2="15"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
             </span>
             <span class="step-label">Toán</span>
-            <span class="step-num">02</span>
           </button>
-
+ 
           <div class="step-connector"></div>
-
+ 
           <!-- 03 Đọc hiểu -->
           <button class="editor-step" type="button" data-editor-tab-target="reading">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             </span>
             <span class="step-label">Đọc hiểu</span>
-            <span class="step-num">03</span>
           </button>
-
+ 
           <div class="step-connector"></div>
-
+ 
           <!-- 04 Khoa học -->
           <button class="editor-step" type="button" data-editor-tab-target="science">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
             </span>
             <span class="step-label">Khoa học</span>
-            <span class="step-num">04</span>
           </button>
-
+ 
           <div class="step-connector"></div>
-
+ 
           <!-- 05 Import LaTeX -->
           <button class="editor-step" type="button" data-editor-tab-target="import">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
             </span>
             <span class="step-label">Import LaTeX</span>
-            <span class="step-num">05</span>
           </button>
-
+ 
           <div class="step-connector"></div>
-
+ 
           <!-- 06 Lưu & Xuất đề -->
           <button class="editor-step" type="button" data-editor-tab-target="export">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             </span>
             <span class="step-label">Lưu &amp; Xuất đề</span>
-            <span class="step-num">06</span>
           </button>
 
         </div>
@@ -1895,11 +1904,33 @@
         </section>
 
         <section class="tab-panel" id="tab-reading">
+          <!-- TABS CONTAINER -->
+          <div class="reading-tabs-nav">
+            <button class="reading-tab-btn active" id="reading-tab-btn-g1" type="button" onclick="switchReadingGroupTab('g1')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 1
+            </button>
+            <button class="reading-tab-btn" id="reading-tab-btn-g2" type="button" onclick="switchReadingGroupTab('g2')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 2
+            </button>
+          </div>
           <article class="card">
 
             <div class="card-body passage-layout">
               <div>
                 <div class="eyebrow">Cột trái: ngữ liệu</div>
+                <!-- Circle navigation grid for questions -->
+                <div class="wizard-nav-wrap" style="background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: 800; font-size: 13px; color: var(--text);">Câu hỏi của ngữ liệu:</span>
+                    <span id="reading-wizard-progress" style="font-weight: 700; font-size: 11px; color: var(--brand);">Tiến độ: 0/10 câu đã soạn</span>
+                  </div>
+                  <div id="reading-wizard-grid" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <!-- Generated dynamically -->
+                  </div>
+                </div>
+                
                 <form id="reading-group-form" onsubmit="return false;"></form>
                 <div class="btn-row" style="display: none;">
                   <button class="btn btn-outline" type="button" data-new-group="reading">Thêm ngữ liệu</button>
@@ -1911,13 +1942,13 @@
                 <div class="eyebrow">Cột phải: câu hỏi của ngữ liệu</div>
                 <form id="reading-question-form" onsubmit="return false;"></form>
                 <div class="btn-row">
-                  <button class="btn btn-primary" type="button" data-save-question="reading">Thêm vào ngữ liệu</button>
+                  <button class="btn btn-primary" type="button" data-save-question="reading">Lưu câu hỏi</button>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; display: none;">
                   <span style="font-weight:600; font-size:14px; color:#475569;">Câu hỏi đi kèm:</span>
                   <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('reading')" style="display: none; margin:0; padding:4px 8px; font-size:11px; font-weight:700;">Xóa tất cả câu hỏi</button>
                 </div>
-                <div class="table-wrap" style="margin-top:8px;">
+                <div class="table-wrap" style="margin-top:8px; display: none;">
                   <table>
                     <thead><tr><th>Câu</th><th>Nội dung</th><th>Mẫu</th><th>Hành động</th></tr></thead>
                     <tbody id="reading-question-list"></tbody>
@@ -1929,29 +1960,75 @@
         </section>
 
         <section class="tab-panel" id="tab-science">
+          <!-- TABS CONTAINER -->
+          <div class="science-tabs-nav">
+            <button class="science-tab-btn active" id="science-tab-btn-g1" type="button" onclick="switchScienceGroupTab('g1')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 1
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g2" type="button" onclick="switchScienceGroupTab('g2')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 2
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g3" type="button" onclick="switchScienceGroupTab('g3')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 3
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g4" type="button" onclick="switchScienceGroupTab('g4')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 4
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g5" type="button" onclick="switchScienceGroupTab('g5')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 5
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g6" type="button" onclick="switchScienceGroupTab('g6')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 6
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g7" type="button" onclick="switchScienceGroupTab('g7')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 7
+            </button>
+            <button class="science-tab-btn" id="science-tab-btn-g8" type="button" onclick="switchScienceGroupTab('g8')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Ngữ liệu 8
+            </button>
+          </div>
           <article class="card">
 
             <div class="card-body passage-layout">
               <div>
                 <div class="eyebrow">Cột trái: dữ liệu khoa học</div>
+                <!-- Circle navigation grid for questions -->
+                <div class="wizard-nav-wrap" style="background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: 800; font-size: 13px; color: var(--text);">Câu hỏi của ngữ liệu:</span>
+                    <span id="science-wizard-progress" style="font-weight: 700; font-size: 11px; color: var(--brand);">Tiến độ: 0/5 câu đã soạn</span>
+                  </div>
+                  <div id="science-wizard-grid" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <!-- Generated dynamically -->
+                  </div>
+                </div>
+
                 <form id="science-group-form" onsubmit="return false;"></form>
-                <div class="btn-row">
+                <div class="btn-row" style="display: none;">
                   <button class="btn btn-outline" type="button" data-new-group="science">Thêm dữ liệu</button>
                   <button class="btn btn-primary" type="button" data-save-group="science">Lưu dữ liệu</button>
                 </div>
-                <div class="mini-list" id="science-group-list" style="margin-top:16px;"></div>
+                <div class="mini-list" id="science-group-list" style="display: none; margin-top:16px;"></div>
               </div>
               <div>
                 <div class="eyebrow">Cột phải: câu hỏi của dữ liệu</div>
                 <form id="science-question-form" onsubmit="return false;"></form>
                 <div class="btn-row">
-                  <button class="btn btn-primary" type="button" data-save-question="science">Thêm vào dữ liệu</button>
+                  <button class="btn btn-primary" type="button" data-save-question="science">Lưu câu hỏi</button>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; display: none;">
                   <span style="font-weight:600; font-size:14px; color:#475569;">Câu hỏi đi kèm:</span>
-                  <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('science')" style="margin:0; padding:4px 8px; font-size:11px; font-weight:700;">Xóa tất cả câu hỏi</button>
+                  <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('science')" style="display: none; margin:0; padding:4px 8px; font-size:11px; font-weight:700;">Xóa tất cả câu hỏi</button>
                 </div>
-                <div class="table-wrap" style="margin-top:8px;">
+                <div class="table-wrap" style="margin-top:8px; display: none;">
                   <table>
                     <thead><tr><th>Câu</th><th>Nội dung</th><th>Mẫu</th><th>Hành động</th></tr></thead>
                     <tbody id="science-question-list"></tbody>
@@ -2749,8 +2826,7 @@
         ["single_choice", "Trắc nghiệm 1 đáp án"],
         ["multiple_choice", "Trắc nghiệm nhiều đáp án"],
         ["true_false", "Đúng / Sai"],
-        ["fill_blank", "Trả lời ngắn"],
-        ["numeric_answer", "Nhập số"],
+        ["fill_blank", "Điền đáp án"],
         ["drag_drop", "Chọn thẻ vào chỗ trống"]
       ];
 
@@ -2967,8 +3043,77 @@
             g2.questions[i].question_no = i + 11;
           }
           
+          readingSec.g1 = g1;
+          readingSec.g2 = g2;
+          readingSec.g1_questions = g1.questions;
+          readingSec.g2_questions = g2.questions;
+          
           if (!activeGroupIds["reading"]) {
             activeGroupIds["reading"] = "g1";
+          }
+        }
+
+        // Enforce Science Section Schema (exactly 8 groups, 5 questions each)
+        var scienceSec = getSection("science");
+        if (scienceSec) {
+          if (!Array.isArray(scienceSec.groups)) scienceSec.groups = [];
+          
+          // Keep only g1 to g8
+          var allowedScienceGroups = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8"];
+          scienceSec.groups = scienceSec.groups.filter(function(g) {
+            return allowedScienceGroups.indexOf(g.group_id) !== -1;
+          });
+          
+          for (var gIdx = 1; gIdx <= 8; gIdx++) {
+            var gId = "g" + gIdx;
+            var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+            if (!group) {
+              group = {
+                group_id: gId,
+                title: "Ngữ liệu Khoa học số 0" + gIdx,
+                stimulus: { type: "text", content: "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...", image_url: "", image_width: 100 },
+                questions: []
+              };
+              scienceSec.groups.push(group);
+            }
+            if (!Array.isArray(group.questions)) group.questions = [];
+            
+            var startNo = (gIdx - 1) * 5 + 1;
+            while (group.questions.length < 5) {
+              var nextNo = startNo + group.questions.length;
+              group.questions.push({
+                question_no: nextNo,
+                question_type: "single_choice",
+                question: "",
+                image_url: "",
+                options: [
+                  { key: "A", text: "" },
+                  { key: "B", text: "" },
+                  { key: "C", text: "" },
+                  { key: "D", text: "" }
+                ],
+                correct_answer: "A",
+                explanation: "",
+                points: 1
+              });
+            }
+            // Sort and assign question numbers
+            group.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+            for (var i = 0; i < group.questions.length; i++) {
+              group.questions[i].question_no = startNo + i;
+            }
+            
+            scienceSec[gId] = group;
+            scienceSec[gId + "_questions"] = group.questions;
+          }
+          
+          // Keep groups ordered from g1 to g8 in scienceSec.groups array
+          scienceSec.groups.sort(function(a, b) {
+            return allowedScienceGroups.indexOf(a.group_id) - allowedScienceGroups.indexOf(b.group_id);
+          });
+          
+          if (!activeGroupIds["science"]) {
+            activeGroupIds["science"] = "g1";
           }
         }
       }
@@ -3160,14 +3305,14 @@
             q.question_no = activeMathQuestionNo; // always align displayed number with slot
             editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: q };
           }
-        } else if (sectionId === "reading") {
+        } else if (sectionId === "reading" || sectionId === "science") {
           ensureSchema();
-          if (!editingQuestion["reading"] || editingQuestion["reading"].index === -1) {
-            var readingSec = getSection("reading");
-            var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
-            var q = g1 && g1.questions && g1.questions[0] ? clone(g1.questions[0]) : defaultQuestion("reading");
-            editingQuestion["reading"] = { index: 0, question: q };
-            activeGroupIds["reading"] = "g1";
+          var gId = activeGroupIds[sectionId] || "g1";
+          if (!editingQuestion[sectionId] || editingQuestion[sectionId].index === -1) {
+            var sec = getSection(sectionId);
+            var group = sec.groups.find(function(g) { return g.group_id === gId; });
+            var q = group && group.questions && group.questions[0] ? clone(group.questions[0]) : defaultQuestion(sectionId);
+            editingQuestion[sectionId] = { index: 0, question: q };
           }
         } else {
           if (!editingQuestion[sectionId]) editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
@@ -3518,8 +3663,9 @@
           qList[idx] = base;
         }
         saveDraft();
-        if (sectionId === "reading") {
+        if (sectionId === "reading" || sectionId === "science") {
           editingQuestion[sectionId].question = clone(base);
+          window.alert("Đã lưu câu hỏi " + base.question_no + " thành công!");
         } else {
           resetQuestion(sectionId);
         }
@@ -3784,6 +3930,12 @@
 
       function renderAll() {
         renderSummary();
+        if (activeEditorTab === "reading") {
+          updateReadingTabsUI();
+        }
+        if (activeEditorTab === "science") {
+          updateScienceTabsUI();
+        }
         ["math", "reading", "science"].forEach(function (sectionId) {
           if (activeEditorTab === sectionId) {
             if (sectionId === "math") {
@@ -3799,6 +3951,7 @@
               renderQuestionList(sectionId);
               renderGroupList(sectionId);
               renderActiveGroupDetails(sectionId);
+              renderSubjectWizardNav(sectionId);
             }
             updatePreview(sectionId);
           }
@@ -3836,46 +3989,27 @@
 
         if (sectionId === "reading") {
           var readingSec = getSection("reading");
-          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
-          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+          var gId = activeGroupIds["reading"] || "g1";
+          var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+          var numberLabel = gId === "g1" ? "1" : "2";
+          var rangeLabel = gId === "g1" ? "Câu 1 - 10" : "Câu 11 - 20";
           
           var html = "";
           
-          // Render group 1 header
-          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-bottom: 1.5px solid var(--line);">Ngữ liệu 1 (Câu 1 - 10)</td></tr>';
-          var g1List = g1 ? (g1.questions || []) : [];
-          if (!g1List.length) {
-            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu 1.</td></tr>';
+          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-bottom: 1.5px solid var(--line);">Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')</td></tr>';
+          var gList = group ? (group.questions || []) : [];
+          if (!gList.length) {
+            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu ' + numberLabel + '.</td></tr>';
           } else {
-            html += g1List.map(function (q, index) {
+            html += gList.map(function (q, index) {
               var label = (QUESTION_TYPES.find(function (t) { return t[0] === q.question_type; }) || ["", "Khác"])[1];
-              var isActive = activeGroupIds["reading"] === "g1" && editingQuestion["reading"]?.index === index;
+              var isActive = editingQuestion["reading"]?.index === index;
               return '<tr class="' + (isActive ? 'table-row-active' : '') + '">' +
                 '<td class="table-main" style="text-align:center;">' + q.question_no + '</td>' +
                 '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question || "Nội dung trống") + '</td>' +
                 '<td><span class="status type">' + label + '</span></td>' +
                 '<td><div class="actions">' +
-                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'g1\', ' + index + ')">Sửa</button>' +
-                '</div></td>' +
-                '</tr>';
-            }).join("");
-          }
-          
-          // Render group 2 header
-          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-top: 12px solid transparent; border-bottom: 1.5px solid var(--line);">Ngữ liệu 2 (Câu 11 - 20)</td></tr>';
-          var g2List = g2 ? (g2.questions || []) : [];
-          if (!g2List.length) {
-            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu 2.</td></tr>';
-          } else {
-            html += g2List.map(function (q, index) {
-              var label = (QUESTION_TYPES.find(function (t) { return t[0] === q.question_type; }) || ["", "Khác"])[1];
-              var isActive = activeGroupIds["reading"] === "g2" && editingQuestion["reading"]?.index === index;
-              return '<tr class="' + (isActive ? 'table-row-active' : '') + '">' +
-                '<td class="table-main" style="text-align:center;">' + q.question_no + '</td>' +
-                '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question || "Nội dung trống") + '</td>' +
-                '<td><span class="status type">' + label + '</span></td>' +
-                '<td><div class="actions">' +
-                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'g2\', ' + index + ')">Sửa</button>' +
+                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'' + gId + '\', ' + index + ')">Sửa</button>' +
                 '</div></td>' +
                 '</tr>';
             }).join("");
@@ -3907,6 +4041,8 @@
             '</tr>';
         }).join("");
       }
+
+
 
       function editReadingQuestion(groupId, index) {
         ensureSchema();
@@ -3949,55 +4085,120 @@
         if (sectionId === "reading") {
           ensureSchema();
           var readingSec = getSection("reading");
-          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
-          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+          var gId = activeGroupIds["reading"] || "g1";
+          var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+          if (!group) return;
+          
+          var numberLabel = gId === "g1" ? "1" : "2";
+          var rangeLabel = gId === "g1" ? "Câu 1 - 10" : "Câu 11 - 20";
           
           form.innerHTML = 
-            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 20px; background: #fff;">' +
-              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu 1 (Câu 1 - 10)' +
-              '</h3>' +
-              '<div class="form-grid" style="gap: 12px 14px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu 1</label><input class="input" id="reading-g1-title" value="' + attr(g1?.title || "") + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu 1</label><textarea class="textarea" id="reading-g1-text" style="min-height:140px;">' + esc(g1?.stimulus?.content || "") + '</textarea></div>' +
-                '<div class="btn-row" style="margin-top: 8px;">' +
-                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'g1\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu 1</button>' +
-                '</div>' +
-              '</div>' +
-            '</div>' +
             '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #fff;">' +
               '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu 2 (Câu 11 - 20)' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
               '</h3>' +
               '<div class="form-grid" style="gap: 12px 14px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu 2</label><input class="input" id="reading-g2-title" value="' + attr(g2?.title || "") + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu 2</label><textarea class="textarea" id="reading-g2-text" style="min-height:140px;">' + esc(g2?.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + numberLabel + '</label><textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
                 '<div class="btn-row" style="margin-top: 8px;">' +
-                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'g2\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu 2</button>' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
             
-          ["g1", "g2"].forEach(function(gId) {
-            var titleInp = $("#reading-" + gId + "-title");
-            var textInp = $("#reading-" + gId + "-text");
-            [titleInp, textInp].forEach(function(inp) {
-              if (inp) {
-                inp.addEventListener("input", function() {
-                  var readingSec = getSection("reading");
-                  var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
-                  if (group) {
-                    if (inp.id.includes("title")) {
-                      group.title = inp.value;
-                    } else {
-                      if (!group.stimulus) group.stimulus = {};
-                      group.stimulus.content = inp.value;
-                    }
+          var titleInp = $("#reading-" + gId + "-title");
+          var textInp = $("#reading-" + gId + "-text");
+          [titleInp, textInp].forEach(function(inp) {
+            if (inp) {
+              inp.addEventListener("input", function() {
+                var readingSec = getSection("reading");
+                var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+                if (group) {
+                  if (inp.id.includes("title")) {
+                    group.title = inp.value;
+                  } else {
+                    if (!group.stimulus) group.stimulus = {};
+                    group.stimulus.content = inp.value;
                   }
-                  updatePreview("reading");
-                });
+                }
+                updatePreview("reading");
+              });
+            }
+          });
+          return;
+        }
+
+        if (sectionId === "science") {
+          ensureSchema();
+          var scienceSec = getSection("science");
+          var gId = activeGroupIds["science"] || "g1";
+          var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+          if (!group) return;
+          
+          var gIdx = Number(gId.replace("g", "")) || 1;
+          var startNo = (gIdx - 1) * 5 + 1;
+          var rangeLabel = "Câu " + startNo + " - " + (startNo + 4);
+          
+          var groupImgWidth = group.stimulus?.image_width || 100;
+          
+          form.innerHTML = 
+            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #fff;">' +
+              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + gIdx + ' (' + rangeLabel + ')' +
+              '</h3>' +
+              '<div class="form-grid" style="gap: 12px 14px;">' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu ' + gIdx + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + gIdx + '</label><textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="field full" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0;">' +
+                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh ngữ liệu ' + gIdx + ': <span id="science-' + gId + '-image-width-val" style="font-weight:700; color:var(--brand);">' + groupImgWidth + '</span>%</label>' +
+                    '<input type="range" class="slider" id="science-' + gId + '-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
+                  '</div>' +
+                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh ngữ liệu ' + gIdx + ' nếu có</label><input class="input" id="science-' + gId + '-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
+                '</div>' +
+                '<div class="btn-row" style="margin-top: 8px;">' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveScienceGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + gIdx + '</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+            
+          var titleInp = $("#science-" + gId + "-title");
+          var textInp = $("#science-" + gId + "-text");
+          var imgInp = $("#science-" + gId + "-image");
+          var slider = $("#science-" + gId + "-image-width");
+          var indicator = $("#science-" + gId + "-image-width-val");
+          
+          if (slider && indicator) {
+            slider.addEventListener("input", function() {
+              indicator.textContent = this.value;
+              var scienceSec = getSection("science");
+              var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+              if (group) {
+                if (!group.stimulus) group.stimulus = {};
+                group.stimulus.image_width = Number(this.value);
               }
+              updatePreview("science");
             });
+          }
+          
+          [titleInp, textInp, imgInp].forEach(function(inp) {
+            if (inp) {
+              inp.addEventListener("input", function() {
+                var scienceSec = getSection("science");
+                var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+                if (group) {
+                  if (inp.id.includes("title")) {
+                    group.title = inp.value;
+                  } else if (inp.id.includes("text")) {
+                    if (!group.stimulus) group.stimulus = {};
+                    group.stimulus.content = inp.value;
+                  } else if (inp.id.includes("image")) {
+                    if (!group.stimulus) group.stimulus = {};
+                    group.stimulus.image_url = inp.value;
+                  }
+                }
+                updatePreview("science");
+              });
+            }
           });
           return;
         }
@@ -4052,6 +4253,175 @@
         window.alert("Đã lưu nội dung " + (gId === "g1" ? "ngữ liệu 1" : "ngữ liệu 2") + " thành công!");
       }
       window.saveReadingGroupDirect = saveReadingGroupDirect;
+
+      function switchReadingGroupTab(groupId) {
+        activeGroupIds["reading"] = groupId;
+        
+        // Reset the active question index to the first question of this group
+        ensureSchema();
+        var readingSec = getSection("reading");
+        var group = readingSec.groups.find(function(g) { return g.group_id === groupId; });
+        var firstQ = group && group.questions && group.questions[0] ? clone(group.questions[0]) : defaultQuestion("reading");
+        
+        editingQuestion["reading"] = { index: 0, question: firstQ };
+        
+        renderAll();
+      }
+      window.switchReadingGroupTab = switchReadingGroupTab;
+
+      function updateReadingTabsUI() {
+        var activeId = activeGroupIds["reading"] || "g1";
+        var btnG1 = document.getElementById("reading-tab-btn-g1");
+        var btnG2 = document.getElementById("reading-tab-btn-g2");
+        if (btnG1 && btnG2) {
+          btnG1.classList.toggle("active", activeId === "g1");
+          btnG2.classList.toggle("active", activeId === "g2");
+        }
+      }
+
+      function switchScienceGroupTab(groupId) {
+        activeGroupIds["science"] = groupId;
+        
+        // Reset the active question index to the first question of this group
+        ensureSchema();
+        var scienceSec = getSection("science");
+        var group = scienceSec.groups.find(function(g) { return g.group_id === groupId; });
+        var firstQ = group && group.questions && group.questions[0] ? clone(group.questions[0]) : defaultQuestion("science");
+        
+        editingQuestion["science"] = { index: 0, question: firstQ };
+        
+        renderAll();
+      }
+      window.switchScienceGroupTab = switchScienceGroupTab;
+
+      function updateScienceTabsUI() {
+        var activeId = activeGroupIds["science"] || "g1";
+        for (var i = 1; i <= 8; i++) {
+          var btn = document.getElementById("science-tab-btn-g" + i);
+          if (btn) {
+            btn.classList.toggle("active", activeId === "g" + i);
+          }
+        }
+      }
+
+      function saveScienceGroupDirect(gId) {
+        ensureSchema();
+        var scienceSec = getSection("science");
+        var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+        if (!group) return;
+        var titleInp = $("#science-" + gId + "-title");
+        var textInp = $("#science-" + gId + "-text");
+        var imgInp = $("#science-" + gId + "-image");
+        var widthInp = $("#science-" + gId + "-image-width");
+        
+        if (titleInp) group.title = titleInp.value.trim() || "Chủ đề ngữ liệu";
+        if (!group.stimulus) group.stimulus = {};
+        if (textInp) group.stimulus.content = textInp.value || "";
+        if (imgInp) group.stimulus.image_url = imgInp.value || "";
+        if (widthInp) group.stimulus.image_width = Number(widthInp.value) || 100;
+        
+        saveDraft();
+        renderAll();
+        var gIdx = Number(gId.replace("g", "")) || 1;
+        window.alert("Đã lưu nội dung ngữ liệu " + gIdx + " thành công!");
+      }
+      window.saveScienceGroupDirect = saveScienceGroupDirect;
+
+      function renderSubjectWizardNav(sectionId) {
+        var grid = $("#" + sectionId + "-wizard-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        
+        ensureSchema();
+        var sec = getSection(sectionId);
+        var gId = activeGroupIds[sectionId] || "g1";
+        var group = sec.groups.find(function(g) { return g.group_id === gId; });
+        if (!group) return;
+        
+        var questions = group.questions || [];
+        var numQuestions = sectionId === "reading" ? 10 : 5;
+        
+        var gIdx = Number(gId.replace("g", "")) || 1;
+        var startNo = sectionId === "reading" ? (gId === "g1" ? 1 : 11) : ((gIdx - 1) * 5 + 1);
+        
+        var editedCount = 0;
+        var activeIdx = editingQuestion[sectionId]?.index || 0;
+        
+        for (var i = 0; i < numQuestions; i++) {
+          var qNo = startNo + i;
+          var q = questions[i];
+          var isFilled = false;
+          if (q) {
+            var qText = (q.question || "").trim();
+            var hasImage = (q.image_url || "").trim() !== "";
+            var hasText = qText !== "";
+            var hasOptions = false;
+            if (Array.isArray(q.options)) {
+              hasOptions = q.options.some(function (opt) {
+                return (opt.text || "").trim() !== "";
+              });
+            }
+            if (hasText || hasImage || hasOptions) {
+              isFilled = true;
+            }
+          }
+          if (isFilled) {
+            editedCount++;
+          }
+          
+          var isActive = i === activeIdx;
+          
+          var styleStr = "display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
+          if (isFilled) {
+            styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
+          } else {
+            styleStr += " background: #fff; border: 1.5px solid var(--line); color: var(--muted);";
+          }
+          if (isActive) {
+            styleStr += " box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--brand); z-index: 1; font-weight: 800;";
+          }
+          
+          var btnHtml = '<button type="button" style="' + styleStr + '" onclick="selectSubjectWizardQuestion(\'' + sectionId + '\', ' + i + ')">' + qNo + '</button>';
+          grid.innerHTML += btnHtml;
+        }
+        
+        var progressEl = $("#" + sectionId + "-wizard-progress");
+        if (progressEl) {
+          progressEl.textContent = "Tiến độ: " + editedCount + "/" + numQuestions + " câu đã soạn";
+        }
+      }
+      window.renderSubjectWizardNav = renderSubjectWizardNav;
+
+      function selectSubjectWizardQuestion(sectionId, idx) {
+        ensureSchema();
+        var sec = getSection(sectionId);
+        var gId = activeGroupIds[sectionId] || "g1";
+        var group = sec.groups.find(function(g) { return g.group_id === gId; });
+        if (!group) return;
+        
+        // Auto-save currently edited question in the active group's question slot before switching
+        if (editingQuestion[sectionId]) {
+          var currentVal = collectBaseQuestion(sectionId, false);
+          var activeIdx = editingQuestion[sectionId].index;
+          if (activeIdx >= 0 && activeIdx < group.questions.length) {
+            currentVal.question_no = group.questions[activeIdx].question_no; // preserve number
+            group.questions[activeIdx] = currentVal;
+            saveDraft();
+          }
+        }
+        
+        // Load target question
+        var targetQ = clone(group.questions[idx]);
+        editingQuestion[sectionId] = { index: idx, question: targetQ };
+        
+        renderQuestionForm(sectionId);
+        renderSubjectWizardNav(sectionId);
+        updatePreview(sectionId);
+        
+        var form = $("#" + sectionId + "-question-form");
+        if (form) form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      window.selectSubjectWizardQuestion = selectSubjectWizardQuestion;
 
       function updatePreview(sectionId) {
         var bodyEl = $("#" + sectionId + "-preview-body");
