@@ -74,6 +74,48 @@
       background: #fff;
       padding: 18px 12px;
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-scrollable {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 0;
+    }
+
+    .sidebar-bottom {
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Toggle button in topbar */
+    .btn-topbar-toggle {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .btn-topbar-toggle:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+    .btn-topbar-toggle svg {
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .teacher-shell.sidebar-collapsed .btn-topbar-toggle svg {
+      transform: rotate(180deg);
     }
 
     .brand {
@@ -84,10 +126,11 @@
       padding-bottom: 16px;
       margin-bottom: 16px;
       padding-left: 8px;
+      flex-shrink: 0;
     }
 
     .brand img { width: auto; max-width: 120px; max-height: 38px; }
-    .brand span { margin-left: auto; color: var(--brand); font-size: 10px; font-weight: 800; text-transform: uppercase; margin-right: 8px; }
+    .brand span { color: var(--brand); font-size: 10px; font-weight: 800; text-transform: uppercase; }
 
     .nav-label {
       margin: 18px 0 8px;
@@ -137,6 +180,107 @@
       border-color: var(--brand);
       background: var(--brand);
       color: #fff;
+    }
+
+    /* ── EDITOR STEP NAV ── */
+    .editor-step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 4px 0 12px;
+    }
+
+    .editor-step {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .editor-step:hover {
+      background: #f8fafc;
+      color: var(--brand);
+    }
+
+    .editor-step.active {
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .editor-step.active .step-icon-wrap {
+      background: var(--brand);
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(193,18,31,0.15);
+    }
+
+    .editor-step.active .step-icon-wrap svg {
+      stroke: #fff;
+    }
+
+    .editor-step.active .step-num {
+      color: var(--brand);
+    }
+
+    .step-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: #f1f5f9;
+      border: 1.5px solid #e2e8f0;
+      transition: all 0.18s ease;
+    }
+
+    .step-icon-wrap svg {
+      width: 17px;
+      height: 17px;
+      stroke: #64748b;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.18s ease;
+    }
+
+    .editor-step:hover .step-icon-wrap {
+      background: var(--brand-soft);
+      border-color: var(--brand);
+    }
+
+    .editor-step:hover .step-icon-wrap svg {
+      stroke: var(--brand);
+    }
+
+    .step-label { flex: 1; }
+
+    .step-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 0.03em;
+      transition: color 0.18s ease;
+    }
+
+    .step-connector {
+      width: 2px;
+      height: 10px;
+      background: linear-gradient(to bottom, #e2e8f0, #cbd5e1);
+      border-radius: 2px;
+      margin: 0 0 0 27px;
     }
 
     /* ── SIDEBAR NESTED ACCORDION STYLES ── */
@@ -749,6 +893,113 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block !important; }
 
+    /* Sidebar collapse styles */
+    .teacher-shell {
+      transition: grid-template-columns 0.3s ease;
+    }
+    .teacher-shell.sidebar-collapsed {
+      grid-template-columns: 64px minmax(0, 1fr) !important;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar {
+      padding: 14px 6px !important;
+    }
+
+    /* Brand area collapsed */
+    .teacher-shell.sidebar-collapsed .brand {
+      justify-content: center !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    /* In collapsed: hide logo image and Giáo viên text, show TMA text */
+    .teacher-shell.sidebar-collapsed .brand-logo,
+    .teacher-shell.sidebar-collapsed .brand-text {
+      display: none !important;
+    }
+    .brand-collapsed-logo {
+      display: none;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--brand);
+      letter-spacing: 0.04em;
+      text-align: center;
+      line-height: 1;
+    }
+    .teacher-shell.sidebar-collapsed .brand-collapsed-logo {
+      display: block !important;
+    }
+
+    /* Hide all text labels and section labels */
+    .teacher-shell.sidebar-collapsed .nav-label,
+    .teacher-shell.sidebar-collapsed .group-title,
+    .teacher-shell.sidebar-collapsed .group-arrow,
+    .teacher-shell.sidebar-collapsed .submenu-wrapper,
+    .teacher-shell.sidebar-collapsed .hero-note,
+    .teacher-shell.sidebar-collapsed #sidebar-editor-nav .btn-outline,
+    .teacher-shell.sidebar-collapsed .step-label,
+    .teacher-shell.sidebar-collapsed .step-num,
+    .teacher-shell.sidebar-collapsed .step-connector {
+      display: none !important;
+    }
+    /* Old nav-button collapsed (dashboard nav) */
+    .teacher-shell.sidebar-collapsed .nav-button span:not(.nav-number) {
+      display: none !important;
+    }
+    .teacher-shell.sidebar-collapsed .nav-button {
+      justify-content: center !important;
+      padding: 0 !important;
+      min-height: 40px !important;
+    }
+    .teacher-shell.sidebar-collapsed .nav-number {
+      margin: 0 !important;
+      font-size: 11px !important;
+    }
+    .teacher-shell.sidebar-collapsed .menu-icon {
+      margin: 0 !important;
+    }
+    .teacher-shell.sidebar-collapsed .group-header {
+      justify-content: center !important;
+      padding: 8px 0 !important;
+    }
+    .teacher-shell.sidebar-collapsed .menu-group {
+      border: none !important;
+    }
+    /* Editor step nav collapsed: only icons centered */
+    .teacher-shell.sidebar-collapsed .editor-step {
+      justify-content: center !important;
+      padding: 6px 0 !important;
+      gap: 0 !important;
+    }
+    .teacher-shell.sidebar-collapsed .step-icon-wrap {
+      width: 38px !important;
+      height: 38px !important;
+    }
+    .teacher-shell.sidebar-collapsed .editor-step-list {
+      gap: 2px !important;
+    }
+    /* Sidebar bottom button collapsed */
+    .teacher-shell.sidebar-collapsed .sidebar-bottom {
+      padding: 8px 0 0;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar-bottom .btn {
+      padding: 8px 0 !important;
+      font-size: 0 !important;
+      justify-content: center !important;
+      gap: 0 !important;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar-bottom .btn svg {
+      flex-shrink: 0;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar-bottom .btn-back-text {
+      display: none;
+    }
+
+    /* Editor nav flex layout when shown */
+    #sidebar-editor-nav {
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
     @media (max-width: 1080px) {
       .teacher-shell { grid-template-columns: 1fr; }
       .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
@@ -779,12 +1030,13 @@
   <div class="teacher-shell">
     <aside class="sidebar">
       <div class="brand">
-        <img src="assets/logo1.png" alt="TMA TSA">
-        <span style="font-size: 10px; font-weight: 800; color: var(--brand);">Giáo viên</span>
+        <img src="assets/logo1.png" alt="TMA TSA" class="brand-logo">
+        <span class="brand-text" style="font-size: 10px; font-weight: 800; color: var(--brand); text-transform: uppercase;">Giáo viên</span>
+        <span class="brand-collapsed-logo">TMA</span>
       </div>
 
-      <!-- Navigation for System Dashboard -->
-      <div id="sidebar-normal-nav" class="tsa-menu">
+      <!-- Navigation for System Dashboard (Visible by default) -->
+      <div id="sidebar-normal-nav" class="tsa-menu sidebar-scrollable">
         <div class="nav-label">Quản trị hệ thống</div>
 
         <!-- ACCORDION 1: Phòng luyện -->
@@ -970,20 +1222,88 @@
 
       <!-- Navigation for Exam Editor (Visible when editing) -->
       <div id="sidebar-editor-nav" style="display: none;">
-        <button class="btn btn-outline btn-full btn-sm" style="margin-bottom: 16px; font-weight: 800;" onclick="exitEditingMode()">
-          ← Quay lại danh sách
-        </button>
-        <div class="nav-label">Luồng soạn đề</div>
-        <button class="nav-button active" type="button" data-editor-tab-target="setup"><span class="nav-number">01</span><span>Tạo đề</span></button>
-        <button class="nav-button" type="button" data-editor-tab-target="math"><span class="nav-number">02</span><span>Toán</span></button>
-        <button class="nav-button" type="button" data-editor-tab-target="reading"><span class="nav-number">03</span><span>Đọc hiểu</span></button>
-        <button class="nav-button" type="button" data-editor-tab-target="science"><span class="nav-number">04</span><span>Khoa học</span></button>
-        <button class="nav-button" type="button" data-editor-tab-target="import"><span class="nav-number">05</span><span>Import LaTeX</span></button>
-        <button class="nav-button" type="button" data-editor-tab-target="export"><span class="nav-number">06</span><span>Lưu & Xuất đề</span></button>
-        
-        <div class="nav-label">Thông tin soạn thảo</div>
+        <div class="sidebar-scrollable">
+          <div class="nav-label">Luồng soạn đề</div>
+
+        <div class="editor-step-list">
+
+          <!-- 01 Tạo đề -->
+          <button class="editor-step active" type="button" data-editor-tab-target="setup">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/><line x1="8" y1="16" x2="11" y2="16"/></svg>
+            </span>
+            <span class="step-label">Tạo đề</span>
+            <span class="step-num">01</span>
+          </button>
+
+          <div class="step-connector"></div>
+
+          <!-- 02 Toán -->
+          <button class="editor-step" type="button" data-editor-tab-target="math">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="15" y1="9" x2="15" y2="15"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+            </span>
+            <span class="step-label">Toán</span>
+            <span class="step-num">02</span>
+          </button>
+
+          <div class="step-connector"></div>
+
+          <!-- 03 Đọc hiểu -->
+          <button class="editor-step" type="button" data-editor-tab-target="reading">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </span>
+            <span class="step-label">Đọc hiểu</span>
+            <span class="step-num">03</span>
+          </button>
+
+          <div class="step-connector"></div>
+
+          <!-- 04 Khoa học -->
+          <button class="editor-step" type="button" data-editor-tab-target="science">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+            </span>
+            <span class="step-label">Khoa học</span>
+            <span class="step-num">04</span>
+          </button>
+
+          <div class="step-connector"></div>
+
+          <!-- 05 Import LaTeX -->
+          <button class="editor-step" type="button" data-editor-tab-target="import">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            </span>
+            <span class="step-label">Import LaTeX</span>
+            <span class="step-num">05</span>
+          </button>
+
+          <div class="step-connector"></div>
+
+          <!-- 06 Lưu & Xuất đề -->
+          <button class="editor-step" type="button" data-editor-tab-target="export">
+            <span class="step-icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </span>
+            <span class="step-label">Lưu &amp; Xuất đề</span>
+            <span class="step-num">06</span>
+          </button>
+
+        </div>
+
+        <div class="nav-label" style="margin-top: 4px;">Thông tin soạn thảo</div>
         <div class="hero-note" style="font-size: 11px; padding: 12px; margin-top: 8px;">
           Bạn đang chỉnh sửa đề dạng tĩnh. Hãy lưu nháp hoặc xuất JSON để cập nhật vào dự án.
+        </div>
+        </div><!-- end sidebar-scrollable for editor nav -->
+
+        <div class="sidebar-bottom" id="editor-back-btn-slot">
+          <button class="btn btn-outline btn-full" style="font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 12px; border-radius: 10px;" onclick="exitEditingMode()">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span class="btn-back-text">Quay lại danh sách</span>
+          </button>
         </div>
       </div>
     </aside>
@@ -994,7 +1314,16 @@
         <!-- 1. TAB: PHÒNG LUYỆN -->
         <div id="tab-practice" class="tab-panel active">
           <div class="topbar">
-            <div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line>
+                  <line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
               <h1 id="practice-room-title">Phòng luyện đề: Đánh giá tư duy - TSA</h1>
             </div>
           </div>
@@ -1010,7 +1339,16 @@
         <!-- 2. TAB: THI THỬ -->
         <div id="tab-exams" class="tab-panel">
           <div class="topbar">
-            <div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line>
+                  <line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
               <h1 id="exam-tab-title">Bài thi Đánh giá tư duy - TSA</h1>
             </div>
           </div>
@@ -1023,7 +1361,14 @@
         <!-- 3. TAB: PHÊ DUYỆT HỌC SINH -->
         <div id="tab-approve-students" class="tab-panel">
           <div class="topbar">
-            <div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
               <h1>Phê duyệt đăng ký học sinh</h1>
             </div>
           </div>
@@ -1053,7 +1398,14 @@
         <!-- 4. TAB: QUẢN LÝ HỌC SINH -->
         <div id="tab-manage-students" class="tab-panel">
           <div class="topbar">
-            <div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
               <h1>Quản lý danh sách học sinh</h1>
             </div>
           </div>
@@ -1084,9 +1436,18 @@
         <!-- 5. TAB: QUẢN LÝ TÀI LIỆU -->
         <div id="tab-manage-documents" class="tab-panel">
           <div class="topbar" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <h1>Quản lý Kho tài liệu ôn tập</h1>
-              <p style="margin: 6px 0 0; color: var(--muted);">Nhập link Google Drive của các đề thi và sách để hiển thị cho học sinh.</p>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
+              <div>
+                <h1>Quản lý Kho tài liệu ôn tập</h1>
+                <p style="margin: 6px 0 0; color: var(--muted);">Nhập link Google Drive của các đề thi và sách để hiển thị cho học sinh.</p>
+              </div>
             </div>
             <div style="display: flex; gap: 8px;">
               <button class="btn btn-primary" type="button" id="save-documents-btn" onclick="saveDocumentsToSupabase()">
@@ -1110,9 +1471,20 @@
 
       <div id="editor-container" style="display: none;">
         <header class="topbar">
-          <div>
-            <h1 id="page-title">Bộ soạn đề TSA</h1>
-            <p style="margin:6px 0 0;color:var(--muted);" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+                <line x1="13" y1="10" x2="21" y2="10"></line>
+                <line x1="13" y1="14" x2="21" y2="14"></line>
+                <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+              </svg>
+            </button>
+            <div>
+              <h1 id="page-title">Bộ soạn đề TSA</h1>
+              <p style="margin:6px 0 0;color:var(--muted);" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
+            </div>
           </div>
           <div style="display: flex; align-items: center; gap: 16px;">
             <button class="btn btn-primary" type="button" onclick="previewInStudentRoom()" style="background-color: #1769d8; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: #fff; border: none; cursor: pointer;">Xem giao diện HS</button>
@@ -1166,46 +1538,36 @@
 
         <section class="tab-panel" id="tab-math">
           <article class="card">
-            <div class="card-header">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <h2>Toán</h2>
                 <p>Nhập tối đa 40 câu Toán. Mỗi câu có thể chọn một trong 6 mẫu câu hỏi.</p>
               </div>
-              <button class="btn btn-outline" type="button" data-reset-question="math">Thêm câu Toán</button>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('math')" style="margin:0; padding:6px 12px; font-size:12px; font-weight:700;">Xóa tất cả câu hỏi</button>
+              </div>
             </div>
             <div class="card-body">
-              <div class="editor-layout">
+              <!-- Wizard Navigation Grid -->
+              <div class="math-wizard-wrapper" style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <span style="font-weight: 700; color: var(--text); font-size: 14px;">Chọn câu hỏi để soạn:</span>
+                  <span id="math-wizard-progress" style="font-size: 13px; font-weight: 700; color: var(--brand);">Tiến độ: 0/40 câu đã soạn</span>
+                </div>
+                <div id="math-wizard-grid" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px;">
+                  <!-- Generated dynamically -->
+                </div>
+              </div>
+
+              <div class="editor-layout" style="grid-template-columns: 1fr;">
                 <div>
                   <form id="math-question-form" onsubmit="return false;"></form>
-                  <div class="btn-row">
-                    <button class="btn btn-outline" type="button" data-preview-question="math">Cập nhật preview</button>
-                    <button class="btn btn-primary" type="button" data-save-question="math">Thêm vào đề</button>
+                  <div class="btn-row" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px;">
+                    <button class="btn btn-outline" type="button" onclick="navigateMathWizard(-1)" id="math-wizard-prev" style="flex: 1; padding: 10px 16px; font-weight: 700;">← Câu trước</button>
+                    <button class="btn btn-outline" type="button" onclick="saveMathWizardQuestion(false)" id="math-wizard-save-only" style="flex: 1; padding: 10px 16px; font-weight: 700;">Lưu câu này</button>
+                    <button class="btn btn-primary" type="button" onclick="saveMathWizardQuestion(true)" id="math-wizard-save-next" style="flex: 2; padding: 10px 16px; background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff;">Lưu &amp; Câu tiếp →</button>
                   </div>
                 </div>
-                <div>
-                  <div class="eyebrow">Preview học sinh</div>
-                  <div class="preview-card">
-                    <div id="math-preview-body"></div>
-                    <form id="math-preview-answer" onsubmit="return false;"></form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-          <article class="card" style="margin-top:18px;">
-            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <h3>Danh sách câu Toán</h3>
-                <p id="math-count-label">0/40 câu</p>
-              </div>
-              <button class="btn btn-danger btn-small" type="button" onclick="clearAllQuestions('math')" style="margin:0; padding:6px 12px; font-size:12px; font-weight:700;">Xóa tất cả câu hỏi</button>
-            </div>
-            <div class="card-body">
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>Câu</th><th>Nội dung</th><th>Mẫu</th><th>Hành động</th></tr></thead>
-                  <tbody id="math-question-list"></tbody>
-                </table>
               </div>
             </div>
           </article>
@@ -1233,17 +1595,7 @@
                 <div class="eyebrow">Cột phải: câu hỏi của ngữ liệu</div>
                 <form id="reading-question-form" onsubmit="return false;"></form>
                 <div class="btn-row">
-                  <button class="btn btn-outline" type="button" data-preview-question="reading">Cập nhật preview</button>
                   <button class="btn btn-primary" type="button" data-save-question="reading">Thêm vào ngữ liệu</button>
-                </div>
-                <div class="preview-card" style="margin-top:16px;">
-                  <div class="preview-split">
-                    <div id="reading-preview-stimulus"></div>
-                    <div>
-                      <div id="reading-preview-body"></div>
-                      <form id="reading-preview-answer" onsubmit="return false;"></form>
-                    </div>
-                  </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
                   <span style="font-weight:600; font-size:14px; color:#475569;">Câu hỏi đi kèm:</span>
@@ -1282,17 +1634,7 @@
                 <div class="eyebrow">Cột phải: câu hỏi của dữ liệu</div>
                 <form id="science-question-form" onsubmit="return false;"></form>
                 <div class="btn-row">
-                  <button class="btn btn-outline" type="button" data-preview-question="science">Cập nhật preview</button>
                   <button class="btn btn-primary" type="button" data-save-question="science">Thêm vào dữ liệu</button>
-                </div>
-                <div class="preview-card" style="margin-top:16px;">
-                  <div class="preview-split">
-                    <div id="science-preview-stimulus"></div>
-                    <div>
-                      <div id="science-preview-body"></div>
-                      <form id="science-preview-answer" onsubmit="return false;"></form>
-                    </div>
-                  </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
                   <span style="font-weight:600; font-size:14px; color:#475569;">Câu hỏi đi kèm:</span>
@@ -2110,6 +2452,7 @@
       var activeEditorTab = "setup";
       var activeGroupIds = { reading: "", science: "" };
       var editingQuestion = { math: null, reading: null, science: null };
+      var activeMathQuestionNo = 1;
       var importedQuestions = [];
       var exam = createEmptyExam("TSA001", "Đề TSA số 01", 45, "published");
 
@@ -2207,6 +2550,11 @@
           return (Number(a.question_no) || 0) - (Number(b.question_no) || 0);
         });
 
+        // Normalize: always make question_no match the 1-based array position
+        for (var i = 0; i < mathSec.questions.length; i++) {
+          mathSec.questions[i].question_no = i + 1;
+        }
+
         ["reading", "science"].forEach(function (id) {
           if (!Array.isArray(getSection(id).groups)) getSection(id).groups = [];
         });
@@ -2303,7 +2651,7 @@
       function switchEditorTab(tab) {
         activeEditorTab = tab;
         // Update navigation UI
-        document.querySelectorAll("#sidebar-editor-nav .nav-button").forEach(function (button) {
+        document.querySelectorAll("#sidebar-editor-nav .editor-step, #sidebar-editor-nav .nav-button").forEach(function (button) {
           button.classList.toggle("active", button.getAttribute("data-editor-tab-target") === tab);
         });
         
@@ -2356,7 +2704,17 @@
       }
 
       function getQuestionDraft(sectionId) {
-        if (!editingQuestion[sectionId]) editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
+        if (sectionId === "math") {
+          ensureSchema();
+          if (!editingQuestion["math"] || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
+            var mathQs = getSection("math").questions;
+            var q = clone(mathQs[activeMathQuestionNo - 1]);
+            q.question_no = activeMathQuestionNo; // always align displayed number with slot
+            editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: q };
+          }
+        } else {
+          if (!editingQuestion[sectionId]) editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
+        }
         return editingQuestion[sectionId].question;
       }
 
@@ -2687,6 +3045,123 @@
         renderAll();
       }
 
+      function renderMathWizardNav() {
+        var grid = $("#math-wizard-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        
+        ensureSchema();
+        var mathSec = getSection("math");
+        var questions = mathSec.questions || [];
+        
+        var editedCount = 0;
+        for (var i = 1; i <= 40; i++) {
+          var q = questions.find(function(item) { return (Number(item.question_no) || 0) === i; });
+          var isFilled = false;
+          if (q) {
+            var qText = (q.question || "").trim();
+            var defaultPlaceholder = "Nội dung câu hỏi " + i + " chưa được nhập.";
+            if (qText !== "" && qText !== defaultPlaceholder) {
+              isFilled = true;
+            }
+          }
+          if (isFilled) {
+            editedCount++;
+          }
+          
+          var isActive = i === activeMathQuestionNo;
+          
+          var styleStr = "display: flex; align-items: center; justify-content: center; height: 38px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;";
+          if (isActive) {
+            styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
+          } else if (isFilled) {
+            styleStr += " background: var(--brand-soft); border: 1.5px solid var(--brand); color: var(--brand-dark);";
+          } else {
+            styleStr += " background: #fff; border: 1.5px solid var(--line); color: var(--muted);";
+          }
+          
+          var btnHtml = '<button type="button" style="' + styleStr + '" onclick="selectMathWizardQuestion(' + i + ')">' + i + '</button>';
+          grid.innerHTML += btnHtml;
+        }
+        
+        var progressEl = $("#math-wizard-progress");
+        if (progressEl) {
+          progressEl.textContent = "Tiến độ: " + editedCount + "/40 câu đã soạn";
+        }
+        
+        var prevBtn = $("#math-wizard-prev");
+        var nextBtn = $("#math-wizard-save-next");
+        if (prevBtn) {
+          prevBtn.disabled = (activeMathQuestionNo === 1);
+        }
+        if (nextBtn) {
+          if (activeMathQuestionNo === 40) {
+            nextBtn.textContent = "Lưu câu cuối cùng";
+          } else {
+            nextBtn.textContent = "Lưu & Câu tiếp →";
+          }
+        }
+      }
+      window.renderMathWizardNav = renderMathWizardNav;
+
+      function selectMathWizardQuestion(qNo) {
+        if (qNo < 1 || qNo > 40) return;
+        
+        // Auto-save current draft before switching
+        if (editingQuestion["math"]) {
+          var currentVal = collectBaseQuestion("math", false);
+          currentVal.question_no = activeMathQuestionNo; // always keep question_no correct
+          ensureSchema();
+          var mathSec2 = getSection("math");
+          mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+          saveDraft();
+        }
+        
+        activeMathQuestionNo = qNo;
+        ensureSchema();
+        var mathSec = getSection("math");
+        // Load by array slot (ensureSchema ensures 40 items), then force question_no to match slot
+        var targetQ = clone(mathSec.questions[activeMathQuestionNo - 1]);
+        targetQ.question_no = activeMathQuestionNo; // always correct the displayed number
+        
+        editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: targetQ };
+        renderQuestionForm("math");
+        renderMathWizardNav();
+        
+        var form = $("#math-question-form");
+        if (form) form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      window.selectMathWizardQuestion = selectMathWizardQuestion;
+
+      function navigateMathWizard(dir) {
+        var targetQNo = activeMathQuestionNo + dir;
+        if (targetQNo >= 1 && targetQNo <= 40) {
+          selectMathWizardQuestion(targetQNo);
+        }
+      }
+      window.navigateMathWizard = navigateMathWizard;
+
+      function saveMathWizardQuestion(goToNext) {
+        ensureSchema();
+        var base = collectBaseQuestion("math", true);
+        base.question_no = activeMathQuestionNo; // always keep question_no aligned with slot
+        var targetSection = getSection("math");
+        
+        targetSection.questions[activeMathQuestionNo - 1] = base;
+        
+        saveDraft();
+        renderMathWizardNav();
+        
+        if (goToNext && activeMathQuestionNo < 40) {
+          selectMathWizardQuestion(activeMathQuestionNo + 1);
+        } else {
+          editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: clone(base) };
+          renderQuestionForm("math");
+          window.alert("Đã lưu câu hỏi " + activeMathQuestionNo + " thành công!");
+        }
+      }
+      window.saveMathWizardQuestion = saveMathWizardQuestion;
+
       function editQuestion(sectionId, index) {
         ensureSchema();
         var targetSection = getSection(sectionId);
@@ -2718,6 +3193,8 @@
         var targetSection = getSection(sectionId);
         if (sectionId === "math") {
           targetSection.questions = [];
+          activeMathQuestionNo = 1;
+          editingQuestion["math"] = null;
         } else {
           var group = getActiveGroup(sectionId);
           if (group) {
@@ -2819,9 +3296,17 @@
         renderSummary();
         ["math", "reading", "science"].forEach(function (sectionId) {
           if (activeEditorTab === sectionId) {
-            renderQuestionForm(sectionId);
-            renderQuestionList(sectionId);
-            if (sectionId !== "math") {
+            if (sectionId === "math") {
+              ensureSchema();
+              if (!editingQuestion["math"] || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
+                var mathQs = getSection("math").questions;
+                editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: clone(mathQs[activeMathQuestionNo - 1]) };
+              }
+              renderQuestionForm("math");
+              renderMathWizardNav();
+            } else {
+              renderQuestionForm(sectionId);
+              renderQuestionList(sectionId);
               renderGroupList(sectionId);
               renderActiveGroupDetails(sectionId);
             }
@@ -3519,6 +4004,16 @@
       }
       window.previewInStudentRoom = previewInStudentRoom;
 
+      function toggleSidebar() {
+        var shell = document.querySelector(".teacher-shell");
+        if (shell) {
+          shell.classList.toggle("sidebar-collapsed");
+          var isCollapsed = shell.classList.contains("sidebar-collapsed");
+          localStorage.setItem("tma_teacher_sidebar_collapsed", isCollapsed ? "true" : "false");
+        }
+      }
+      window.toggleSidebar = toggleSidebar;
+
       function toggleTeacherChoiceSelection(el, key, isMulti) {
         var input = el.querySelector('input[name="choice-correct"]');
         if (!input) return;
@@ -3575,7 +4070,7 @@
         document.getElementById("sidebar-normal-nav").style.display = "none";
 
         document.getElementById("editor-container").style.display = "block";
-        document.getElementById("sidebar-editor-nav").style.display = "block";
+        document.getElementById("sidebar-editor-nav").style.display = "flex";
 
         $("#editor-subtitle").textContent = `Đang chỉnh sửa: ${title} (${cleanCode})`;
         syncMetadataToForm();
@@ -3700,6 +4195,11 @@
       }
 
       function init() {
+        var isCollapsed = localStorage.getItem("tma_teacher_sidebar_collapsed") === "true";
+        if (isCollapsed) {
+          var shell = document.querySelector(".teacher-shell");
+          if (shell) shell.classList.add("sidebar-collapsed");
+        }
         var lastCode = localStorage.getItem("tma_tsa_teacher_last_exam_code") || "TSA001";
         var draft = loadDraft(lastCode);
         if (draft) exam = draft;

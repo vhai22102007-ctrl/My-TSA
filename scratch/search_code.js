@@ -1,17 +1,22 @@
 const fs = require('fs');
 
-function searchFile(filename, pattern) {
-    console.log(`=== Searching in ${filename} for "${pattern}" ===`);
-    const content = fs.readFileSync(filename, 'utf8');
-    const lines = content.split('\n');
-    let count = 0;
-    lines.forEach((line, idx) => {
-        if (line.toLowerCase().includes(pattern.toLowerCase())) {
-            count++;
-            console.log(`${idx + 1}: ${line.trim()}`);
-        }
-    });
-    console.log(`Found ${count} matches.\n`);
+const filePath = "c:\\Users\\vhai2\\OneDrive\\Desktop\\MY TSA\\teacher.html";
+if (!fs.existsSync(filePath)) {
+  console.log("File not found");
+  process.exit(1);
 }
 
-searchFile('select.html', 'exam_history_data');
+const content = fs.readFileSync(filePath, 'utf8');
+const lines = content.split('\n');
+
+const searchTerms = ["Danh sách câu", "luong-soan-de", "tab-math", "renderMath", "Toán", "0/40"];
+
+for (let i = 0; i < lines.length; i++) {
+  const line = lines[i];
+  for (const term of searchTerms) {
+    if (line.toLowerCase().includes(term.toLowerCase())) {
+      console.log(`Line ${i + 1} (${term}): ${line.trim().slice(0, 150)}`);
+      break;
+    }
+  }
+}

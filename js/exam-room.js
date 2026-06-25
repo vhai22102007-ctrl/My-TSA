@@ -372,9 +372,19 @@
     if (!section) return normalized;
 
     if (subj === "math") {
-      normalized.questions = (section.questions || []).map((question, index) => ({
+      // Filter out blank/placeholder questions (questions with no real content)
+      const allMathQs = (section.questions || []);
+      const filledQs = allMathQs.filter((q) => {
+        const text = (q.question || "").trim();
+        if (!text) return false;
+        // Reject default placeholder text like "Nội dung câu hỏi X chưa được nhập."
+        if (/^N\u1ed9i dung c\u00e2u h\u1ecfi\s+\d+\s+ch\u01b0a \u0111\u01b0\u1ee3c nh\u1eadp/i.test(text)) return false;
+        return true;
+      });
+      // Re-index sequentially from 1 so grid always starts at 1
+      normalized.questions = filledQs.map((question, index) => ({
         ...question,
-        question_no: Number(question.question_no) || index + 1
+        question_no: index + 1
       }));
       return normalized;
     }
