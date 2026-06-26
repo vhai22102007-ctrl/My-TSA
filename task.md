@@ -1,0 +1,18 @@
+- [x] Create attempt selector dropdown element next to title in `select.html`
+- [x] Create certificate image modal container, close button, and backdrop in `select.html`
+- [x] Configure keydown Escape and click triggers to close the certificate modal
+- [x] Update `showExamResultModal` to dynamically fetch attempts from database or local cache in chronological order
+- [x] Populate the attempts selector dropdown and update scores/breakdowns in real-time on change
+- [x] Bind certificate modal display triggers to "XEM CHỨNG CHỈ" button for completed attempts
+- [x] Validate JavaScript syntax on the modified `select.html` with Node.js
+- [x] Center and expand the full title 'Thời Khóa Biểu Cá Nhân' (no abbreviation/emojis/badges)
+- [x] Shrink grid cells (labels, empty cells, and cards) to a compact 85px height
+- [x] Retain card container vertical flex-stretch to fill bottom container space cleanly
+- [x] Replace empty course text alert box under "My courses" tab with core.png image
+- [x] Scale up core.png image width to 720px in select.html
+- [x] Remove the white background card container of the courses tab (set background: transparent)
+- [x] Remove the red gradient stripe line (.featured-rule-line) from CSS and HTML
+- [x] Convert timetable rows to a full 24-hour timeline (00:00 to 23:00) with compact cell heights
+- [x] Clean up and completely remove the obsolete Sáng/Chiều/Tối shift rows leftover remnants
+- [x] Update timetable container overflow to auto for vertical and horizontal scrolling
+- [x] Validate script compilation and update project walkthrough documentation
