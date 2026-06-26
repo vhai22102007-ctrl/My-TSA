@@ -1,12 +1,12 @@
 const fs = require('fs');
-const content = fs.readFileSync('select.html', 'utf8');
-const lines = content.split('\n');
+const path = require('path');
 
-console.log("=== Body and Html styles ===");
-lines.forEach((line, index) => {
-  if (index < 1000) {
-    if (line.includes('body') || line.includes('html')) {
-      console.log(`${index+1}: ${line.trim()}`);
-    }
-  }
-});
+const targetDir = 'assets/questions/tsa001';
+
+if (fs.existsSync(targetDir)) {
+  console.log(`=== Files in ${targetDir} ===`);
+  const files = fs.readdirSync(targetDir);
+  files.forEach(f => console.log(f));
+} else {
+  console.log(`Directory not found: ${targetDir}`);
+}

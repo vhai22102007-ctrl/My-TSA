@@ -70,6 +70,8 @@
       top: 0;
       height: 100vh;
       overflow-y: auto;
+
+
       border-right: 1px solid var(--line);
       background: #fff;
       padding: 18px 12px;
@@ -277,6 +279,47 @@
       color: var(--brand);
     }
     .reading-tab-btn.active::after, .science-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1.5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--brand);
+      border-radius: 99px;
+    }
+
+    /* Style for Question Type tabs */
+    .q-type-tabs-nav {
+      display: flex;
+      gap: 20px;
+      border-bottom: 1.5px solid var(--line);
+      margin-bottom: 16px;
+      padding-left: 4px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .q-type-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .q-type-tab-btn:hover {
+      color: var(--brand);
+    }
+    .q-type-tab-btn.active {
+      color: var(--brand);
+    }
+    .q-type-tab-btn.active::after {
       content: "";
       position: absolute;
       bottom: -1.5px;
@@ -1023,18 +1066,18 @@
     }
     #math-question-form .form-grid, #reading-question-form .form-grid, #science-question-form .form-grid,
     #reading-group-form .form-grid, #science-group-form .form-grid {
-      gap: 12px 14px !important;
+      gap: 18px 20px !important;
     }
     #math-question-form .field, #reading-question-form .field, #science-question-form .field,
     #reading-group-form .field, #science-group-form .field {
-      gap: 6px !important;
+      gap: 8px !important;
     }
     #math-question-form label, #reading-question-form label, #science-question-form label,
     #reading-group-form label, #science-group-form label {
       font-size: 12.5px !important;
       font-weight: 750 !important;
       color: #374151 !important;
-      margin-bottom: 2px !important;
+      margin-bottom: 6px !important;
     }
     #math-question-form .input, #reading-question-form .input, #science-question-form .input,
     #math-question-form .select, #reading-question-form .select, #science-question-form .select,
@@ -1069,8 +1112,8 @@
     #math-question-form .choices-container, #reading-question-form .choices-container, #science-question-form .choices-container {
       display: grid !important;
       grid-template-columns: repeat(2, 1fr) !important;
-      gap: 10px 14px !important;
-      margin-top: 6px !important;
+      gap: 14px 20px !important;
+      margin-top: 10px !important;
     }
     /* Clean choice item style matching student side */
     #math-question-form .choice-item, #reading-question-form .choice-item, #science-question-form .choice-item {
@@ -1312,13 +1355,14 @@
     }
     .math-split-layout {
       display: grid;
-      grid-template-columns: 1fr 270px;
+      grid-template-columns: 1fr 365px;
       gap: 20px;
       align-items: stretch;
     }
     @media (max-width: 1080px) {
       .math-split-layout {
         grid-template-columns: 1fr;
+      }
     }
     #tab-reading .passage-layout > div:first-child {
       border-right: 1px solid var(--line);
@@ -1376,19 +1420,62 @@
       fill: none !important;
       display: block !important;
     }
+
+    /* Editor Role switcher tabs (Giáo viên vs Giao diện học sinh) */
+    .editor-role-tabs-nav {
+      display: flex;
+      gap: 20px;
+      border-bottom: 1.5px solid var(--line);
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+    .editor-role-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      font-size: 13.5px;
+      font-weight: 750;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .editor-role-tab-btn:hover {
+      color: var(--brand);
+    }
+    .editor-role-tab-btn.active {
+      color: var(--brand);
+    }
+    .editor-role-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1.5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--brand);
+      border-radius: 99px;
+    }
+    
+    /* Topbar Group Tabs overrides */
+    #topbar-group-tabs-container .reading-tabs-nav,
+    #topbar-group-tabs-container .science-tabs-nav {
+      margin-bottom: 12px !important;
+      padding-left: 8px !important;
+      gap: 20px !important;
+    }
   </style>
-  <script>
-    window.MathJax = {
-      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
-      svg: { fontCache: 'global' },
-      startup: { typeset: false }
-    };
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+
+
   <script defer src="js/question-renderers.js"></script>
 </head>
 <body>
   <div class="teacher-shell">
+
     <aside class="sidebar">
       <div class="brand">
         <img src="assets/logo1.png" alt="TMA TSA" class="brand-logo">
@@ -1611,16 +1698,6 @@
  
           <div class="step-connector"></div>
  
-          <!-- 05 Import LaTeX -->
-          <button class="editor-step" type="button" data-editor-tab-target="import">
-            <span class="step-icon-wrap">
-              <svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
-            </span>
-            <span class="step-label">Import LaTeX</span>
-          </button>
- 
-          <div class="step-connector"></div>
- 
           <!-- 06 Lưu & Xuất đề -->
           <button class="editor-step" type="button" data-editor-tab-target="export">
             <span class="step-icon-wrap">
@@ -1808,27 +1885,44 @@
       </div>
 
       <div id="editor-container" style="display: none;">
-        <header class="topbar">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-                <line x1="13" y1="10" x2="21" y2="10"></line>
-                <line x1="13" y1="14" x2="21" y2="14"></line>
-                <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
-              </svg>
-            </button>
-            <div>
-              <h1 id="page-title">Bộ soạn đề TSA</h1>
-              <p style="margin:6px 0 0;color:var(--muted);" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
+        <header class="topbar" style="display: flex; flex-direction: column; align-items: stretch; gap: 8px;">
+          <!-- Top Row: Toggle + Controls on left, Autosave status on right -->
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line>
+                  <line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
+              <div id="topbar-title-wrapper">
+                <h1 id="page-title">Bộ soạn đề TSA</h1>
+                <p style="margin:6px 0 0;color:var(--muted);" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
+              </div>
+              <div id="topbar-editor-controls" style="display: none; align-items: center; gap: 16px; margin-left: 12px;">
+                <div class="question-number-circle" id="topbar-qno-circle">1</div>
+                <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding-left: 0; display: flex; gap: 16px; flex-wrap: wrap;">
+                  <button type="button" class="editor-role-tab-btn active" id="global-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Giáo viên
+                  </button>
+                  <button type="button" class="editor-role-tab-btn" id="global-role-tab-student" onclick="setGlobalEditorRoleView('student')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Giao diện học sinh
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="autosave" id="autosave-status">Chưa lưu nháp</div>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <button class="btn btn-primary" type="button" id="header-preview-btn" onclick="previewInStudentRoom()" style="background-color: #1769d8; padding: 8px 16px; border-radius: 6px; font-weight: bold; color: #fff; border: none; cursor: pointer;">Xem giao diện học sinh</button>
-            <div class="autosave" id="autosave-status">Chưa lưu nháp</div>
-          </div>
+          
+          <!-- Bottom Row: Group Tabs (Reading/Science) -->
+          <div id="topbar-group-tabs-container" style="display: none; width: 100%; margin-top: 4px;"></div>
         </header>
+
 
         <section class="summary-grid" id="summary-grid"></section>
 
@@ -1887,18 +1981,19 @@
                 <span style="font-weight: 700; color: var(--text); font-size: 13px;">Câu hỏi:</span>
                 <span id="math-wizard-progress" style="font-size: 11.5px; font-weight: 700; color: var(--brand);">Tiến độ: 0/40 câu</span>
               </div>
-              <div id="math-wizard-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 14px;">
+              <div id="math-wizard-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-bottom: 14px;">
                 <!-- Generated dynamically -->
               </div>
               
               <div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
                 <div style="display: flex; gap: 8px;">
                   <button class="btn btn-outline" type="button" onclick="navigateMathWizard(-1)" id="math-wizard-prev" style="flex: 1; font-weight: 700;">← Câu trước</button>
-                  <button class="btn btn-outline" type="button" onclick="saveMathWizardQuestion(false)" id="math-wizard-save-only" style="flex: 1; font-weight: 700;">Lưu câu này</button>
+                  <button class="btn btn-outline" type="button" onclick="navigateMathWizard(1)" id="math-wizard-next" style="flex: 1; font-weight: 700;">Câu tiếp →</button>
                 </div>
+                <button class="btn btn-outline" type="button" onclick="saveMathWizardQuestion(false)" id="math-wizard-save-only" style="width: 100%; font-weight: 700;">Lưu câu này</button>
                 <button class="btn btn-primary" type="button" onclick="saveMathWizardQuestion(true)" id="math-wizard-save-next" style="width: 100%; background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff;">Lưu &amp; Câu tiếp →</button>
-                <button class="btn" type="button" onclick="previewInStudentRoom()" style="width: 100%; background-color: #1769d8; border-color: #1769d8; font-weight: 700; color: #fff; margin-top: 4px;">Xem giao diện học sinh</button>
               </div>
+
             </div>
           </div>
         </section>
@@ -1941,7 +2036,7 @@
               <div>
                 <div class="eyebrow">Cột phải: câu hỏi của ngữ liệu</div>
                 <form id="reading-question-form" onsubmit="return false;"></form>
-                <div class="btn-row">
+                <div class="btn-row" id="reading-editor-save-btn-row">
                   <button class="btn btn-primary" type="button" data-save-question="reading">Lưu câu hỏi</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; display: none;">
@@ -2021,7 +2116,7 @@
               <div>
                 <div class="eyebrow">Cột phải: câu hỏi của dữ liệu</div>
                 <form id="science-question-form" onsubmit="return false;"></form>
-                <div class="btn-row">
+                <div class="btn-row" id="science-editor-save-btn-row">
                   <button class="btn btn-primary" type="button" data-save-question="science">Lưu câu hỏi</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; display: none;">
@@ -2034,53 +2129,6 @@
                     <tbody id="science-question-list"></tbody>
                   </table>
                 </div>
-              </div>
-            </div>
-          </article>
-        </section>
-
-        <section class="tab-panel" id="tab-import">
-          <article class="card">
-            <div class="card-header">
-              <div>
-                <h2>Import LaTeX từ Overleaf</h2>
-                <p>Dán main.tex, parser sẽ đọc \cau, \choicefour, \dotline và các comment %WEB.</p>
-              </div>
-            </div>
-            <div class="card-body editor-layout">
-              <div>
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="import-section">Đưa câu vào phần</label>
-                    <select class="select" id="import-section">
-                      <option value="math">Toán</option>
-                      <option value="reading">Đọc hiểu</option>
-                      <option value="science">Khoa học</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label for="import-group">Nhóm ngữ liệu nếu có</label>
-                    <select class="select" id="import-group"></select>
-                  </div>
-                  <div class="field full">
-                    <label for="latex-input">main.tex</label>
-                    <textarea class="textarea" id="latex-input" style="min-height:360px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;" placeholder="%WEB:type=single_choice&#10;%WEB:answer=B&#10;\cau[1] Tính \(I=\int_0^1 x^2\,dx\).&#10;\choicefour{\(\frac12\)}{\(\frac13\)}{\(\frac14\)}{\(1\)}"></textarea>
-                  </div>
-                </div>
-                <div class="btn-row">
-                  <button class="btn btn-outline" type="button" id="parse-latex-button">Đọc LaTeX</button>
-                  <button class="btn btn-primary" type="button" id="add-imported-button">Thêm câu đã đọc vào đề</button>
-                </div>
-              </div>
-              <div>
-                <div class="eyebrow">Kết quả đọc</div>
-                <div class="table-wrap">
-                  <table>
-                    <thead><tr><th>#</th><th>Nội dung</th><th>Mẫu</th><th>Đáp án</th></tr></thead>
-                    <tbody id="latex-result-list"></tbody>
-                  </table>
-                </div>
-                <p>Parser giữ nguyên LaTeX trong nội dung, không xử lý TikZ. Hình vẽ nên xuất thành ảnh và khai báo bằng <code>%WEB:image=assets/questions/TSA001/cau-01.webp</code>.</p>
               </div>
             </div>
           </article>
@@ -2863,6 +2911,75 @@
         return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + ":" + String(d.getSeconds()).padStart(2, "0");
       }
 
+      var FORMULA_CONTENT_PATTERN = new RegExp([
+        "\\\\\\(", "\\\\\\[", "\\\\d?frac", "\\\\sqrt", "\\\\lim", "\\\\sin", "\\\\cos", "\\\\tan",
+        "\\\\text", "\\\\mathbb", "\\\\left", "\\\\right", "\\\\begin", "\\\\end",
+        "\\^\\{", "_\\{", "\\bsqrt\\s*\\{", "\\bRightarrow\\b", "\\bLeftrightarrow\\b"
+      ].join("|"));
+
+      function hasFormulaContent(value) {
+        if (value == null) return false;
+        if (typeof value === "string") return FORMULA_CONTENT_PATTERN.test(value);
+        if (Array.isArray(value)) return value.some(hasFormulaContent);
+        if (typeof value === "object") {
+          return Object.keys(value).some(function (key) { return hasFormulaContent(value[key]); });
+        }
+        return false;
+      }
+
+      function stripFormulaQuestions(targetExam) {
+        var changed = false;
+        if (!targetExam) return false;
+
+        if (Array.isArray(targetExam.questions)) {
+          var keptRootQuestions = targetExam.questions.filter(function (question) { return !hasFormulaContent(question); });
+          if (keptRootQuestions.length !== targetExam.questions.length) changed = true;
+          targetExam.questions = keptRootQuestions;
+        }
+
+        if (!Array.isArray(targetExam.sections)) return changed;
+
+        targetExam.sections.forEach(function (section) {
+          if (Array.isArray(section.questions)) {
+            var kept = section.questions.filter(function (question) { return !hasFormulaContent(question); });
+            if (kept.length !== section.questions.length) changed = true;
+            section.questions = kept;
+          }
+
+          if (Array.isArray(section.groups)) {
+            section.groups.forEach(function (group) {
+              if (hasFormulaContent(group.stimulus)) {
+                group.stimulus = { type: "text", content: "", image_url: "", image_width: 100 };
+                changed = true;
+              }
+              if (Array.isArray(group.questions)) {
+                var keptGroupQuestions = group.questions.filter(function (question) { return !hasFormulaContent(question); });
+                if (keptGroupQuestions.length !== group.questions.length) changed = true;
+                group.questions = keptGroupQuestions;
+              }
+            });
+          }
+        });
+
+        return changed;
+      }
+
+      function stripStoredFormulaQuestions() {
+        try {
+          var keys = [];
+          for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+          keys.forEach(function (key) {
+            if (!/^tma_tsa_(teacher_draft|exam)_/.test(key)) return;
+            try {
+              var storedExam = JSON.parse(localStorage.getItem(key));
+              if (stripFormulaQuestions(storedExam)) {
+                localStorage.setItem(key, JSON.stringify(storedExam));
+              }
+            } catch (error) {}
+          });
+        } catch (error) {}
+      }
+
       function createEmptyExam(code, title, duration, status) {
         return {
           exam_code: normalizeCode(code),
@@ -2976,13 +3093,16 @@
           if (!g1) {
             g1 = {
               group_id: "g1",
-              title: "Ngữ liệu Đọc hiểu số 01",
-              stimulus: { type: "text", content: "Nhập nội dung ngữ liệu 1 ở đây...", image_url: "", image_width: 100 },
+              title: "",
+              stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
               questions: []
             };
             readingSec.groups.push(g1);
           }
           if (!Array.isArray(g1.questions)) g1.questions = [];
+          // Strip legacy demo placeholder text if still present
+          if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
+          if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
           while (g1.questions.length < 10) {
             var nextNo = g1.questions.length + 1;
             g1.questions.push({
@@ -3012,13 +3132,16 @@
           if (!g2) {
             g2 = {
               group_id: "g2",
-              title: "Ngữ liệu Đọc hiểu số 02",
-              stimulus: { type: "text", content: "Nhập nội dung ngữ liệu 2 ở đây...", image_url: "", image_width: 100 },
+              title: "",
+              stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
               questions: []
             };
             readingSec.groups.push(g2);
           }
           if (!Array.isArray(g2.questions)) g2.questions = [];
+          // Strip legacy demo placeholder text if still present
+          if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
+          if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
           while (g2.questions.length < 10) {
             var nextNo = g2.questions.length + 11; // 11 to 20
             g2.questions.push({
@@ -3070,13 +3193,16 @@
             if (!group) {
               group = {
                 group_id: gId,
-                title: "Ngữ liệu Khoa học số 0" + gIdx,
-                stimulus: { type: "text", content: "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...", image_url: "", image_width: 100 },
+                title: "",
+                stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
                 questions: []
               };
               scienceSec.groups.push(group);
             }
             if (!Array.isArray(group.questions)) group.questions = [];
+            // Strip legacy demo placeholder text if still present
+            if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
+            if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
             
             var startNo = (gIdx - 1) * 5 + 1;
             while (group.questions.length < 5) {
@@ -3128,6 +3254,7 @@
 
       function saveDraft() {
         syncMetadataFromForm(false);
+        stripFormulaQuestions(exam);
         ensureSchema();
         try {
           localStorage.setItem(draftKey(), JSON.stringify(exam));
@@ -3206,7 +3333,53 @@
         }
       }
 
+      function moveGroupTabsToTopbar(tab) {
+        var container = document.getElementById("topbar-group-tabs-container");
+        if (!container) return;
+        container.innerHTML = "";
+        if (tab === "reading") {
+          var nav = document.querySelector("#tab-reading .reading-tabs-nav") || document.querySelector(".reading-tabs-nav");
+          if (nav) {
+            container.appendChild(nav);
+            container.style.display = "block";
+          } else {
+            container.style.display = "none";
+          }
+        } else if (tab === "science") {
+          var nav = document.querySelector("#tab-science .science-tabs-nav") || document.querySelector(".science-tabs-nav");
+          if (nav) {
+            container.appendChild(nav);
+            container.style.display = "block";
+          } else {
+            container.style.display = "none";
+          }
+        } else {
+          container.style.display = "none";
+        }
+      }
+
+      function restoreGroupTabsToPanels() {
+        var container = document.getElementById("topbar-group-tabs-container");
+        if (container) container.style.display = "none";
+
+        var readingNav = document.querySelector("#topbar-group-tabs-container .reading-tabs-nav");
+        if (readingNav) {
+          var readingPanel = document.getElementById("tab-reading");
+          if (readingPanel) {
+            readingPanel.insertBefore(readingNav, readingPanel.firstChild);
+          }
+        }
+        var scienceNav = document.querySelector("#topbar-group-tabs-container .science-tabs-nav");
+        if (scienceNav) {
+          var sciencePanel = document.getElementById("tab-science");
+          if (sciencePanel) {
+            sciencePanel.insertBefore(scienceNav, sciencePanel.firstChild);
+          }
+        }
+      }
+
       function switchEditorTab(tab) {
+        restoreGroupTabsToPanels();
         activeEditorTab = tab;
         // Update navigation UI
         document.querySelectorAll("#sidebar-editor-nav .editor-step, #sidebar-editor-nav .nav-button").forEach(function (button) {
@@ -3223,28 +3396,31 @@
           math: "Soạn phần Toán",
           reading: "Soạn phần Đọc hiểu",
           science: "Soạn phần Khoa học",
-          import: "Import LaTeX",
           export: "Lưu và xuất đề"
         };
         $("#page-title").textContent = titles[tab] || "Bộ soạn đề TSA";
 
         // Hide/show topbar title/subtitle, autosave, and summary grid on math, reading, science tabs
         var isSubjectTab = (tab === "math" || tab === "reading" || tab === "science");
-        var titleWrapper = document.querySelector("#editor-container .topbar > div > div");
+        var titleWrapper = document.getElementById("topbar-title-wrapper");
+        var editorControls = document.getElementById("topbar-editor-controls");
         var autosaveStatus = document.getElementById("autosave-status");
         var summaryGrid = document.getElementById("summary-grid");
         var topbar = document.querySelector("#editor-container .topbar");
 
         if (isSubjectTab) {
           if (titleWrapper) titleWrapper.style.display = "none";
+          if (editorControls) editorControls.style.display = "flex";
           if (autosaveStatus) autosaveStatus.style.display = "none";
           if (summaryGrid) summaryGrid.style.display = "none";
           if (topbar) {
-            topbar.style.marginBottom = "0px";
+            topbar.style.marginBottom = (tab === "math") ? "12px" : "0px";
             topbar.style.paddingBottom = "0px";
           }
+          updateTopbarQNo();
         } else {
           if (titleWrapper) titleWrapper.style.display = "block";
+          if (editorControls) editorControls.style.display = "none";
           if (autosaveStatus) autosaveStatus.style.display = "block";
           if (summaryGrid) summaryGrid.style.display = "grid";
           if (topbar) {
@@ -3263,6 +3439,7 @@
         }
 
         renderAll();
+        moveGroupTabsToTopbar(tab);
       }
 
       // Expose to window for clicks
@@ -3326,9 +3503,29 @@
         updatePreview(sectionId);
       }
 
-      function typeOptions(selected) {
+      function switchQuestionType(sectionId, type) {
+        var current = collectBaseQuestion(sectionId, false);
+        current.question_type = type;
+        applyTypeDefaults(current);
+        editingQuestion[sectionId].question = current;
+        renderQuestionForm(sectionId);
+        updatePreview(sectionId);
+      }
+      window.switchQuestionType = switchQuestionType;
+
+      function typeTabsHtml(sectionId, selected) {
+        var icons = {
+          single_choice: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>',
+          multiple_choice: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+          true_false: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>',
+          fill_blank: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m14 4 4 4"/><path d="M21.5 2.5a2.12 2.12 0 0 1 0 3l-12 12-4 1-1-4 12-12a2.12 2.12 0 0 1 3 0Z"/><path d="M3 22h18"/></svg>',
+          drag_drop: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="1"/><circle cx="19" cy="9" r="1"/><circle cx="5" cy="9" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="19" cy="15" r="1"/><circle cx="5" cy="15" r="1"/></svg>'
+        };
+
         return QUESTION_TYPES.map(function (item) {
-          return '<option value="' + item[0] + '"' + (selected === item[0] ? " selected" : "") + ">" + item[1] + "</option>";
+          var isActive = selected === item[0];
+          var icon = icons[item[0]] || "";
+          return '<button type="button" class="q-type-tab-btn' + (isActive ? ' active' : '') + '" data-value="' + item[0] + '" onclick="switchQuestionType(\'' + sectionId + '\', \'' + item[0] + '\')">' + icon + '<span>' + item[1] + '</span></button>';
         }).join("");
       }
 
@@ -3336,24 +3533,58 @@
         var q = getQuestionDraft(sectionId);
         var form = $("#" + sectionId + "-question-form");
         if (!form) return;
+        updateTopbarQNo();
         form.innerHTML =
-          '<div class="form-grid" style="grid-template-columns: 50px 1fr; gap: 10px; align-items: center; margin-bottom: 8px;">' +
-          '<div style="display: flex; justify-content: center; align-items: center;">' +
-            '<div class="question-number-circle">' + attr(q.question_no || 1) + '</div>' +
+          '<div class="form-grid" style="grid-template-columns: 1fr; gap: 10px; align-items: center; margin-bottom: 8px;">' +
             '<input type="hidden" id="' + sectionId + '-q-no" value="' + attr(q.question_no || 1) + '">' +
-          '</div>' +
-          '<div>' +
-            '<select class="select" id="' + sectionId + '-q-type" style="width: 100%; height: 36px !important; min-height: 36px !important; font-size: 13.5px !important; border-radius: 8px !important;">' + typeOptions(q.question_type) + '</select>' +
-          '</div>' +
-          '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Có thể nhập LaTeX dạng \\( \\frac{1}{2} \\)">' + esc(q.question || "") + '</textarea></div>' +
-          '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
-            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
-            '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh: <span id="' + sectionId + '-q-image-width-val">' + (q.image_width || 100) + '</span>%</label>' +
-              '<input type="range" class="slider" id="' + sectionId + '-q-image-width" min="10" max="100" value="' + (q.image_width || 100) + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
+            '<input type="hidden" id="' + sectionId + '-q-type" value="' + attr(q.question_type) + '">' +
+
+            // Editor View Wrapper
+            '<div id="' + sectionId + '-editor-view" style="width: 100%; display: flex; flex-direction: column; gap: 20px;">' +
+              // Row 2: Question Type tabs
+              '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
+                typeTabsHtml(sectionId, q.question_type) +
+              '</div>' +
+              // Inputs
+              '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Nhập nội dung câu hỏi">' + esc(q.question || "") + '</textarea></div>' +
+              '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
+                '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh nếu có</label><input class="input" id="' + sectionId + '-q-image" value="' + attr(q.image_url || "") + '" placeholder="assets/questions/' + attr(exam.exam_code) + '/cau-01.webp"></div>' +
+                '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh: <span id="' + sectionId + '-q-image-width-val">' + (q.image_width || 100) + '</span>%</label>' +
+                  '<input type="range" class="slider" id="' + sectionId + '-q-image-width" min="10" max="100" value="' + (q.image_width || 100) + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
+                '</div>' +
+              '</div>' +
+              '<div class="field full" id="' + sectionId + '-type-fields" style="width: 100%;"></div>' +
+              '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || "") + '</textarea></div>' +
             '</div>' +
-          '</div>' +
-          '<div class="field full" id="' + sectionId + '-type-fields"></div>' +
-          '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || "") + '</textarea></div>' +
+
+            // Preview View Wrapper
+            '<div id="' + sectionId + '-preview-view" style="display: none; width: 100%;">' +
+              (sectionId === "math"
+                ? ('<div style="display: flex; flex-direction: column; gap: 16px; width: 100%;">' +
+                    '<div class="question-card" style="width: 100%; box-sizing: border-box;">' +
+                      '<div class="question-layout-row" style="width: 100%;">' +
+                        '<div class="question-number-circle" id="' + sectionId + '-preview-qno-circle">' + attr(q.question_no || 1) + '</div>' +
+                        '<div class="question-text-content" style="flex: 1; min-width: 0;">' +
+                          '<div class="question-body" id="' + sectionId + '-preview-body" style="width: 100%; word-break: break-word;"></div>' +
+                          '<div class="answer-area" id="' + sectionId + '-preview-answer" style="width: 100%;"></div>' +
+                        '</div>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>')
+                : ('<div style="display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr); gap: 0; width: 100%; min-height: 480px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff;">' +
+                    '<div id="' + sectionId + '-preview-stimulus" style="overflow-y: auto; padding: 20px 24px; border-right: 1.5px solid var(--line); background: #f8fafc; line-height: 1.85;"></div>' +
+                    '<div style="overflow-y: auto; padding: 20px 24px;">' +
+                      '<div class="question-layout-row" style="width: 100%; align-items: flex-start;">' +
+                        '<div class="question-number-circle" id="' + sectionId + '-preview-qno-circle">' + attr(q.question_no || 1) + '</div>' +
+                        '<div class="question-text-content" style="flex: 1; min-width: 0;">' +
+                          '<div class="question-body" id="' + sectionId + '-preview-body" style="width: 100%; word-break: break-word;"></div>' +
+                          '<div class="answer-area" id="' + sectionId + '-preview-answer" style="width: 100%;"></div>' +
+                        '</div>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>')
+              ) +
+            '</div>' +
           '</div>';
         renderTypeFields(sectionId, q);
         
@@ -3365,14 +3596,6 @@
           });
         }
 
-        $("#" + sectionId + "-q-type").addEventListener("change", function () {
-          var current = collectBaseQuestion(sectionId, false);
-          current.question_type = this.value;
-          applyTypeDefaults(current);
-          editingQuestion[sectionId].question = current;
-          renderQuestionForm(sectionId);
-          updatePreview(sectionId);
-        });
         $all("#" + sectionId + "-question-form input, #" + sectionId + "-question-form textarea, #" + sectionId + "-question-form select").forEach(function (input) {
           input.addEventListener("input", function () { updatePreview(sectionId); });
           input.addEventListener("change", function () { updatePreview(sectionId); });
@@ -3485,7 +3708,7 @@
             '<input type="radio" name="tf-correct-' + id + '" value="F"' + (isFalse ? " checked" : "") + ' style="display:none;">' +
             '</div>' +
             '<div class="statement-cell-btn">' +
-            '<button type="button" class="btn btn-danger" style="margin: 0; padding: 4px 8px; font-size: 11px; font-weight: 700; min-height: 24px; height: 24px; border-radius: 6px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;" onclick="removeTfStatement(\'' + sectionId + '\', \'' + id + '\')">Xóa</button>' +
+             '<button type="button" style="background: none; border: none; color: #b91c1c; font-weight: 700; font-size: 13.5px; cursor: pointer; padding: 0; margin: 0; display: inline-flex; align-items: center; justify-content: center;" onclick="removeTfStatement(\'' + sectionId + '\', \'' + id + '\')">Xóa</button>' +
             '</div>' +
             '</div>';
         });
@@ -3706,7 +3929,7 @@
           
           var isActive = i === activeMathQuestionNo;
           
-          var styleStr = "display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
+          var styleStr = "display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
           if (isFilled) {
             styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
           } else {
@@ -3727,8 +3950,12 @@
         
         var prevBtn = $("#math-wizard-prev");
         var nextBtn = $("#math-wizard-save-next");
+        var navNextBtn = $("#math-wizard-next");
         if (prevBtn) {
           prevBtn.disabled = (activeMathQuestionNo === 1);
+        }
+        if (navNextBtn) {
+          navNextBtn.disabled = (activeMathQuestionNo === 40);
         }
         if (nextBtn) {
           if (activeMathQuestionNo === 40) {
@@ -3763,6 +3990,7 @@
         editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: targetQ };
         renderQuestionForm("math");
         renderMathWizardNav();
+        setEditorRoleView("math", "teacher");
         
         var form = $("#math-question-form");
         if (form) form.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -3807,6 +4035,7 @@
 
         editingQuestion[sectionId] = { index: index, question: q };
         renderQuestionForm(sectionId);
+        setEditorRoleView(sectionId, "teacher");
         updatePreview(sectionId);
         
         var form = $("#" + sectionId + "-question-form");
@@ -3875,10 +4104,10 @@
         var newId = "group_" + Date.now();
         var groupObj = {
           group_id: newId,
-          title: "Chủ đề ngữ liệu mới",
+          title: "",
           stimulus: {
             type: "text",
-            content: "Nhập nội dung văn bản/ngữ liệu hoặc kịch bản ở đây...",
+            content: "",
             image_url: ""
           },
           questions: []
@@ -3956,9 +4185,6 @@
             updatePreview(sectionId);
           }
         });
-        if (activeEditorTab === "import") {
-          renderImportGroups();
-        }
       }
 
       function renderImportGroups() {
@@ -4067,7 +4293,7 @@
           var count = (g.questions || []).length;
           var activeClass = g.group_id === activeId ? " active" : "";
           return '<div class="mini-item' + activeClass + '">' +
-            '<h4>' + esc(g.title) + '</h4>' +
+            '<h4>' + esc(g.title || "Chưa có tiêu đề") + '</h4>' +
             '<p>' + count + ' câu hỏi đi kèm</p>' +
             '<div class="btn-row" style="margin-top:8px;">' +
             '<button class="btn btn-small btn-outline" data-select-group="' + sectionId + '" data-group-id="' + g.group_id + '">Chọn</button>' +
@@ -4097,9 +4323,9 @@
               '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
               '</h3>' +
-              '<div class="form-grid" style="gap: 12px 14px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + numberLabel + '</label><textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+              '<div class="form-grid" style="gap: 18px 20px;">' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Đọc hiểu số 0' + numberLabel + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + numberLabel + '</label><textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung đoạn văn / ngữ liệu ' + numberLabel + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
                 '<div class="btn-row" style="margin-top: 8px;">' +
                   '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
                 '</div>' +
@@ -4146,9 +4372,9 @@
               '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + gIdx + ' (' + rangeLabel + ')' +
               '</h3>' +
-              '<div class="form-grid" style="gap: 12px 14px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu ' + gIdx + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + gIdx + '</label><textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+              '<div class="form-grid" style="gap: 18px 20px;">' +
+                '<div class="field full"><label>Tiêu đề ngữ liệu ' + gIdx + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Khoa học số 0' + gIdx + '"></div>' +
+                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + gIdx + '</label><textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung dữ liệu khoa học ' + gIdx + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
                 '<div class="field full" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0;">' +
                   '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh ngữ liệu ' + gIdx + ': <span id="science-' + gId + '-image-width-val" style="font-weight:700; color:var(--brand);">' + groupImgWidth + '</span>%</label>' +
                     '<input type="range" class="slider" id="science-' + gId + '-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
@@ -4294,6 +4520,83 @@
       }
       window.switchScienceGroupTab = switchScienceGroupTab;
 
+
+      function getActiveQuestionNo(sectionId) {
+        if (sectionId === "math") {
+          return activeMathQuestionNo;
+        }
+        var gId = activeGroupIds[sectionId] || "g1";
+        var gIdx = Number(gId.replace("g", "")) || 1;
+        var startNo = (sectionId === "reading") ? (gId === "g1" ? 1 : 11) : ((gIdx - 1) * 5 + 1);
+        var activeIdx = (editingQuestion[sectionId] && editingQuestion[sectionId].index !== undefined) ? editingQuestion[sectionId].index : 0;
+        if (activeIdx === -1) activeIdx = 0;
+        return startNo + activeIdx;
+      }
+      window.getActiveQuestionNo = getActiveQuestionNo;
+
+      function updateTopbarQNo() {
+        var qNoCircle = document.getElementById("topbar-qno-circle");
+        if (qNoCircle && activeEditorTab) {
+          qNoCircle.textContent = getActiveQuestionNo(activeEditorTab);
+        }
+      }
+      window.updateTopbarQNo = updateTopbarQNo;
+
+      function setGlobalEditorRoleView(role) {
+        if (activeEditorTab) {
+          setEditorRoleView(activeEditorTab, role);
+        }
+      }
+      window.setGlobalEditorRoleView = setGlobalEditorRoleView;
+
+
+      function setEditorRoleView(sectionId, role) {
+        var editorView = document.getElementById(sectionId + "-editor-view");
+        var previewView = document.getElementById(sectionId + "-preview-view");
+        var btnTeacher = document.getElementById("global-role-tab-teacher");
+        var btnStudent = document.getElementById("global-role-tab-student");
+        var saveRow = document.getElementById(sectionId + "-editor-save-btn-row");
+
+        if (role === "student") {
+          // Save the current question inputs to state before rendering preview
+          var currentVal = collectBaseQuestion(sectionId, false);
+          if (sectionId === "math") {
+            currentVal.question_no = activeMathQuestionNo;
+            ensureSchema();
+            getSection("math").questions[activeMathQuestionNo - 1] = currentVal;
+          } else {
+            var idx = editingQuestion[sectionId].index;
+            var group = getActiveGroup(sectionId);
+            if (group) {
+              if (idx === -1) {
+                editingQuestion[sectionId].question = currentVal;
+              } else {
+                group.questions[idx] = currentVal;
+                editingQuestion[sectionId].question = currentVal;
+              }
+            }
+          }
+
+          if (editorView) editorView.style.display = "none";
+          if (previewView) previewView.style.display = "block";
+          if (btnTeacher) btnTeacher.classList.remove("active");
+          if (btnStudent) btnStudent.classList.add("active");
+          if (saveRow) saveRow.style.display = "none";
+
+          updatePreview(sectionId);
+        } else {
+          if (editorView) editorView.style.display = "block";
+          if (previewView) previewView.style.display = "none";
+          if (btnTeacher) btnTeacher.classList.add("active");
+          if (btnStudent) btnStudent.classList.remove("active");
+          if (saveRow) saveRow.style.display = "";
+        }
+      }
+      window.setEditorRoleView = setEditorRoleView;
+
+
+
+
       function updateScienceTabsUI() {
         var activeId = activeGroupIds["science"] || "g1";
         for (var i = 1; i <= 8; i++) {
@@ -4371,7 +4674,7 @@
           
           var isActive = i === activeIdx;
           
-          var styleStr = "display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
+          var styleStr = "display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
           if (isFilled) {
             styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
           } else {
@@ -4416,6 +4719,7 @@
         
         renderQuestionForm(sectionId);
         renderSubjectWizardNav(sectionId);
+        setEditorRoleView(sectionId, "teacher");
         updatePreview(sectionId);
         
         var form = $("#" + sectionId + "-question-form");
@@ -4433,11 +4737,20 @@
         if (ansEl) ansEl.innerHTML = "";
         if (stimEl) stimEl.innerHTML = "";
 
+        var qNo = getActiveQuestionNo(sectionId);
+        var qnoCircle = document.getElementById(sectionId + "-preview-qno-circle");
+        if (qnoCircle) {
+          qnoCircle.textContent = qNo;
+        }
+
         var q = collectBaseQuestion(sectionId, false);
         if (sectionId !== "math") {
           var group = getActiveGroup(sectionId);
           if (stimEl && group) {
-            stimEl.innerHTML = '<div class="stimulus-card"><h3>' + esc(group.title) + '</h3><div class="stimulus-content">' + esc(group.stimulus?.content || "") + '</div></div>';
+            var stimTitle = group.title || (sectionId === "reading" ? "Ngữ liệu đọc hiểu" : "Dữ liệu khoa học");
+            stimEl.innerHTML =
+              '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--brand);margin-bottom:10px;opacity:0.8;">' + esc(stimTitle) + '</div>' +
+              '<div class="stimulus-content" style="font-size:14px;line-height:1.85;color:#1e293b;">' + esc(group.stimulus?.content || "") + '</div>';
             if (group.stimulus?.image_url) {
               var gWidth = group.stimulus?.image_width || 100;
               var widthStyle = 'style="width:' + gWidth + '%;max-width:100%;height:auto;"';
@@ -4451,208 +4764,6 @@
         } else {
           bodyEl.textContent = q.question;
         }
-
-        if (window.MathJax && window.MathJax.typesetPromise) {
-          window.MathJax.typesetPromise().catch(function () {});
-        }
-      }
-
-      // Overleaf parser
-      function parseLatex() {
-        var text = ($("#latex-input")?.value || "");
-        var tbody = $("#latex-result-list");
-        if (!tbody) return;
-        tbody.innerHTML = "";
-        importedQuestions = [];
-
-        var regex = /\\cau(?:\[(\d+(?:\.\d+)?)\])?\s*([\s\S]*?)(?=\\cau|$)/g;
-        var match;
-        var count = 1;
-        while ((match = regex.exec(text)) !== null) {
-          var block = match[2].trim();
-          var points = Number(match[1]) || 1;
-
-          var qText = "";
-          var qType = "fill_blank";
-          var correct = "";
-          var image = "";
-          var image_width = 100;
-          var explanation = "";
-          var options = [];
-          var statements = [];
-          var tfAnswers = [];
-          var dragItems = [];
-          var dragCorrect = "";
-
-          var lines = block.split("\n");
-          var cleanLines = [];
-          for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            if (line.indexOf("%WEB:") === 0) {
-              var meta = line.substring(5).split("=");
-              if (meta.length >= 2) {
-                var key = meta[0].trim().toLowerCase();
-                var val = meta.slice(1).join("=").trim();
-                if (key === "type") qType = val;
-                else if (key === "answer") correct = val;
-                else if (key === "image") image = val;
-                else if (key === "width") image_width = Number(val) || 100;
-                else if (key === "explanation") explanation = val;
-                else if (key === "statements") {
-                  statements = val.split("|").map(function(s) { return s.trim(); }).filter(Boolean);
-                }
-                else if (key === "tf_answers") {
-                  tfAnswers = val.split("|").map(function(s) { return s.trim().toUpperCase(); });
-                }
-                else if (key === "items") {
-                  dragItems = val.split("|").map(function(s) { return s.trim(); }).filter(Boolean);
-                }
-                else if (key === "drag_correct") {
-                  dragCorrect = val;
-                }
-              }
-            } else {
-              cleanLines.push(lines[i]);
-            }
-          }
-          var cleanBlock = cleanLines.join("\n").trim();
-          qText = cleanBlock;
-
-          // Check single choice choices
-          var choiceRegex = /\\choicefour\s*\{([\s\S]*?)\}\s*\{([\s\S]*?)\}\s*\{([\s\S]*?)\}\s*\{([\s\S]*?)\}/;
-          var choiceMatch = choiceRegex.exec(cleanBlock);
-          if (choiceMatch) {
-            qType = "single_choice";
-            qText = cleanBlock.replace(choiceRegex, "").trim();
-            options = [
-              { key: "A", text: choiceMatch[1].trim() },
-              { key: "B", text: choiceMatch[2].trim() },
-              { key: "C", text: choiceMatch[3].trim() },
-              { key: "D", text: choiceMatch[4].trim() }
-            ];
-            if (!correct) correct = "A";
-          }
-
-          var imported = {
-            question_no: count++,
-            question_type: qType,
-            question: qText,
-            image_url: image,
-            image_width: image_width,
-            options: options,
-            correct_answer: correct,
-            explanation: explanation,
-            points: points
-          };
-
-          // Post-process special types
-          if (qType === "true_false") {
-            var tfStatements = [];
-            var tfCorrectObj = {};
-            if (statements.length) {
-              statements.forEach(function(stText, idx) {
-                var id = "s" + (idx + 1);
-                tfStatements.push({ id: id, text: stText });
-                var ansChar = tfAnswers[idx] || "T";
-                tfCorrectObj[id] = ansChar === "T" || ansChar === "TRUE" || ansChar === "ĐÚNG" || ansChar === "Đ" || ansChar === "D";
-              });
-            } else {
-              ["a", "b", "c", "d"].forEach(function(id, idx) {
-                tfStatements.push({ id: id, text: "Nhận định " + id.toUpperCase() });
-                var ansChar = tfAnswers[idx] || "T";
-                tfCorrectObj[id] = ansChar === "T" || ansChar === "TRUE" || ansChar === "ĐÚNG" || ansChar === "Đ" || ansChar === "D";
-              });
-            }
-            imported.statements = tfStatements;
-            imported.correct_answer = tfCorrectObj;
-          } 
-          else if (qType === "multiple_choice") {
-            if (typeof correct === "string") {
-              imported.correct_answer = correct.split(/[\|,\s]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean);
-            }
-          }
-          else if (qType === "drag_drop") {
-            var items = dragItems.map(function(text, idx) { return { id: "item" + (idx + 1), text: text }; });
-            imported.items = items;
-            
-            var bodyBlocks = [];
-            var lastIdx = 0;
-            var regexDD = /\[(o\d+)\]/g;
-            var matchDD;
-            while ((matchDD = regexDD.exec(qText)) !== null) {
-              var textBefore = qText.substring(lastIdx, matchDD.index);
-              if (textBefore) bodyBlocks.push({ type: "text", content: textBefore });
-              bodyBlocks.push({ type: "blank", id: matchDD[1] });
-              lastIdx = regexDD.lastIndex;
-            }
-            var textAfter = qText.substring(lastIdx);
-            if (textAfter) bodyBlocks.push({ type: "text", content: textAfter });
-            imported.body = bodyBlocks;
-
-            var dragCorrectObj = {};
-            var finalDragCorrect = dragCorrect || correct;
-            if (typeof finalDragCorrect === "string") {
-              finalDragCorrect.split("|").forEach(function (pair) {
-                var parts = pair.split("=");
-                if (parts.length === 2) {
-                  var blankId = parts[0].trim();
-                  var matchText = parts[1].trim();
-                  var foundItem = items.find(function (it) { return it.text === matchText; });
-                  dragCorrectObj[blankId] = foundItem ? foundItem.id : matchText;
-                }
-              });
-            }
-            imported.correct_answer = dragCorrectObj;
-          }
-
-          applyTypeDefaults(imported);
-          importedQuestions.push(imported);
-        }
-
-        if (importedQuestions.length === 0) {
-          tbody.innerHTML = '<tr><td class="empty" colspan="4">Không tìm thấy câu hỏi \\cau nào.</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = importedQuestions.map(function (q) {
-          return '<tr>' +
-            '<td>' + q.question_no + '</td>' +
-            '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question) + '</td>' +
-            '<td><span class="status type">' + q.question_type + '</span></td>' +
-            '<td style="font-family:monospace;font-weight:700;">' + esc(JSON.stringify(q.correct_answer)) + '</td>' +
-            '</tr>';
-        }).join("");
-      }
-
-      function addImportedQuestions() {
-        if (!importedQuestions.length) {
-          window.alert("Không có câu hỏi nào để thêm. Hãy dán LaTeX và bấm 'Đọc LaTeX' trước.");
-          return;
-        }
-        ensureSchema();
-        var secId = $("#import-section").value;
-        var destList = [];
-        if (secId === "math") {
-          destList = getSection("math").questions;
-        } else {
-          var group = getActiveGroup(secId);
-          if (!group) {
-            window.alert("Vui lòng sang tab " + (secId === "reading" ? "Đọc hiểu" : "Khoa học") + " tạo chủ đề ngữ liệu trước.");
-            return;
-          }
-          destList = group.questions;
-        }
-
-        var startNo = nextQuestionNo(secId);
-        for (var i = 0; i < importedQuestions.length; i++) {
-          var item = clone(importedQuestions[i]);
-          item.question_no = startNo++;
-          destList.push(item);
-        }
-        importedQuestions = [];
-        $("#latex-result-list").innerHTML = '<tr><td class="empty" colspan="4">Đã thêm câu vào đề.</td></tr>';
-        saveDraft();
-        renderAll();
       }
 
       function downloadJson(filename, obj) {
@@ -5019,8 +5130,10 @@
           qNo = activeMathQuestionNo;
           link = "exam-math.html?exam=" + exam.exam_code + "&preview=true&preview_qno=" + qNo;
         }
-        window.open(link, "_blank");
+        openPreviewModal(link);
       }
+
+
       window.previewInStudentRoom = previewInStudentRoom;
 
       function toggleSidebar() {
@@ -5205,15 +5318,10 @@
             });
           });
         }
-        var parseLatBtn = $("#parse-latex-button");
-        if (parseLatBtn) parseLatBtn.addEventListener("click", parseLatex);
-        var addImpBtn = $("#add-imported-button");
-        if (addImpBtn) addImpBtn.addEventListener("click", addImportedQuestions);
-        var impSecSel = $("#import-section");
-        if (impSecSel) impSecSel.addEventListener("change", renderImportGroups);
       }
 
       function init() {
+        stripStoredFormulaQuestions();
         var isCollapsed = localStorage.getItem("tma_teacher_sidebar_collapsed") === "true";
         if (isCollapsed) {
           var shell = document.querySelector(".teacher-shell");
@@ -5222,6 +5330,7 @@
         var lastCode = localStorage.getItem("tma_tsa_teacher_last_exam_code") || "TSA001";
         var draft = loadDraft(lastCode);
         if (draft) exam = draft;
+        stripFormulaQuestions(exam);
         ensureSchema();
         syncMetadataToForm();
         ["math", "reading", "science"].forEach(function (sectionId) {
