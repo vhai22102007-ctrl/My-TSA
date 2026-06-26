@@ -6366,8 +6366,279 @@
     </div>
   </div>
 
+  <!-- EXAM RESULT MODAL -->
+  <div class="tsa-modal-container" id="exam-result-modal" hidden>
+    <div class="tsa-modal-backdrop" id="exam-result-modal-backdrop"></div>
+    <div class="modal" style="position: relative; width: 1000px; height: 529px; background: #ffffff; border-radius: 7px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); z-index: 10; transform: scale(0.75); transform-origin: center;">
+      <style>
+        #exam-result-modal .close {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          width: 17px;
+          height: 17px;
+          padding: 0;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          display: block;
+        }
+
+        #exam-result-modal .close svg {
+          width: 17px;
+          height: 17px;
+          display: block;
+        }
+
+        #exam-result-modal .title-container {
+          position: absolute;
+          top: 37px;
+          left: 33px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          z-index: 10;
+        }
+
+        #exam-result-modal .title {
+          margin: 0;
+          font-size: 26px;
+          line-height: 1;
+          font-weight: 400;
+          color: #333333;
+          letter-spacing: 0.1px;
+          text-transform: none;
+          border: none;
+          padding-bottom: 0;
+        }
+
+        #exam-result-modal .divider {
+          position: absolute;
+          top: 96px;
+          left: 35px;
+          width: 938px;
+          height: 1px;
+          background: #eeeeee;
+        }
+
+        #exam-result-modal .score-card {
+          position: absolute;
+          top: 118px;
+          left: 35px;
+          width: 422px;
+          height: 204px;
+          background: #fcf0f2;
+          border-radius: 10px;
+        }
+
+        #exam-result-modal .score-left {
+          position: absolute;
+          top: 32px;
+          left: 26px;
+          width: 116px;
+          text-align: center;
+        }
+
+        #exam-result-modal .score-label {
+          font-size: 18px;
+          line-height: 22px;
+          font-weight: 700;
+          color: #333333;
+          margin-bottom: 8px;
+        }
+
+        #exam-result-modal .score-number {
+          font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+          font-size: 39px;
+          line-height: 41px;
+          font-weight: 600;
+          letter-spacing: 0.8px;
+          color: #cf1f34;
+          -webkit-font-smoothing: antialiased;
+          text-rendering: geometricPrecision;
+        }
+
+        #exam-result-modal .score-detail {
+          position: absolute;
+          top: 23px;
+          left: 148px;
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 14px;
+          line-height: 1.92;
+          font-weight: 400;
+          color: #333333;
+        }
+
+        #exam-result-modal .score-detail .head {
+          font-weight: 700;
+          color: #222222;
+          margin-bottom: 4px;
+        }
+
+        #exam-result-modal .score-detail .row {
+          font-weight: 400;
+          color: #333333;
+        }
+
+        #exam-result-modal .score-detail .point {
+          font-weight: 600;
+          color: #222222;
+        }
+
+        #exam-result-modal .cert-btn {
+          position: absolute;
+          left: 14px;
+          bottom: 17px;
+          width: 384px;
+          height: 40px;
+          border: none;
+          border-radius: 7px;
+          background: #d61030;
+          color: #ffffff;
+          font-size: 17px;
+          font-weight: 500;
+          letter-spacing: 0.2px;
+          cursor: pointer;
+          font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+        }
+
+        #exam-result-modal .info {
+          position: absolute;
+          top: 119px;
+          left: 504px;
+          width: 462px;
+          font-size: 18px;
+          line-height: 1.44;
+          color: #333333;
+        }
+
+        #exam-result-modal .info-title {
+          margin: 0 0 18px 0;
+          font-size: 19px;
+          line-height: 23px;
+          font-weight: 700;
+          color: #333333;
+          text-transform: none;
+          border: none;
+          padding-bottom: 0;
+          letter-spacing: normal;
+        }
+
+        #exam-result-modal .info p {
+          margin: 0 0 17px 0;
+          font-weight: 400;
+          color: #333333;
+        }
+
+        #exam-result-modal .info a {
+          color: #007cff;
+          text-decoration: none;
+        }
+      </style>
+
+      <button class="close" id="close-result-modal" aria-label="Đóng">
+        <svg viewBox="0 0 17 17" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="8.5" fill="#858585"></circle>
+          <line x1="5.9" y1="5.9" x2="11.1" y2="11.1" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></line>
+          <line x1="11.1" y1="5.9" x2="5.9" y2="11.1" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+      </button>
+
+      <div class="title-container">
+        <h1 class="title" id="result-modal-title">Bài thi TSA 2026 chính thức - Đợt 3</h1>
+        <select id="result-modal-attempt-select" style="display: none; font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 600; padding: 4px 28px 4px 12px; border: 1px solid #d61030; border-radius: 4px; background: #ffffff url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23d61030\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 9l6 6 6-6\"/></svg>') no-repeat right 8px center; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; color: #d61030; outline: none;"></select>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="score-card">
+        <div class="score-left">
+          <div class="score-label" id="result-modal-score-label">Điểm TSA</div>
+          <div class="score-number" id="result-modal-score">61.49</div>
+        </div>
+
+        <div class="score-detail">
+          <div class="head">Số câu đúng:</div>
+          <div class="row"><span id="result-modal-label-1">Tư duy Toán học:</span> <span class="point" id="result-modal-math-count">28</span></div>
+          <div class="row"><span id="result-modal-label-2">Tư duy Đọc hiểu:</span> <span class="point" id="result-modal-reading-count">9</span></div>
+          <div class="row"><span id="result-modal-label-3">Tư duy Khoa học/Giải quyết vấn đề:</span> <span class="point" id="result-modal-science-count">22</span></div>
+        </div>
+
+        <button class="cert-btn" id="result-modal-cert-btn">XEM CHỨNG CHỈ</button>
+      </div>
+
+      <!-- Đã thanh toán thành công 1 bản chứng chỉ được bỏ đi theo yêu cầu -->
+
+      <div class="info">
+        <h2 class="info-title">Thông tin dự thi</h2>
+
+        <p>Hội đồng thi: <strong id="result-modal-council" style="font-weight: 400;">TMA Study</strong></p>
+
+        <p>Thời gian làm thủ tục: <span id="result-modal-prep-time">07:00 16/05/2026</span></p>
+
+        <p>Thời gian vào phòng thi: <span id="result-modal-enter-time">07:45 16/05/2026</span></p>
+
+        <p>Thời gian bắt đầu thi: <span id="result-modal-start-time">08:30 16/05/2026</span></p>
+
+        <p>
+          Phòng thi: <span id="result-modal-room">TMA Study Exam Practice Room</span>
+        </p>
+
+        <p>Số báo danh: <strong id="result-modal-sbd" style="font-weight: 400;">TSA2603-04719</strong></p>
+
+        <p>Giấy báo dự thi: <a href="javascript:void(0)" onclick="const m = document.getElementById('cert-image-modal'); if (m) m.hidden = false;">Xem tại đây</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATE IMAGE MODAL -->
+  <div class="tsa-modal-container" id="cert-image-modal" style="z-index: 200;" hidden>
+    <div class="tsa-modal-backdrop" id="cert-image-modal-backdrop" style="z-index: 155; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"></div>
+    <div class="modal" style="position: relative; width: auto; max-width: 90%; max-height: 90%; background: transparent; border-radius: 8px; overflow: hidden; box-shadow: none; z-index: 160; display: flex; align-items: center; justify-content: center; transform: scale(0.75); transform-origin: center;">
+      <button class="close" id="close-cert-modal" style="position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; background: #adb5bd; cursor: pointer; color: #ffffff; padding: 0;">
+        <svg viewBox="0 0 17 17" style="width: 12px; height: 12px; display: block; margin: auto;"><line x1="2" y1="2" x2="15" y2="15" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line><line x1="15" y1="2" x2="2" y2="15" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line></svg>
+      </button>
+      <img src="assets/chungchi.png" alt="Chứng chỉ" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+    </div>
+  </div>
+
   <script>
     (() => {
+      // Result Modal logic
+      const resultModal = document.getElementById("exam-result-modal");
+      const closeResultBtn = document.getElementById("close-result-modal");
+      const resultBackdrop = document.getElementById("exam-result-modal-backdrop");
+
+      // Cert Modal logic
+      const certModal = document.getElementById("cert-image-modal");
+      const closeCertBtn = document.getElementById("close-cert-modal");
+      const certBackdrop = document.getElementById("cert-image-modal-backdrop");
+
+      window.openResultModal = (data) => {
+        document.getElementById("result-modal-title").innerText = data.title;
+        document.getElementById("result-modal-score").innerText = data.score;
+        document.getElementById("result-modal-math-count").innerText = data.math;
+        document.getElementById("result-modal-reading-count").innerText = data.reading;
+        document.getElementById("result-modal-science-count").innerText = data.science;
+        document.getElementById("result-modal-council").innerText = data.council;
+        document.getElementById("result-modal-prep-time").innerText = data.prep;
+        document.getElementById("result-modal-enter-time").innerText = data.enter;
+        document.getElementById("result-modal-start-time").innerText = data.start;
+        document.getElementById("result-modal-room").innerText = data.room;
+        document.getElementById("result-modal-sbd").innerText = data.sbd;
+        resultModal.hidden = false;
+      };
+
+      [closeResultBtn, resultBackdrop].forEach(el => {
+        if (el) el.addEventListener("click", () => { if (resultModal) resultModal.hidden = true; });
+      });
+
+      if (certModal && closeCertBtn && certBackdrop) {
+        [closeCertBtn, certBackdrop].forEach(el => {
+          el.addEventListener("click", () => certModal.hidden = true);
+        });
+      }
+
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
       window.scrollTo(0, 0);
       window.addEventListener("pageshow", () => window.scrollTo(0, 0));
@@ -8281,14 +8552,14 @@
             if (isUploaded) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                   <button class="btn btn-sm" style="background: #16a34a; border-color: #16a34a; color: #ffffff; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #16a34a; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                   <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
                 </footer>
               `;
@@ -8350,14 +8621,14 @@
           if (isUploaded) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                 <button class="btn btn-sm" style="background: #16a34a; border-color: #16a34a; color: #ffffff; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #16a34a; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
               </footer>
             `;
           } else {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                 <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
               </footer>
             `;
@@ -8449,14 +8720,14 @@
             if (isOpen) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                   <button class="btn btn-sm" style="background:#16a34a;border-color:#16a34a;color:#fff;font-weight:800;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                   <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
                 </footer>
               `;
@@ -8510,14 +8781,14 @@
           if (!exam.uploaded) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <a href="#" onclick="window.showExamResultModal('${exam.id}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                 <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:600;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
               </footer>
             `;
           } else {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="alert('Tính năng xem kết quả chi tiết đang được phát triển.'); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <a href="#" onclick="window.showExamResultModal('${exam.id}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
                 <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${exam.actionUrl}')">${exam.actionText}</button>
               </footer>
             `;
@@ -9012,7 +9283,7 @@
       function normalizeCutoffSearch(value) {
         return String(value || "")
           .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[\\u0300-\\u036f]/g, "")
           .replace(/đ/g, "d")
           .replace(/Đ/g, "D")
           .toUpperCase();
@@ -9164,7 +9435,7 @@
               const examMeta = window.EXAMS_LIST.find(e => e.exam_code === row.exam_code);
               if (examMeta) {
                 examTitle = examMeta.title;
-              }
+              } 
             }
 
             // Category Label & Badge Class
@@ -9183,7 +9454,7 @@
             }
 
             // Time string only (HH:MM:SS)
-            const timeOnly = (function(iso) {
+            const timeOnly = (function(iso) {   
               const d = new Date(iso);
               if (isNaN(d.getTime())) return "";
               const pad = (n) => String(n).padStart(2, '0');
@@ -9324,6 +9595,219 @@
           `;
         }
       }
+
+      // EXAM RESULT MODAL HANDLERS
+      window.showExamResultModal = async function(examCode, examTitle) {
+        const modal = document.getElementById("exam-result-modal");
+        if (!modal) return;
+        
+        // SBD: either student code or mock (TMA + student username)
+        let studentCode = "TMA507905";
+        let studentSbd = "TMA-STUDENT";
+        try {
+          const cached = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cached) {
+            studentCode = cached.code || cached.phone || studentCode;
+            const rawUser = cached.username || cached.email || "STUDENT";
+            const cleanUser = rawUser.split("@")[0].toUpperCase();
+            studentSbd = "TMA-" + cleanUser;
+          }
+        } catch (e) {}
+        
+        const category = getExamCategoryLabel(examCode);
+        document.getElementById("result-modal-council").textContent = "TMA Study";
+        document.getElementById("result-modal-room").textContent = "TMA Study Exam Practice Room";
+        
+        // Fetch attempts for this specific exam code
+        let attempts = [];
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('exam_results')
+              .select('*')
+              .eq('user_email', studentCode)
+              .eq('exam_code', examCode)
+              .order('created_at', { ascending: true }); // chronological order
+            if (!error && data) {
+              attempts = data;
+            }
+          } catch (err) {
+            console.error("Lỗi khi tải lịch sử bài thi:", err);
+          }
+        }
+        
+        // Fallback to local cache if Supabase is empty or failed
+        if (attempts.length === 0) {
+          const historyData = window.EXAM_HISTORY_DATA || [];
+          attempts = historyData
+            .filter(row => row.exam_code === examCode)
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }
+        
+        const selectEl = document.getElementById("result-modal-attempt-select");
+        
+        function displayAttempt(result) {
+          if (result) {
+            const totalQ = result.total_questions || 100;
+            const score100 = ((result.score / totalQ) * 100).toFixed(2);
+            document.getElementById("result-modal-score").textContent = score100;
+            
+            let scoreLabel = "Điểm TSA";
+            if (category === "Bài thi HSA") scoreLabel = "Điểm HSA";
+            else if (category === "Bài thi THPTQG") scoreLabel = "Điểm THPT";
+            else if (category === "Bài thi Luyện tập") scoreLabel = "Điểm thi";
+            document.getElementById("result-modal-score-label").textContent = scoreLabel;
+
+            let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học/Giải quyết vấn đề";
+            let count1 = 0, count2 = 0, count3 = 0;
+            
+            if (category === "Bài thi TSA") {
+              label1 = "Tư duy Toán học";
+              label2 = "Tư duy Đọc hiểu";
+              label3 = "Tư duy Khoa học/Giải quyết vấn đề";
+              count1 = Math.round(result.correct_count * 0.4);
+              count2 = Math.round(result.correct_count * 0.2);
+              count3 = result.correct_count - count1 - count2;
+            } else if (category === "Bài thi HSA") {
+              label1 = "Định lượng (Toán)";
+              label2 = "Định tính (Văn)";
+              label3 = "Khoa học (Lý/Hóa...)";
+              count1 = Math.round(result.correct_count / 3);
+              count2 = Math.round(result.correct_count / 3);
+              count3 = result.correct_count - count1 - count2;
+            } else {
+              label1 = "Phần Toán học";
+              label2 = "Phần Ngữ văn";
+              label3 = "Phần Khoa học";
+              count1 = Math.round(result.correct_count * 0.4);
+              count2 = Math.round(result.correct_count * 0.2);
+              count3 = result.correct_count - count1 - count2;
+            }
+            
+            document.getElementById("result-modal-label-1").textContent = label1 + ":";
+            document.getElementById("result-modal-label-2").textContent = label2 + ":";
+            document.getElementById("result-modal-label-3").textContent = label3 + ":";
+            document.getElementById("result-modal-math-count").textContent = count1;
+            document.getElementById("result-modal-reading-count").textContent = count2;
+            document.getElementById("result-modal-science-count").textContent = count3;
+            
+            const submissionDate = new Date(result.created_at);
+            const pad = (n) => String(n).padStart(2, '0');
+            const dateStr = `${pad(submissionDate.getDate())}/${pad(submissionDate.getMonth() + 1)}/${submissionDate.getFullYear()}`;
+            
+            document.getElementById("result-modal-prep-time").textContent = `07:00 ${dateStr}`;
+            document.getElementById("result-modal-enter-time").textContent = `07:45 ${dateStr}`;
+            document.getElementById("result-modal-start-time").textContent = `08:30 ${dateStr}`;
+            document.getElementById("result-modal-sbd").textContent = studentSbd;
+
+            const certBtn = document.getElementById("result-modal-cert-btn");
+            if (certBtn) {
+              certBtn.onclick = () => {
+                const certModal = document.getElementById("cert-image-modal");
+                if (certModal) {
+                  certModal.hidden = false;
+                }
+              };
+            }
+          } else {
+            showNoScore();
+          }
+        }
+        
+        function showNoScore() {
+          let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học/Giải quyết vấn đề";
+          let count1 = "--", count2 = "--", count3 = "--";
+          let scoreVal = "--";
+          let scoreLabel = "Điểm TSA";
+
+          if (category === "Bài thi HSA") {
+            label1 = "Định lượng (Toán)";
+            label2 = "Định tính (Văn)";
+            label3 = "Khoa học (Lý/Hóa...)";
+            scoreLabel = "Điểm HSA";
+          } else if (category === "Bài thi THPTQG") {
+            label1 = "Toán học";
+            label2 = "Ngữ văn";
+            label3 = "Môn tự chọn";
+            scoreLabel = "Điểm THPT";
+          } else if (category === "Bài thi Luyện tập") {
+            label1 = "Phần Toán học";
+            label2 = "Phần Ngữ văn";
+            label3 = "Phần Khoa học";
+            scoreLabel = "Điểm thi";
+          }
+
+          document.getElementById("result-modal-score-label").textContent = scoreLabel;
+          document.getElementById("result-modal-score").textContent = scoreVal;
+          
+          document.getElementById("result-modal-label-1").textContent = label1 + ":";
+          document.getElementById("result-modal-label-2").textContent = label2 + ":";
+          document.getElementById("result-modal-label-3").textContent = label3 + ":";
+          
+          document.getElementById("result-modal-math-count").textContent = count1;
+          document.getElementById("result-modal-reading-count").textContent = count2;
+          document.getElementById("result-modal-science-count").textContent = count3;
+          
+          const today = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          const dateStr = `${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()}`;
+          
+          document.getElementById("result-modal-prep-time").textContent = `07:00 ${dateStr}`;
+          document.getElementById("result-modal-enter-time").textContent = `07:45 ${dateStr}`;
+          document.getElementById("result-modal-start-time").textContent = `08:30 ${dateStr}`;
+          document.getElementById("result-modal-sbd").textContent = studentSbd;
+
+          const certBtn = document.getElementById("result-modal-cert-btn");
+          if (certBtn) {
+            certBtn.onclick = () => alert("Bạn chưa hoàn thành bài thi này nên chưa thể xem chứng chỉ!");
+          }
+        }
+        
+        // Set main title (e.g. "Đề tổng hợp số 01")
+        document.getElementById("result-modal-title").textContent = examTitle || "Bài thi TSA 2026 chính thức - Đợt 3";
+        
+        if (attempts.length > 0) {
+          if (selectEl) {
+            selectEl.innerHTML = "";
+            attempts.forEach((att, idx) => {
+              const opt = document.createElement("option");
+              opt.value = idx;
+              opt.textContent = ` - Lần ${idx + 1}`;
+              selectEl.appendChild(opt);
+            });
+            selectEl.style.display = "inline-block";
+            selectEl.value = attempts.length - 1; // Default to last attempt
+            
+            selectEl.onchange = function() {
+              const selectedIdx = parseInt(this.value, 10);
+              displayAttempt(attempts[selectedIdx]);
+            };
+          }
+          displayAttempt(attempts[attempts.length - 1]);
+        } else {
+          if (selectEl) {
+            selectEl.style.display = "none";
+          }
+          showNoScore();
+        }
+        
+        modal.hidden = false;
+      };
+      
+      function closeResultModalFunc() {
+        if (resultModal) resultModal.hidden = true;
+      }
+      
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          const certModal = document.getElementById("cert-image-modal");
+          if (certModal && !certModal.hidden) {
+            certModal.hidden = true;
+          } else if (resultModal && !resultModal.hidden) {
+            closeResultModalFunc();
+          }
+        }
+      });
 
       // Hash routing
       const currentHash = window.location.hash.substring(1);
