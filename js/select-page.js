@@ -1176,6 +1176,49 @@
       
       let watermarkTimer = null;
       let activeIframeSrc = "";
+      const COURSE_STUDY_THEME_KEY = "tmaTsaCourseStudyTheme";
+
+      function getLessonMetricKey(kind, lessonId) {
+        return `tmaTsaLessonMetric_${kind}_${lessonId || "unknown"}`;
+      }
+
+      function readLessonMetric(kind, lesson) {
+        const directValue = lesson && (lesson[kind + "_count"] ?? lesson[kind + "s"]);
+        const baseValue = Number.isFinite(Number(directValue)) ? Number(directValue) : 0;
+        const key = getLessonMetricKey(kind, lesson?.id);
+        const localValue = Math.max(0, parseInt(localStorage.getItem(key) || "0", 10) || 0);
+        return baseValue + localValue;
+      }
+
+      function incrementLessonMetric(kind, lesson) {
+        const key = getLessonMetricKey(kind, lesson?.id);
+        const nextLocalValue = (Math.max(0, parseInt(localStorage.getItem(key) || "0", 10) || 0)) + 1;
+        localStorage.setItem(key, String(nextLocalValue));
+        return readLessonMetric(kind, lesson);
+      }
+
+      function applyCourseStudyTheme(theme) {
+        const mode = theme === "dark" ? "dark" : "light";
+        if (courseStudyModal) courseStudyModal.setAttribute("data-study-theme", mode);
+        const toggle = document.getElementById("course-study-theme-toggle");
+        if (toggle) {
+          toggle.setAttribute("aria-pressed", mode === "dark" ? "true" : "false");
+          toggle.classList.toggle("is-dark", mode === "dark");
+        }
+      }
+
+      function initCourseStudyThemeToggle() {
+        const toggle = document.getElementById("course-study-theme-toggle");
+        if (!toggle || toggle.dataset.bound === "true") return;
+        toggle.dataset.bound = "true";
+        applyCourseStudyTheme(localStorage.getItem(COURSE_STUDY_THEME_KEY) || "light");
+        toggle.addEventListener("click", () => {
+          const currentMode = courseStudyModal?.getAttribute("data-study-theme") === "dark" ? "dark" : "light";
+          const nextMode = currentMode === "dark" ? "light" : "dark";
+          localStorage.setItem(COURSE_STUDY_THEME_KEY, nextMode);
+          applyCourseStudyTheme(nextMode);
+        });
+      }
 
       function getLessonIconSvg(title) {
         const titleLower = title.toLowerCase();
@@ -1222,6 +1265,7 @@
           const course = COURSES_DATA.find(c => c.id === courseId);
           if (!course) { alert("Không tìm thấy khóa học: " + courseId); return; }
           courseStudyModal.oncontextmenu = (e) => e.preventDefault();
+          initCourseStudyThemeToggle();
 
           const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
           const registeredIds = getRegisteredCourseIds();
@@ -1334,10 +1378,10 @@
             });
 
             // SVG icons
-            const SVG_PLAY = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#475569" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.85;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="none" stroke="#475569" stroke-width="1.8"></polygon></svg>`;
-            const SVG_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="20 6 9 17 4 12" stroke="#22c55e" stroke-width="2" style="transform: scale(0.6) translate(8px, 8px);"></polyline></svg>`;
-            const SVG_LOCK = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#cbd5e1" fill="none" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
-            const SVG_DOC = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+            const SVG_PLAY = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="none" stroke="currentColor" stroke-width="1.8"></polygon></svg>`;
+            const SVG_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12.5 11 15.5 16.5 8.5"></polyline></svg>`;
+            const SVG_LOCK = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+            const SVG_DOC = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><polyline points="14 2 14 7 19 7"></polyline></svg>`;
             const SVG_TEST = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>`;
             const SVG_CHEVRON = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
 
@@ -1357,27 +1401,20 @@
                 // Show lesson info bar
                 const infoBar2 = document.getElementById("study-lesson-info-bar");
                 const lessonTitleEl = document.getElementById("study-lesson-title");
-                const lessonTypeBadge = document.getElementById("study-lesson-type-badge");
                 const viewCountBadge = document.getElementById("study-lesson-view-badge");
                 const viewCountVal = document.getElementById("study-lesson-view-count");
+                const downloadCountBadge = document.getElementById("study-lesson-download-badge");
+                const downloadCountVal = document.getElementById("study-lesson-download-count");
 
                 if (infoBar2) infoBar2.style.display = "flex";
                 if (lessonTitleEl) lessonTitleEl.textContent = lesson.title;
-                if (lessonTypeBadge) {
-                  const hasVideo = !!lesson.video_drive_id;
-                  lessonTypeBadge.textContent = hasVideo ? "DẠNG TÀI NGUYÊN: VIDEO" : "DẠNG TÀI NGUYÊN: TÀI LIỆU";
-                }
-                
-                // Show view count only for videos to match the image view counter badge
                 if (viewCountBadge && viewCountVal) {
-                  const hasVideo = !!lesson.video_drive_id;
-                  if (hasVideo) {
-                    viewCountBadge.style.display = "inline-flex";
-                    // Dynamic view count logic simulation
-                    viewCountVal.textContent = Math.floor(Math.random() * 5) + 3;
-                  } else {
-                    viewCountBadge.style.display = "none";
-                  }
+                  viewCountBadge.style.display = "inline-flex";
+                  viewCountVal.textContent = incrementLessonMetric("view", lesson);
+                }
+                if (downloadCountBadge && downloadCountVal) {
+                  downloadCountBadge.style.display = "inline-flex";
+                  downloadCountVal.textContent = readLessonMetric("download", lesson);
                 }
 
                 // Remove active class from all kinds of sidebar items
@@ -1389,12 +1426,6 @@
                 document.getElementById("course-player-cover").style.display = "none";
                 iframe.style.display = "block";
 
-                // Show branded overlays
-                const ytBlocker = document.getElementById("yt-logo-blocker");
-                const ytBadge = document.getElementById("yt-brand-badge");
-                if (ytBlocker) ytBlocker.style.display = "block";
-                if (ytBadge) ytBadge.style.display = "flex";
-
                 if (isRegistered && completeBtn) {
                                   if (isCompleted) {
                                     completeBtn.className = "lesson-complete-btn completed";
@@ -1404,9 +1435,24 @@
                                     completeBtn.querySelector("span").textContent = "Đánh dấu hoàn thành";
                                   }
                                 }
-              
+                                
                                 const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
                                 const downloadDocBtn = document.getElementById("lesson-download-doc-btn");
+                                if (downloadDocBtn) {
+                                  downloadDocBtn.onclick = null;
+                                  if (lesson.doc_link) {
+                                    downloadDocBtn.href = lesson.doc_link;
+                                    downloadDocBtn.style.display = "flex";
+                                    downloadDocBtn.onclick = () => {
+                                      const nextDownloadCount = incrementLessonMetric("download", lesson);
+                                      const downloadCountVal = document.getElementById("study-lesson-download-count");
+                                      if (downloadCountVal) downloadCountVal.textContent = nextDownloadCount;
+                                    };
+                                  } else {
+                                    downloadDocBtn.removeAttribute("href");
+                                    downloadDocBtn.style.display = "none";
+                                  }
+                                }
                                 if (isVideo) {
                                   const videoId = lesson.video_drive_id || "";
                                   const isYouTube = videoId.length === 11 || videoId.includes("youtube.com") || videoId.includes("youtu.be");
@@ -1424,23 +1470,11 @@
                                   
                                   startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
                                   
-                                  if (downloadDocBtn) {
-                                    if (lesson.doc_link) {
-                                      downloadDocBtn.href = lesson.doc_link;
-                                      downloadDocBtn.style.display = "flex";
-                                    } else {
-                                      downloadDocBtn.style.display = "none";
-                                    }
-                                  }
-              
                                   // Write video view log (Feature 2)
                                   writeVideoViewLog(studentCode, lesson, course.title);
                                 } else {
                                   iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
                                   stopWatermark();
-                                  if (downloadDocBtn) {
-                                    downloadDocBtn.style.display = "none";
-                                  }
                                 }
               });
             }
@@ -1449,10 +1483,28 @@
               const chapterLessons = chapters[chName];
 
               // Chapter header
-              const chHeader = document.createElement("div");
+              const chHeader = document.createElement("button");
+              chHeader.type = "button";
               chHeader.className = "tree-chapter-header";
-              chHeader.textContent = chName.toUpperCase();
+              const chTitle = document.createElement("span");
+              chTitle.className = "tree-chapter-title";
+              chTitle.textContent = chName.toUpperCase();
+              const chToggle = document.createElement("span");
+              chToggle.className = "tree-chapter-toggle open";
+              chToggle.innerHTML = SVG_CHEVRON;
+              chHeader.appendChild(chTitle);
+              chHeader.appendChild(chToggle);
               lessonsList.appendChild(chHeader);
+
+              const chapterBody = document.createElement("div");
+              chapterBody.className = "tree-chapter-body";
+              lessonsList.appendChild(chapterBody);
+              chHeader.addEventListener("click", () => {
+                const shouldCollapse = !chapterBody.hidden;
+                chapterBody.hidden = shouldCollapse;
+                chHeader.classList.toggle("collapsed", shouldCollapse);
+                chToggle.classList.toggle("open", !shouldCollapse);
+              });
 
               // Group bai -> phan sub-items
               const baiGroups = [];
@@ -1498,7 +1550,7 @@
 
                   const iconEl = document.createElement("div");
                   iconEl.className = "tree-row-icon";
-                  iconEl.innerHTML = (isRegistered && isCompleted) ? SVG_CHECK : SVG_PLAY;
+                  iconEl.innerHTML = SVG_PLAY;
 
                   const labelEl = document.createElement("span");
                   labelEl.className = "tree-row-label";
@@ -1517,7 +1569,7 @@
                   baiRow.appendChild(iconEl);
                   baiRow.appendChild(labelEl);
                   baiRow.appendChild(rightEl);
-                  lessonsList.appendChild(baiRow);
+                  chapterBody.appendChild(baiRow);
 
                   // Sub-list for phans
                   const subList = document.createElement("div");
@@ -1531,16 +1583,16 @@
 
                     phanRow.innerHTML = `
                       <span class="tree-phan-indent">↳</span>
-                      <div class="tree-phan-icon">${(isRegistered && phanCompleted) ? SVG_CHECK : SVG_PLAY}</div>
+                      <div class="tree-phan-icon">${SVG_PLAY}</div>
                       <span class="tree-phan-label">${phan.title}</span>
-                      <div class="tree-right-icon">${(!isRegistered && !phan.preview_allowed) ? SVG_LOCK : ""}</div>
+                      <div class="tree-right-icon ${(!isRegistered && !phan.preview_allowed) ? "tree-lock-icon" : ""}">${(!isRegistered && !phan.preview_allowed) ? SVG_LOCK : (isRegistered && phanCompleted ? SVG_CHECK : "")}</div>
                     `;
 
                     makeLessonClickable(phanRow, phan);
                     subList.appendChild(phanRow);
                   });
 
-                  if (hasSubs) lessonsList.appendChild(subList);
+                  if (hasSubs) chapterBody.appendChild(subList);
 
                   // Toggle sub-list on bai click (if has subs)
                   if (hasSubs) {
@@ -1553,37 +1605,29 @@
                   }
 
                   // Play lesson on bai row click (if no subs, or click label directly)
-                  if (!hasSubs) {
-                    makeLessonClickable(baiRow, lesson);
-                  } else {
-                    // Clicking row label opens the bai if registered
-                    labelEl.addEventListener("click", (e) => {
-                      e.stopPropagation();
-                      makeLessonClickable(baiRow, lesson);
-                    });
-                  }
+                  makeLessonClickable(baiRow, lesson);
 
                 } else if (group.type === "document") {
                   const row = document.createElement("div");
-                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "");
+                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "") + (isRegistered && isCompleted ? " completed-row" : "");
                   row.innerHTML = `
                     <div class="tree-doc-icon">${SVG_DOC}</div>
                     <span class="tree-row-label">${lesson.title}</span>
-                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                    <div class="tree-right-icon ${(!isRegistered && !lesson.preview_allowed) ? "tree-lock-icon" : ""}">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : (isRegistered && isCompleted ? SVG_CHECK : "")}</div>
                   `;
                   makeLessonClickable(row, lesson);
-                  lessonsList.appendChild(row);
+                  chapterBody.appendChild(row);
 
                 } else if (group.type === "test") {
                   const row = document.createElement("div");
-                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "");
+                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "") + (isRegistered && isCompleted ? " completed-row" : "");
                   row.innerHTML = `
                     <div class="tree-test-icon">${SVG_TEST}</div>
                     <span class="tree-row-label">${lesson.title}</span>
-                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                    <div class="tree-right-icon ${(!isRegistered && !lesson.preview_allowed) ? "tree-lock-icon" : ""}">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : (isRegistered && isCompleted ? SVG_CHECK : "")}</div>
                   `;
                   makeLessonClickable(row, lesson);
-                  lessonsList.appendChild(row);
+                  chapterBody.appendChild(row);
 
                 } else if (group.type === "phan-standalone") {
                   const phanRow = document.createElement("div");
@@ -1591,12 +1635,12 @@
                   phanRow.className = "tree-phan-row" + (activeLessonId === lesson.id ? " active" : "") + (isRegistered && phanCompleted ? " completed" : "");
                   phanRow.innerHTML = `
                     <span class="tree-phan-indent">↳</span>
-                    <div class="tree-phan-icon">${(isRegistered && phanCompleted) ? SVG_CHECK : SVG_PLAY}</div>
+                    <div class="tree-phan-icon">${SVG_PLAY}</div>
                     <span class="tree-phan-label">${lesson.title}</span>
-                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                    <div class="tree-right-icon ${(!isRegistered && !lesson.preview_allowed) ? "tree-lock-icon" : ""}">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : (isRegistered && phanCompleted ? SVG_CHECK : "")}</div>
                   `;
                   makeLessonClickable(phanRow, lesson);
-                  lessonsList.appendChild(phanRow);
+                  chapterBody.appendChild(phanRow);
                 }
               });
             });

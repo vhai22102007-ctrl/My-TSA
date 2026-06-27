@@ -3465,18 +3465,92 @@
         chapterLessons.sort(function(a, b) { return (a.order_index || 0) - (b.order_index || 0); });
 
         var chBlock = document.createElement("div");
-        chBlock.style.cssText = "margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;";
+        chBlock.style.cssText = "margin-bottom: 16px;";
 
         // Chapter Header row
         var chHeaderRow = document.createElement("div");
-        chHeaderRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #e2e8f0; border-radius: 8px; margin-bottom: 4px;";
-        chHeaderRow.innerHTML = `
-          <span style="font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">${esc(chName)}</span>
-          <button class="btn btn-outline btn-xs" style="font-size: 11px; font-weight: 700; color: #0f5a9e; border-color: #0f5a9e; background: #ffffff; padding: 2px 10px;" onclick="showAddLessonForChapter('${escJs(chName)}')">
-            + Thêm bài giảng / tài liệu
-          </button>
-        `;
+        chHeaderRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #e2e8f0; border-radius: 8px; cursor: pointer; user-select: none;";
+        
+        var chLeftGroup = document.createElement("div");
+        chLeftGroup.style.cssText = "display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;";
+        
+        // Collapse toggle button (chevron)
+        var collapseBtn = document.createElement("button");
+        collapseBtn.type = "button";
+        collapseBtn.style.cssText = "background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; color: #64748b; transition: transform 0.2s; flex-shrink: 0;";
+        collapseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+        collapseBtn.title = "Thu gọn / Mở rộng";
+        chLeftGroup.appendChild(collapseBtn);
+        
+        // Chapter name
+        var chNameSpan = document.createElement("span");
+        chNameSpan.style.cssText = "font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;";
+        chNameSpan.textContent = chName;
+        chLeftGroup.appendChild(chNameSpan);
+        
+        chHeaderRow.appendChild(chLeftGroup);
+        
+        // Right group: rename + add lesson buttons
+        var chRightGroup = document.createElement("div");
+        chRightGroup.style.cssText = "display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px;";
+        
+        // Nút đổi tên chương
+        var btnRename = document.createElement("button");
+        btnRename.type = "button";
+        btnRename.className = "btn btn-outline btn-xs";
+        btnRename.style.cssText = "font-size: 11px; font-weight: 600; color: #475569; border-color: #cbd5e1; background: #ffffff; padding: 2px 8px; cursor: pointer;";
+        btnRename.title = "Đổi tên chương";
+        btnRename.textContent = "✏️ Đổi tên";
+        btnRename.addEventListener("click", function(e) {
+          e.stopPropagation();
+          renameChapter(chName);
+        });
+        chRightGroup.appendChild(btnRename);
+
+        // Nút thêm bài giảng
+        var btnAddLesson = document.createElement("button");
+        btnAddLesson.type = "button";
+        btnAddLesson.className = "btn btn-outline btn-xs";
+        btnAddLesson.style.cssText = "font-size: 11px; font-weight: 700; color: #0f5a9e; border-color: #0f5a9e; background: #ffffff; padding: 2px 10px; cursor: pointer;";
+        btnAddLesson.textContent = "+ Thêm bài";
+        btnAddLesson.addEventListener("click", function(e) {
+          e.stopPropagation();
+          showAddLessonForChapter(chName);
+        });
+        chRightGroup.appendChild(btnAddLesson);
+
+        chHeaderRow.appendChild(chRightGroup);
         chBlock.appendChild(chHeaderRow);
+
+        // Lessons container (collapsible)
+        var lessonsWrapper = document.createElement("div");
+        lessonsWrapper.style.cssText = "display: flex; flex-direction: column; gap: 0; overflow: hidden; transition: all 0.2s ease;";
+        var isCollapsed = false;
+
+        // Toggle collapse on header click
+        chHeaderRow.onclick = function(e) {
+          // Don't toggle if clicking buttons
+          if (e.target.closest("button")) return;
+          isCollapsed = !isCollapsed;
+          if (isCollapsed) {
+            lessonsWrapper.style.display = "none";
+            collapseBtn.style.transform = "rotate(-90deg)";
+          } else {
+            lessonsWrapper.style.display = "flex";
+            collapseBtn.style.transform = "rotate(0deg)";
+          }
+        };
+        collapseBtn.onclick = function(e) {
+          e.stopPropagation();
+          isCollapsed = !isCollapsed;
+          if (isCollapsed) {
+            lessonsWrapper.style.display = "none";
+            collapseBtn.style.transform = "rotate(-90deg)";
+          } else {
+            lessonsWrapper.style.display = "flex";
+            collapseBtn.style.transform = "rotate(0deg)";
+          }
+        };
 
         // Lessons of this chapter
         chapterLessons.forEach(function(lesson) {
@@ -3605,15 +3679,53 @@
             lessonRow.style.background = "transparent";
           };
 
-          chBlock.appendChild(lessonRow);
+          lessonsWrapper.appendChild(lessonRow);
         });
 
+        chBlock.appendChild(lessonsWrapper);
         lessonsContainer.appendChild(chBlock);
       });
     }
 
     function escJs(str) {
       return (str || "").replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    async function renameChapter(oldName) {
+      var newName = prompt("Đổi tên chương:", oldName);
+      if (!newName || !newName.trim() || newName.trim() === oldName) return;
+      newName = newName.trim();
+      if (!activeCourseId) {
+        alert("Không thể kết nối database. Vui lòng tải lại trang.");
+        return;
+      }
+      try {
+        if (supabaseClient) {
+          var { error } = await supabaseClient
+            .from("lessons")
+            .update({ chapter_name: newName })
+            .eq("course_id", activeCourseId)
+            .eq("chapter_name", oldName);
+          if (error) throw error;
+        } else {
+          var allMockLessons = JSON.parse(localStorage.getItem("tmaTsaMockLessons") || "[]");
+          var renamedAny = false;
+          allMockLessons = allMockLessons.map(function(lesson) {
+            if (lesson.course_id === activeCourseId && (lesson.chapter_name || oldName) === oldName) {
+              renamedAny = true;
+              return Object.assign({}, lesson, { chapter_name: newName });
+            }
+            return lesson;
+          });
+          if (!renamedAny) {
+            throw new Error("Không tìm thấy chương cần đổi tên.");
+          }
+          localStorage.setItem("tmaTsaMockLessons", JSON.stringify(allMockLessons));
+        }
+        await renderCourseDetails();
+      } catch(e) {
+        await window.showCustomAlert("Lỗi đổi tên chương: " + (e.message || e));
+      }
     }
 
     function showAddChapterPrompt() {
@@ -3758,7 +3870,9 @@
           localStorage.setItem("tmaTsaMockCourses", JSON.stringify(lmsCourses));
         }
 
-        await showCustomAlert("Lưu thông tin khóa học thành công!");
+        if (!id) {
+          await showCustomAlert("Lưu thông tin khóa học thành công!");
+        }
         closeLmsCourseModal();
         
         // Refresh grid
@@ -3977,7 +4091,9 @@
           localStorage.setItem("tmaTsaMockLessons", JSON.stringify(allMockLessons));
         }
 
-        await showCustomAlert("Lưu thông tin bài học thành công!");
+        if (!id) {
+          await showCustomAlert("Lưu thông tin bài học thành công!");
+        }
         closeLmsLessonModal();
         renderCourseDetails();
       } catch (err) {
