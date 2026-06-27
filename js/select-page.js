@@ -514,8 +514,31 @@
         });
       }
 
-      // ─── DYNAMIC COURSE REGISTRATION ENGINE ────────────────────────────
-      const COURSES_DATA = [
+      // DYNAMIC COURSE REGISTRATION & SUPABASE SYNC ENGINE
+      const MOCK_COURSES_DEFAULTS = [
+        {
+          id: "thpt-math-luyen-de",
+          label: "Luyện Đề THPT",
+          title: "Khoá Luyện Đề THPT Môn Toán",
+          subheading: "Luyện đề thi thử tốt nghiệp THPT Quốc gia bám sát cấu trúc đề minh họa mới nhất.",
+          desc: "Học sinh được làm đề bấm giờ, xem lời giải chi tiết bằng video và tải bản viết tay.",
+          author: "Trần Hoàng Anh",
+          tags: ["Toán học", "THPTQG"],
+          badge: "Chưa mua",
+          category: "THPT",
+          lessons: [
+            { title: "Chữa Đề Tăng Tốc Số 3", type: "video", video_drive_id: "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1", preview_allowed: true },
+            { title: "File Đề Tăng Tốc Số 3", type: "pdf", doc_link: "https://example.com/de-thi.pdf", preview_allowed: true },
+            { title: "Bản Viết Tay Để Tăng Tốc Số 3", type: "write", doc_link: "https://example.com/bvt.pdf", preview_allowed: true },
+            { title: "Chữa Đề Tăng Tốc Số 4", type: "video", video_drive_id: "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l2" },
+            { title: "Đề Tăng Tốc Số 4", type: "pdf", doc_link: "https://example.com/de-thi-4.pdf" },
+            { title: "BVT: Đề Tăng Tốc Số 4", type: "write", doc_link: "https://example.com/bvt-4.pdf" },
+            { title: "Chữa Đề Tăng Tốc Số 5", type: "video", video_drive_id: "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l3" },
+            { title: "File Đề Tăng Tốc Số 5", type: "pdf", doc_link: "https://example.com/de-thi-5.pdf" },
+            { title: "BVT Đề Tăng Tốc Số 5", type: "write", doc_link: "https://example.com/bvt-5.pdf" }
+          ],
+          progress: 33
+        },
         {
           id: "01",
           label: "TSA Core",
@@ -651,56 +674,6 @@
           progress: 0
         },
         {
-          id: "14",
-          label: "14 days",
-          title: "Khóa 14 ngày Vật lý THPT",
-          subheading: "Lộ trình ngắn ngày để gom lại trọng tâm, luyện dạng nhanh và tự tin bước vào bài thi Vật lý.",
-          desc: "Thiết kế cho giai đoạn nước rút: học đúng phần cần học, làm đúng dạng cần làm, sửa lỗi ngay sau mỗi cụm bài.",
-          author: "Thầy Nghiêm Xuân Tân",
-          tags: ["Vật lý THPT", "Nước rút", "14 ngày"],
-          badge: "Vật lý",
-          category: "THPT",
-          lessons: [
-            { title: "Ngày 1: Hệ thống dao động cơ học", status: "completed" },
-            { title: "Ngày 2: Sóng cơ và truyền sóng", status: "completed" },
-            { title: "Ngày 3: Dòng điện xoay chiều", status: "pending" }
-          ],
-          progress: 66,
-          isWide: true
-        }
-      ];
-
-      // EXAMS DATA MODEL
-      const EXAMS_DATA = [
-        {
-          id: "tsa-online",
-          title: "Thi thử Bài thi Đánh giá tư duy TSA",
-          category: "TSA",
-          typeBadge: "Thi trực tuyến",
-          isOnline: true,
-          regTime: "Hằng ngày",
-          fee: "Miễn phí",
-          examTime: "Hằng ngày",
-          status: "online",
-          actionUrl: "waiting.html",
-          actionText: "Vào thi ngay",
-          uploaded: true
-        },
-        {
-          id: "hsa-online",
-          title: "Thi thử Bài thi Đánh giá năng lực HSA",
-          category: "HSA",
-          typeBadge: "Thi trực tuyến",
-          isOnline: true,
-          regTime: "Hằng ngày",
-          fee: "Miễn phí",
-          examTime: "Hằng ngày",
-          status: "online",
-          actionUrl: "waiting.html",
-          actionText: "Vào thi ngay",
-          uploaded: false
-        },
-        {
           id: "vact-online",
           title: "Thi thử Bài thi Đánh giá năng lực VACT",
           category: "VACT",
@@ -743,6 +716,135 @@
           uploaded: false
         }
       ];
+
+      let COURSES_DATA = [];
+      let enrolledCourseIds = [];
+
+      async function seedSupabaseDatabase() {
+        try {
+          console.log("Seeding Supabase Database...");
+          
+          for (const course of MOCK_COURSES_DEFAULTS) {
+            if (course.isOnline) continue;
+
+            const { data: insertedCourse, error: cErr } = await supabaseClient
+              .from('courses')
+              .insert({
+                title: course.title,
+                description: course.subheading + " " + course.desc,
+                cover_image: course.category === "THPT" ? "assets/thpt.png" : "assets/anhnen.png",
+                teacher: course.author,
+                price: 0,
+                active: true,
+                category: course.category
+              })
+              .select('id')
+              .single();
+
+            if (cErr) {
+              console.error("Error inserting course:", cErr.message);
+              continue;
+            }
+
+            const courseId = insertedCourse.id;
+
+            const lessonsToInsert = course.lessons.map((l, index) => ({
+              course_id: courseId,
+              title: l.title,
+              short_description: l.title,
+              type: l.title.toLowerCase().includes("file") ? "pdf" : (l.title.toLowerCase().includes("viết tay") || l.title.toLowerCase().includes("bvt") ? "write" : "video"),
+              video_drive_id: l.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1",
+              doc_link: l.doc_link || "https://example.com/mock-document.pdf",
+              order_index: index,
+              preview_allowed: l.preview_allowed || false
+            }));
+
+            const { error: lErr } = await supabaseClient
+              .from('lessons')
+              .insert(lessonsToInsert);
+
+            if (lErr) {
+              console.error("Error inserting lessons:", lErr.message);
+            }
+
+            if (course.id === "thpt-math-luyen-de") {
+              await supabaseClient.from('activation_codes').insert({
+                code: "123",
+                course_id: courseId,
+                max_uses: 9999,
+                used_count: 0,
+                active: true
+              });
+            }
+          }
+          console.log("Seeding Supabase completed successfully!");
+        } catch (seedErr) {
+          console.error("Failed to seed database:", seedErr);
+        }
+      }
+
+      async function loadCoursesAndEnrollments() {
+        if (!supabaseClient) {
+          console.log("No supabaseClient. Running local mockup mode.");
+          COURSES_DATA = [...MOCK_COURSES_DEFAULTS];
+          return;
+        }
+
+        const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
+
+        try {
+          const { data: dbCourses, error: courseError } = await supabaseClient
+            .from('courses')
+            .select('*');
+
+          if (courseError) throw courseError;
+
+          if (!dbCourses || dbCourses.length === 0) {
+            await seedSupabaseDatabase();
+            const { data: reFetchedCourses } = await supabaseClient.from('courses').select('*');
+            COURSES_DATA = reFetchedCourses || [];
+          } else {
+            COURSES_DATA = [];
+            for (const c of dbCourses) {
+              const { data: dbLessons } = await supabaseClient
+                .from('lessons')
+                .select('*')
+                .eq('course_id', c.id)
+                .order('order_index', { ascending: true });
+
+              COURSES_DATA.push({
+                id: c.id,
+                title: c.title,
+                subheading: c.description || "",
+                desc: c.description || "",
+                author: c.teacher || "Trần Hoàng Anh",
+                category: c.category || "TSA",
+                lessons: dbLessons || [],
+                progress: 33
+              });
+            }
+          }
+
+          MOCK_COURSES_DEFAULTS.forEach(m => {
+            if (m.isOnline) COURSES_DATA.push(m);
+          });
+
+          const { data: dbEnrollments, error: enrollError } = await supabaseClient
+            .from('enrollments')
+            .select('course_id')
+            .eq('user_email', studentCode);
+
+          if (enrollError) throw enrollError;
+          enrolledCourseIds = (dbEnrollments || []).map(e => e.course_id);
+
+          const key = `tmaTsaRegisteredCourses_${studentInfo.username}`;
+          localStorage.setItem(key, JSON.stringify(enrolledCourseIds));
+
+        } catch (err) {
+          console.warn("Supabase fetch error. Falling back to local mode:", err.message || err);
+          COURSES_DATA = [...MOCK_COURSES_DEFAULTS];
+        }
+      }
 
       function getRegisteredCourseIds() {
         if (!studentInfo) return [];
@@ -862,8 +964,8 @@
           }
 
           const actionBtn = isRegistered
-            ? `<button type="button" class="enter-btn enter-class-btn" data-course-id="${course.id}" style="border:none; cursor:pointer;">Vào học</button>`
-            : `<button type="button" class="enter-btn register-course-btn" data-course-id="${course.id}" style="border:none; cursor:pointer;">Đăng ký</button>`;
+            ? `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#22c55e;">Vào học</button>`
+            : `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#64748b;">Chi tiết</button>`;
 
           card.innerHTML = `
             <div class="course-hero" style="background-image: url('${heroImage}')"></div>
@@ -881,38 +983,12 @@
             </div>
           `;
 
-          // Clicking anywhere on the card should trigger the primary action
+          // Clicking anywhere on the card opens the classroom details modal
           card.addEventListener("click", () => {
-            if (isRegistered) {
-              openClassroomModal(course.id);
-            } else {
-              const btn = card.querySelector(".register-course-btn");
-              if (btn) btn.click();
-            }
+            openClassroomModal(course.id);
           });
 
           grid.appendChild(card);
-        });
-
-        // Attach event listeners to buttons inside cards
-        grid.querySelectorAll(".register-course-btn").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            e.stopPropagation();
-            const courseId = btn.getAttribute("data-course-id");
-            const course = COURSES_DATA.find(c => c.id === courseId);
-            if (await showCustomConfirm(`Bạn có chắc chắn muốn đăng ký khóa học "${course.title}"?`)) {
-              registerCourse(courseId);
-              await showCustomAlert(`Đăng ký khóa học "${course.title}" thành công!`);
-            }
-          });
-        });
-
-        grid.querySelectorAll(".enter-class-btn").forEach((btn) => {
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const courseId = btn.getAttribute("data-course-id");
-            openClassroomModal(courseId);
-          });
         });
       }
 
@@ -964,55 +1040,429 @@
         });
       }
 
-      // Classroom Modal implementation
-      const classroomModal = document.getElementById("classroom-modal");
-      const closeClassroomBtn = document.getElementById("close-classroom-modal");
-      const classroomCloseBtn = document.getElementById("classroom-close-btn");
+      // Course Study Modal Implementation
+      const courseStudyModal = document.getElementById("course-study-modal");
+      const closeCourseModalBtn = document.getElementById("close-course-modal-btn");
+      const courseModalActivationBtn = document.getElementById("course-modal-activation-btn");
+      
+      let watermarkTimer = null;
+      let activeIframeSrc = "";
+
+      function getLessonIconSvg(title) {
+        const titleLower = title.toLowerCase();
+        // File / PDF
+        if (titleLower.includes("file") || titleLower.includes("đề số") || titleLower.includes("de so") || titleLower.includes("đề tăng tốc") || titleLower.includes("de thi")) {
+          return `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+        }
+        // Write / BVT
+        if (titleLower.includes("viết tay") || titleLower.includes("viet tay") || titleLower.includes("bvt")) {
+          return `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+        }
+        // Video / Chữa (Default)
+        return `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="currentColor" stroke-linecap="round" stroke-linejoin="round" style="transform: translate(1px, 0);"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+      }
+
+      function startWatermark(studentName, studentPhone) {
+        const overlay = document.getElementById("video-watermark-overlay");
+        if (!overlay) return;
+        
+        overlay.style.display = "block";
+        const text = `${studentName} - ${studentPhone || "0987654321"} - ${new Date().toLocaleDateString("vi-VN")}`;
+        overlay.textContent = text;
+        
+        const container = document.getElementById("course-player-container");
+        if (!container) return;
+
+        function moveWatermark() {
+          const containerWidth = container.clientWidth;
+          const containerHeight = container.clientHeight;
+          const watermarkWidth = overlay.clientWidth || 250;
+          const watermarkHeight = overlay.clientHeight || 20;
+
+          const maxX = Math.max(10, containerWidth - watermarkWidth - 20);
+          const maxY = Math.max(10, containerHeight - watermarkHeight - 20);
+
+          const randomX = Math.floor(Math.random() * maxX);
+          const randomY = Math.floor(Math.random() * maxY);
+
+          overlay.style.left = `${randomX}px`;
+          overlay.style.top = `${randomY}px`;
+        }
+
+        moveWatermark();
+        if (watermarkTimer) clearInterval(watermarkTimer);
+        watermarkTimer = setInterval(moveWatermark, 4000);
+      }
+
+      function stopWatermark() {
+        if (watermarkTimer) {
+          clearInterval(watermarkTimer);
+          watermarkTimer = null;
+        }
+        const overlay = document.getElementById("video-watermark-overlay");
+        if (overlay) overlay.style.display = "none";
+      }
 
       function openClassroomModal(courseId) {
-        const course = COURSES_DATA.find(c => c.id === courseId);
-        if (!course) return;
-
-        document.getElementById("classroom-modal-title").textContent = `Lớp học: ${course.title}`;
-        document.getElementById("classroom-modal-desc").textContent = course.subheading + " " + course.desc;
-        
-        const lessonsList = document.getElementById("classroom-lessons-list");
-        lessonsList.innerHTML = "";
-        
-        course.lessons.forEach((lesson) => {
-          const item = document.createElement("div");
-          item.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 8px;";
-          
-          let statusBadge = "";
-          if (lesson.status === "completed") {
-            statusBadge = `<span style="font-size: 11px; color: #16a34a; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">✓ Đã học</span>`;
-          } else {
-            statusBadge = `<button type="button" class="btn btn-outline btn-xs" style="font-size: 10px; border-radius: 4px; padding: 2px 6px;" onclick="alert('Bắt đầu bài học thử nghiệm: ${lesson.title}')">Học bài</button>`;
+        try {
+          console.log("Opening classroom modal for course:", courseId);
+          const course = COURSES_DATA.find(c => c.id === courseId);
+          if (!course) {
+            alert("Error: Không tìm thấy khóa học với ID: " + courseId + ". Danh sách ID hiện có: " + JSON.stringify(COURSES_DATA.map(c => c.id)));
+            return;
           }
 
-          item.innerHTML = `
-            <span style="font-size: 12px; font-weight: 500; color: var(--text);">${lesson.title}</span>
-            ${statusBadge}
-          `;
-          lessonsList.appendChild(item);
-        });
+          // Basic inspect leak prevention: block right clicks in modal
+          courseStudyModal.oncontextmenu = (e) => e.preventDefault();
 
-        classroomModal.hidden = false;
-        document.body.style.overflow = 'hidden';
+          const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
+          const registeredIds = getRegisteredCourseIds();
+          const isRegistered = registeredIds.includes(courseId);
+
+          // Populate header details
+          document.getElementById("course-modal-title").textContent = course.title;
+          document.getElementById("course-modal-breadcrumb-title").textContent = course.title;
+          document.getElementById("course-player-cover-text").textContent = course.title;
+          document.getElementById("course-teacher-name").textContent = course.author || "Trần Hoàng Anh";
+          
+          const sName = studentInfo?.name || studentInfo?.username || "Học sinh";
+          document.getElementById("course-modal-student-name").textContent = sName.toLowerCase();
+
+          // Reset Player Left Area
+          document.getElementById("course-player-cover").style.display = "flex";
+          const iframe = document.getElementById("course-video-iframe");
+          iframe.style.display = "none";
+          iframe.src = "";
+          stopWatermark();
+
+          // Hide player controls initially
+          const controlsBar = document.getElementById("player-controls-bar");
+          const completeBtn = document.getElementById("lesson-complete-toggle-btn");
+          if (controlsBar) controlsBar.style.display = "none";
+
+          let activeLessonId = null;
+
+          // Asynchronously load progress from database
+          async function loadProgressAndRender() {
+            let completedLessonIds = [];
+            try {
+              if (supabaseClient) {
+                const { data: dbProgress } = await supabaseClient
+                  .from('lesson_progress')
+                  .select('lesson_id')
+                  .eq('user_email', studentCode);
+                completedLessonIds = (dbProgress || []).map(p => p.lesson_id);
+              } else {
+                const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+                completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
+              }
+            } catch (err) {
+              console.warn("Failed to load progress, using local storage backup:", err);
+              const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+              completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
+            }
+
+            // Update status badge & progress bar in header
+            const badge = document.getElementById("course-modal-status-badge");
+            const lessonsArray = course.lessons || [];
+            const courseLessonsCount = lessonsArray.length;
+            
+            // Filter completed lessons belonging to this course
+            const completedInCourse = lessonsArray.filter(l => completedLessonIds.includes(l.id));
+            const completedCount = completedInCourse.length;
+            const percent = courseLessonsCount > 0 ? Math.round((completedCount / courseLessonsCount) * 100) : 0;
+
+            if (isRegistered) {
+              badge.textContent = `Đã mở khóa (${percent}%)`;
+              badge.className = "course-status-badge unlocked";
+              courseModalActivationBtn.style.display = "none";
+            } else {
+              badge.textContent = "Chưa mua";
+              badge.className = "course-status-badge locked";
+              courseModalActivationBtn.style.display = "block";
+            }
+
+            // Populate Sidebar Lessons
+            const lessonsList = document.getElementById("course-modal-lessons-list");
+            lessonsList.innerHTML = "";
+
+            const folderName = course.title.includes("Toán") || course.title.includes("THPT") ? "ĐỀ TĂNG TỐC" : "CHUYÊN ĐỀ TĂNG TỐC";
+
+            const group = document.createElement("div");
+            group.className = "accordion-group";
+
+            const accHeader = document.createElement("div");
+            accHeader.className = "accordion-header";
+            accHeader.innerHTML = `
+              <div class="accordion-header-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                ${folderName}
+              </div>
+              <svg class="accordion-arrow open" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            `;
+
+            const accContent = document.createElement("div");
+            accContent.className = "accordion-content";
+            accContent.style.display = "flex";
+
+            lessonsArray.forEach((lesson, index) => {
+              const item = document.createElement("div");
+              item.className = "lesson-item";
+              if (activeLessonId === lesson.id) item.classList.add("active");
+              
+              let previewBadge = "";
+              let rightIcon = "";
+
+              const isCompleted = completedLessonIds.includes(lesson.id);
+
+              if (lesson.preview_allowed) {
+                previewBadge = `<span class="lesson-badge-preview">Xem thử</span>`;
+              } else if (!isRegistered) {
+                rightIcon = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#64748b" fill="none" stroke-width="2.5" style="margin-left:auto;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+              }
+
+              // Tick green icon for completed, otherwise type icon
+              let leftIconSvg = getLessonIconSvg(lesson.title);
+              if (isRegistered && isCompleted) {
+                leftIconSvg = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#22c55e" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+              }
+
+              item.innerHTML = `
+                <div class="lesson-icon-wrapper" style="${isRegistered && isCompleted ? 'background:#e2fbe8; color:#22c55e;' : ''}">
+                  ${leftIconSvg}
+                </div>
+                <span class="lesson-title">${lesson.title}</span>
+                ${previewBadge}
+                ${rightIcon}
+              `;
+
+              // Handle Lesson click
+              item.addEventListener("click", () => {
+                if (!isRegistered && !lesson.preview_allowed) {
+                  showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm vào nút "MÃ TRUY CẬP" ở góc phải để nhập mã kích hoạt khóa học này!`);
+                  return;
+                }
+
+                activeLessonId = lesson.id;
+
+                // Mark active item
+                accContent.querySelectorAll(".lesson-item").forEach(el => el.classList.remove("active"));
+                item.classList.add("active");
+
+                // Play/Show content on Left Area
+                document.getElementById("course-player-cover").style.display = "none";
+                iframe.style.display = "block";
+                
+                // Show controls if registered
+                if (isRegistered && controlsBar && completeBtn) {
+                  controlsBar.style.display = "flex";
+                  // Render button state
+                  if (isCompleted) {
+                    completeBtn.className = "lesson-complete-btn completed";
+                    completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                  } else {
+                    completeBtn.className = "lesson-complete-btn";
+                    completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
+                  }
+                }
+                
+                // Load video/pdf source
+                const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
+                if (isVideo) {
+                  iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
+                  startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
+                } else {
+                  iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
+                  stopWatermark();
+                }
+              });
+
+              accContent.appendChild(item);
+            });
+
+            group.appendChild(accHeader);
+            group.appendChild(accContent);
+            lessonsList.appendChild(group);
+
+            // Accordion toggle handler
+            accHeader.addEventListener("click", () => {
+              const isOpen = accContent.style.display !== "none";
+              accContent.style.display = isOpen ? "none" : "flex";
+              const arrow = accHeader.querySelector(".accordion-arrow");
+              if (isOpen) {
+                arrow.classList.remove("open");
+                arrow.style.transform = "rotate(0deg)";
+              } else {
+                arrow.classList.add("open");
+                arrow.style.transform = "rotate(180deg)";
+              }
+            });
+          }
+
+          // Initial render of progress
+          loadProgressAndRender();
+
+          // Set complete toggle handler
+          if (completeBtn) {
+            completeBtn.onclick = async () => {
+              if (!activeLessonId) return;
+              
+              const isCompletedCurrently = completeBtn.classList.contains("completed");
+              
+              try {
+                if (supabaseClient) {
+                  if (isCompletedCurrently) {
+                    // Remove completion record from database
+                    await supabaseClient
+                      .from('lesson_progress')
+                      .delete()
+                      .eq('user_email', studentCode)
+                      .eq('lesson_id', activeLessonId);
+                  } else {
+                    // Add completion record to database
+                    await supabaseClient
+                      .from('lesson_progress')
+                      .insert({
+                        user_email: studentCode,
+                        lesson_id: activeLessonId,
+                        status: 'completed'
+                      });
+                  }
+                } else {
+                  // Offline mockup
+                  const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+                  let localProg = JSON.parse(localStorage.getItem(key) || "[]");
+                  if (isCompletedCurrently) {
+                    localProg = localProg.filter(id => id !== activeLessonId);
+                  } else {
+                    if (!localProg.includes(activeLessonId)) localProg.push(activeLessonId);
+                  }
+                  localStorage.setItem(key, JSON.stringify(localProg));
+                }
+
+                // Refresh sidebar progress and icon states
+                await loadProgressAndRender();
+
+                // Re-render button state
+                const nowCompleted = !isCompletedCurrently;
+                if (nowCompleted) {
+                  completeBtn.className = "lesson-complete-btn completed";
+                  completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                } else {
+                  completeBtn.className = "lesson-complete-btn";
+                  completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
+                }
+
+              } catch (err) {
+                console.error("Failed to update progress:", err);
+                await showCustomAlert("Lỗi khi cập nhật tiến độ học tập: " + (err.message || err));
+              }
+            };
+          }
+
+          // Set activation click handler for this course
+          courseModalActivationBtn.onclick = async () => {
+            const codeInput = await showCustomPrompt(`NHẬP MÃ KÍCH HOẠT KHÓA HỌC:\nVui lòng nhập mã kích hoạt:`);
+            if (codeInput !== null) {
+              const cleanCode = codeInput.trim();
+              const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
+
+              // Chế độ test local offline
+              const isLocalMockId = String(courseId).startsWith("thpt-") || String(courseId).length < 5;
+              if (!supabaseClient || isLocalMockId) {
+                if (cleanCode === "123" || cleanCode.toUpperCase() === "VIP") {
+                  registerCourse(courseId);
+                  await showCustomAlert(`Kích hoạt thành công khóa học "${course.title}"! Chúc bạn học tập tốt!`);
+                  openClassroomModal(courseId); // reload layout
+                } else {
+                  await showCustomAlert(`Mã kích hoạt không chính xác hoặc đã hết hạn sử dụng. Vui lòng liên hệ Admin để nhận mã kích hoạt hợp lệ!`);
+                }
+                return;
+              }
+
+              // Gọi Supabase thật
+              try {
+                const { data: codeData, error: codeErr } = await supabaseClient
+                  .from('activation_codes')
+                  .select('*')
+                  .eq('code', cleanCode)
+                  .eq('active', true)
+                  .single();
+
+                if (codeErr || !codeData) {
+                  await showCustomAlert(`Mã kích hoạt không chính xác hoặc đã hết hạn sử dụng. Vui lòng liên hệ Admin để nhận mã kích hoạt hợp lệ!`);
+                  return;
+                }
+
+                if (codeData.course_id !== courseId) {
+                  await showCustomAlert(`Mã kích hoạt này không áp dụng cho khóa học này!`);
+                  return;
+                }
+
+                if (codeData.used_count >= codeData.max_uses) {
+                  await showCustomAlert(`Mã kích hoạt này đã vượt quá số lần sử dụng tối đa!`);
+                  return;
+                }
+
+                // Ghi nhận enrollment
+                const { error: enrollErr } = await supabaseClient
+                  .from('enrollments')
+                  .insert({
+                    user_email: studentCode,
+                    course_id: courseId
+                  });
+
+                if (enrollErr && !enrollErr.message.includes("unique")) {
+                  throw enrollErr;
+                }
+
+                // Cộng dồn used_count
+                await supabaseClient
+                  .from('activation_codes')
+                  .update({ used_count: codeData.used_count + 1 })
+                  .eq('id', codeData.id);
+
+                // Tải lại quyền truy cập mới nhất
+                await loadCoursesAndEnrollments();
+
+                await showCustomAlert(`Kích hoạt thành công khóa học "${course.title}"! Chúc bạn học tập tốt!`);
+                openClassroomModal(courseId); // reload layout
+                
+                // Re-render
+                renderExamRoomCourses();
+                renderOverviewCourses();
+
+              } catch (err) {
+                console.error("Lỗi kích hoạt:", err);
+                await showCustomAlert(`Gặp lỗi khi kết nối máy chủ: ${err.message || err}`);
+              }
+            }
+          };
+
+          courseStudyModal.hidden = false;
+          document.body.style.overflow = 'hidden';
+
+        } catch (err) {
+          alert("Lỗi khi mở giao diện học tập:\n" + err.message + "\n" + err.stack);
+        }
       }
 
-      function closeClassroomModalFunc() {
-        classroomModal.hidden = true;
+      function closeCourseStudyModalFunc() {
+        courseStudyModal.hidden = true;
         document.body.style.overflow = '';
+        stopWatermark();
+        const iframe = document.getElementById("course-video-iframe");
+        if (iframe) iframe.src = "";
       }
 
-      if (closeClassroomBtn) closeClassroomBtn.addEventListener("click", closeClassroomModalFunc);
-      if (classroomCloseBtn) classroomCloseBtn.addEventListener("click", closeClassroomModalFunc);
-      document.getElementById("classroom-modal-backdrop")?.addEventListener("click", closeClassroomModalFunc);
+      if (closeCourseModalBtn) closeCourseModalBtn.addEventListener("click", closeCourseStudyModalFunc);
 
       // Initialize UI
       updateAccountUI();
-      renderOverviewCourses();
+      loadCoursesAndEnrollments().then(() => {
+        renderExamRoomCourses();
+        renderOverviewCourses();
+      });
 
       // EDIT PROFILE MODALS HANDLERS
       const editModal = document.getElementById("edit-profile-modal");

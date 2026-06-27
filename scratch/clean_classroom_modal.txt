@@ -1,0 +1,343 @@
+function openClassroomModal(courseId) {
+        try {
+          console.log("Opening classroom modal for course:", courseId);
+          const course = COURSES_DATA.find(c => c.id === courseId);
+          if (!course) {
+            alert("Error: Không tìm thấy khóa học với ID: " + courseId + ". Danh sách ID hiện có: " + JSON.stringify(COURSES_DATA.map(c => c.id)));
+            return;
+          }
+
+          // Basic inspect leak prevention: block right clicks in modal
+          courseStudyModal.oncontextmenu = (e) => e.preventDefault();
+
+          const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
+          const registeredIds = getRegisteredCourseIds();
+          const isRegistered = registeredIds.includes(courseId);
+
+          // Populate header details
+          document.getElementById("course-modal-title").textContent = course.title;
+          document.getElementById("course-modal-breadcrumb-title").textContent = course.title;
+          document.getElementById("course-player-cover-text").textContent = course.title;
+          document.getElementById("course-teacher-name").textContent = course.author || "Trần Hoàng Anh";
+          
+          const sName = studentInfo?.name || studentInfo?.username || "Học sinh";
+          document.getElementById("course-modal-student-name").textContent = sName.toLowerCase();
+
+          // Reset Player Left Area
+          document.getElementById("course-player-cover").style.display = "flex";
+          const iframe = document.getElementById("course-video-iframe");
+          iframe.style.display = "none";
+          iframe.src = "";
+          stopWatermark();
+
+          // Hide player controls initially
+          const controlsBar = document.getElementById("player-controls-bar");
+          const completeBtn = document.getElementById("lesson-complete-toggle-btn");
+          if (controlsBar) controlsBar.style.display = "none";
+
+          let activeLessonId = null;
+
+          // Asynchronously load progress from database
+          async function loadProgressAndRender() {
+            let completedLessonIds = [];
+            try {
+              if (supabaseClient) {
+                const { data: dbProgress } = await supabaseClient
+                  .from('lesson_progress')
+                  .select('lesson_id')
+                  .eq('user_email', studentCode);
+                completedLessonIds = (dbProgress || []).map(p => p.lesson_id);
+              } else {
+                const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+                completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
+              }
+            } catch (err) {
+              console.warn("Failed to load progress, using local storage backup:", err);
+              const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+              completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
+            }
+
+            // Update status badge & progress bar in header
+            const badge = document.getElementById("course-modal-status-badge");
+            const lessonsArray = course.lessons || [];
+            const courseLessonsCount = lessonsArray.length;
+            
+            // Filter completed lessons belonging to this course
+            const completedInCourse = lessonsArray.filter(l => completedLessonIds.includes(l.id));
+            const completedCount = completedInCourse.length;
+            const percent = courseLessonsCount > 0 ? Math.round((completedCount / courseLessonsCount) * 100) : 0;
+
+            if (isRegistered) {
+              badge.textContent = `Đã mở khóa (${percent}%)`;
+              badge.className = "course-status-badge unlocked";
+              courseModalActivationBtn.style.display = "none";
+            } else {
+              badge.textContent = "Chưa mua";
+              badge.className = "course-status-badge locked";
+              courseModalActivationBtn.style.display = "block";
+            }
+
+            // Populate Sidebar Lessons
+            const lessonsList = document.getElementById("course-modal-lessons-list");
+            lessonsList.innerHTML = "";
+
+            const folderName = course.title.includes("Toán") || course.title.includes("THPT") ? "ĐỀ TĂNG TỐC" : "CHUYÊN ĐỀ TĂNG TỐC";
+
+            const group = document.createElement("div");
+            group.className = "accordion-group";
+
+            const accHeader = document.createElement("div");
+            accHeader.className = "accordion-header";
+            accHeader.innerHTML = `
+              <div class="accordion-header-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                ${folderName}
+              </div>
+              <svg class="accordion-arrow open" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            `;
+
+            const accContent = document.createElement("div");
+            accContent.className = "accordion-content";
+            accContent.style.display = "flex";
+
+            lessonsArray.forEach((lesson, index) => {
+              const item = document.createElement("div");
+              item.className = "lesson-item";
+              if (activeLessonId === lesson.id) item.classList.add("active");
+              
+              let previewBadge = "";
+              let rightIcon = "";
+
+              const isCompleted = completedLessonIds.includes(lesson.id);
+
+              if (lesson.preview_allowed) {
+                previewBadge = `<span class="lesson-badge-preview">Xem thử</span>`;
+              } else if (!isRegistered) {
+                rightIcon = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#64748b" fill="none" stroke-width="2.5" style="margin-left:auto;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+              }
+
+              // Tick green icon for completed, otherwise type icon
+              let leftIconSvg = getLessonIconSvg(lesson.title);
+              if (isRegistered && isCompleted) {
+                leftIconSvg = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#22c55e" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+              }
+
+              item.innerHTML = `
+                <div class="lesson-icon-wrapper" style="${isRegistered && isCompleted ? 'background:#e2fbe8; color:#22c55e;' : ''}">
+                  ${leftIconSvg}
+                </div>
+                <span class="lesson-title">${lesson.title}</span>
+                ${previewBadge}
+                ${rightIcon}
+              `;
+
+              // Handle Lesson click
+              item.addEventListener("click", () => {
+                if (!isRegistered && !lesson.preview_allowed) {
+                  showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm vào nút "MÃ TRUY CẬP" ở góc phải để nhập mã kích hoạt khóa học này!`);
+                  return;
+                }
+
+                activeLessonId = lesson.id;
+
+                // Mark active item
+                accContent.querySelectorAll(".lesson-item").forEach(el => el.classList.remove("active"));
+                item.classList.add("active");
+
+                // Play/Show content on Left Area
+                document.getElementById("course-player-cover").style.display = "none";
+                iframe.style.display = "block";
+                
+                // Show controls if registered
+                if (isRegistered && controlsBar && completeBtn) {
+                  controlsBar.style.display = "flex";
+                  // Render button state
+                  if (isCompleted) {
+                    completeBtn.className = "lesson-complete-btn completed";
+                    completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                  } else {
+                    completeBtn.className = "lesson-complete-btn";
+                    completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
+                  }
+                }
+                
+                // Load video/pdf source
+                const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
+                if (isVideo) {
+                  iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
+                  startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
+                } else {
+                  iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
+                  stopWatermark();
+                }
+              });
+
+              accContent.appendChild(item);
+            });
+
+            group.appendChild(accHeader);
+            group.appendChild(accContent);
+            lessonsList.appendChild(group);
+
+            // Accordion toggle handler
+            accHeader.addEventListener("click", () => {
+              const isOpen = accContent.style.display !== "none";
+              accContent.style.display = isOpen ? "none" : "flex";
+              const arrow = accHeader.querySelector(".accordion-arrow");
+              if (isOpen) {
+                arrow.classList.remove("open");
+                arrow.style.transform = "rotate(0deg)";
+              } else {
+                arrow.classList.add("open");
+                arrow.style.transform = "rotate(180deg)";
+              }
+            });
+          }
+
+          // Initial render of progress
+          loadProgressAndRender();
+
+          // Set complete toggle handler
+          if (completeBtn) {
+            completeBtn.onclick = async () => {
+              if (!activeLessonId) return;
+              
+              const isCompletedCurrently = completeBtn.classList.contains("completed");
+              
+              try {
+                if (supabaseClient) {
+                  if (isCompletedCurrently) {
+                    // Remove completion record from database
+                    await supabaseClient
+                      .from('lesson_progress')
+                      .delete()
+                      .eq('user_email', studentCode)
+                      .eq('lesson_id', activeLessonId);
+                  } else {
+                    // Add completion record to database
+                    await supabaseClient
+                      .from('lesson_progress')
+                      .insert({
+                        user_email: studentCode,
+                        lesson_id: activeLessonId,
+                        status: 'completed'
+                      });
+                  }
+                } else {
+                  // Offline mockup
+                  const key = `tmaTsaLessonProgress_${studentInfo.username}`;
+                  let localProg = JSON.parse(localStorage.getItem(key) || "[]");
+                  if (isCompletedCurrently) {
+                    localProg = localProg.filter(id => id !== activeLessonId);
+                  } else {
+                    if (!localProg.includes(activeLessonId)) localProg.push(activeLessonId);
+                  }
+                  localStorage.setItem(key, JSON.stringify(localProg));
+                }
+
+                // Refresh sidebar progress and icon states
+                await loadProgressAndRender();
+
+                // Re-render button state
+                const nowCompleted = !isCompletedCurrently;
+                if (nowCompleted) {
+                  completeBtn.className = "lesson-complete-btn completed";
+                  completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                } else {
+                  completeBtn.className = "lesson-complete-btn";
+                  completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
+                }
+
+              } catch (err) {
+                console.error("Failed to update progress:", err);
+                await showCustomAlert("Lỗi khi cập nhật tiến độ học tập: " + (err.message || err));
+              }
+            };
+          }
+
+          // Set activation click handler for this course
+          courseModalActivationBtn.onclick = async () => {
+            const codeInput = await showCustomPrompt(`NHẬP MÃ KÍCH HOẠT KHÓA HỌC:\nVui lòng nhập mã kích hoạt:`);
+            if (codeInput !== null) {
+              const cleanCode = codeInput.trim();
+              const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
+
+              // Chế độ test local offline
+              const isLocalMockId = String(courseId).startsWith("thpt-") || String(courseId).length < 5;
+              if (!supabaseClient || isLocalMockId) {
+                if (cleanCode === "123" || cleanCode.toUpperCase() === "VIP") {
+                  registerCourse(courseId);
+                  await showCustomAlert(`Kích hoạt thành công khóa học "${course.title}"! Chúc bạn học tập tốt!`);
+                  openClassroomModal(courseId); // reload layout
+                } else {
+                  await showCustomAlert(`Mã kích hoạt không chính xác hoặc đã hết hạn sử dụng. Vui lòng liên hệ Admin để nhận mã kích hoạt hợp lệ!`);
+                }
+                return;
+              }
+
+              // Gọi Supabase thật
+              try {
+                const { data: codeData, error: codeErr } = await supabaseClient
+                  .from('activation_codes')
+                  .select('*')
+                  .eq('code', cleanCode)
+                  .eq('active', true)
+                  .single();
+
+                if (codeErr || !codeData) {
+                  await showCustomAlert(`Mã kích hoạt không chính xác hoặc đã hết hạn sử dụng. Vui lòng liên hệ Admin để nhận mã kích hoạt hợp lệ!`);
+                  return;
+                }
+
+                if (codeData.course_id !== courseId) {
+                  await showCustomAlert(`Mã kích hoạt này không áp dụng cho khóa học này!`);
+                  return;
+                }
+
+                if (codeData.used_count >= codeData.max_uses) {
+                  await showCustomAlert(`Mã kích hoạt này đã vượt quá số lần sử dụng tối đa!`);
+                  return;
+                }
+
+                // Ghi nhận enrollment
+                const { error: enrollErr } = await supabaseClient
+                  .from('enrollments')
+                  .insert({
+                    user_email: studentCode,
+                    course_id: courseId
+                  });
+
+                if (enrollErr && !enrollErr.message.includes("unique")) {
+                  throw enrollErr;
+                }
+
+                // Cộng dồn used_count
+                await supabaseClient
+                  .from('activation_codes')
+                  .update({ used_count: codeData.used_count + 1 })
+                  .eq('id', codeData.id);
+
+                // Tải lại quyền truy cập mới nhất
+                await loadCoursesAndEnrollments();
+
+                await showCustomAlert(`Kích hoạt thành công khóa học "${course.title}"! Chúc bạn học tập tốt!`);
+                openClassroomModal(courseId); // reload layout
+                
+                // Re-render
+                renderExamRoomCourses();
+                renderOverviewCourses();
+
+              } catch (err) {
+                console.error("Lỗi kích hoạt:", err);
+                await showCustomAlert(`Gặp lỗi khi kết nối máy chủ: ${err.message || err}`);
+              }
+            }
+          };
+
+          courseStudyModal.hidden = false;
+          document.body.style.overflow = 'hidden';
+
+        } catch (err) {
+          alert("Lỗi khi mở giao diện học tập:\n" + err.message + "\n" + err.stack);
+        }
+      }

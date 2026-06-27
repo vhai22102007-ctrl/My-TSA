@@ -280,4 +280,11 @@
     console.log("Custom alert triggered: ", message);
     window.showCustomAlert(String(message));
   };
+
+  window.showCustomPrompt = function (message) {
+    return new Promise((resolve) => {
+      const val = prompt(message);
+      resolve(val);
+    });
+  };
 })();
