@@ -1279,17 +1279,31 @@
                     }
                   }
                   
-                  // Load video/pdf source
+                                    // Load video/pdf source
                   const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
+                  const downloadDocBtn = document.getElementById("lesson-download-doc-btn");
+
                   if (isVideo) {
                     iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
                     startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
                     
+                    if (downloadDocBtn) {
+                      if (lesson.doc_link) {
+                        downloadDocBtn.href = lesson.doc_link;
+                        downloadDocBtn.style.display = "flex";
+                      } else {
+                        downloadDocBtn.style.display = "none";
+                      }
+                    }
+
                     // Write video view log (Feature 2)
                     writeVideoViewLog(studentCode, lesson, course.title);
                   } else {
                     iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
                     stopWatermark();
+                    if (downloadDocBtn) {
+                      downloadDocBtn.style.display = "none";
+                    }
                   }
                 });
 
@@ -2642,7 +2656,10 @@
         });
 
         // Update corresponding UIs
-        if (isExamRoom) updateExamRoomUI();
+        if (isExamRoom) {
+          updateExamRoomUI();
+          syncEnrollmentsFromDatabase();
+        }
         if (isPracticeRoom) updatePracticeRoomUI();
         if (isExamList) renderExams();
         if (isDocumentsRoom) updateDocumentsUI();
@@ -3630,4 +3647,30 @@
         }
       }
 
-          })();
+                async function syncEnrollmentsFromDatabase() {
+        if (!studentInfo || !supabaseClient) return;
+        try {
+          const studentCode = studentInfo.email || studentInfo.username;
+          const { data: dbEnrollments, error: enrollError } = await supabaseClient
+            .from('enrollments')
+            .select('course_id')
+            .eq('user_email', studentCode);
+          if (!enrollError && dbEnrollments) {
+            const enrolledCourseIds = dbEnrollments.map(e => e.course_id);
+            const key = "tmaTsaRegisteredCourses_" + studentInfo.username;
+            localStorage.setItem(key, JSON.stringify(enrolledCourseIds));
+            renderExamRoomCourses();
+            renderOverviewCourses();
+          }
+        } catch (e) {
+          console.warn("Failed to sync enrollments from database:", e);
+        }
+      }
+
+      window.addEventListener('storage', function(e) {
+        if (e.key && e.key.startsWith('tmaTsaRegisteredCourses_')) {
+          renderExamRoomCourses();
+          renderOverviewCourses();
+        }
+      });
+    })();

@@ -1450,3 +1450,258 @@
       padding-left: 8px !important;
       gap: 20px !important;
     }
+
+    /* Horizontal Chapter-Lesson Tree Diagram */
+    .tree-wrapper {
+      display: flex;
+      gap: 60px;
+      padding: 40px 20px;
+      background: #f8fafc;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      position: relative;
+      min-width: 100%;
+    }
+    
+    .tree-root-col {
+      display: flex;
+      align-items: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tree-root-col::after {
+      content: '';
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      width: 30px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-branches-col {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: relative;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tree-branches-col::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 20px;
+      bottom: 20px;
+      width: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-branch-item {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tree-branch-item::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 50%;
+      width: 30px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-node {
+      background: #ffffff;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      min-width: 180px;
+      max-width: 280px;
+    }
+    
+    .tree-node.course-node { border-left: 5px solid var(--brand); }
+    .tree-node.chapter-node { border-left: 5px solid #3b82f6; }
+    .tree-node.lesson-node { border-left: 5px solid #10b981; font-weight: 500; font-size: 12px; }
+    
+    .tree-node .node-title {
+      color: #1e293b;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    
+    .tree-node .node-btn-add {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-left: auto;
+      color: #334155;
+    }
+    .tree-node .node-btn-add:hover {
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+    }
+    
+    .tree-chapter-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .tree-chapter-wrap::after {
+      content: '';
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      width: 30px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-leaves-col {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+      padding-left: 0;
+      flex-shrink: 0;
+    }
+    .tree-leaves-col::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 15px;
+      bottom: 15px;
+      width: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-leaf-item {
+      display: flex;
+      align-items: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tree-leaf-item::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 50%;
+      width: 30px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+
+    /* Teacher Course Grid Cards (matched to student card layout) */
+    .lms-courses-grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    
+    .lms-courses-grid-container .course-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .lms-courses-grid-container .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      border-color: var(--brand);
+    }
+    
+    .lms-courses-grid-container .course-hero {
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .lms-courses-grid-container .course-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    
+    .lms-courses-grid-container .course-name {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+    
+    .lms-courses-grid-container .course-desc {
+      margin: 6px 0 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .lms-courses-grid-container .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 14px 0;
+    }
+    
+    .lms-courses-grid-container .course-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    
+    .lms-courses-grid-container .lesson-count {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    
+    .lms-courses-grid-container .enter-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+      background: var(--brand);
+      color: #ffffff;
+      transition: background 0.15s ease;
+    }
+    .lms-courses-grid-container .enter-btn:hover {
+      background: var(--brand-dark);
+    }

@@ -1,7 +1,22 @@
 <!doctype html>
 <html lang="vi">
 <head>
-    <script src="js/custom-dialogs.js"></script>
+  <script>
+    try {
+      var teacherInfo = localStorage.getItem("teacherInfo");
+      if (!teacherInfo) {
+        window.location.href = "login.html#teacher";
+      } else {
+        var parsed = JSON.parse(teacherInfo);
+        if (parsed.role !== "teacher") {
+          window.location.href = "login.html#teacher";
+        }
+      }
+    } catch (e) {
+      window.location.href = "login.html#teacher";
+    }
+  </script>
+  <script src="js/custom-dialogs.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Quản trị viên và Bộ soạn đề TSA dành cho giáo viên.">
@@ -190,6 +205,15 @@
           </span>
           <span>Quản lý học sinh</span>
         </button>
+        <button class="nav-button" type="button" data-tab-target="approve-courses">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </span>
+          <span>Cấp quyền khóa học</span>
+        </button>
         <button class="nav-button" type="button" data-tab-target="manage-documents">
           <span class="menu-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -220,6 +244,17 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           </span>
           <span>Nhật ký & Bảo mật</span>
+        </button>
+        <div style="border-top: 1px solid var(--border); margin: 10px 0; opacity: 0.5;"></div>
+        <button class="nav-button" type="button" onclick="teacherLogout()" style="color: #c1121f;">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </span>
+          <span>Đăng xuất</span>
         </button>
       </div>
 
@@ -360,28 +395,6 @@
             </div>
           </div>
 
-          <!-- Manual Course Enrollment Card -->
-          <article class="card" style="margin-bottom: 20px;">
-            <div class="card-header">
-              <h3>Mở khóa khóa học thủ công (Cấp quyền cho học sinh)</h3>
-            </div>
-            <div class="card-body" style="padding: 20px;">
-              <form id="lms-manual-enroll-form" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; border: none; padding: 0; background: transparent;">
-                <div class="form-group" style="flex: 2; min-width: 200px;">
-                  <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text);">Email học sinh</label>
-                  <input type="text" id="lms-enroll-student-email" required placeholder="Ví dụ: student@gmail.com hoặc mã học sinh" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
-                </div>
-                <div class="form-group" style="flex: 2; min-width: 200px;">
-                  <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text);">Khóa học muốn cấp quyền</label>
-                  <select id="lms-enroll-course-select" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; height: 33px; box-sizing: border-box;">
-                    <!-- Rendered dynamically -->
-                  </select>
-                </div>
-                <button class="btn btn-primary" type="submit" style="height: 33px; padding: 0 20px; font-weight: 700; border-radius: 6px;">Cấp quyền mở khóa</button>
-              </form>
-            </div>
-          </article>
-
           <article class="card">
             <div class="card-body" style="padding: 0;">
               <div class="table-wrap">
@@ -401,6 +414,43 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- TAB: CẤP QUYỀN KHÓA HỌC -->
+        <div id="tab-approve-courses" class="tab-panel">
+          <div class="topbar">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
+              <h1>Cấp quyền mở khóa khóa học</h1>
+            </div>
+          </div>
+
+          <article class="card" style="margin-top: 20px;">
+            <div class="card-header">
+              <h3>Mở khóa khóa học thủ công (Cấp quyền cho học sinh)</h3>
+            </div>
+            <div class="card-body" style="padding: 20px;">
+              <form id="lms-manual-enroll-form" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; border: none; padding: 0; background: transparent;">
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                  <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text);">Email học sinh</label>
+                  <input type="text" id="lms-enroll-student-email" required placeholder="Ví dụ: student@gmail.com hoặc mã học sinh" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div class="form-group" style="flex: 2; min-width: 200px;">
+                  <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--text);">Khóa học muốn cấp quyền</label>
+                  <select id="lms-enroll-course-select" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; height: 33px; box-sizing: border-box;">
+                    <!-- Rendered dynamically -->
+                  </select>
+                </div>
+                <button class="btn btn-primary" type="submit" style="height: 33px; padding: 0 20px; font-weight: 700; border-radius: 6px;">Cấp quyền mở khóa</button>
+              </form>
             </div>
           </article>
         </div>
@@ -442,65 +492,69 @@
 
         <!-- 6. TAB: QUẢN LÝ KHÓA HỌC (LMS) -->
         <div id="tab-manage-courses" class="tab-panel">
-          <div class="topbar">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
-                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
-                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
-                </svg>
-              </button>
+          
+          <!-- View 1: Grid of Courses (Default) -->
+          <div id="lms-courses-list-view" style="display: block;">
+            <div class="topbar">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                    <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                    <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                  </svg>
+                </button>
+                <div>
+                  <h1>Quản lý Khóa học & Bài học LMS</h1>
+                  <p style="margin: 6px 0 0; color: var(--muted);">Thêm, sửa, xóa các khóa học, tải lên video, tài liệu PDF và bản viết tay bài học.</p>
+                </div>
+              </div>
               <div>
-                <h1>Quản lý Khóa học & Bài học LMS</h1>
-                <p style="margin: 6px 0 0; color: var(--muted);">Thêm, sửa, xóa các khóa học, tải lên video, tài liệu PDF và bản viết tay bài học.</p>
+                <button class="btn btn-primary" type="button" onclick="showAddCourseModal()">
+                  + Thêm khóa học mới
+                </button>
               </div>
             </div>
-            <div>
-              <button class="btn btn-primary" type="button" onclick="showAddCourseModal()">
-                + Thêm khóa học mới
-              </button>
+
+            <!-- Grid container styled like student course lobby -->
+            <div class="lms-courses-grid-container" id="lms-courses-grid">
+              <!-- Rendered dynamically -->
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start; margin-top: 20px;">
-            <!-- Left: Courses List Card -->
-            <article class="card">
-              <div class="card-header">
-                <h3>Danh sách khóa học</h3>
-              </div>
-              <div class="card-body" style="padding: 12px; display: flex; flex-direction: column; gap: 8px;" id="lms-courses-list-container">
-                <!-- Rendered dynamically -->
-              </div>
-            </article>
+          <!-- View 2: Full Width Course Details & Lessons Editor -->
+          <div id="lms-course-editor-view" style="display: none; margin-top: 10px;">
+            <button class="btn btn-outline" onclick="backToCoursesList()" style="margin-bottom: 20px; display: flex; align-items: center; gap: 6px; padding: 10px 16px; font-weight: 700; border-radius: 8px;">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>Quay lại danh sách khóa học</span>
+            </button>
 
-            <!-- Right: Course Details & Lessons Card -->
-            <article class="card" id="lms-course-editor-card" style="display: none;">
-              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 id="lms-editor-course-title">Chi tiết khóa học</h3>
+            <article class="card" id="lms-course-editor-card" style="width: 100%;">
+              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                <h3 id="lms-editor-course-title" style="font-size: 18px; font-weight: 800; margin: 0;">Chi tiết khóa học</h3>
                 <div style="display: flex; gap: 8px;">
                   <button class="btn btn-outline btn-xs" type="button" onclick="showEditCourseModal()">Sửa thông tin</button>
                   <button class="btn btn-danger btn-xs" type="button" onclick="deleteActiveCourse()">Xóa khóa học</button>
                 </div>
               </div>
-              <div class="card-body" style="padding: 20px;">
-                <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
-                  <div style="display: flex; gap: 16px; align-items: start;">
-                    <div id="lms-editor-course-cover" style="width: 100px; height: 60px; border-radius: 6px; background-size: cover; background-position: center; border: 1px solid var(--border);"></div>
-                    <div>
-                      <h4 id="lms-editor-course-name" style="margin: 0; font-size: 16px; font-weight: 700;">Tên khóa học</h4>
-                      <p id="lms-editor-course-category" style="margin: 4px 0; font-size: 12px; color: var(--brand); font-weight: 700;">Danh mục: THPT</p>
-                      <p id="lms-editor-course-desc" style="margin: 0; font-size: 13px; color: var(--muted);">Mô tả khóa học...</p>
+              <div class="card-body" style="padding: 24px;">
+                <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                  <div style="display: flex; gap: 20px; align-items: start; flex-wrap: wrap;">
+                    <div id="lms-editor-course-cover" style="width: 160px; height: 96px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05);"></div>
+                    <div style="flex: 1; min-width: 250px;">
+                      <h4 id="lms-editor-course-name" style="margin: 0; font-size: 20px; font-weight: 800; color: #1f2937;">Tên khóa học</h4>
+                      <p id="lms-editor-course-category" style="margin: 6px 0; font-size: 13px; color: var(--brand); font-weight: 800;">Danh mục: THPT</p>
+                      <p id="lms-editor-course-desc" style="margin: 8px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5;">Mô tả khóa học...</p>
                     </div>
                   </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <h4 style="margin: 0; font-weight: 700;">Danh sách bài học</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                  <h4 style="margin: 0; font-weight: 800; font-size: 16px;">Sơ đồ chương mục & bài giảng</h4>
                   <button class="btn btn-primary btn-xs" type="button" onclick="showAddLessonModal()">+ Thêm bài học</button>
                 </div>
                 
-                <div id="lms-lessons-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <div id="lms-lessons-list-container" style="width: 100%;">
                   <!-- Rendered dynamically -->
                 </div>
               </div>

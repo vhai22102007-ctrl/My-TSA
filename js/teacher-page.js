@@ -1,145 +1,130 @@
 // State management for Student lists
-    var pendingStudents = [
-      { id: 1, name: "Nguyễn Thị Minh Anh", email: "minhanh@gmail.com", phone: "0912345678", course: "Khóa học TSA", date: "2026-06-20" },
-      { id: 2, name: "Trần Hoàng Nam", email: "namth@gmail.com", phone: "0987654321", course: "Khóa học HSA", date: "2026-06-21" },
-      { id: 3, name: "Phạm Thùy Linh", email: "linhpt@gmail.com", phone: "0934567890", course: "Khóa học THPTQG", date: "2026-06-21" }
-    ];
-
-    var approvedStudents = [
-      { id: 101, name: "Nguyễn Văn Hải", email: "vhai2@tma.edu.vn", phone: "0909090909", code: "TMA507905", course: "Khóa học TSA", date: "2026-06-15" },
-      { id: 102, name: "Lê Minh Triết", email: "trietlm@tma.edu.vn", phone: "0808080808", code: "TMA507906", course: "Khóa học TSA", date: "2026-06-16" },
-      { id: 103, name: "Phạm Thanh Hằng", email: "hangpt@tma.edu.vn", phone: "0707070707", code: "TMA507907", course: "Khóa học HSA", date: "2026-06-18" }
-    ];
-
-    function renderStudents() {
-      // 1. Pending approval list
-      var pendingTbody = document.getElementById("pending-students-list");
-      if (pendingTbody) {
-        if (pendingStudents.length === 0) {
-          pendingTbody.innerHTML = '<tr><td colspan="5" class="empty">Không có yêu cầu đăng ký nào cần duyệt.</td></tr>';
+    var approvedStudents = [];
+    
+    function loadStudentsFromLocalStorage() {
+      try {
+        var saved = localStorage.getItem("tmaTsaUsers");
+        if (saved) {
+          approvedStudents = JSON.parse(saved);
         } else {
-          pendingTbody.innerHTML = pendingStudents.map(function(s) {
-            return `
-              <tr>
-                <td class="table-main">${esc(s.name)}</td>
-                <td>
-                  <div>${esc(s.email)}</div>
-                  <div class="table-sub">${esc(s.phone)}</div>
-                </td>
-                <td><span class="status type">${esc(s.course)}</span></td>
-                <td>${esc(s.date)}</td>
-                <td>
-                  <div class="actions">
-                    <button class="btn btn-sm btn-success" onclick="approveStudent(${s.id})">Duyệt</button>
-                    <button class="btn btn-sm btn-danger" onclick="rejectStudent(${s.id})">Từ chối</button>
-                  </div>
-                </td>
-              </tr>
-            `;
-          }).join("");
+          approvedStudents = []; // Start completely empty!
+          localStorage.setItem("tmaTsaUsers", JSON.stringify(approvedStudents));
         }
-      }
-
-      // 2. Approved students list
-      var approvedTbody = document.getElementById("approved-students-list");
-      if (approvedTbody) {
-        if (approvedStudents.length === 0) {
-          approvedTbody.innerHTML = '<tr><td colspan="6" class="empty">Chưa có học sinh nào tham gia khóa học.</td></tr>';
-        } else {
-          approvedTbody.innerHTML = approvedStudents.map(function(s) {
-            return `
-              <tr>
-                <td>
-                  <div class="table-main">${esc(s.name)}</div>
-                  <div class="table-sub">${esc(s.email)} • ${esc(s.phone)}</div>
-                </td>
-                <td style="font-family: monospace; font-weight: bold; color: var(--brand);">${esc(s.code)}</td>
-                <td><span class="status type">${esc(s.course)}</span></td>
-                <td>${esc(s.date)}</td>
-                <td><span class="status published">Đang học</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn btn-sm btn-outline" onclick="viewStudentDetails(${s.id})">Chi tiết</button>
-                    <button class="btn btn-sm btn-danger" onclick="kickStudent(${s.id})">Kích</button>
-                  </div>
-                </td>
-              </tr>
-            `;
-          }).join("");
-        }
+      } catch (e) {
+        console.warn("Failed to load students from localStorage:", e);
       }
     }
 
+    async function renderStudents() {
+      loadStudentsFromLocalStorage();
 
+      var approvedTbody = document.getElementById("approved-students-list");
+      if (!approvedTbody) return;
 
-    function approveStudent(id) {
-      var idx = pendingStudents.findIndex(function(s) { return s.id === id; });
-      if (idx !== -1) {
-        var student = pendingStudents[idx];
-        pendingStudents.splice(idx, 1);
-        
-        // Add to approved
-        var nextCodeNum = 507900 + approvedStudents.length + 8;
-        var code = "TMA" + nextCodeNum;
-        approvedStudents.push({
-          id: Date.now(),
-          name: student.name,
-          email: student.email,
-          phone: student.phone,
-          code: code,
-          course: student.course,
-          date: new Date().toISOString().split('T')[0]
+      if (approvedStudents.length === 0) {
+        approvedTbody.innerHTML = '<tr><td colspan="6" class="empty">Chưa có học sinh nào đăng ký tài khoản.</td></tr>';
+        return;
+      }
+
+      approvedTbody.innerHTML = '<tr><td colspan="6" class="empty">Đang tải danh sách học sinh và khóa học...</td></tr>';
+
+      // Fetch all enrollments from Supabase to match
+      var enrollsList = [];
+      try {
+        if (window.supabaseClient) {
+          var { data: dbEnrolls } = await window.supabaseClient.from('enrollments').select('*');
+          enrollsList = dbEnrolls || [];
+        } else {
+          // Offline mock enrollments
+          enrollsList = [];
+        }
+      } catch (err) {
+        console.warn("Failed to fetch enrollments from Supabase for student grid:", err);
+      }
+
+      approvedTbody.innerHTML = "";
+      approvedStudents.forEach(function(s) {
+        // Find enrolled courses for this student
+        var studentEnrolls = enrollsList.filter(function(e) {
+          return String(e.user_email).toLowerCase() === String(s.email).toLowerCase();
         });
 
-        alert(`Đã phê duyệt học sinh: ${student.name}!\nMã học sinh cấp mới: ${code}`);
-        renderStudents();
-      }
-    }
-
-    async function rejectStudent(id) {
-      var idx = pendingStudents.findIndex(function(s) { return s.id === id; });
-      if (idx !== -1) {
-        var student = pendingStudents[idx];
-        if (await showCustomConfirm(`Bạn có chắc muốn từ chối đăng ký của học sinh: ${student.name}?`)) {
-          pendingStudents.splice(idx, 1);
-          renderStudents();
+        // Map course IDs to titles
+        var courseTags = "Chưa tham gia";
+        if (studentEnrolls.length > 0) {
+          var titles = studentEnrolls.map(function(e) {
+            var courseObj = lmsCourses.find(function(c) { return c.id === e.course_id; });
+            return courseObj ? courseObj.title : e.course_id;
+          });
+          courseTags = titles.map(function(t) {
+            return `<span class="status type" style="background:#fee2e2; color:#991b1b; font-weight:700; margin-right:4px; font-size:11px;">${esc(t)}</span>`;
+          }).join("");
         }
-      }
-      document.getElementById("student-detail-modal").style.display = "none";
+
+        // Generate SBD
+        var cleanEmail = String(s.email || "student").split("@")[0].toUpperCase();
+        var sbd = "TMA-" + cleanEmail;
+        var regDate = s.created_at ? s.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
+
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <div class="table-main">${esc(s.name)}</div>
+            <div class="table-sub">${esc(s.email)} • ${esc(s.phone)}</div>
+          </td>
+          <td style="font-family: monospace; font-weight: bold; color: var(--brand);">${esc(sbd)}</td>
+          <td>${courseTags}</td>
+          <td>${esc(regDate)}</td>
+          <td><span class="status published">Đang học</span></td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-sm btn-outline" onclick="viewStudentDetails('${s.email}')">Chi tiết</button>
+              <button class="btn btn-sm btn-danger" onclick="kickStudent('${s.email}')">Kích</button>
+            </div>
+          </td>
+        `;
+        approvedTbody.appendChild(tr);
+      });
     }
 
-    async function kickStudent(id) {
-      var idx = approvedStudents.findIndex(function(s) { return s.id === id; });
+    async function kickStudent(email) {
+      var idx = approvedStudents.findIndex(function(s) { return String(s.email).toLowerCase() === String(email).toLowerCase(); });
       if (idx !== -1) {
         var student = approvedStudents[idx];
-        if (await showCustomConfirm(`Bạn có chắc muốn kích học sinh: ${student.name} ra khỏi khóa học?`)) {
+        if (await showCustomConfirm(`Bạn có chắc muốn kích học sinh: ${student.name} ra khỏi lớp học? Quyền truy cập các khóa học của học sinh này sẽ bị xóa khỏi hệ thống.`)) {
+          // Delete from Supabase enrollments
+          if (window.supabaseClient) {
+            await window.supabaseClient.from('enrollments').delete().eq('user_email', student.email);
+          }
+          // Remove from local array
           approvedStudents.splice(idx, 1);
+          localStorage.setItem("tmaTsaUsers", JSON.stringify(approvedStudents));
           renderStudents();
         }
       }
     }
 
-    async function viewStudentDetails(id) {
-      var student = approvedStudents.find(function(s) { return s.id === id; });
+    async function viewStudentDetails(email) {
+      var student = approvedStudents.find(function(s) { return String(s.email).toLowerCase() === String(email).toLowerCase(); });
       if (student) {
         document.getElementById("modal-student-name").textContent = student.name;
-        document.getElementById("modal-student-code").textContent = "Mã học sinh: " + student.code;
+        document.getElementById("modal-student-code").textContent = "Mã học sinh: " + student.email.split("@")[0].toUpperCase();
         document.getElementById("modal-student-email").textContent = student.email;
         document.getElementById("modal-student-phone").textContent = student.phone;
-        document.getElementById("modal-student-course").textContent = student.course;
-        document.getElementById("modal-student-date").textContent = student.date;
+        document.getElementById("modal-student-course").textContent = student.school || "";
+        document.getElementById("modal-student-date").textContent = student.className || "";
         
         var progressContainer = document.getElementById("modal-student-lms-progress");
         if (progressContainer) {
           progressContainer.innerHTML = "<p style='color: var(--muted); font-size: 12px; margin: 0;'>Đang tải thông tin tiến độ...</p>";
           
           try {
-            var studentCode = student.code || student.email;
+            var studentCode = student.email;
             var enrolledCourses = [];
             var completedLessonIds = [];
             
-            if (supabaseClient) {
-              var { data: enrolls } = await supabaseClient
+            if (window.supabaseClient) {
+              var { data: enrolls } = await window.supabaseClient
                 .from('enrollments')
                 .select('course_id')
                 .eq('user_email', studentCode);
@@ -147,7 +132,7 @@
               
               enrolledCourses = lmsCourses.filter(c => enrolledIds.includes(c.id));
               
-              var { data: progress } = await supabaseClient
+              var { data: progress } = await window.supabaseClient
                 .from('lesson_progress')
                 .select('lesson_id')
                 .eq('user_email', studentCode);
@@ -163,8 +148,8 @@
               progressContainer.innerHTML = "";
               for (const course of enrolledCourses) {
                 var courseLessons = [];
-                if (supabaseClient) {
-                  var { data: dbLessons } = await supabaseClient
+                if (window.supabaseClient) {
+                  var { data: dbLessons } = await window.supabaseClient
                     .from('lessons')
                     .select('*')
                     .eq('course_id', course.id)
@@ -208,6 +193,8 @@
     }
 
     window.kickStudent = kickStudent;
+    window.viewStudentDetails = viewStudentDetails;
+    window.closeStudentModal = closeStudentModal;
     window.viewStudentDetails = viewStudentDetails;
     window.closeStudentModal = closeStudentModal;
 
@@ -666,7 +653,7 @@
       });
 
       // Update sidebar nav active states
-      if (tabId === "approve-students" || tabId === "manage-students" || tabId === "manage-documents" || tabId === "manage-courses" || tabId === "activation-codes" || tabId === "security-logs") {
+      if (tabId === "approve-students" || tabId === "manage-students" || tabId === "manage-documents" || tabId === "manage-courses" || tabId === "activation-codes" || tabId === "security-logs" || tabId === "approve-courses") {
         document.querySelectorAll("#sidebar-normal-nav .nav-button").forEach(function(btn) {
           var target = btn.getAttribute("data-tab-target");
           btn.classList.toggle("active", target === tabId);
@@ -691,6 +678,8 @@
         renderActivationCodes();
       } else if (tabId === "security-logs") {
         renderSecurityLogs();
+      } else if (tabId === "approve-courses") {
+        renderManageCourses();
       }
     }
 
@@ -3229,9 +3218,15 @@
 
     // 1. COURSES MANAGEMENT
     async function renderManageCourses() {
-      var container = document.getElementById("lms-courses-list-container");
+      // Toggle views
+      var listView = document.getElementById("lms-courses-list-view");
+      var editorView = document.getElementById("lms-course-editor-view");
+      if (listView) listView.style.display = "block";
+      if (editorView) editorView.style.display = "none";
+
+      var container = document.getElementById("lms-courses-grid");
       if (!container) return;
-      container.innerHTML = "<p style='color:var(--muted);'>Đang tải danh sách khóa học...</p>";
+      container.innerHTML = "<p style='color:var(--muted); grid-column: 1 / -1; text-align: center;'>Đang tải danh sách khóa học...</p>";
 
       var selectDropdown = document.getElementById("lms-new-code-course-select");
       if (selectDropdown) selectDropdown.innerHTML = "";
@@ -3274,32 +3269,30 @@
       }
 
       if (lmsCourses.length === 0) {
-        container.innerHTML = "<p style='color:var(--muted); text-align:center; padding: 20px 0;'>Chưa có khóa học nào. Hãy nhấn nút 'Thêm khóa học mới' để bắt đầu!</p>";
-        document.getElementById("lms-course-editor-card").style.display = "none";
+        container.innerHTML = "<p style='color:var(--muted); grid-column: 1 / -1; text-align:center; padding: 20px 0;'>Chưa có khóa học nào. Hãy nhấn nút 'Thêm khóa học mới' để bắt đầu!</p>";
         return;
+      }
+
+      // Pre-fetch/calculate lesson counts for all courses
+      var lessonsCountMap = {};
+      try {
+        if (supabaseClient) {
+          var { data: allLessons } = await supabaseClient.from("lessons").select("id, course_id");
+          (allLessons || []).forEach(function(l) {
+            lessonsCountMap[l.course_id] = (lessonsCountMap[l.course_id] || 0) + 1;
+          });
+        } else {
+          var mockLessons = JSON.parse(localStorage.getItem("tmaTsaMockLessons") || "[]");
+          mockLessons.forEach(function(l) {
+            lessonsCountMap[l.course_id] = (lessonsCountMap[l.course_id] || 0) + 1;
+          });
+        }
+      } catch (ce) {
+        console.warn("Failed to fetch lesson counts:", ce);
       }
 
       container.innerHTML = "";
       lmsCourses.forEach(function(course) {
-        var row = document.createElement("div");
-        row.className = "lms-course-row" + (activeCourseId === course.id ? " active" : "");
-        row.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding: 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:" + (activeCourseId === course.id ? "#fee2e2" : "#ffffff") + "; transition: all 0.2s;";
-        
-        row.innerHTML = `
-          <div>
-            <h4 style="margin:0; font-size:14px; font-weight:700; color:${activeCourseId === course.id ? '#991b1b' : 'var(--text)'}">${course.title}</h4>
-            <span style="font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase;">${course.category} | ${course.teacher}</span>
-          </div>
-        `;
-
-        row.addEventListener("click", function() {
-          activeCourseId = course.id;
-          renderManageCourses();
-          renderCourseDetails();
-        });
-
-        container.appendChild(row);
-
         // Populate dropdown select for codes creation
         if (selectDropdown) {
           var opt = document.createElement("option");
@@ -3315,6 +3308,30 @@
           optEnroll.textContent = course.title;
           manualEnrollSelect.appendChild(optEnroll);
         }
+
+        // Create Grid Card
+        var card = document.createElement("div");
+        card.className = "course-card";
+        
+        var coverUrl = course.cover_image || (course.category === "THPT" ? "assets/thpt.png" : "assets/anhnen.png");
+        var count = lessonsCountMap[course.id] || 0;
+
+        card.innerHTML = `
+          <div class="course-hero" style="background-image: url('${coverUrl}')"></div>
+          <div class="course-body">
+            <h4 class="course-name">${esc(course.title)}</h4>
+            <p class="course-desc">${esc(course.category)} | ${esc(course.teacher || "TMA TSA")}</p>
+            <div class="divider"></div>
+            <div class="course-footer">
+              <span class="lesson-count">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>${count} bài học</span>
+              </span>
+              <button class="enter-btn" onclick="selectCourseForEditing('${course.id}')" type="button">Chỉnh sửa</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
       });
 
       // If active course is still in list, keep it selected, else select first
@@ -3322,11 +3339,28 @@
         var exists = lmsCourses.some(function(c) { return c.id === activeCourseId; });
         if (!exists) activeCourseId = lmsCourses[0].id;
       } else {
-        activeCourseId = lmsCourses[0].id;
+        activeCourseId = lmsCourses.length ? lmsCourses[0].id : null;
       }
+    }
 
+    function selectCourseForEditing(courseId) {
+      activeCourseId = courseId;
+      var listView = document.getElementById("lms-courses-list-view");
+      var editorView = document.getElementById("lms-course-editor-view");
+      if (listView) listView.style.display = "none";
+      if (editorView) editorView.style.display = "block";
       renderCourseDetails();
     }
+    window.selectCourseForEditing = selectCourseForEditing;
+
+    function backToCoursesList() {
+      var listView = document.getElementById("lms-courses-list-view");
+      var editorView = document.getElementById("lms-course-editor-view");
+      if (listView) listView.style.display = "block";
+      if (editorView) editorView.style.display = "none";
+      renderManageCourses();
+    }
+    window.backToCoursesList = backToCoursesList;
 
     async function renderCourseDetails() {
       var editorCard = document.getElementById("lms-course-editor-card");
@@ -3375,38 +3409,140 @@
       }
 
       if (lessonsList.length === 0) {
-        lessonsContainer.innerHTML = "<p style='color:var(--muted); font-size:13px; text-align:center; padding:20px 0;'>Chưa có bài học nào trong khóa này. Hãy bấm 'Thêm bài học' để đăng tải bài giải đầu tiên!</p>";
+        lessonsContainer.innerHTML = "";
+        lessonsContainer.style.cssText = "overflow-x: auto; padding: 20px 10px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);";
+        
+        var treeWrapper = document.createElement("div");
+        treeWrapper.className = "tree-wrapper";
+        
+        var rootCol = document.createElement("div");
+        rootCol.className = "tree-root-col";
+        rootCol.innerHTML = `
+          <div class="tree-node course-node">
+            <span class="node-title">${esc(course.title)}</span>
+            <button class="node-btn-add" onclick="showAddChapterPrompt()" title="Thêm chương mới">+</button>
+          </div>
+        `;
+        treeWrapper.appendChild(rootCol);
+        
+        var branchesCol = document.createElement("div");
+        branchesCol.className = "tree-branches-col";
+        var emptyBranch = document.createElement("div");
+        emptyBranch.style.cssText = "padding-left: 20px; font-size:12px; color:var(--muted);";
+        emptyBranch.textContent = "Chưa có chuyên mục / bài giảng nào. Hãy bấm nút '+' để thêm chương.";
+        branchesCol.appendChild(emptyBranch);
+        
+        treeWrapper.appendChild(branchesCol);
+        lessonsContainer.appendChild(treeWrapper);
         return;
       }
 
-      lessonsContainer.innerHTML = "";
+      // Group lessons by chapter
+      var chapters = {};
       lessonsList.forEach(function(lesson) {
-        var row = document.createElement("div");
-        row.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border:1px solid var(--border); border-radius:8px; background:#faf8f8;";
+        var chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
+        if (!chapters[chName]) {
+          chapters[chName] = [];
+        }
+        chapters[chName].push(lesson);
+      });
+
+      lessonsContainer.innerHTML = "";
+      lessonsContainer.style.cssText = "overflow-x: auto; padding: 20px 10px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);";
+      
+      var treeWrapper = document.createElement("div");
+      treeWrapper.className = "tree-wrapper";
+      
+      // Column 1: Course Node
+      var rootCol = document.createElement("div");
+      rootCol.className = "tree-root-col";
+      rootCol.innerHTML = `
+        <div class="tree-node course-node">
+          <span class="node-title">${esc(course.title)}</span>
+          <button class="node-btn-add" onclick="showAddChapterPrompt()" title="Thêm chương mới">+</button>
+        </div>
+      `;
+      treeWrapper.appendChild(rootCol);
+      
+      // Column 2: Branches (Chapters & Lessons)
+      var branchesCol = document.createElement("div");
+      branchesCol.className = "tree-branches-col";
+      
+      var chNames = Object.keys(chapters);
+      chNames.forEach(function(chName) {
+        var branchItem = document.createElement("div");
+        branchItem.className = "tree-branch-item";
         
-        var icon = "🎥";
-        if (lesson.type === "pdf") icon = "📄";
-        if (lesson.type === "write") icon = "✍️";
-
-        var previewText = lesson.preview_allowed ? " <span style='font-size:9px; background:#e2fbe8; color:#15803d; padding:1px 5px; border-radius:4px; font-weight:800; text-transform:uppercase;'>Xem thử</span>" : "";
-        var chapterText = `<span style="font-size:9px; background:#fee2e2; color:#b9152a; padding:1px 5px; border-radius:4px; font-weight:800; margin-right:4px;">${lesson.chapter_name || 'Chương 1'}</span>`;
-
-        var detailsText = lesson.type === "video" ? `Drive ID: ${lesson.video_drive_id || ""}` : `Doc Link: ${lesson.doc_link || ""}`;
-
-        row.innerHTML = `
-          <div style="flex: 1;">
-            <h5 style="margin:0; font-size:13px; font-weight:700;">[#${lesson.order_index}] ${chapterText}${icon} ${lesson.title}${previewText}</h5>
-            <span style="font-size:11px; color:var(--muted);">${detailsText}</span>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline btn-xs" type="button" onclick="showEditLessonModal('${lesson.id}')">Sửa</button>
-            <button class="btn btn-danger btn-xs" type="button" onclick="deleteLmsLesson('${lesson.id}')">Xóa</button>
+        var chapterLessons = chapters[chName];
+        chapterLessons.sort(function(a, b) { return (a.order_index || 0) - (b.order_index || 0); });
+        
+        // Chapter wrap (holds chapter node)
+        var chWrap = document.createElement("div");
+        chWrap.className = "tree-chapter-wrap";
+        chWrap.innerHTML = `
+          <div class="tree-node chapter-node">
+            <span class="node-title" title="${esc(chName)}">${esc(chName)}</span>
+            <button class="node-btn-add" onclick="showAddLessonForChapter('${escJs(chName)}')" title="Thêm bài giảng vào chương này">+</button>
           </div>
         `;
-
-        lessonsContainer.appendChild(row);
+        branchItem.appendChild(chWrap);
+        
+        // Lessons wrap (holds list of leaves)
+        var leavesCol = document.createElement("div");
+        leavesCol.className = "tree-leaves-col";
+        
+        chapterLessons.forEach(function(lesson) {
+          var leafItem = document.createElement("div");
+          leafItem.className = "tree-leaf-item";
+          
+          var previewTag = lesson.preview_allowed ? " <span style='font-size:8px; background:#e2fbe8; color:#15803d; padding:1px 3px; border-radius:3px; font-weight:800; text-transform:uppercase;'>Free</span>" : "";
+          
+          leafItem.innerHTML = `
+            <div class="tree-node lesson-node">
+              <div style="flex:1; overflow:hidden;">
+                <div class="node-title" style="font-weight:700;" title="${esc(lesson.title)}">${esc(lesson.title)}${previewTag}</div>
+                <div style="font-size:10px; color:var(--muted); margin-top:2px; display:flex; gap:6px;">
+                  ${lesson.video_drive_id ? '<span>🎥 Video: Có</span>' : '<span>🎥 Video: Không</span>'}
+                  ${lesson.doc_link ? '<span>📄 PDF: Có</span>' : '<span>📄 PDF: Không</span>'}
+                </div>
+              </div>
+              <div style="display:flex; gap:6px; margin-left:12px;">
+                <button class="btn btn-outline btn-xs" type="button" onclick="showEditLessonModal('${lesson.id}')" style="padding: 2px 6px; font-size:10px;">Sửa</button>
+                <button class="btn btn-danger btn-xs" type="button" onclick="deleteLmsLesson('${lesson.id}')" style="padding: 2px 6px; font-size:10px;">Xóa</button>
+              </div>
+            </div>
+          `;
+          leavesCol.appendChild(leafItem);
+        });
+        
+        branchItem.appendChild(leavesCol);
+        branchesCol.appendChild(branchItem);
       });
+      
+      treeWrapper.appendChild(branchesCol);
+      lessonsContainer.appendChild(treeWrapper);
     }
+
+    function escJs(str) {
+      return (str || "").replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    function showAddChapterPrompt() {
+      var chName = prompt("Nhập tên chương / chuyên đề mới:");
+      if (chName && chName.trim()) {
+        showAddLessonForChapter(chName.trim());
+      }
+    }
+    window.showAddChapterPrompt = showAddChapterPrompt;
+
+    function showAddLessonForChapter(chName) {
+      showAddLessonModal();
+      var chInput = document.getElementById("lms-lesson-modal-chapter");
+      if (chInput) {
+        chInput.value = chName;
+      }
+    }
+    window.showAddLessonForChapter = showAddLessonForChapter;
 
     // Modal Course Toggles
     function showAddCourseModal() {
@@ -3586,17 +3722,10 @@
     }
 
     function onLmsLessonTypeChange() {
-      var type = document.getElementById("lms-lesson-modal-type").value;
       var driveWrap = document.getElementById("lms-lesson-modal-drive-wrap");
       var docWrap = document.getElementById("lms-lesson-modal-doc-wrap");
-
-      if (type === "video") {
-        driveWrap.style.display = "block";
-        docWrap.style.display = "none";
-      } else {
-        driveWrap.style.display = "none";
-        docWrap.style.display = "block";
-      }
+      if (driveWrap) driveWrap.style.display = "block";
+      if (docWrap) docWrap.style.display = "block";
     }
 
     async function saveLmsLesson(e) {
@@ -3925,6 +4054,27 @@
           await showCustomAlert(`[Offline Mock] Cấp quyền mở khóa thành công cho học sinh "${emailInput}"!`);
           document.getElementById("lms-manual-enroll-form").reset();
         }
+
+        // Sync to student's local storage immediately for same-browser testing
+        try {
+          var cleanEmail = emailInput.trim().toLowerCase();
+          var studentObj = approvedStudents.find(function(s) {
+            return String(s.email).toLowerCase() === cleanEmail;
+          });
+          var username = studentObj ? studentObj.username || studentObj.email.split("@")[0] : cleanEmail.split("@")[0];
+          var key = "tmaTsaRegisteredCourses_" + username;
+          var current = [];
+          try {
+            current = JSON.parse(localStorage.getItem(key) || "[]");
+          } catch(e){}
+          if (!current.includes(courseId)) {
+            current.push(courseId);
+            localStorage.setItem(key, JSON.stringify(current));
+          }
+        } catch(e) {
+          console.warn("Failed to sync enrollment to local storage:", e);
+        }
+
       } catch (err) {
         console.error(err);
         await showCustomAlert("Lỗi khi cấp quyền thủ công: " + (err.message || err));
@@ -4111,6 +4261,11 @@
     });
 
     // Expose to window
+    function teacherLogout() {
+      localStorage.removeItem("teacherInfo");
+      window.location.href = "login.html#teacher";
+    }
+    window.teacherLogout = teacherLogout;
     window.renderManageCourses = renderManageCourses;
     window.renderCourseDetails = renderCourseDetails;
     window.showAddCourseModal = showAddCourseModal;
@@ -4139,6 +4294,21 @@
 
 
       function init() {
+        // One-time clear of previous mock students
+        try {
+          var existing = localStorage.getItem("tmaTsaUsers");
+          if (existing && existing.includes("vhai2@tma.edu.vn")) {
+            localStorage.removeItem("tmaTsaUsers");
+          }
+        } catch (e) {}
+
+        // Listen for student registrations in other tabs and refresh grid instantly
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'tmaTsaUsers') {
+            renderStudents();
+          }
+        });
+
         stripStoredFormulaQuestions();
         var isCollapsed = localStorage.getItem("tma_teacher_sidebar_collapsed") === "true";
         if (isCollapsed) {

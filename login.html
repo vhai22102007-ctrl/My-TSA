@@ -815,7 +815,7 @@
 
         function getLocalTeachers() {
           const defaultTeachers = [
-            { username: "giaovien", email: "giaovien", passwordHash: "sha256:4b53b96958457bbe8c564540d7ca67afad76d4177fa23a590914af74a9bffe7d", name: "Giáo viên TSA" },
+            { username: "giaovien", email: "giaovien", password: "giaovien", passwordHash: "sha256:4b53b96958457bbe8c564540d7ca67afad76d4177fa23a590914af74a9bffe7d", name: "Giáo viên TSA" },
           ];
 
           try {
@@ -829,12 +829,14 @@
           return defaultTeachers;
         }
 
-        function findLocalTeacher(email, password) {
+        async function findLocalTeacher(email, password) {
           const normalizedEmail = email.toLowerCase();
+          const passwordHash = await hashPassword(password);
           return getLocalTeachers().find((teacher) => {
             const teacherEmail = String(teacher.email || "").toLowerCase();
             const teacherUsername = String(teacher.username || "").toLowerCase();
-            return (teacherEmail === normalizedEmail || teacherUsername === normalizedEmail) && String(teacher.password || "") === password;
+            return (teacherEmail === normalizedEmail || teacherUsername === normalizedEmail) && 
+                   (String(teacher.password || "") === password || teacher.passwordHash === passwordHash);
           });
         }
 
@@ -895,28 +897,7 @@
             return;
           }
 
-          if (email.toLowerCase() === "test" && password === "182201") {
-            localStorage.setItem(
-              "studentInfo",
-              JSON.stringify({
-                username: "test",
-                email: "haitmatsa@gmail.com",
-                name: "Nguyễn Văn Hải",
-                phone: "0987654321",
-                cccd: "001096012345",
-                dob: "2008-10-24",
-                gender: "Nam",
-                school: "THPT Chuyên Hà Nội - Amsterdam",
-                className: "12 Lý 1",
-                province: "Hà Nội",
-                district: "Quận Cầu Giấy",
-                ward: "Phường Dịch Vọng",
-                street: "Số 1 Hoàng Minh Giám"
-              })
-            );
-            window.location.href = "select.html";
-            return;
-          }
+
 
           const users = getUsers();
           const passwordHash = await hashPassword(password);
@@ -1022,7 +1003,7 @@
           studentError.textContent = "Đăng ký thành công. Vui lòng nhập mật khẩu để đăng nhập.";
         });
 
-        teacherForm.addEventListener("submit", (event) => {
+        teacherForm.addEventListener("submit", async (event) => {
           event.preventDefault();
           const email = getValue("teacher-email");
           const password = getValue("teacher-password");
@@ -1032,7 +1013,7 @@
             return;
           }
 
-          const teacher = findLocalTeacher(email, password);
+          const teacher = await findLocalTeacher(email, password);
           if (!teacher) {
             teacherError.textContent = "Tài khoản hoặc mật khẩu giáo viên không đúng.";
             return;
