@@ -128,13 +128,13 @@ function parseQuestions(rawText) {
           else if (key === "width") image_width = Number(val) || 100;
           else if (key === "explanation") explanation = val;
           else if (key === "statements") {
-            statements = val.split("|").map(s => s.trim()).filter(Boolean);
+            statements = val.split(/\s+\|\s+/).map(s => s.trim()).filter(Boolean);
           }
           else if (key === "tf_answers") {
-            tfAnswers = val.split("|").map(s => s.trim().toUpperCase());
+            tfAnswers = val.split(/\s+\|\s+/).map(s => s.trim().toUpperCase());
           }
           else if (key === "items") {
-            dragItems = val.split("|").map(s => s.trim()).filter(Boolean);
+            dragItems = val.split(/\s+\|\s+/).map(s => s.trim()).filter(Boolean);
           }
           else if (key === "drag_correct") {
             dragCorrect = val;

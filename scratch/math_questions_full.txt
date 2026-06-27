@@ -126,10 +126,12 @@ D. 90.
 \cau[1]
 %WEB: type=single_choice
 %WEB: answer=D
+%WEB: image=assets/questions/graph_cau_2.svg
+%WEB: width=50
 Hàm số \(y = f(x)\) xác định trên đoạn \([-3; 2]\) và có đồ thị như hình vẽ bên. Gọi M và m lần lượt là giá trị lớn nhất và giá trị nhỏ nhất của hàm số \(y = f(x)\) trên đoạn \([-3; 2]\). Khi đó, giá trị của biểu thức \(M - 2m\) bằng?
 A. 5.
-B. 7.
-C. 4.
+B. 4.
+C. 7.
 D. 6.
 
 \cau[1]

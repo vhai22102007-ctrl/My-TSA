@@ -8,7 +8,1200 @@
             "section_id": "math",
             "section_label": "Tư duy Toán học",
             "layout": "single",
-            "questions": []
+            "questions": [
+                {
+                    "question_no": 1,
+                    "question_type": "fill_blank",
+                    "question": "Cho hình phẳng (H) giới hạn bởi các đường \\(y = \\sqrt{x}\\), \\(y = 0\\), \\(x = 2\\) và \\(x = 6\\). Thể tích khối tròn xoay thu được khi xoay (H) quanh trục hoành bằng bao nhiêu? (Lấy \\(\\pi \\approx 3,14\\))",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "50.24",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "50.24"
+                    ]
+                },
+                {
+                    "question_no": 2,
+                    "question_type": "true_false",
+                    "question": "Trong không gian, xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": true,
+                        "s3": true,
+                        "s4": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Hai đường thẳng không có điểm chung thì chéo nhau."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Hai đường thẳng chéo nhau thì không đồng phẳng."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Hai đường thẳng chéo nhau thì không có điểm chung."
+                        },
+                        {
+                            "id": "s4",
+                            "text": "Hai đường thẳng song song thì đồng phẳng."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 3,
+                    "question_type": "single_choice",
+                    "question": "Tập nghiệm của bất phương trình \\(\\log_{\\frac{1}{2}} (2x - 1) > \\log_{\\frac{1}{2}} (x + 1)\\) là:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "\\(S = \\left(-\\infty; \\frac{1}{2}\\right)\\)."
+                        },
+                        {
+                            "key": "B",
+                            "text": "\\(S = (2; +\\infty)\\)."
+                        },
+                        {
+                            "key": "C",
+                            "text": "\\(S = \\left(\\frac{1}{2}; 2\\right)\\)."
+                        },
+                        {
+                            "key": "D",
+                            "text": "\\((-1; 2)\\)."
+                        }
+                    ],
+                    "correct_answer": "C",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 4,
+                    "question_type": "fill_blank",
+                    "question": "Cho hình nón tròn xoay có chiều cao \\(h = 4\\) (m), bán kính đáy \\(r = 3\\) (m). Diện tích xung quanh của hình nón đã cho bằng bao nhiêu \\(\\text{m}^2\\)? (Làm tròn kết quả đến hàng phần chục)",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "47.1",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "47.1"
+                    ]
+                },
+                {
+                    "question_no": 5,
+                    "question_type": "single_choice",
+                    "question": "Biết rằng \\(F(x) = \\ln|2x + 1|\\) là một nguyên hàm của hàm số \\(f(x) = \\frac{2}{2x + 1}\\) và tích phân \\(\\int_{0}^{4} \\frac{dx}{2x + 1} = \\ln(S)\\). Khi đó, giá trị của S là?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "81."
+                        },
+                        {
+                            "key": "B",
+                            "text": "9."
+                        },
+                        {
+                            "key": "C",
+                            "text": "8."
+                        },
+                        {
+                            "key": "D",
+                            "text": "3."
+                        }
+                    ],
+                    "correct_answer": "D",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 6,
+                    "question_type": "single_choice",
+                    "question": "Một ngày, Kylian Mbappe đi bộ theo đường ray tuyến Tramway T3 ở thủ đô Paris và nhận thấy cứ 12 phút lại có một tàu vượt qua mình, cứ 4 phút lại gặp một tàu đi ngược mình. Giả thiết Kylian cũng như các tàu Tramway đều di chuyển với vận tốc không đổi, đồng thời quãng thời gian giữa hai tàu liên tiếp xuất bến của Tramway T3 là đều đặn, cố định, và như nhau theo cả hai chiều. Cứ bao nhiêu phút thì ở đường Tramway T3 lại có một tàu xuất bến?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "3 phút."
+                        },
+                        {
+                            "key": "B",
+                            "text": "8 phút."
+                        },
+                        {
+                            "key": "C",
+                            "text": "6 phút."
+                        },
+                        {
+                            "key": "D",
+                            "text": "4 phút."
+                        }
+                    ],
+                    "correct_answer": "C",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 7,
+                    "question_type": "single_choice",
+                    "question": "Cho hai biến cố A, B thoả mãn \\(P(A) = \\frac{2}{5}\\), \\(P(B) = \\frac{3}{10}\\) và \\(P(A \\cup B) = \\frac{5}{8}\\). Khi đó, xác suất \\(P(A|B)\\) bằng?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "\\frac{3}{16}."
+                        },
+                        {
+                            "key": "B",
+                            "text": "\\frac{1}{4}."
+                        },
+                        {
+                            "key": "C",
+                            "text": "\\frac{3}{40}."
+                        },
+                        {
+                            "key": "D",
+                            "text": "\\frac{2}{5}."
+                        }
+                    ],
+                    "correct_answer": "B",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 8,
+                    "question_type": "single_choice",
+                    "question": "Bạn An phát biểu: \"Tích các số liên tiếp từ 1 đến 30 không chia hết cho 1000000\". Phát biểu của bạn An đúng hay sai?\nA. Đúng.\nB. Sai.",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": ""
+                        },
+                        {
+                            "key": "B",
+                            "text": ""
+                        },
+                        {
+                            "key": "C",
+                            "text": ""
+                        },
+                        {
+                            "key": "D",
+                            "text": ""
+                        }
+                    ],
+                    "correct_answer": "B",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 9,
+                    "question_type": "single_choice",
+                    "question": "Bạn Nam có một mô hình khối cầu có đường kính bằng 4 (cm). Thể tích khối cầu của bạn Nam xấp xỉ bằng?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "8 (cm3)."
+                        },
+                        {
+                            "key": "B",
+                            "text": "8,4 (cm3)."
+                        },
+                        {
+                            "key": "C",
+                            "text": "18,8 (cm3)."
+                        },
+                        {
+                            "key": "D",
+                            "text": "33,5 (cm3)."
+                        }
+                    ],
+                    "correct_answer": "D",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 10,
+                    "question_type": "true_false",
+                    "question": "Cho một hình nón có thiết diện qua trục là tam giác đều có diện tích bằng \\(2\\sqrt{3}\\). Xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": true,
+                        "s2": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Thể tích của khối nón được giới hạn bởi hình nón đã cho bằng \\frac{\\pi\\sqrt{6}}{3}."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Bán kính đáy của hình nón bằng \\sqrt{2}."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 11,
+                    "question_type": "fill_blank",
+                    "question": "Cho hình chóp S.ABC, gọi M, N lần lượt là các điểm trên cạnh SA, SB sao cho \\(SA = 2SM\\), \\(2NS = 3NB\\). Khi đó, tỉ lệ thể tích \\(\\frac{V_{S.MNC}}{V_{S.ABC}}\\) bằng bao nhiêu?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "0.3",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "0.3"
+                    ]
+                },
+                {
+                    "question_no": 12,
+                    "question_type": "single_choice",
+                    "question": "Cho các dãy số với công thức của số hạng tổng quát như sau, dãy số nào là một cấp số cộng?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "\\(u_n = \\frac{3n - 1}{2}\\)."
+                        },
+                        {
+                            "key": "B",
+                            "text": "\\(u_n = n^2 + n + 1\\)."
+                        },
+                        {
+                            "key": "C",
+                            "text": "\\(u_n = \\frac{1}{n}\\)."
+                        },
+                        {
+                            "key": "D",
+                            "text": "\\(u_n = \\sin(n)\\)."
+                        }
+                    ],
+                    "correct_answer": "A",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 13,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\na. Phương trình \\(\\sin(2x) = \\frac{1}{2}\\) có một nghiệm là \\(x =\\) [o1].\nb. Phương trình \\(\\sin(x) + 2\\cos(x) = 2\\) có một nghiệm là \\(x =\\) [o2].",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item1",
+                        "o2": "item3"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "\\pi/12"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "\\pi/6"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "2\\pi"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "\\pi"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\na. Phương trình \\(\\sin(2x) = \\frac{1}{2}\\) có một nghiệm là \\(x =\\) "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nb. Phương trình \\(\\sin(x) + 2\\cos(x) = 2\\) có một nghiệm là \\(x =\\) "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": "."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 14,
+                    "question_type": "fill_blank",
+                    "question": "Trong không gian Oxyz, với m là tham số (\\(m \\in \\mathbb{Z}^+\\)), cho mặt cầu (S) có phương trình \\((S): x^2 + y^2 + z^2 - 2x + 4y - 2mz + m^2 - m = 0\\). Biết diện tích mặt cầu (S) bằng \\(100\\pi\\), giá trị của m bằng?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "20",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "20"
+                    ]
+                },
+                {
+                    "question_no": 15,
+                    "question_type": "true_false",
+                    "question": "Cho hàm số \\(y = f(x)\\) liên tục trên đoạn [a; b] (a < b), xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Tích phân từ a đến b của f(x) dx = Tích phân từ b đến a của f(x) dx."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Tích phân từ a đến b của k.f(x) dx = k * Tích phân từ a đến b của f(x) dx với mọi k thực."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 16,
+                    "question_type": "single_choice",
+                    "question": "Cho hàm số \\(f(x)\\) xác định và có đạo hàm trên \\(\\mathbb{R}\\) thoả mãn \\(f(0) = 2\\). Khi đó, đạo hàm của hàm số \\(g(x) = f(x)\\sin(x)\\) tại điểm \\(x = 0\\) bằng?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "1."
+                        },
+                        {
+                            "key": "B",
+                            "text": "2."
+                        },
+                        {
+                            "key": "C",
+                            "text": "0."
+                        },
+                        {
+                            "key": "D",
+                            "text": "3."
+                        }
+                    ],
+                    "correct_answer": "B",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 17,
+                    "question_type": "single_choice",
+                    "question": "Mùa hè năm 2023, một công ty thời trang sản xuất ba dáng áo phông mới, mỗi dáng áo đều được sản xuất với các màu: cam, đỏ, trắng, vàng, và xanh cùng với các kích cỡ: S, M, L, XL, XXL, XXXL. Có tất cả bao nhiêu loại áo phông khác nhau mà công ty có thể sản xuất cho dịp hè năm 2023?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "72."
+                        },
+                        {
+                            "key": "B",
+                            "text": "30."
+                        },
+                        {
+                            "key": "C",
+                            "text": "14."
+                        },
+                        {
+                            "key": "D",
+                            "text": "90."
+                        }
+                    ],
+                    "correct_answer": "D",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 18,
+                    "question_type": "single_choice",
+                    "question": "Hàm số \\(y = f(x)\\) xác định trên đoạn \\([-3; 2]\\) và có đồ thị như hình vẽ bên. Gọi M và m lần lượt là giá trị lớn nhất và giá trị nhỏ nhất của hàm số \\(y = f(x)\\) trên đoạn \\([-3; 2]\\). Khi đó, giá trị của biểu thức \\(M - 2m\\) bằng?",
+                    "image_url": "assets/questions/graph_cau_2.svg",
+                    "image_width": 50,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "5."
+                        },
+                        {
+                            "key": "B",
+                            "text": "4."
+                        },
+                        {
+                            "key": "C",
+                            "text": "7."
+                        },
+                        {
+                            "key": "D",
+                            "text": "6."
+                        }
+                    ],
+                    "correct_answer": "D",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 19,
+                    "question_type": "true_false",
+                    "question": "Phương trình \\(25^x + 15^x = 6.9^x\\) có một nghiệm duy nhất \\(x_0\\) được viết dưới dạng \\(x_0 = \\frac{a}{\\log_b(c) - \\log_b(d)}\\), với a là số nguyên dương và b, c, d là các số nguyên tố. Xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": true,
+                        "s3": false
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "a là số nguyên tố."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "b là số chẵn."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Tổng S = a^2 + b + c + d = 10."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 20,
+                    "question_type": "true_false",
+                    "question": "Cho hình đa diện (H) có tất cả các mặt là ngũ giác. Xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": true,
+                        "s2": true,
+                        "s3": false
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Số cạnh của (H) là một số chia hết cho 5."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Số mặt của (H) là một số chẵn."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Số cạnh của (H) gấp ba lần số mặt của (H)."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 21,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\nXét khai triển của biểu thức \\(\\left(x - \\frac{1}{2}\\right)^9\\).\na. Số hạng không chứa x trong khai triển là [o1].\nb. Hệ số của x trong khai triển là [o2].\nc. Tổng các hệ số của khai triển là [o3].",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item1",
+                        "o2": "item5",
+                        "o3": "item6"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "-1/512"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "-9/256"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "9/64"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "-9/64"
+                        },
+                        {
+                            "id": "item5",
+                            "text": "9/256"
+                        },
+                        {
+                            "id": "item6",
+                            "text": "1/512"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\nXét khai triển của biểu thức \\(\\left(x - \\frac{1}{2}\\right)^9\\).\na. Số hạng không chứa x trong khai triển là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nb. Hệ số của x trong khai triển là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nc. Tổng các hệ số của khai triển là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o3"
+                        },
+                        {
+                            "type": "text",
+                            "content": "."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 22,
+                    "question_type": "single_choice",
+                    "question": "Một sơ đồ các lối đi một chiều theo chiều mũi tên để đi từ điểm A tới điểm H được minh hoạ bởi hình bên. Biết rằng có 2 đường để đi từ A tới B, có 3 đường để đi từ C tới D. Theo sơ đồ đã cho, số cách để đi từ A tới H là?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "20."
+                        },
+                        {
+                            "key": "B",
+                            "text": "17."
+                        },
+                        {
+                            "key": "C",
+                            "text": "40."
+                        },
+                        {
+                            "key": "D",
+                            "text": "13."
+                        }
+                    ],
+                    "correct_answer": "C",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 23,
+                    "question_type": "true_false",
+                    "question": "Cho phương trình \\(\\log_2^2|x| - 4\\sqrt{\\log_4|x|} - 5 = 0\\), xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": true,
+                        "s2": true,
+                        "s3": false
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Phương trình đã cho có 2 nghiệm phân biệt."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Đặt t = \\sqrt{\\frac{1}{2}\\log_2|x|} (t >= 0), khi đó phương trình đã cho trở thành 2t^2 - 4t - 5 = 0."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Điều kiện xác định của phương trình là -1 <= x <= 1."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 24,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\nHàng năm, Bảo tàng dân tộc học Việt Nam thường tổ chức các hoạt động vui xuân. Có 5 người trong một gia đình được sắp xếp vào một chiếc ghế dài vừa đủ cho 5 người ngồi.\na. Số cách sắp xếp để bạn Dương ngồi chính giữa là [o1].\nb. Số cách sắp xếp để ông nội và bố ngồi ở hai đầu ghế là [o2].\nc. Số cách sắp xếp để Dương ngồi cạnh bố là [o3].",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item3",
+                        "o2": "item4",
+                        "o3": "item2"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "64"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "48"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "24"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "12"
+                        },
+                        {
+                            "id": "item5",
+                            "text": "36"
+                        },
+                        {
+                            "id": "item6",
+                            "text": "90"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\nHàng năm, Bảo tàng dân tộc học Việt Nam thường tổ chức các hoạt động vui xuân. Có 5 người trong một gia đình được sắp xếp vào một chiếc ghế dài vừa đủ cho 5 người ngồi.\na. Số cách sắp xếp để bạn Dương ngồi chính giữa là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nb. Số cách sắp xếp để ông nội và bố ngồi ở hai đầu ghế là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nc. Số cách sắp xếp để Dương ngồi cạnh bố là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o3"
+                        },
+                        {
+                            "type": "text",
+                            "content": "."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 25,
+                    "question_type": "fill_blank",
+                    "question": "Cho tứ diện ABCD, lấy hai điểm M, N lần lượt là trọng tâm của các tam giác ABC và ABD. Cho các khẳng định sau:\n1) MN // (BCD).\n2) MN // (ACD).\n3) MN // (ABD).\nTrong các khẳng định trên, những khẳng định nào đúng? (Ví dụ viết: 1 và 2)",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "1 và 2",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "1 và 2"
+                    ]
+                },
+                {
+                    "question_no": 26,
+                    "question_type": "fill_blank",
+                    "question": "Xuất phát với giá trị đầu vào là một số nguyên dương N, thuật toán \\(\\Phi\\) được tiến hành như sau:\n1. Tính tổng các chữ số của N để thu được \\(N_1\\).\n2. Tính tổng các chữ số của \\(N_1\\) để thu được \\(N_2\\).\n3. Cứ như vậy cho đến lúc giá trị của các \\(N_k\\) không thay đổi nữa thì dừng lại và ghi kết quả làm giá trị đầu ra \\(\\Phi(N)\\).\nNếu tiến hành thuật toán \\(\\Phi\\) với số được cấu tạo từ ngày Giải Phóng Thủ Đô, \\(N = 10^{10^{1954}}\\) thì giá trị của \\(\\Phi(10^{10^{1954}})\\) bằng bao nhiêu?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "1",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "1"
+                    ]
+                },
+                {
+                    "question_no": 27,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\nMột guồng nước (cọn nước) có dạng hình tròn bán kính 2,5 (m) với trục cách mặt nước 2 (m). Khoảng cách từ một ống đựng nước trên guồng đến mặt nước được tính theo công thức \\(h = |y|\\), trong đó \\(y = 2,5\\sin\\left(2\\pi x - \\frac{\\pi}{2}\\right) + 2\\) với x (phút) là thời gian quay.\na. Ban đầu, tại thời điểm \\(x = 0\\), ống nước cách mặt nước [o1] (m).\nb. Khoảng thời gian giữa hai lần ống nước ở vị trí cao nhất là [o2] (phút).",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item1",
+                        "o2": "item2"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "0,5"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "1"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "1,5"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "2"
+                        },
+                        {
+                            "id": "item5",
+                            "text": "2,5"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\nMột guồng nước (cọn nước) có dạng hình tròn bán kính 2,5 (m) với trục cách mặt nước 2 (m). Khoảng cách từ một ống đựng nước trên guồng đến mặt nước được tính theo công thức \\(h = |y|\\), trong đó \\(y = 2,5\\sin\\left(2\\pi x - \\frac{\\pi}{2}\\right) + 2\\) với x (phút) là thời gian quay.\na. Ban đầu, tại thời điểm \\(x = 0\\), ống nước cách mặt nước "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": " (m).\nb. Khoảng thời gian giữa hai lần ống nước ở vị trí cao nhất là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": " (phút)."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 28,
+                    "question_type": "true_false",
+                    "question": "Bạn Sơn tìm nghiệm \\(x \\in [0; 2\\pi)\\) của ba phương trình sau đây:\n(1) \\(\\cos(x) = 1\\).\n(2) \\(\\sin(x) = \\frac{1}{2}\\).\n(3) \\(\\sin(x) + \\cos(x) = \\frac{3}{2}\\).\nXét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": true,
+                        "s3": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Phương trình (3) có 3 nghiệm phân biệt trên [0; 2\\pi)."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Phương trình (1) có nghiệm duy nhất trên [0; 2\\pi)."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Phương trình (2) có 2 nghiệm phân biệt trên [0; 2\\pi)."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 29,
+                    "question_type": "fill_blank",
+                    "question": "Cho a, b là hai số nguyên dương đồng thời thỏa mãn \\(2 \\le a \\le 2020\\), \\(2 \\le b \\le 2020\\) và \\(\\log_a(b) + 6\\log_b(a) = 5\\). Số cặp (a, b) thỏa mãn là bao nhiêu?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "54",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "54"
+                    ]
+                },
+                {
+                    "question_no": 30,
+                    "question_type": "single_choice",
+                    "question": "Đặt một cái dây lạt thẳng lên mặt chiếc bánh chưng hình vuông đã bóc thì chiếc bánh bị chia thành 2 phần. Đặt thêm một dây lạt thẳng nữa: Nếu hai dây lạt không cắt nhau bên trong bánh mặt bánh thì chiếc bánh bị chia thành 3 phần, còn nếu hai dây lạt cắt nhau bên trong mặt bánh thì chiếc bánh lại được chia thành 4 phần. Khi đó, nếu đặt 7 dây lạt thẳng thì chiếc bánh chưng được chia thành tối đa bao nhiêu phần?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "128 phần."
+                        },
+                        {
+                            "key": "B",
+                            "text": "14 phần."
+                        },
+                        {
+                            "key": "C",
+                            "text": "29 phần."
+                        },
+                        {
+                            "key": "D",
+                            "text": "49 phần."
+                        }
+                    ],
+                    "correct_answer": "C",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 31,
+                    "question_type": "true_false",
+                    "question": "Cho dãy số \\((u_n)\\) thỏa mãn: \\(u_1 = 1\\), \\(u_n = 3(u_{n-1} + 2)\\) (\\(n \\in \\mathbb{N}^*\\)). Đặt \\(v_n = u_n + 3\\), xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": true,
+                        "s2": false,
+                        "s3": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Dãy số (v_n) là một cấp số nhân với công bội q = 3."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Số hạng tổng quát của dãy số (v_n) là v_n = 3^n."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Số hạng tổng quát của dãy số (u_n) là u_n = 4.3^{n-1} - 3."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 32,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\nCho hình trụ tròn xoay có đường cao \\(h = 7\\) và bán kính đáy \\(r = 4\\). Xét mặt phẳng (P) song song với trục của hình trụ, cách trục một khoảng bằng 3.\na. Mặt phẳng (P) cắt hình tròn đáy theo một giao tuyến có độ dài bằng [o1].\nb. Diện tích thiết diện của hình trụ với mặt phẳng (P) bằng [o2].",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item3",
+                        "o2": "item5"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "\\sqrt{7}"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "7\\sqrt{14}"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "2\\sqrt{7}"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "\\sqrt{14}"
+                        },
+                        {
+                            "id": "item5",
+                            "text": "14\\sqrt{7}"
+                        },
+                        {
+                            "id": "item6",
+                            "text": "7\\sqrt{7}"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\nCho hình trụ tròn xoay có đường cao \\(h = 7\\) và bán kính đáy \\(r = 4\\). Xét mặt phẳng (P) song song với trục của hình trụ, cách trục một khoảng bằng 3.\na. Mặt phẳng (P) cắt hình tròn đáy theo một giao tuyến có độ dài bằng "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nb. Diện tích thiết diện của hình trụ với mặt phẳng (P) bằng "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": "."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 33,
+                    "question_type": "fill_blank",
+                    "question": "Cho hai số nguyên dương x, y đồng thời thoả mãn điều kiện \\(1 \\le x \\le 2023\\) và \\(\\ln\\left(\\frac{4^y + 1}{x}\\right) = \\ln(x + 1) - y\\ln(4)\\). Khi đó, có bao nhiêu cặp số (x, y) thoả mãn?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "5",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "5"
+                    ]
+                },
+                {
+                    "question_no": 34,
+                    "question_type": "drag_drop",
+                    "question": "Kéo và thả các phương án thích hợp vào chỗ trống.\nTrong không gian Oxyz, cho ba điểm A(1; 3; 4), B(-1; 1; 2) và C(3; 2; -12). Cho M là điểm thuộc mặt phẳng (Oxy) thoả mãn \\(AM^2 + BM^2 + CM^2 = 174\\).\na. Hoành độ của điểm M là [o1].\nb. Tung độ của điểm M là [o2].",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "o1": "item1",
+                        "o2": "item2"
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "items": [
+                        {
+                            "id": "item1",
+                            "text": "1"
+                        },
+                        {
+                            "id": "item2",
+                            "text": "2"
+                        },
+                        {
+                            "id": "item3",
+                            "text": "3"
+                        },
+                        {
+                            "id": "item4",
+                            "text": "-1"
+                        },
+                        {
+                            "id": "item5",
+                            "text": "-2"
+                        }
+                    ],
+                    "body": [
+                        {
+                            "type": "text",
+                            "content": "Kéo và thả các phương án thích hợp vào chỗ trống.\nTrong không gian Oxyz, cho ba điểm A(1; 3; 4), B(-1; 1; 2) và C(3; 2; -12). Cho M là điểm thuộc mặt phẳng (Oxy) thoả mãn \\(AM^2 + BM^2 + CM^2 = 174\\).\na. Hoành độ của điểm M là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o1"
+                        },
+                        {
+                            "type": "text",
+                            "content": ".\nb. Tung độ của điểm M là "
+                        },
+                        {
+                            "type": "blank",
+                            "id": "o2"
+                        },
+                        {
+                            "type": "text",
+                            "content": "."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 35,
+                    "question_type": "fill_blank",
+                    "question": "Cho phương trình \\(m\\sin(x) + (m - 1)\\cos(2x) + 5 = 0\\), với m là tham số thực. Có bao nhiêu giá trị nguyên của tham số m để phương trình đã cho vô nghiệm?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "6",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "6"
+                    ]
+                },
+                {
+                    "question_no": 36,
+                    "question_type": "true_false",
+                    "question": "Cho hàm số \\(y = f(x)\\) xác định, liên tục trên các khoảng \\((-\\infty; 1)\\) và \\((1; +\\infty)\\) và có bảng biến thiên như hình vẽ. Đặt \\(h(x) = \\frac{5}{f^2(x) - 4f(x) + 3}\\), xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": true,
+                        "s2": false,
+                        "s3": false
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Số tiệm cận ngang của đồ thị hàm số y = h(x) là 1."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Số tiệm cận đứng của đồ thị hàm số y = h(x) là 2."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Tổng số tiệm cận đứng và tiệm cận ngang của đồ thị hàm số y = h(x) là 3."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 37,
+                    "question_type": "single_choice",
+                    "question": "Cho hình chóp đều S.ABCD có độ dài cạnh đáy bằng 2, góc giữa mặt bên và mặt đáy bằng 60°. Gọi M, N, P lần lượt là trung điểm của các cạnh SA, SC và BC. Thể tích khối chóp DMNP bằng bao nhiêu?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [
+                        {
+                            "key": "A",
+                            "text": "\\frac{\\sqrt{110}}{24}."
+                        },
+                        {
+                            "key": "B",
+                            "text": "\\frac{\\sqrt{6}}{4}."
+                        },
+                        {
+                            "key": "C",
+                            "text": "\\frac{\\sqrt{110}}{8}."
+                        },
+                        {
+                            "key": "D",
+                            "text": "\\frac{\\sqrt{3}}{4}."
+                        }
+                    ],
+                    "correct_answer": "D",
+                    "explanation": "",
+                    "points": 1
+                },
+                {
+                    "question_no": 38,
+                    "question_type": "true_false",
+                    "question": "Cho dãy số \\((u_n)\\) thỏa mãn: \\(u_1 = 5\\), \\(u_{n+1} = 3u_n - 7\\) (\\(n \\in \\mathbb{N}^*\\)). Xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": false,
+                        "s3": false,
+                        "s4": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "Dãy số (v_n) là một cấp số cộng."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "Dãy số (v_n) là một cấp số nhân."
+                        },
+                        {
+                            "id": "s3",
+                            "text": "Đặt v_n = u_n + \\alpha. Khi đó, (v_n) là cấp số nhân khi và chỉ khi \\alpha = 7/3."
+                        },
+                        {
+                            "id": "s4",
+                            "text": "Công thức cho số hạng tổng quát u_n = \\frac{3^n + 7}{2}."
+                        }
+                    ]
+                },
+                {
+                    "question_no": 39,
+                    "question_type": "fill_blank",
+                    "question": "Cho hình hộp ABCD.A'B'C'D' có độ dài \\(AA' = a\\). Gọi M, N là các điểm thuộc cạnh BB' và DD' sao cho \\(BM = DN = \\frac{a}{3}\\). Mặt phẳng (AMN) chia khối hộp thành hai phần, gọi \\(V_1\\) là thể tích khối đa diện chứa A' và \\(V_2\\) là thể tích phần còn lại. Khi đó, tỉ lệ thể tích \\(\\frac{V_1}{V_2}\\) bằng bao nhiêu?",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": "2",
+                    "explanation": "",
+                    "points": 1,
+                    "accepted_answers": [
+                        "2"
+                    ]
+                },
+                {
+                    "question_no": 40,
+                    "question_type": "true_false",
+                    "question": "Cho hàm số f(x) xác định, có đạo hàm đến cấp hai trên \\(\\mathbb{R}\\) và thoả mãn phương trình \\([f'(x)]^2 + f(x).f''(x) = 20x^4 + 12x^2 + 9\\) với mọi \\(x \\in \\mathbb{R}\\) và \\(f(0) = 0. Xét tính đúng/sai của các mệnh đề sau:",
+                    "image_url": "",
+                    "image_width": 100,
+                    "options": [],
+                    "correct_answer": {
+                        "s1": false,
+                        "s2": true
+                    },
+                    "explanation": "",
+                    "points": 1,
+                    "statements": [
+                        {
+                            "id": "s1",
+                            "text": "f^2(x) = 2/3 x^6 + x^4 + 9/2 x^2."
+                        },
+                        {
+                            "id": "s2",
+                            "text": "f(x).f'(x) = 4 x^5 + 4 x^3 + 9x."
+                        }
+                    ]
+                }
+            ]
         },
         {
             "section_id": "reading",

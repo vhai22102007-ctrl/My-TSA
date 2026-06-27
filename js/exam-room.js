@@ -189,7 +189,13 @@
     }
     answers = readLocalJson(storageKey) || {};
     flagged = readLocalJson(flaggedKey) || {};
-    isSubmitted = localStorage.getItem(submittedKey) === "true";
+
+    const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+    if (viewSolution) {
+      isSubmitted = true;
+    } else {
+      isSubmitted = localStorage.getItem(submittedKey) === "true";
+    }
   }
 
   function saveLocalState() {
@@ -513,7 +519,7 @@
       feedbackDiv.style.background = "#f0fdf4";
       feedbackDiv.style.border = "1px solid #bbf7d0";
       feedbackDiv.style.color = "#166534";
-      feedbackDiv.innerHTML = '<div style="font-weight:700;">Chính xác</div>';
+      feedbackDiv.innerHTML = '<div style="font-weight:700;font-size:14px;">Chính xác</div>';
     } else {
       let correctText = "";
       if (qType === "multiple_choice") {
@@ -532,17 +538,74 @@
       feedbackDiv.style.background = "#fef2f2";
       feedbackDiv.style.border = "1px solid #fca5a5";
       feedbackDiv.style.color = "#991b1b";
-      feedbackDiv.innerHTML = `<div style="font-weight:700;">Chưa chính xác</div><div style="margin-top:6px;"><strong>Đáp án đúng:</strong> ${esc(correctText)}</div>`;
-    }
-
-    if (question.explanation) {
-      const expDiv = document.createElement("div");
-      expDiv.style.cssText = "margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,.08);";
-      expDiv.innerHTML = `<strong>Giải thích:</strong> ${question.explanation}`;
-      feedbackDiv.appendChild(expDiv);
+      feedbackDiv.innerHTML = `<div style="font-weight:700;font-size:14px;">Chưa chính xác</div><div style="margin-top:6px;"><strong>Đáp án đúng:</strong> ${esc(correctText)}</div>`;
     }
 
     container.appendChild(feedbackDiv);
+
+    if (question.explanation) {
+      const solutionContainer = document.createElement("div");
+      solutionContainer.className = "solution-container";
+      solutionContainer.style.cssText = "margin-top:16px; text-align: left;";
+
+      const toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.className = "btn-toggle-solution";
+      toggleBtn.style.cssText = `
+        background-color: #a91e2c;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background-color 0.2s;
+        margin-bottom: 12px;
+      `;
+      toggleBtn.innerHTML = `<span>Lời giải</span> <svg class="arrow-icon" viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+
+      const explanationBox = document.createElement("div");
+      explanationBox.className = "explanation-box";
+      explanationBox.style.cssText = `
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 18px;
+        display: block;
+      `;
+
+      explanationBox.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #0284c7; font-weight: 700; font-size: 13.5px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Lời giải chi tiết:</span>
+        </div>
+        <div class="explanation-content text-left" style="color: #334155; font-size: 13.5px; line-height: 1.6;">
+          ${question.explanation}
+        </div>
+      `;
+
+      toggleBtn.addEventListener("click", () => {
+        const isHidden = explanationBox.style.display === "none";
+        explanationBox.style.display = isHidden ? "block" : "none";
+        const arrow = toggleBtn.querySelector(".arrow-icon");
+        if (arrow) {
+          arrow.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+        }
+      });
+
+      solutionContainer.appendChild(toggleBtn);
+      solutionContainer.appendChild(explanationBox);
+      container.appendChild(solutionContainer);
+    }
+
     container.querySelectorAll("input, select").forEach((el) => { el.disabled = true; });
   }
 
@@ -573,6 +636,9 @@
       parent.insertBefore(banner, parent.firstChild);
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+
     banner.innerHTML = `
       <h3 style="margin:0 0 8px;font-weight:800;font-size:15px;color:#15803d;text-transform:none;">Kết quả làm bài</h3>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;">
@@ -590,8 +656,11 @@
         </div>
       </div>
       <div id="supabase-save-status" style="margin-top:12px;font-size:12px;color:#1e293b;line-height:1.45;display:flex;align-items:center;gap:6px;">
-        <span class="spinner" style="display:inline-block;width:10px;height:10px;border:2px solid #0284c7;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;"></span>
-        <span>Đang gửi kết quả lên máy chủ Supabase...</span>
+        ${viewSolution ? 
+          `<span style="color:#0284c7;font-weight:600;">✓ Bạn đang xem lời giải chi tiết của bài thi.</span>` :
+          `<span class="spinner" style="display:inline-block;width:10px;height:10px;border:2px solid #0284c7;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;"></span>
+           <span>Đang gửi kết quả lên máy chủ Supabase...</span>`
+        }
       </div>
     `;
 
@@ -603,8 +672,10 @@
       document.head.appendChild(style);
     }
 
-    // Gửi điểm số lên Supabase
-    saveResultToSupabase(correctCount, totalPoints, scoredPoints);
+    // Gửi điểm số lên Supabase nếu không ở chế độ xem giải
+    if (!viewSolution) {
+      saveResultToSupabase(correctCount, totalPoints, scoredPoints);
+    }
   }
 
   async function saveResultToSupabase(correctCount, totalPoints, scoredPoints) {
@@ -1159,11 +1230,22 @@
       loadLocalState();
       initMetadata();
       currentQuestionIndex = 0;
+      const targetQParam = urlParams.get("q");
+      if (targetQParam) {
+        const tQNo = Number(targetQParam);
+        const idx = examData.questions.findIndex(q => q.question_no === tQNo || q.original_question_no === tQNo);
+        if (idx !== -1) {
+          currentQuestionIndex = idx;
+        }
+      }
 
       if (isSubmitted) {
         clearFullscreenRequirement();
-        setText("#countdown", "Đã nộp bài");
-        setText("#submit-countdown", "Đã nộp bài");
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+        const countdownText = viewSolution ? "Xem lời giải" : "Đã nộp bài";
+        setText("#countdown", countdownText);
+        setText("#submit-countdown", countdownText);
         showResultsPanel();
       } else {
         startTimer();
@@ -1298,6 +1380,9 @@
     }
 
     const nextBtn = $('[data-action="next"]');
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         if (!examData) return;
@@ -1306,7 +1391,11 @@
           questionElapsedSeconds = 0;
           renderActiveQuestion();
         } else {
-          submitExam();
+          if (viewSolution) {
+            leaveExamRoom();
+          } else {
+            submitExam();
+          }
         }
       });
     }
@@ -1325,6 +1414,15 @@
     }
 
     const submitBtn = $('[data-action="submit"]');
-    if (submitBtn) submitBtn.addEventListener("click", submitExam);
+    if (submitBtn) {
+      if (viewSolution) {
+        submitBtn.textContent = "Thoát";
+        submitBtn.style.background = "#64748b";
+        submitBtn.style.borderColor = "#64748b";
+        submitBtn.addEventListener("click", leaveExamRoom);
+      } else {
+        submitBtn.addEventListener("click", submitExam);
+      }
+    }
   });
 })();
