@@ -1039,6 +1039,135 @@
           });
         });
       }
+      function renderExamRoomCourses() {
+        const grid = document.getElementById("exam-room-courses-grid");
+        if (!grid) return;
+
+        const registeredIds = getRegisteredCourseIds();
+        grid.innerHTML = "";
+
+        const filtered = COURSES_DATA.filter((course) => {
+          // Filter by category (case-insensitive)
+          const catMatch = course.category.toLowerCase() === currentExamCategory.toLowerCase();
+          if (!catMatch) return false;
+
+          // Filter by sub-tab (my courses vs all courses)
+          if (currentSubtab === "my") {
+            return registeredIds.includes(course.id);
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          const emptyCard = document.createElement("div");
+          emptyCard.className = "no-courses-message";
+          if (currentSubtab === "my") {
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 20px 0; border: none; background: transparent; width: 100%;";
+            emptyCard.innerHTML = `
+              <img src="assets/core.png" alt="Chưa tham gia khóa học nào" style="max-width: 720px; width: 100%; height: auto; display: block; margin: 0 auto;" />
+            `;
+          } else {
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 40px; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%;";
+            emptyCard.innerHTML = `
+              <p style="font-size: 14px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</p>
+              <p style="font-size: 12px; margin-top: 4px;">Các khóa học đang được cập nhật.</p>
+            `;
+          }
+          grid.appendChild(emptyCard);
+          return;
+        }
+
+        filtered.forEach((course, idx) => {
+          const isRegistered = registeredIds.includes(course.id);
+          const card = document.createElement("article");
+          card.className = "course-card";
+          card.style.setProperty("--delay", `${idx * 80}ms`);
+          card.style.cursor = "pointer";
+
+          let heroImage = "assets/thpt.png";
+          const titleLower = course.title.toLowerCase();
+          if (titleLower.includes("tsa")) {
+            heroImage = "assets/anhnen.png";
+          } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
+            heroImage = "assets/ly.png";
+          }
+
+          const actionBtn = isRegistered
+            ? `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#22c55e;">Vào học</button>`
+            : `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#64748b;">Chi tiết</button>`;
+
+          card.innerHTML = `
+            <div class="course-hero" style="background-image: url('${heroImage}')"></div>
+            <div class="course-body">
+              <h3 class="course-name">${course.title}</h3>
+              <p class="course-desc">${course.label || course.category}</p>
+              <div class="divider"></div>
+              <div class="course-footer">
+                <div class="lesson-count">
+                  <span class="book-icon"></span>
+                  <span>${course.lessons?.length || 33} bài học</span>
+                </div>
+                ${actionBtn}
+              </div>
+            </div>
+          `;
+
+          // Clicking anywhere on the card opens the classroom details modal
+          card.addEventListener("click", () => {
+            openClassroomModal(course.id);
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      function renderOverviewCourses() {
+        const grid = document.getElementById("overview-my-courses-grid");
+        if (!grid) return;
+
+        const registeredIds = getRegisteredCourseIds();
+        grid.innerHTML = "";
+
+        if (registeredIds.length === 0) {
+          const empty = document.createElement("div");
+          empty.style.cssText = "grid-column: span 2; text-align: center; padding: 24px; color: var(--muted); font-size: 12px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff; width: 100%;";
+          empty.innerHTML = `
+            <p style="font-weight: 500;">Bạn chưa tham gia khóa học nào</p>
+            <button type="button" class="btn btn-primary btn-xs" style="margin-top: 8px;" id="overview-go-to-courses">Đăng ký ngay</button>
+          `;
+          grid.appendChild(empty);
+          
+          document.getElementById("overview-go-to-courses")?.addEventListener("click", () => {
+            switchTab("courses");
+            window.location.hash = "courses";
+          });
+          return;
+        }
+
+        COURSES_DATA.filter(c => registeredIds.includes(c.id)).forEach((course) => {
+          const card = document.createElement("div");
+          card.className = "course-compact-card";
+          card.innerHTML = `
+            <div class="course-header">
+              <span class="course-badge">${course.badge}</span>
+              <h4>${course.title}</h4>
+            </div>
+            <div class="course-meta">
+              <span>Tiến độ: ${course.progress}%</span>
+              <div class="progress-bar"><div class="progress-bar-fill" style="width: ${course.progress}%;"></div></div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-xs overview-enter-class-btn" data-course-id="${course.id}">Vào học</button>
+          `;
+          grid.appendChild(card);
+        });
+
+        grid.querySelectorAll(".overview-enter-class-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const courseId = btn.getAttribute("data-course-id");
+            openClassroomModal(courseId);
+          });
+        });
+      }
 
       // Course Study Modal Implementation
       const courseStudyModal = document.getElementById("course-study-modal");
@@ -1065,40 +1194,24 @@
       function startWatermark(studentName, studentPhone) {
         const overlay = document.getElementById("video-watermark-overlay");
         if (!overlay) return;
-        
         overlay.style.display = "block";
         const text = `${studentName} - ${studentPhone || "0987654321"} - ${new Date().toLocaleDateString("vi-VN")}`;
         overlay.textContent = text;
-        
         const container = document.getElementById("course-player-container");
         if (!container) return;
-
         function moveWatermark() {
-          const containerWidth = container.clientWidth;
-          const containerHeight = container.clientHeight;
-          const watermarkWidth = overlay.clientWidth || 250;
-          const watermarkHeight = overlay.clientHeight || 20;
-
-          const maxX = Math.max(10, containerWidth - watermarkWidth - 20);
-          const maxY = Math.max(10, containerHeight - watermarkHeight - 20);
-
-          const randomX = Math.floor(Math.random() * maxX);
-          const randomY = Math.floor(Math.random() * maxY);
-
-          overlay.style.left = `${randomX}px`;
-          overlay.style.top = `${randomY}px`;
+          const cw = container.clientWidth, ch = container.clientHeight;
+          const ww = overlay.clientWidth || 250, wh = overlay.clientHeight || 20;
+          overlay.style.left = Math.floor(Math.random() * Math.max(10, cw - ww - 20)) + "px";
+          overlay.style.top = Math.floor(Math.random() * Math.max(10, ch - wh - 20)) + "px";
         }
-
         moveWatermark();
         if (watermarkTimer) clearInterval(watermarkTimer);
         watermarkTimer = setInterval(moveWatermark, 4000);
       }
 
       function stopWatermark() {
-        if (watermarkTimer) {
-          clearInterval(watermarkTimer);
-          watermarkTimer = null;
-        }
+        if (watermarkTimer) { clearInterval(watermarkTimer); watermarkTimer = null; }
         const overlay = document.getElementById("video-watermark-overlay");
         if (overlay) overlay.style.display = "none";
       }
@@ -1107,231 +1220,406 @@
         try {
           console.log("Opening classroom modal for course:", courseId);
           const course = COURSES_DATA.find(c => c.id === courseId);
-          if (!course) {
-            alert("Error: Không tìm thấy khóa học với ID: " + courseId + ". Danh sách ID hiện có: " + JSON.stringify(COURSES_DATA.map(c => c.id)));
-            return;
-          }
-
-          // Basic inspect leak prevention: block right clicks in modal
+          if (!course) { alert("Không tìm thấy khóa học: " + courseId); return; }
           courseStudyModal.oncontextmenu = (e) => e.preventDefault();
 
           const studentCode = studentInfo?.code || studentInfo?.phone || studentInfo?.email || "test";
           const registeredIds = getRegisteredCourseIds();
           const isRegistered = registeredIds.includes(courseId);
 
-          // Populate header details
-          document.getElementById("course-modal-title").textContent = course.title;
-          document.getElementById("course-modal-breadcrumb-title").textContent = course.title;
+          // Update topbar with course name
+          const topbarLessonLabel = document.getElementById("study-topbar-lesson-name");
+          if (topbarLessonLabel) topbarLessonLabel.textContent = course.title;
           document.getElementById("course-player-cover-text").textContent = course.title;
-          document.getElementById("course-teacher-name").textContent = course.author || "Trần Hoàng Anh";
-          
-          const sName = studentInfo?.name || studentInfo?.username || "Học sinh";
-          document.getElementById("course-modal-student-name").textContent = sName.toLowerCase();
 
-          // Reset Player Left Area
+          // Dynamically bind topbar student name
+          const topbarStudentNameEl = document.getElementById("study-topbar-student-name");
+          if (topbarStudentNameEl) {
+            topbarStudentNameEl.textContent = studentInfo?.name || studentInfo?.username || "học sinh";
+          }
+
+          // Wire sidebar tab switching (cloneNode to remove previous listeners)
+          document.querySelectorAll(".study-sidebar-tab").forEach(btn => {
+            const nb = btn.cloneNode(true);
+            btn.parentNode.replaceChild(nb, btn);
+            nb.addEventListener("click", () => {
+              document.querySelectorAll(".study-sidebar-tab").forEach(b => b.classList.remove("active"));
+              document.querySelectorAll(".study-tab-content").forEach(c => c.classList.remove("active"));
+              nb.classList.add("active");
+              const tabEl = document.getElementById("study-tab-" + nb.dataset.sidebartab);
+              if (tabEl) tabEl.classList.add("active");
+            });
+          });
+
+          // Reset player
           document.getElementById("course-player-cover").style.display = "flex";
           const iframe = document.getElementById("course-video-iframe");
           iframe.style.display = "none";
           iframe.src = "";
           stopWatermark();
 
-          // Hide player controls initially
+          // Hide lesson info bar
+          const infoBar = document.getElementById("study-lesson-info-bar");
+          if (infoBar) infoBar.style.display = "none";
+
           const controlsBar = document.getElementById("player-controls-bar");
           const completeBtn = document.getElementById("lesson-complete-toggle-btn");
           if (controlsBar) controlsBar.style.display = "none";
 
+          const courseModalActivationBtn = document.getElementById("course-modal-activation-btn");
+
           let activeLessonId = null;
 
-          // Asynchronously load progress from database
           async function loadProgressAndRender() {
             let completedLessonIds = [];
             try {
               if (supabaseClient) {
                 const { data: dbProgress } = await supabaseClient
-                  .from('lesson_progress')
-                  .select('lesson_id')
-                  .eq('user_email', studentCode);
+                  .from('lesson_progress').select('lesson_id').eq('user_email', studentCode);
                 completedLessonIds = (dbProgress || []).map(p => p.lesson_id);
               } else {
                 const key = `tmaTsaLessonProgress_${studentInfo.username}`;
                 completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
               }
             } catch (err) {
-              console.warn("Failed to load progress, using local storage backup:", err);
               const key = `tmaTsaLessonProgress_${studentInfo.username}`;
               completedLessonIds = JSON.parse(localStorage.getItem(key) || "[]");
             }
 
-            // Update status badge & progress bar in header
             const badge = document.getElementById("course-modal-status-badge");
             const lessonsArray = course.lessons || [];
-            const courseLessonsCount = lessonsArray.length;
-            
-            // Filter completed lessons belonging to this course
             const completedInCourse = lessonsArray.filter(l => completedLessonIds.includes(l.id));
-            const completedCount = completedInCourse.length;
-            const percent = courseLessonsCount > 0 ? Math.round((completedCount / courseLessonsCount) * 100) : 0;
+            const percent = lessonsArray.length > 0 ? Math.round((completedInCourse.length / lessonsArray.length) * 100) : 0;
 
             if (isRegistered) {
-              badge.textContent = `Đã mở khóa (${percent}%)`;
-              badge.className = "course-status-badge unlocked";
-              courseModalActivationBtn.style.display = "none";
+              if (badge) { badge.textContent = `Đã mở khóa (${percent}%)`; badge.className = "course-status-badge unlocked"; }
+              if (courseModalActivationBtn) courseModalActivationBtn.style.display = "none";
             } else {
-              badge.textContent = "Chưa mua";
-              badge.className = "course-status-badge locked";
-              courseModalActivationBtn.style.display = "block";
+              if (badge) { badge.textContent = "Chưa mua"; badge.className = "course-status-badge locked"; }
+              if (courseModalActivationBtn) courseModalActivationBtn.style.display = "block";
             }
 
-            // Populate Sidebar Lessons
+            // Update sidebar progress bar
+            const fill = document.getElementById("study-progress-fill");
+            const pct = document.getElementById("study-progress-pct");
+            if (fill) fill.style.width = percent + "%";
+            if (pct) pct.textContent = percent + "%";
+
+            // ===== TREE SIDEBAR RENDER =====
             const lessonsList = document.getElementById("course-modal-lessons-list");
             lessonsList.innerHTML = "";
 
-            // Group lessons by chapter
+            // Helper: detect lesson type from title
+            function getLessonType(title) {
+              const t = title.toLowerCase();
+              if (t.startsWith("phần") || t.startsWith("phan") || t.match(/^p\d/)) return "phan";
+              if (t.startsWith("tài liệu") || t.startsWith("tai lieu") || t.startsWith("file")) return "document";
+              if (t.startsWith("thi online") || t.startsWith("bài tập kiểm tra") || t.startsWith("bài kiểm tra")) return "test";
+              return "bai"; // default = main lesson (Bài X)
+            }
+
+            // Helper: get parent bai key from title like "Phần 2.1" -> "2"
+            function getParentBaiNum(title) {
+              const m = title.match(/ph[aầ]n\s*(\d+)\.(\d+)/i) || title.match(/p(\d+)\.(\d+)/i);
+              return m ? m[1] : null;
+            }
+
+            // Group by chapter
             const chapters = {};
+            const chapterOrder = [];
             lessonsArray.forEach(lesson => {
               const chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
-              if (!chapters[chName]) {
-                chapters[chName] = [];
-              }
+              if (!chapters[chName]) { chapters[chName] = []; chapterOrder.push(chName); }
               chapters[chName].push(lesson);
             });
 
-            // Render each chapter as a collapsible accordion
-            Object.keys(chapters).forEach((chName) => {
+            // SVG icons
+            const SVG_PLAY = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#475569" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.85;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="none" stroke="#475569" stroke-width="1.8"></polygon></svg>`;
+            const SVG_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="20 6 9 17 4 12" stroke="#22c55e" stroke-width="2" style="transform: scale(0.6) translate(8px, 8px);"></polyline></svg>`;
+            const SVG_LOCK = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#cbd5e1" fill="none" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+            const SVG_DOC = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+            const SVG_TEST = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>`;
+            const SVG_CHEVRON = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+
+            function makeLessonClickable(el, lesson) {
+              const isCompleted = completedLessonIds.includes(lesson.id);
+              el.addEventListener("click", () => {
+                if (!isRegistered && !lesson.preview_allowed) {
+                  showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm "MÃ TRUY CẬP" để nhập mã kích hoạt!`);
+                  return;
+                }
+                activeLessonId = lesson.id;
+
+                // Remove old warning first
+                const oldWarning = document.getElementById("lms-file-protocol-warning");
+                if (oldWarning) oldWarning.remove();
+
+                // Show lesson info bar
+                const infoBar2 = document.getElementById("study-lesson-info-bar");
+                const lessonTitleEl = document.getElementById("study-lesson-title");
+                const lessonTypeBadge = document.getElementById("study-lesson-type-badge");
+                const viewCountBadge = document.getElementById("study-lesson-view-badge");
+                const viewCountVal = document.getElementById("study-lesson-view-count");
+
+                if (infoBar2) infoBar2.style.display = "flex";
+                if (lessonTitleEl) lessonTitleEl.textContent = lesson.title;
+                if (lessonTypeBadge) {
+                  const hasVideo = !!lesson.video_drive_id;
+                  lessonTypeBadge.textContent = hasVideo ? "DẠNG TÀI NGUYÊN: VIDEO" : "DẠNG TÀI NGUYÊN: TÀI LIỆU";
+                }
+                
+                // Show view count only for videos to match the image view counter badge
+                if (viewCountBadge && viewCountVal) {
+                  const hasVideo = !!lesson.video_drive_id;
+                  if (hasVideo) {
+                    viewCountBadge.style.display = "inline-flex";
+                    // Dynamic view count logic simulation
+                    viewCountVal.textContent = Math.floor(Math.random() * 5) + 3;
+                  } else {
+                    viewCountBadge.style.display = "none";
+                  }
+                }
+
+                // Remove active class from all kinds of sidebar items
+                lessonsList.querySelectorAll(".tree-bai-row, .tree-phan-row, .tree-standalone-row").forEach(item => item.classList.remove("active"));
+                el.classList.add("active");
+
+
+
+                document.getElementById("course-player-cover").style.display = "none";
+                iframe.style.display = "block";
+
+                // Show branded overlays
+                const ytBlocker = document.getElementById("yt-logo-blocker");
+                const ytBadge = document.getElementById("yt-brand-badge");
+                if (ytBlocker) ytBlocker.style.display = "block";
+                if (ytBadge) ytBadge.style.display = "flex";
+
+                if (isRegistered && completeBtn) {
+                                  if (isCompleted) {
+                                    completeBtn.className = "lesson-complete-btn completed";
+                                    completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                                  } else {
+                                    completeBtn.className = "lesson-complete-btn";
+                                    completeBtn.querySelector("span").textContent = "Đánh dấu hoàn thành";
+                                  }
+                                }
+              
+                                const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
+                                const downloadDocBtn = document.getElementById("lesson-download-doc-btn");
+                                if (isVideo) {
+                                  const videoId = lesson.video_drive_id || "";
+                                  const isYouTube = videoId.length === 11 || videoId.includes("youtube.com") || videoId.includes("youtu.be");
+                                  
+                                  if (isYouTube) {
+                                    let cleanYtId = videoId;
+                                    const ytMatch = videoId.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^\"&?\/ ]{11})/i);
+                                    if (ytMatch && ytMatch[1]) {
+                                      cleanYtId = ytMatch[1];
+                                    }
+                                    iframe.src = `https://www.youtube-nocookie.com/embed/${cleanYtId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&color=white&showinfo=0`;
+                                  } else {
+                                    iframe.src = `https://drive.google.com/file/d/${videoId || "17l2lP"}/preview`;
+                                  }
+                                  
+                                  startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
+                                  
+                                  if (downloadDocBtn) {
+                                    if (lesson.doc_link) {
+                                      downloadDocBtn.href = lesson.doc_link;
+                                      downloadDocBtn.style.display = "flex";
+                                    } else {
+                                      downloadDocBtn.style.display = "none";
+                                    }
+                                  }
+              
+                                  // Write video view log (Feature 2)
+                                  writeVideoViewLog(studentCode, lesson, course.title);
+                                } else {
+                                  iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
+                                  stopWatermark();
+                                  if (downloadDocBtn) {
+                                    downloadDocBtn.style.display = "none";
+                                  }
+                                }
+              });
+            }
+
+            chapterOrder.forEach((chName) => {
               const chapterLessons = chapters[chName];
 
-              const group = document.createElement("div");
-              group.className = "accordion-group";
-              group.style.marginBottom = "10px";
+              // Chapter header
+              const chHeader = document.createElement("div");
+              chHeader.className = "tree-chapter-header";
+              chHeader.textContent = chName.toUpperCase();
+              lessonsList.appendChild(chHeader);
 
-              const accHeader = document.createElement("div");
-              accHeader.className = "accordion-header";
-              accHeader.innerHTML = `
-                <div class="accordion-header-title">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                  ${chName}
-                </div>
-                <svg class="accordion-arrow open" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              `;
+              // Group bai -> phan sub-items
+              const baiGroups = [];
+              let currentBai = null;
 
-              const accContent = document.createElement("div");
-              accContent.className = "accordion-content";
-              accContent.style.display = "flex";
-
-              chapterLessons.forEach((lesson) => {
-                const item = document.createElement("div");
-                item.className = "lesson-item";
-                if (activeLessonId === lesson.id) item.classList.add("active");
-                
-                let previewBadge = "";
-                let rightIcon = "";
-
-                const isCompleted = completedLessonIds.includes(lesson.id);
-
-                if (lesson.preview_allowed) {
-                  previewBadge = `<span class="lesson-badge-preview">Xem thử</span>`;
-                } else if (!isRegistered) {
-                  rightIcon = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#64748b" fill="none" stroke-width="2.5" style="margin-left:auto;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
-                }
-
-                // Tick green icon for completed, otherwise type icon
-                let leftIconSvg = getLessonIconSvg(lesson.title);
-                if (isRegistered && isCompleted) {
-                  leftIconSvg = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#22c55e" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-                }
-
-                item.innerHTML = `
-                  <div class="lesson-icon-wrapper" style="${isRegistered && isCompleted ? 'background:#e2fbe8; color:#22c55e;' : ''}">
-                    ${leftIconSvg}
-                  </div>
-                  <span class="lesson-title">${lesson.title}</span>
-                  ${previewBadge}
-                  ${rightIcon}
-                `;
-
-                // Handle Lesson click
-                item.addEventListener("click", () => {
-                  if (!isRegistered && !lesson.preview_allowed) {
-                    showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm vào nút "MÃ TRUY CẬP" ở góc phải để nhập mã kích hoạt khóa học này!`);
-                    return;
-                  }
-
-                  activeLessonId = lesson.id;
-
-                  // Mark active item (across all accordion sections)
-                  lessonsList.querySelectorAll(".lesson-item").forEach(el => el.classList.remove("active"));
-                  item.classList.add("active");
-
-                  // Play/Show content on Left Area
-                  document.getElementById("course-player-cover").style.display = "none";
-                  iframe.style.display = "block";
-                  
-                  // Show controls if registered
-                  if (isRegistered && controlsBar && completeBtn) {
-                    controlsBar.style.display = "flex";
-                    // Render button state
-                    if (isCompleted) {
-                      completeBtn.className = "lesson-complete-btn completed";
-                      completeBtn.querySelector("span").textContent = "Đã hoàn thành";
-                    } else {
-                      completeBtn.className = "lesson-complete-btn";
-                      completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
-                    }
-                  }
-                  
-                                    // Load video/pdf source
-                  const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
-                  const downloadDocBtn = document.getElementById("lesson-download-doc-btn");
-
-                  if (isVideo) {
-                    iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
-                    startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
-                    
-                    if (downloadDocBtn) {
-                      if (lesson.doc_link) {
-                        downloadDocBtn.href = lesson.doc_link;
-                        downloadDocBtn.style.display = "flex";
-                      } else {
-                        downloadDocBtn.style.display = "none";
-                      }
-                    }
-
-                    // Write video view log (Feature 2)
-                    writeVideoViewLog(studentCode, lesson, course.title);
+              chapterLessons.forEach(lesson => {
+                const type = getLessonType(lesson.title);
+                if (type === "phan") {
+                  if (currentBai) {
+                    currentBai.phans.push(lesson);
                   } else {
-                    iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
-                    stopWatermark();
-                    if (downloadDocBtn) {
-                      downloadDocBtn.style.display = "none";
-                    }
+                    // orphan phan - treat as standalone
+                    baiGroups.push({ type: "phan-standalone", lesson });
                   }
-                });
-
-                accContent.appendChild(item);
+                } else if (type === "document") {
+                  currentBai = null;
+                  baiGroups.push({ type: "document", lesson });
+                } else if (type === "test") {
+                  currentBai = null;
+                  baiGroups.push({ type: "test", lesson });
+                } else {
+                  // Main Bai
+                  currentBai = { type: "bai", lesson, phans: [] };
+                  baiGroups.push(currentBai);
+                }
               });
 
-              group.appendChild(accHeader);
-              group.appendChild(accContent);
-              lessonsList.appendChild(group);
+              // Render each group
+              baiGroups.forEach(group => {
+                const lesson = group.lesson;
+                const isCompleted = completedLessonIds.includes(lesson.id);
 
-              // Accordion toggle handler
-              accHeader.addEventListener("click", () => {
-                const isOpen = accContent.style.display !== "none";
-                accContent.style.display = isOpen ? "none" : "flex";
-                const arrow = accHeader.querySelector(".accordion-arrow");
-                if (isOpen) {
-                  arrow.classList.remove("open");
-                  arrow.style.transform = "rotate(0deg)";
-                } else {
-                  arrow.classList.add("open");
-                  arrow.style.transform = "rotate(180deg)";
+                if (group.type === "bai") {
+                  // Main lesson row (collapsible if has phans)
+                  const hasSubs = group.phans.length > 0;
+                  const baiRow = document.createElement("div");
+                  baiRow.className = "tree-bai-row" + (activeLessonId === lesson.id ? " active" : "") + (isRegistered && isCompleted ? " completed-row" : "");
+
+                  const toggleEl = document.createElement("div");
+                  toggleEl.className = "tree-toggle-arrow" + (hasSubs ? " open" : "");
+                  toggleEl.innerHTML = hasSubs ? SVG_CHEVRON : "";
+                  toggleEl.style.visibility = hasSubs ? "visible" : "hidden";
+
+                  const iconEl = document.createElement("div");
+                  iconEl.className = "tree-row-icon";
+                  iconEl.innerHTML = (isRegistered && isCompleted) ? SVG_CHECK : SVG_PLAY;
+
+                  const labelEl = document.createElement("span");
+                  labelEl.className = "tree-row-label";
+                  labelEl.textContent = lesson.title;
+
+                  const rightEl = document.createElement("div");
+                  rightEl.className = "tree-right-icon";
+                  if (!isRegistered && !lesson.preview_allowed) {
+                    rightEl.innerHTML = SVG_LOCK;
+                    rightEl.className = "tree-right-icon tree-lock-icon";
+                  } else if (isRegistered && isCompleted) {
+                    rightEl.innerHTML = SVG_CHECK;
+                  }
+
+                  baiRow.appendChild(toggleEl);
+                  baiRow.appendChild(iconEl);
+                  baiRow.appendChild(labelEl);
+                  baiRow.appendChild(rightEl);
+                  lessonsList.appendChild(baiRow);
+
+                  // Sub-list for phans
+                  const subList = document.createElement("div");
+                  subList.className = "tree-sub-list";
+                  subList.style.display = hasSubs ? "block" : "none";
+
+                  group.phans.forEach(phan => {
+                    const phanCompleted = completedLessonIds.includes(phan.id);
+                    const phanRow = document.createElement("div");
+                    phanRow.className = "tree-phan-row" + (activeLessonId === phan.id ? " active" : "") + (isRegistered && phanCompleted ? " completed" : "");
+
+                    phanRow.innerHTML = `
+                      <span class="tree-phan-indent">↳</span>
+                      <div class="tree-phan-icon">${(isRegistered && phanCompleted) ? SVG_CHECK : SVG_PLAY}</div>
+                      <span class="tree-phan-label">${phan.title}</span>
+                      <div class="tree-right-icon">${(!isRegistered && !phan.preview_allowed) ? SVG_LOCK : ""}</div>
+                    `;
+
+                    makeLessonClickable(phanRow, phan);
+                    subList.appendChild(phanRow);
+                  });
+
+                  if (hasSubs) lessonsList.appendChild(subList);
+
+                  // Toggle sub-list on bai click (if has subs)
+                  if (hasSubs) {
+                    toggleEl.addEventListener("click", (e) => {
+                      e.stopPropagation();
+                      const isOpen = subList.style.display !== "none";
+                      subList.style.display = isOpen ? "none" : "block";
+                      toggleEl.classList.toggle("open", !isOpen);
+                    });
+                  }
+
+                  // Play lesson on bai row click (if no subs, or click label directly)
+                  if (!hasSubs) {
+                    makeLessonClickable(baiRow, lesson);
+                  } else {
+                    // Clicking row label opens the bai if registered
+                    labelEl.addEventListener("click", (e) => {
+                      e.stopPropagation();
+                      makeLessonClickable(baiRow, lesson);
+                    });
+                  }
+
+                } else if (group.type === "document") {
+                  const row = document.createElement("div");
+                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "");
+                  row.innerHTML = `
+                    <div class="tree-doc-icon">${SVG_DOC}</div>
+                    <span class="tree-row-label">${lesson.title}</span>
+                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                  `;
+                  makeLessonClickable(row, lesson);
+                  lessonsList.appendChild(row);
+
+                } else if (group.type === "test") {
+                  const row = document.createElement("div");
+                  row.className = "tree-standalone-row" + (activeLessonId === lesson.id ? " active" : "");
+                  row.innerHTML = `
+                    <div class="tree-test-icon">${SVG_TEST}</div>
+                    <span class="tree-row-label">${lesson.title}</span>
+                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                  `;
+                  makeLessonClickable(row, lesson);
+                  lessonsList.appendChild(row);
+
+                } else if (group.type === "phan-standalone") {
+                  const phanRow = document.createElement("div");
+                  const phanCompleted = completedLessonIds.includes(lesson.id);
+                  phanRow.className = "tree-phan-row" + (activeLessonId === lesson.id ? " active" : "") + (isRegistered && phanCompleted ? " completed" : "");
+                  phanRow.innerHTML = `
+                    <span class="tree-phan-indent">↳</span>
+                    <div class="tree-phan-icon">${(isRegistered && phanCompleted) ? SVG_CHECK : SVG_PLAY}</div>
+                    <span class="tree-phan-label">${lesson.title}</span>
+                    <div class="tree-right-icon">${(!isRegistered && !lesson.preview_allowed) ? SVG_LOCK : ""}</div>
+                  `;
+                  makeLessonClickable(phanRow, lesson);
+                  lessonsList.appendChild(phanRow);
                 }
               });
             });
+
+
+
+
+
+            // DUMMY: keep this reference so JS compat is maintained
+            const _legacyAccordionDummy = null;
           }
 
           // Initial render of progress
           loadProgressAndRender();
+
+          // Tự động chọn bài học đầu tiên khi vừa mở modal để tránh màn hình trống
+          setTimeout(() => {
+            const firstLessonItem = lessonsList.querySelector(".tree-bai-row, .tree-phan-row, .tree-standalone-row");
+            if (firstLessonItem) {
+              const labelToClick = firstLessonItem.querySelector(".tree-row-label, .tree-phan-label") || firstLessonItem;
+              labelToClick.click();
+            }
+          }, 300);
 
           // Set complete toggle handler
           if (completeBtn) {

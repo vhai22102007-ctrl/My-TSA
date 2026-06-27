@@ -538,7 +538,7 @@
                 </div>
               </div>
               <div class="card-body" style="padding: 24px;">
-                <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                <div style="display: none; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
                   <div style="display: flex; gap: 20px; align-items: start; flex-wrap: wrap;">
                     <div id="lms-editor-course-cover" style="width: 160px; height: 96px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05);"></div>
                     <div style="flex: 1; min-width: 250px;">
@@ -549,10 +549,7 @@
                   </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                  <h4 style="margin: 0; font-weight: 800; font-size: 16px;">Sơ đồ chương mục & bài giảng</h4>
-                  <button class="btn btn-primary btn-xs" type="button" onclick="showAddLessonModal()">+ Thêm bài học</button>
-                </div>
+                <h4 style="margin: 0 0 16px 0; font-weight: 800; font-size: 15px; border-left: 4px solid var(--brand); padding-left: 8px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.02em;">Sơ đồ chương mục & bài giảng</h4>
                 
                 <div id="lms-lessons-list-container" style="width: 100%;">
                   <!-- Rendered dynamically -->
@@ -1098,38 +1095,30 @@
       <h3 id="lms-lesson-modal-title" style="margin-top: 0; margin-bottom: 20px; font-weight: 700;">Thêm bài học mới</h3>
       <form id="lms-lesson-modal-form" style="display: flex; flex-direction: column; gap: 16px;">
         <input type="hidden" id="lms-lesson-modal-id">
+        <input type="hidden" id="lms-lesson-modal-chapter" value="Chương 1">
+        <input type="hidden" id="lms-lesson-modal-order" value="0">
+        <input type="checkbox" id="lms-lesson-modal-preview" style="display: none;">
+
         <div class="form-group">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Tên Chương / Chuyên đề</label>
-          <input type="text" id="lms-lesson-modal-chapter" required placeholder="Ví dụ: Chương 1: Đề ôn luyện" value="Chương 1" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Tên bài học / tài liệu</label>
+          <input type="text" id="lms-lesson-modal-name" required placeholder="Ví dụ: Bài 1: Đại cương về Dao động điều hòa" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
         </div>
+
         <div class="form-group">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Tên bài học (Tên hiển thị)</label>
-          <input type="text" id="lms-lesson-modal-name" required placeholder="Ví dụ: Chữa Đề Tăng Tốc Số 3" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
-        </div>
-        <div class="form-group">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Loại học liệu</label>
-          <select id="lms-lesson-modal-type" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white;" onchange="onLmsLessonTypeChange()">
-            <option value="video">Video giảng dạy (Google Drive)</option>
-            <option value="pdf">Tài liệu PDF / File đề</option>
-            <option value="write">Bản viết tay bài giải</option>
+          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Loại bài giảng</label>
+          <select id="lms-lesson-modal-type" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; height: 35px; box-sizing: border-box;" onchange="onLmsLessonTypeChange()">
+            <option value="video">Video bài giảng (YouTube / Drive link)</option>
+            <option value="pdf">Tài liệu PDF / Google Drive link</option>
           </select>
         </div>
+
         <div class="form-group" id="lms-lesson-modal-drive-wrap">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Google Drive File ID (Chỉ điền ID chuỗi ký tự)</label>
-          <input type="text" id="lms-lesson-modal-drive-id" placeholder="Ví dụ: 17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
+          <label id="lms-lesson-modal-url-label" style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Đường dẫn Video bài giảng (YouTube Link / Google Drive Link)</label>
+          <input type="text" id="lms-lesson-modal-drive-id" required placeholder="Dán link YouTube (ví dụ: https://youtu.be/...) hoặc link Drive vào đây" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; box-sizing: border-box;">
         </div>
-        <div class="form-group" id="lms-lesson-modal-doc-wrap">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Đường dẫn tài liệu (Doc link URL)</label>
-          <input type="text" id="lms-lesson-modal-doc-link" placeholder="Ví dụ: https://example.com/tailieu.pdf" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
-        </div>
-        <div class="form-group">
-          <label style="display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px;">Thứ tự hiển thị (Order Index)</label>
-          <input type="number" id="lms-lesson-modal-order" required value="0" min="0" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">
-        </div>
-        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="lms-lesson-modal-preview" style="width: 16px; height: 16px; cursor: pointer;">
-          <label for="lms-lesson-modal-preview" style="font-weight: 600; font-size: 13px; cursor: pointer;">Cho phép xem thử miễn phí (Preview allowed)</label>
-        </div>
+        
+        <input type="hidden" id="lms-lesson-modal-doc-link">
+
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
           <button class="btn btn-outline" type="button" onclick="closeLmsLessonModal()">Hủy</button>
           <button class="btn btn-primary" type="submit">Lưu lại</button>

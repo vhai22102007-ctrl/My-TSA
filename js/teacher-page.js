@@ -3408,119 +3408,208 @@
         lessonsList = allMockLessons.filter(function(l) { return l.course_id === activeCourseId; });
       }
 
+      // Define SVGs
+      var SVG_PLAY = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#475569" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.85; display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="none" stroke="#475569" stroke-width="1.8"></polygon></svg>`;
+      var SVG_DOC = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#16a34a" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+      var SVG_TEST = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#b45309" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>`;
+
+      function getLessonType(title) {
+        var t = title.toLowerCase();
+        if (t.startsWith("phần") || t.startsWith("phan") || t.match(/^p\d/)) return "phan";
+        if (t.startsWith("tài liệu") || t.startsWith("tai lieu") || t.startsWith("file")) return "document";
+        if (t.startsWith("thi online") || t.startsWith("bài tập kiểm tra") || t.startsWith("bài kiểm tra")) return "test";
+        return "bai"; // default
+      }
+
       if (lessonsList.length === 0) {
-        lessonsContainer.innerHTML = "";
-        lessonsContainer.style.cssText = "overflow-x: auto; padding: 20px 10px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);";
-        
-        var treeWrapper = document.createElement("div");
-        treeWrapper.className = "tree-wrapper";
-        
-        var rootCol = document.createElement("div");
-        rootCol.className = "tree-root-col";
-        rootCol.innerHTML = `
-          <div class="tree-node course-node">
-            <span class="node-title">${esc(course.title)}</span>
-            <button class="node-btn-add" onclick="showAddChapterPrompt()" title="Thêm chương mới">+</button>
+        lessonsContainer.innerHTML = `
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+            <button class="btn btn-primary btn-sm" onclick="showAddChapterPrompt()" style="font-weight: 700; background: #0f5a9e; border-color: #0f5a9e;">+ Thêm chương mới</button>
+          </div>
+          <div style="padding: 40px 20px; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; color: var(--muted); font-size: 13.5px;">
+            <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" fill="none" stroke-width="1.5" style="margin: 0 auto 12px; display: block; opacity: 0.4;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Chưa có bài học hoặc chuyên đề nào trong khóa học này. Hãy bấm nút phía trên để bắt đầu!
           </div>
         `;
-        treeWrapper.appendChild(rootCol);
-        
-        var branchesCol = document.createElement("div");
-        branchesCol.className = "tree-branches-col";
-        var emptyBranch = document.createElement("div");
-        emptyBranch.style.cssText = "padding-left: 20px; font-size:12px; color:var(--muted);";
-        emptyBranch.textContent = "Chưa có chuyên mục / bài giảng nào. Hãy bấm nút '+' để thêm chương.";
-        branchesCol.appendChild(emptyBranch);
-        
-        treeWrapper.appendChild(branchesCol);
-        lessonsContainer.appendChild(treeWrapper);
         return;
       }
 
-      // Group lessons by chapter
+      // Group lessons by chapter in order of appearance
+      var chapterOrder = [];
       var chapters = {};
       lessonsList.forEach(function(lesson) {
         var chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
         if (!chapters[chName]) {
           chapters[chName] = [];
+          chapterOrder.push(chName);
         }
         chapters[chName].push(lesson);
       });
 
       lessonsContainer.innerHTML = "";
-      lessonsContainer.style.cssText = "overflow-x: auto; padding: 20px 10px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);";
-      
-      var treeWrapper = document.createElement("div");
-      treeWrapper.className = "tree-wrapper";
-      
-      // Column 1: Course Node
-      var rootCol = document.createElement("div");
-      rootCol.className = "tree-root-col";
-      rootCol.innerHTML = `
-        <div class="tree-node course-node">
-          <span class="node-title">${esc(course.title)}</span>
-          <button class="node-btn-add" onclick="showAddChapterPrompt()" title="Thêm chương mới">+</button>
-        </div>
+      lessonsContainer.style.cssText = "padding: 0; background: transparent; border: none;";
+
+      // Top action header
+      var actionHeader = document.createElement("div");
+      actionHeader.style.cssText = "display: flex; justify-content: flex-end; margin-bottom: 16px;";
+      actionHeader.innerHTML = `
+        <button class="btn btn-primary btn-sm" onclick="showAddChapterPrompt()" style="font-weight: 700; background: #0f5a9e; border-color: #0f5a9e;">
+          + Thêm chương mới
+        </button>
       `;
-      treeWrapper.appendChild(rootCol);
-      
-      // Column 2: Branches (Chapters & Lessons)
-      var branchesCol = document.createElement("div");
-      branchesCol.className = "tree-branches-col";
-      
-      var chNames = Object.keys(chapters);
-      chNames.forEach(function(chName) {
-        var branchItem = document.createElement("div");
-        branchItem.className = "tree-branch-item";
-        
+      lessonsContainer.appendChild(actionHeader);
+
+      // Render chapters and lessons tree-view list
+      chapterOrder.forEach(function(chName) {
         var chapterLessons = chapters[chName];
         chapterLessons.sort(function(a, b) { return (a.order_index || 0) - (b.order_index || 0); });
-        
-        // Chapter wrap (holds chapter node)
-        var chWrap = document.createElement("div");
-        chWrap.className = "tree-chapter-wrap";
-        chWrap.innerHTML = `
-          <div class="tree-node chapter-node">
-            <span class="node-title" title="${esc(chName)}">${esc(chName)}</span>
-            <button class="node-btn-add" onclick="showAddLessonForChapter('${escJs(chName)}')" title="Thêm bài giảng vào chương này">+</button>
-          </div>
+
+        var chBlock = document.createElement("div");
+        chBlock.style.cssText = "margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;";
+
+        // Chapter Header row
+        var chHeaderRow = document.createElement("div");
+        chHeaderRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #e2e8f0; border-radius: 8px; margin-bottom: 4px;";
+        chHeaderRow.innerHTML = `
+          <span style="font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">${esc(chName)}</span>
+          <button class="btn btn-outline btn-xs" style="font-size: 11px; font-weight: 700; color: #0f5a9e; border-color: #0f5a9e; background: #ffffff; padding: 2px 10px;" onclick="showAddLessonForChapter('${escJs(chName)}')">
+            + Thêm bài giảng / tài liệu
+          </button>
         `;
-        branchItem.appendChild(chWrap);
-        
-        // Lessons wrap (holds list of leaves)
-        var leavesCol = document.createElement("div");
-        leavesCol.className = "tree-leaves-col";
-        
+        chBlock.appendChild(chHeaderRow);
+
+        // Lessons of this chapter
         chapterLessons.forEach(function(lesson) {
-          var leafItem = document.createElement("div");
-          leafItem.className = "tree-leaf-item";
+          var type = getLessonType(lesson.title);
+          var lessonRow = document.createElement("div");
           
-          var previewTag = lesson.preview_allowed ? " <span style='font-size:8px; background:#e2fbe8; color:#15803d; padding:1px 3px; border-radius:3px; font-weight:800; text-transform:uppercase;'>Free</span>" : "";
+          var previewTag = lesson.preview_allowed ? ` <span style="font-size: 9px; background: #e2fbe8; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 6px; display: inline-block; vertical-align: middle;">Free</span>` : "";
+
+          if (type === "phan") {
+            // Thụt lề sub-item phẳng
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; margin-left: 24px; position: relative; transition: all 0.15s;";
+            
+            // Draw connector line
+            var connLine = document.createElement("div");
+            connLine.style.cssText = "position: absolute; left: -14px; top: 0; bottom: 0; width: 1px; background: #cbd5e1;";
+            lessonRow.appendChild(connLine);
+
+            lessonRow.innerHTML += `
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span style="color: #94a3b8; font-weight: 700; font-size: 13px;">↳</span>
+                <span style="color: #64748b; font-size: 13px; display: inline-flex; align-items: center; justify-content: center;">${SVG_PLAY}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
+                ${previewTag}
+              </div>
+            `;
+          } else if (type === "document") {
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
+            lessonRow.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span style="color: #16a34a; display: inline-flex; align-items: center; justify-content: center;">${SVG_DOC}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
+                ${previewTag}
+              </div>
+            `;
+          } else if (type === "test") {
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
+            lessonRow.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span style="color: #b45309; display: inline-flex; align-items: center; justify-content: center;">${SVG_TEST}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
+                ${previewTag}
+              </div>
+            `;
+          } else {
+            // Main lesson row (Bài) phẳng
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
+            lessonRow.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">${SVG_PLAY}</span>
+                <span style="font-weight: 700; color: #1e293b; font-size: 13.5px;">${esc(lesson.title)}</span>
+                ${previewTag}
+              </div>
+            `;
+          }
+
+          // Right controls container
+          var rightControls = document.createElement("div");
+          rightControls.style.cssText = "display: flex; align-items: center; gap: 16px; flex-shrink: 0; margin-left: 12px;";
+
+          // Media badges
+          var mediaBadges = document.createElement("div");
+          mediaBadges.style.cssText = "font-size: 11px; color: #64748b; display: flex; gap: 8px; align-items: center;";
           
-          leafItem.innerHTML = `
-            <div class="tree-node lesson-node">
-              <div style="flex:1; overflow:hidden;">
-                <div class="node-title" style="font-weight:700;" title="${esc(lesson.title)}">${esc(lesson.title)}${previewTag}</div>
-                <div style="font-size:10px; color:var(--muted); margin-top:2px; display:flex; gap:6px;">
-                  ${lesson.video_drive_id ? '<span>🎥 Video: Có</span>' : '<span>🎥 Video: Không</span>'}
-                  ${lesson.doc_link ? '<span>📄 PDF: Có</span>' : '<span>📄 PDF: Không</span>'}
-                </div>
-              </div>
-              <div style="display:flex; gap:6px; margin-left:12px;">
-                <button class="btn btn-outline btn-xs" type="button" onclick="showEditLessonModal('${lesson.id}')" style="padding: 2px 6px; font-size:10px;">Sửa</button>
-                <button class="btn btn-danger btn-xs" type="button" onclick="deleteLmsLesson('${lesson.id}')" style="padding: 2px 6px; font-size:10px;">Xóa</button>
-              </div>
-            </div>
+          var hasVideo = !!lesson.video_drive_id;
+          var hasDoc = !!lesson.doc_link;
+          
+          if (type !== "document" && type !== "test") {
+            // Video button
+            var btnVideo = document.createElement("button");
+            btnVideo.className = "btn-media-toggle";
+            btnVideo.type = "button";
+            btnVideo.style.cssText = "cursor: pointer; border: 1px solid " + (hasVideo ? "#bfdbfe" : "#e2e8f0") + "; background: " + (hasVideo ? "#eff6ff" : "#ffffff") + "; color: " + (hasVideo ? "#1d4ed8" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
+            btnVideo.innerHTML = `Video <span style="font-size: 9px; color: ${hasVideo ? '#22c55e' : '#ef4444'};">${hasVideo ? '● Có' : '○ Trống'}</span>`;
+            btnVideo.onclick = function(lessonId) {
+              return function() { openLessonMediaEditor(lessonId, 'video'); };
+            }(lesson.id);
+            
+            // PDF button
+            var btnPdf = document.createElement("button");
+            btnPdf.className = "btn-media-toggle";
+            btnPdf.type = "button";
+            btnPdf.style.cssText = "cursor: pointer; border: 1px solid " + (hasDoc ? "#bbf7d0" : "#e2e8f0") + "; background: " + (hasDoc ? "#f0fdf4" : "#ffffff") + "; color: " + (hasDoc ? "#15803d" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
+            btnPdf.innerHTML = `PDF <span style="font-size: 9px; color: ${hasDoc ? '#22c55e' : '#ef4444'};">${hasDoc ? '● Có' : '○ Trống'}</span>`;
+            btnPdf.onclick = function(lessonId) {
+              return function() { openLessonMediaEditor(lessonId, 'doc'); };
+            }(lesson.id);
+
+            mediaBadges.appendChild(btnVideo);
+            mediaBadges.appendChild(btnPdf);
+          } else if (type === "document") {
+            var btnPdf = document.createElement("button");
+            btnPdf.className = "btn-media-toggle";
+            btnPdf.type = "button";
+            btnPdf.style.cssText = "cursor: pointer; border: 1px solid " + (hasDoc ? "#bbf7d0" : "#e2e8f0") + "; background: " + (hasDoc ? "#f0fdf4" : "#ffffff") + "; color: " + (hasDoc ? "#15803d" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
+            btnPdf.innerHTML = `Link Drive <span style="font-size: 9px; color: ${hasDoc ? '#22c55e' : '#ef4444'};">${hasDoc ? '● Có' : '○ Trống'}</span>`;
+            btnPdf.onclick = function(lessonId) {
+              return function() { openLessonMediaEditor(lessonId, 'doc'); };
+            }(lesson.id);
+            
+            mediaBadges.appendChild(btnPdf);
+          } else {
+            mediaBadges.innerHTML = `<span style="background: #fff8e1; color: #b45309; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: inline-block;">Bài kiểm tra</span>`;
+          }
+          rightControls.appendChild(mediaBadges);
+
+          // Action buttons
+          var actionButtons = document.createElement("div");
+          actionButtons.style.cssText = "display: flex; gap: 6px;";
+          
+          var addBranchBtnHtml = (type === "bai") ? `<button class="btn btn-outline btn-xs" type="button" onclick="showAddSubLessonForLesson('${escJs(chName)}', '${escJs(lesson.title)}')" style="padding: 2px 8px; font-size: 11px; color: #0f5a9e; border-color: #0f5a9e;" title="Thêm nhánh con (Phần...)">+ Thêm nhánh</button>` : '';
+          
+          actionButtons.innerHTML = `
+            ${addBranchBtnHtml}
+            <button class="btn btn-outline btn-xs" type="button" onclick="showEditLessonModal('${lesson.id}')" style="padding: 2px 8px; font-size: 11px; border-color: #cbd5e1;">Sửa</button>
+            <button class="btn btn-danger btn-xs" type="button" onclick="deleteLmsLesson('${lesson.id}')" style="padding: 2px 8px; font-size: 11px;">Xóa</button>
           `;
-          leavesCol.appendChild(leafItem);
+          rightControls.appendChild(actionButtons);
+          
+          lessonRow.appendChild(rightControls);
+          
+          // Hover effect
+          lessonRow.onmouseenter = function() {
+            lessonRow.style.background = "rgba(15, 90, 158, 0.04)";
+          };
+          lessonRow.onmouseleave = function() {
+            lessonRow.style.background = "transparent";
+          };
+
+          chBlock.appendChild(lessonRow);
         });
-        
-        branchItem.appendChild(leavesCol);
-        branchesCol.appendChild(branchItem);
+
+        lessonsContainer.appendChild(chBlock);
       });
-      
-      treeWrapper.appendChild(branchesCol);
-      lessonsContainer.appendChild(treeWrapper);
     }
 
     function escJs(str) {
@@ -3543,6 +3632,46 @@
       }
     }
     window.showAddLessonForChapter = showAddLessonForChapter;
+
+    function showAddSubLessonForLesson(chName, parentTitle) {
+      showAddLessonModal();
+      document.getElementById("lms-lesson-modal-chapter").value = chName;
+      
+      // Auto extract number from parent title e.g. "Bài 1: ..." -> "Phần 1.1: "
+      var matchNum = parentTitle.match(/Bài\s*(\d+)/i);
+      var nextPartPrefix = "Phần 1.1: ";
+      if (parentTitle.toLowerCase().indexOf("đề thi thử hsa số") !== -1) {
+        var matchHsaNum = parentTitle.match(/HSA\s*số\s*(\d+)/i);
+        if (matchHsaNum && matchHsaNum[1]) {
+          nextPartPrefix = "Phần " + matchHsaNum[1] + ".1: ";
+        }
+      } else if (matchNum && matchNum[1]) {
+        nextPartPrefix = "Phần " + matchNum[1] + ".1: ";
+      }
+      document.getElementById("lms-lesson-modal-name").value = nextPartPrefix;
+      document.getElementById("lms-lesson-modal-name").focus();
+    }
+    window.showAddSubLessonForLesson = showAddSubLessonForLesson;
+
+    async function openLessonMediaEditor(lessonId, fieldType) {
+      await showEditLessonModal(lessonId);
+      setTimeout(function() {
+        if (fieldType === 'video') {
+          var input = document.getElementById("lms-lesson-modal-drive-id");
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        } else {
+          var input = document.getElementById("lms-lesson-modal-doc-link");
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        }
+      }, 400);
+    }
+    window.openLessonMediaEditor = openLessonMediaEditor;
 
     // Modal Course Toggles
     function showAddCourseModal() {
@@ -3707,10 +3836,29 @@
       document.getElementById("lms-lesson-modal-id").value = lesson.id;
       document.getElementById("lms-lesson-modal-chapter").value = lesson.chapter_name || "Chương 1";
       document.getElementById("lms-lesson-modal-name").value = lesson.title;
-      document.getElementById("lms-lesson-modal-type").value = lesson.type;
-      document.getElementById("lms-lesson-modal-drive-id").value = lesson.video_drive_id || "";
+      
+      var selectType = document.getElementById("lms-lesson-modal-type");
+      var inputUrl = document.getElementById("lms-lesson-modal-drive-id");
+      
+      // Determine selection type and display link based on filled field
+      if (lesson.video_drive_id) {
+        selectType.value = "video";
+        inputUrl.value = lesson.video_drive_id;
+      } else if (lesson.doc_link) {
+        selectType.value = "pdf";
+        inputUrl.value = lesson.doc_link;
+      } else {
+        // Fallback or default
+        if (lesson.type === "pdf" || lesson.title.toLowerCase().indexOf("tài liệu") !== -1 || lesson.title.toLowerCase().indexOf("file") !== -1) {
+          selectType.value = "pdf";
+        } else {
+          selectType.value = "video";
+        }
+        inputUrl.value = "";
+      }
+
       document.getElementById("lms-lesson-modal-doc-link").value = lesson.doc_link || "";
-      document.getElementById("lms-lesson-modal-order").value = lesson.order_index;
+      document.getElementById("lms-lesson-modal-order").value = lesson.order_index || 0;
       document.getElementById("lms-lesson-modal-preview").checked = lesson.preview_allowed || false;
 
       openModal("lms-lesson-modal");
@@ -3722,11 +3870,20 @@
     }
 
     function onLmsLessonTypeChange() {
-      var driveWrap = document.getElementById("lms-lesson-modal-drive-wrap");
-      var docWrap = document.getElementById("lms-lesson-modal-doc-wrap");
-      if (driveWrap) driveWrap.style.display = "block";
-      if (docWrap) docWrap.style.display = "block";
+      var select = document.getElementById("lms-lesson-modal-type");
+      var label = document.getElementById("lms-lesson-modal-url-label");
+      var input = document.getElementById("lms-lesson-modal-drive-id");
+      if (!select || !label || !input) return;
+      
+      if (select.value === "video") {
+        label.textContent = "Đường dẫn Video bài giảng (YouTube Link / Google Drive Link)";
+        input.placeholder = "Dán link YouTube (ví dụ: https://youtu.be/...) hoặc link Drive vào đây";
+      } else {
+        label.textContent = "Đường dẫn Tài liệu PDF / Google Drive link";
+        input.placeholder = "Dán link Drive tài liệu hoặc link file PDF vào đây";
+      }
     }
+    window.onLmsLessonTypeChange = onLmsLessonTypeChange;
 
     async function saveLmsLesson(e) {
       if (e) e.preventDefault();
@@ -3735,10 +3892,33 @@
       var chapter = document.getElementById("lms-lesson-modal-chapter").value.trim() || "Chương 1";
       var name = document.getElementById("lms-lesson-modal-name").value.trim();
       var type = document.getElementById("lms-lesson-modal-type").value;
-      var driveId = document.getElementById("lms-lesson-modal-drive-id").value.trim();
-      var docLink = document.getElementById("lms-lesson-modal-doc-link").value.trim();
+      var rawUrl = document.getElementById("lms-lesson-modal-drive-id").value.trim();
+      
       var order = parseInt(document.getElementById("lms-lesson-modal-order").value) || 0;
       var preview = document.getElementById("lms-lesson-modal-preview").checked;
+
+      var driveId = "";
+      var docLink = "";
+
+      if (type === "video") {
+        // Auto extract YouTube Video ID from full URL
+        var ytMatch = rawUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^\"&?\/ ]{11})/i);
+        if (ytMatch && ytMatch[1]) {
+          driveId = ytMatch[1];
+        } else {
+          // Auto extract Google Drive Video File ID from full URL
+          var driveMatch = rawUrl.match(/\/d\/([a-zA-Z0-9_-]{25,100})/);
+          if (driveMatch && driveMatch[1]) {
+            driveId = driveMatch[1];
+          } else {
+            driveId = rawUrl; // fallback
+          }
+        }
+        docLink = "";
+      } else {
+        driveId = "";
+        docLink = rawUrl;
+      }
 
       try {
         if (supabaseClient) {

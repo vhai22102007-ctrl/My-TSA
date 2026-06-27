@@ -4217,4 +4217,933 @@
     .lesson-complete-btn.completed:hover {
       background: #16a34a;
       border-color: #16a34a;
-    }
+    }
+    /* ============================================
+       FULLSCREEN COURSE STUDY MODAL - COMPLETE
+       ============================================ */
+
+    /* Override modal container for fullscreen */
+    #course-study-modal {
+      display: flex !important;
+      flex-direction: column !important;
+      place-items: unset !important;
+      background: #1c1d2e !important;
+      overflow: hidden;
+    }
+    #course-study-modal[hidden] { display: none !important; }
+
+    /* DARK TOPBAR */
+    #course-study-modal .course-modal-topbar {
+      background: #c0061f !important;
+      border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+      height: 54px !important;
+      padding: 0 20px !important;
+      flex-shrink: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #course-study-modal .study-back-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+    #course-study-modal .study-back-btn:hover {
+      background: rgba(255,255,255,0.07);
+      color: #e2e8f0;
+    }
+    #course-study-modal .study-topbar-lesson-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 500px;
+      font-size: 13px;
+    }
+    #course-study-modal .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    #course-study-modal .study-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: #2d3554;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #course-study-modal .course-status-badge.unlocked {
+      background: rgba(34,197,94,0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 5px; padding: 3px 9px; font-size: 11px; font-weight: 700;
+    }
+    #course-study-modal .course-status-badge.locked {
+      background: rgba(239,68,68,0.12);
+      color: #f87171;
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 5px; padding: 3px 9px; font-size: 11px; font-weight: 700;
+    }
+
+    /* TWO COLUMN LAYOUT */
+    #course-study-modal .course-study-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 380px; /* Wider sidebar to prevent title wrap */
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    /* LEFT: MAIN CONTENT */
+    #course-study-modal .course-study-main {
+      overflow-y: auto;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 20px 20px 0; /* Padding around the video */
+    }
+
+    /* VIDEO PLAYER */
+    #course-study-modal .study-player-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: 65vh;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      border-radius: 12px; /* Rounded corners as in the screenshot */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #course-study-modal .course-player-mockup-cover {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1f35 0%, #0a0e1a 100%);
+    }
+    #course-study-modal .mockup-cover-text {
+      color: #475569; font-size: 15px; font-weight: 700; margin-top: 18px;
+    }
+    #course-study-modal #course-video-iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+    #course-study-modal .video-watermark-overlay {
+      position: absolute;
+      pointer-events: none;
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.18);
+      user-select: none; white-space: nowrap; z-index: 10;
+    }
+
+    /* LESSON INFO BAR */
+    #course-study-modal .study-lesson-info-bar {
+      padding: 18px 22px;
+      background: #fff;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #course-study-modal .lesson-info-left { flex: 1; min-width: 0; }
+    #course-study-modal .study-lesson-title {
+      font-size: 17px; font-weight: 800; color: #0f172a;
+      margin: 0 0 8px; line-height: 1.3;
+    }
+    #course-study-modal .lesson-meta-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    #course-study-modal .study-type-badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 5px;
+      background: #eff6ff; color: #2563eb;
+    }
+    #course-study-modal .study-doc-link {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 700; color: #2563eb;
+      text-decoration: none; padding: 4px 10px;
+      border: 1.5px solid #bfdbfe; border-radius: 6px; transition: all 0.15s;
+    }
+    #course-study-modal .study-doc-link:hover { background: #eff6ff; }
+    #course-study-modal .lesson-info-right { flex-shrink: 0; display: flex; align-items: center; }
+    #course-study-modal .lesson-complete-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 16px; font-size: 12px; font-weight: 700;
+      border-radius: 8px; border: 1.5px solid #e2e8f0;
+      background: #fff; color: #374151; cursor: pointer; transition: all 0.2s;
+    }
+    #course-study-modal .lesson-complete-btn:hover {
+      background: #f0fdf4; border-color: #86efac; color: #166534;
+    }
+    #course-study-modal .lesson-complete-btn.completed {
+      background: #16a34a; border-color: #16a34a; color: #fff;
+    }
+    #course-study-modal .lesson-complete-btn.completed:hover { background: #15803d; }
+
+    /* TEACHER CARD */
+    #course-study-modal .course-teacher-card {
+      margin: 0; border-radius: 0; border: none;
+      border-top: 1px solid #f1f5f9;
+      padding: 16px 22px; background: #fff;
+    }
+
+    /* RIGHT SIDEBAR */
+    #course-study-modal .course-study-sidebar {
+      background: #fff; border-left: 1px solid #e5e7eb;
+      display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+    }
+    #course-study-modal .study-sidebar-tabs {
+      display: flex; border-bottom: 2px solid #f1f5f9; flex-shrink: 0;
+    }
+    #course-study-modal .study-sidebar-tab {
+      flex: 1; padding: 14px 0; font-size: 13px; font-weight: 700;
+      color: #64748b; background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    #course-study-modal .study-sidebar-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+    #course-study-modal .study-sidebar-tab:hover:not(.active) { color: #0f172a; }
+
+    #course-study-modal .study-progress-wrap {
+      padding: 12px 16px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0;
+    }
+    #course-study-modal .study-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 6px;
+    }
+    #course-study-modal .study-progress-pct { color: #0f172a; font-weight: 800; }
+    #course-study-modal .study-progress-track {
+      height: 5px; background: #f1f5f9; border-radius: 99px; overflow: hidden;
+    }
+    #course-study-modal .study-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      border-radius: 99px; transition: width 0.5s ease;
+    }
+
+    #course-study-modal .study-tab-content {
+      display: none; flex: 1; overflow-y: auto; flex-direction: column;
+    }
+    #course-study-modal .study-tab-content.active { display: flex; }
+    #course-study-modal .sidebar-lessons-list { flex: 1; }
+
+    #course-study-modal .accordion-group { margin: 0; }
+    #course-study-modal .accordion-header {
+      padding: 10px 14px;
+      font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em;
+      text-transform: uppercase; color: #64748b;
+      background: #f8fafc; border-top: 1px solid #f1f5f9;
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 2;
+    }
+    #course-study-modal .accordion-header-title { display: flex; align-items: center; gap: 6px; }
+    #course-study-modal .accordion-content { display: flex; flex-direction: column !important; }
+    #course-study-modal .lesson-item {
+      padding: 10px 14px 10px 30px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #374151; cursor: pointer;
+      border-left: 3px solid transparent; transition: background 0.1s; line-height: 1.4;
+    }
+    #course-study-modal .lesson-item:hover { background: #f8fafc; }
+    #course-study-modal .lesson-item.active {
+      background: #eff6ff; border-left-color: #2563eb; color: #1d4ed8; font-weight: 700;
+    }
+    #course-study-modal .lesson-icon-wrapper {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #f1f5f9; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    #course-study-modal .lesson-title { flex: 1; }
+    #course-study-modal .lesson-badge-preview {
+      font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 3px;
+      background: #dcfce7; color: #15803d; text-transform: uppercase; flex-shrink: 0;
+    }
+
+
+    /* ===== SIDEBAR TREE STRUCTURE ===== */
+    #course-study-modal .tree-chapter-header {
+      padding: 10px 14px 6px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    #course-study-modal .tree-bai-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+      font-size: 13px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+    #course-study-modal .tree-bai-row:hover { background: #f8fafc; }
+    #course-study-modal .tree-bai-row.active {
+      background: #eff6ff;
+      border-left-color: #d61030;
+      color: #d61030;
+    }
+    #course-study-modal .tree-bai-row.completed-row .tree-right-icon svg { color: #22c55e; }
+    #course-study-modal .tree-toggle-arrow {
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #94a3b8;
+      transition: transform 0.2s;
+    }
+    #course-study-modal .tree-toggle-arrow.open { transform: rotate(90deg); }
+    #course-study-modal .tree-row-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #f1f5f9; border: 1.5px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #475569;
+    }
+    #course-study-modal .tree-bai-row.active .tree-row-icon {
+      background: #fee2e2; border-color: #fca5a5; color: #d61030;
+    }
+    #course-study-modal .tree-bai-row.completed-row .tree-row-icon {
+      background: #dcfce7; border-color: #86efac; color: #22c55e;
+    }
+    #course-study-modal .tree-row-label { flex: 1; line-height: 1.35; }
+    #course-study-modal .tree-right-icon {
+      margin-left: auto; flex-shrink: 0; color: #94a3b8;
+    }
+    #course-study-modal .tree-lock-icon { color: #cbd5e1; }
+
+    /* Sub-lessons (Phần) */
+    #course-study-modal .tree-sub-list {
+      overflow: hidden;
+    }
+    #course-study-modal .tree-phan-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px 8px 36px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+      font-size: 12.5px;
+      color: #374151;
+      position: relative;
+    }
+    #course-study-modal .tree-phan-row::before {
+      content: '';
+      position: absolute;
+      left: 27px; top: 0; bottom: 0;
+      width: 1px;
+      background: #e2e8f0;
+    }
+    #course-study-modal .tree-phan-row:hover { background: #f8fafc; }
+    #course-study-modal .tree-phan-row.active {
+      background: #eff6ff;
+      border-left-color: #d61030;
+      color: #d61030;
+      font-weight: 700;
+    }
+    #course-study-modal .tree-phan-indent {
+      color: #94a3b8; flex-shrink: 0; font-size: 11px;
+    }
+    #course-study-modal .tree-phan-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f1f5f9;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #64748b;
+    }
+    #course-study-modal .tree-phan-row.active .tree-phan-icon {
+      background: #fee2e2; color: #d61030;
+    }
+    #course-study-modal .tree-phan-label { flex: 1; line-height: 1.3; }
+    #course-study-modal .tree-phan-row.completed .tree-phan-icon {
+      background: #dcfce7; color: #22c55e;
+    }
+    #course-study-modal .tree-phan-row .tree-right-icon { color: #94a3b8; }
+
+    /* Standalone items (Tài liệu, Thi online) */
+    #course-study-modal .tree-standalone-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+      font-size: 13px;
+      color: #374151;
+    }
+    #course-study-modal .tree-standalone-row:hover { background: #f8fafc; }
+    #course-study-modal .tree-standalone-row.active {
+      background: #eff6ff;
+      border-left-color: #d61030;
+      color: #d61030;
+      font-weight: 700;
+    }
+    #course-study-modal .tree-doc-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #f0fdf4; border: 1.5px solid #bbf7d0;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #16a34a;
+    }
+    #course-study-modal .tree-test-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #fef3c7; border: 1.5px solid #fcd34d;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #b45309;
+    }
+
+    /* ===== EXACT MATCH THE USER IMAGE STYLES ===== */
+
+    #course-study-modal {
+      background: #f8fafc !important;
+    }
+
+    /* TOPBAR: Deep MS Blue color (#0b579a) */
+    #course-study-modal .course-modal-topbar {
+      background: #0f5a9e !important;
+      height: 52px !important;
+      padding: 0 16px !important;
+      border-bottom: none !important;
+    }
+
+    #course-study-modal .study-back-btn {
+      color: #ffffff !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      background: transparent !important;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #course-study-modal .study-topbar-lesson-label {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      max-width: 600px;
+    }
+
+    /* Topbar Right navigation icons like home, library, notification, avatar */
+    #course-study-modal .topbar-right {
+      gap: 16px !important;
+    }
+
+    #course-study-modal .study-topbar-icon {
+      color: #ffffff;
+      opacity: 0.9;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+    #course-study-modal .study-topbar-icon:hover {
+      opacity: 1;
+    }
+
+    #course-study-modal .study-avatar {
+      border: 2px solid rgba(255,255,255,0.8);
+      background: #e2e8f0;
+      width: 32px;
+      height: 32px;
+    }
+
+    /* SIDEBAR TABS: Right aligned to match exactly (Bình luận on left, Mục lục on right) */
+    #course-study-modal .study-sidebar-tabs {
+      border-bottom: 1.5px solid #e2e8f0;
+      padding: 0;
+      background: #ffffff;
+    }
+
+    #course-study-modal .study-sidebar-tab {
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      text-transform: none !important;
+      color: #475569 !important;
+      padding: 12px 0 !important;
+      border-bottom: 2.5px solid transparent !important;
+    }
+
+    #course-study-modal .study-sidebar-tab.active {
+      color: #0f5a9e !important;
+      border-bottom-color: #0f5a9e !important;
+    }
+
+    /* PROGRESS BAR */
+    #course-study-modal .study-progress-wrap {
+      background: #ffffff;
+      padding: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    #course-study-modal .study-progress-label {
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+    }
+
+    #course-study-modal .study-progress-pct {
+      color: #0f5a9e !important;
+    }
+
+    #course-study-modal .study-progress-track {
+      height: 6px !important;
+      background: #f1f5f9 !important;
+    }
+
+    #course-study-modal .study-progress-fill {
+      background: #0f5a9e !important;
+    }
+
+    /* CHAPTER HEADINGS */
+    #course-study-modal .tree-chapter-header {
+      background: #ffffff !important;
+      color: #94a3b8 !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.05em !important;
+      padding: 16px 16px 8px !important;
+      border-top: none !important;
+    }
+
+    /* LESSON ROW STYLING (matching the screenshot) */
+    #course-study-modal .tree-bai-row {
+      padding: 10px 16px !important;
+      font-size: 13px !important;
+      color: #475569 !important;
+      font-weight: 500 !important;
+      background: #ffffff;
+    }
+
+    #course-study-modal .tree-bai-row.active {
+      background: #ffffff !important;
+      color: #0f5a9e !important;
+      font-weight: 600 !important;
+      border-left-color: transparent !important;
+    }
+
+    #course-study-modal .tree-row-icon {
+      border: none !important;
+      background: transparent !important;
+      color: #94a3b8 !important;
+      width: 22px !important;
+      height: 22px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #course-study-modal .tree-bai-row.active .tree-row-icon {
+      color: #0f5a9e !important;
+    }
+
+    #course-study-modal .tree-bai-row.completed-row .tree-row-icon {
+      color: #22c55e !important;
+    }
+
+    /* SUB-LESSON (PHẦN) STYLING */
+    #course-study-modal .tree-sub-list {
+      background: #ffffff;
+      position: relative;
+    }
+
+    #course-study-modal .tree-phan-row {
+      padding: 8px 16px 8px 46px !important;
+      font-size: 13px !important;
+      color: #475569 !important;
+      font-weight: 400 !important;
+      background: #ffffff;
+      border-left: none !important;
+    }
+
+    #course-study-modal .tree-phan-row.active {
+      background: #f0f7ff !important;
+      color: #0f5a9e !important;
+      border-radius: 8px;
+      margin: 2px 16px 2px 32px !important;
+      padding-left: 14px !important;
+      font-weight: 600 !important;
+    }
+
+    #course-study-modal .tree-phan-row::before {
+      content: '';
+      position: absolute;
+      left: 32px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #cbd5e1 !important;
+    }
+
+    #course-study-modal .tree-phan-row.active::before {
+      display: none !important;
+    }
+
+    #course-study-modal .tree-phan-indent {
+      display: none !important; /* Hide the arrow char ↳ because we use padding & border lines */
+    }
+
+    #course-study-modal .tree-phan-icon {
+      width: 18px !important;
+      height: 18px !important;
+      background: transparent !important;
+      border: none !important;
+      color: #94a3b8 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 4px;
+    }
+
+    #course-study-modal .tree-phan-row.active .tree-phan-icon {
+      color: #0f5a9e !important;
+    }
+
+    #course-study-modal .tree-phan-row.completed .tree-phan-icon {
+      color: #22c55e !important;
+    }
+
+    /* STANDALONE DOCUMENTS / TESTS */
+    #course-study-modal .tree-standalone-row {
+      background: #ffffff !important;
+      padding: 10px 16px !important;
+      font-size: 13px !important;
+      color: #475569 !important;
+      border-left: none !important;
+    }
+
+    #course-study-modal .tree-standalone-row.active {
+      color: #0f5a9e !important;
+      font-weight: 600 !important;
+    }
+
+    #course-study-modal .tree-doc-icon,
+    #course-study-modal .tree-test-icon {
+      background: transparent !important;
+      border: none !important;
+      width: 20px !important;
+      height: 20px !important;
+      color: #94a3b8 !important;
+    }
+
+    /* VIDEO PLAYER AREA CARD (white background container below player) */
+    #course-study-modal .study-lesson-info-bar {
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      margin: 20px 0 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+      background: #ffffff !important;
+      padding: 20px 24px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #course-study-modal .study-lesson-title {
+      font-size: 18px !important;
+      font-weight: 800 !important;
+      color: #1e293b !important;
+      font-family: system-ui, -apple-system, sans-serif !important;
+    }
+
+    /* DẠNG TÀI NGUYÊN: VIDEO text */
+    #course-study-modal .study-type-badge {
+      background: transparent !important;
+      color: #94a3b8 !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    #course-study-modal .lesson-complete-btn {
+      border: 1px solid #10b981 !important;
+      color: #10b981 !important;
+      background: transparent !important;
+      border-radius: 8px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      padding: 8px 16px !important;
+      transition: all 0.2s;
+    }
+
+    #course-study-modal .lesson-complete-btn:hover {
+      background: rgba(16, 185, 129, 0.05) !important;
+    }
+
+    #course-study-modal .lesson-complete-btn.completed {
+      background: #10b981 !important;
+      color: #ffffff !important;
+    }
+
+    /* Bottom dynamic view count badge style */
+    .study-view-count-badge {
+      background: #fee2e2 !important;
+      color: #ef4444 !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 2px 8px !important;
+      border-radius: 99px !important;
+      margin-left: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      border: none !important;
+    }
+
+    /* ===== CLASSROOM DETAILS & RATINGS BOXES ===== */
+    .study-classroom-details-container {
+      background: #f8fafc;
+      width: 100%;
+      margin-top: 12px; /* Add spacing below the video detail card */
+    }
+
+    .study-detail-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .study-card-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 16px;
+    }
+
+    /* Teacher layout */
+    .study-teacher-profile-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .study-teacher-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-width: 130px;
+    }
+
+    .study-teacher-avatar-backing {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2px solid #e2e8f0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+    }
+
+    .study-teacher-avatar-backing img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .study-teacher-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      width: 100%;
+      padding-left: 10px;
+    }
+
+    .study-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .study-teacher-right {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .study-teacher-name-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f5a9e;
+      margin: 0 0 4px;
+    }
+
+    .study-teacher-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0 0 10px;
+      font-weight: 500;
+    }
+
+    .study-teacher-bio {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Rating overview block */
+    .rating-overview-row {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .rating-big-number {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .rating-num {
+      font-size: 54px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1;
+    }
+
+    .rating-stars-row {
+      color: #f59e0b;
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    .star-active {
+      color: #f59e0b;
+    }
+
+    .rating-count-label {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .rating-bars-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 220px;
+    }
+
+    .rating-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+    }
+
+    .rating-bar-track {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 240px;
+    }
+
+    .rating-bar-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 4px;
+    }
+
+    .rating-row-stars {
+      color: #f59e0b;
+      display: flex;
+      gap: 1px;
+      min-width: 60px;
+    }
+
+    .rating-row-stars .star-empty {
+      color: #cbd5e1;
+    }
+
+    .rating-pct-label {
+      color: #64748b;
+      font-weight: 600;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* Comment item */
+    .study-comment-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 14px;
+    }
+
+    .comment-avatar-backing {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .comment-content-area {
+      flex: 1;
+    }
+
+    .comment-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .comment-author-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .comment-stars {
+      color: #f59e0b;
+      font-size: 11px;
+    }
+
+    .comment-text-body {
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.4;
+      margin: 0;
+    }

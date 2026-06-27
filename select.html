@@ -3176,9 +3176,6 @@
       }
       #result-modal-detail-btn-2:hover {
         background: #0f3a78;
-        color: #fff;
-        box-shadow: 0 4px 12px rgba(15, 58, 120, 0.2);
-      }
       #result-modal-detail-btn-3 {
         border: 1.5px solid #0d9488;
         color: #0d9488;
@@ -3315,112 +3312,261 @@
   </div>
 
   <!-- COURSE STUDY MODAL (Fullscreen LMS classroom style) -->
-  <div class="tsa-modal-container" id="course-study-modal" style="background: #fdfdfd; z-index: 1500;" hidden>
-    
-    <!-- TOP BAR -->
-    <div class="course-modal-topbar">
-      <div class="topbar-left">
-        <button id="close-course-modal-btn" class="topbar-back-btn">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-          Quay lại
+  <div class="tsa-modal-container" id="course-study-modal" style="background: #1c1d2e; z-index: 1500;" hidden>
+
+    <!-- DARK TOPBAR -->
+    <div class="course-modal-topbar study-dark-topbar" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
+      
+      <!-- LEFT: Back Arrow & Course Name -->
+      <div class="topbar-left" style="display: flex; align-items: center; gap: 12px; z-index: 10;">
+        <button id="close-course-modal-btn" class="topbar-back-btn study-back-btn" style="padding: 6px; background: transparent; border: none; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>
+        <span id="study-topbar-lesson-name" class="study-topbar-lesson-label" style="color: #ffffff; font-weight: 700; font-size: 14px;">Tên khóa học</span>
       </div>
-      
-      <div class="topbar-center">
-        <!-- Logo or tiny icon -->
-        <img src="assets/logo1.png" alt="" class="topbar-logo" style="height: 24px; margin-right: 8px; vertical-align: middle;">
-        <span class="topbar-course-title" id="course-modal-title">Khoá Luyện Đề THPT Môn Toán</span>
+
+      <!-- CENTER: Static Teacher Title (Absolutely centered in the bar) -->
+      <div class="topbar-center" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; z-index: 5; pointer-events: none;">
+        Giảng viên: Nghiêm Xuân Tân
       </div>
-      
-      <div class="topbar-right">
-        <span class="topbar-student-name" id="course-modal-student-name">nguyễn văn hải</span>
-        <div class="topbar-student-avatar">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+
+      <!-- RIGHT: Nav icons (Decorative) + Student info -->
+      <div class="topbar-right" style="display: flex; align-items: center; gap: 16px; z-index: 10;">
+        <!-- Exact navigation icon indicators from MS Blue screenshot -->
+        <div class="study-topbar-icon" aria-label="Trang chủ" style="margin-right: 2px; color: #ffffff; opacity: 0.9;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </div>
-        <button id="course-modal-activation-btn" class="topbar-activation-btn">Mã truy cập</button>
+        <div class="study-topbar-icon" aria-label="Tài liệu" style="margin-right: 2px; color: #ffffff; opacity: 0.9;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </div>
+        <div class="study-topbar-icon" aria-label="Thông báo" style="margin-right: 4px; color: #ffffff; opacity: 0.9;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <div class="topbar-student-avatar study-avatar" style="margin: 0; width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="#475569" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <span id="study-topbar-student-name" style="color: #ffffff; font-size: 13px; font-weight: 600; text-transform: capitalize;">Tên học sinh</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="#ffffff" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9; margin-left: -2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        
+        <!-- Legacy buttons hidden for layout compatibility -->
+        <span id="course-modal-status-badge" style="display:none;"></span>
+        <button id="course-modal-activation-btn" style="display:none;"></button>
       </div>
     </div>
 
-    <!-- BREADCRUMB / STATUS BAR -->
-    <div class="course-modal-breadcrumbs">
-      <div class="breadcrumbs-path">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; display: inline-block; vertical-align: middle;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span style="vertical-align: middle;">&gt;</span>
-        <span class="breadcrumb-current-course" id="course-modal-breadcrumb-title" style="vertical-align: middle;">Khoá Luyện Đề THPT Môn Toán</span>
-      </div>
-      <div class="breadcrumbs-status">
-        <span id="course-modal-status-badge" class="course-status-badge locked">Chưa mua</span>
-      </div>
-    </div>
+    <!-- MAIN TWO-COLUMN STUDY LAYOUT -->
+    <div class="course-study-layout">
 
-    <!-- MAIN TWO-COLUMN GRID -->
-    <div class="course-modal-grid">
-      
-      <!-- LEFT: CONTENT PLAYER & TEACHER CARD -->
-      <div class="course-modal-content-area">
-        <!-- Content Player Box (Drive Iframe / Watermark / Mockup Cover) -->
-        <div class="course-player-wrapper" id="course-player-container">
-          <!-- Mockup default cover when no lesson is active -->
+      <!-- LEFT MAIN AREA: Video + Info -->
+      <div class="course-study-main">
+
+        <!-- Video Player Box -->
+        <div class="study-player-wrapper" id="course-player-container">
           <div class="course-player-mockup-cover" id="course-player-cover">
             <div class="mockup-cover-logo-backing">
-              <img src="assets/tsa.png" alt="" style="width: 70px; height: 70px; object-fit: contain;">
+              <img src="assets/tsa.png" alt="" style="width:70px;height:70px;object-fit:contain;">
             </div>
-            <div class="mockup-cover-text" id="course-player-cover-text">Khoá Luyện Đề THPT Môn Toán</div>
+            <div class="mockup-cover-text" id="course-player-cover-text">Chọn bài học để bắt đầu</div>
           </div>
-          
-          <!-- Embedded Iframe for Drive (rendered dynamically, hidden initially) -->
-          <iframe id="course-video-iframe" src="" allow="autoplay" style="display: none; border: none; width: 100%; height: 100%;"></iframe>
-          
-          <!-- Watermark Overlay (Floating over video, hidden initially) -->
-          <div class="video-watermark-overlay" id="video-watermark-overlay" style="display: none;">
-            Nguyễn Văn Hải - 0987654321
+          <iframe id="course-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen style="display:none;border:none;width:100%;height:100%;"></iframe>
+          <!-- Overlay che logo YouTube góc dưới phải -->
+          <div id="yt-logo-blocker" style="display:none; position:absolute; bottom:0; right:0; width:110px; height:42px; background: #0a0a0a; z-index:10; pointer-events:none;"></div>
+          <!-- Branded logo TMA góc trên trái -->
+          <div id="yt-brand-badge" style="display:none; position:absolute; top:10px; left:12px; z-index:11; pointer-events:none; display:flex; align-items:center; gap:6px; background: rgba(0,0,0,0.55); border-radius:6px; padding:4px 10px;">
+            <img src="assets/tsa.png" alt="TMA" style="width:20px;height:20px;object-fit:contain;filter:brightness(10);">
+            <span style="color:#ffffff; font-size:11px; font-weight:700; letter-spacing:0.04em;">TMA TSA</span>
           </div>
+          <div class="video-watermark-overlay" id="video-watermark-overlay" style="display:none;">Nguyễn Văn Hải - 0987654321</div>
         </div>
-        
-        <!-- PLAYER CONTROLS (PROGRESS TOGGLE) -->
-        <div class="player-controls-bar" id="player-controls-bar" style="display: none; margin: 12px 0; justify-content: flex-end; gap: 8px;">
-          <!-- Attached PDF Download button -->
-          <a id="lesson-download-doc-btn" href="#" target="_blank" style="display: none; align-items: center; gap: 6px; padding: 0 16px; height: 38px; font-weight: 700; border-radius: 8px; font-size: 13px; border: 1.5px solid var(--line); color: var(--text); background: #ffffff; transition: all 0.2s ease;">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span>Tải tài liệu đính kèm</span>
-          </a>
-          <button id="lesson-complete-toggle-btn" class="lesson-complete-btn">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" style="margin-right: 6px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            <span>Đánh dấu đã hoàn thành</span>
-          </button>
-        </div>
-        
-        <!-- Teacher Profile Card -->
-        <div class="course-teacher-card">
-          <div class="teacher-avatar-wrapper">
-            <img src="assets/tsa.png" alt="" onerror="this.src='assets/logo1.png'" class="teacher-avatar">
-          </div>
-          <div class="teacher-info-wrapper">
-            <div class="teacher-name" id="course-teacher-name">Trần Hoàng Anh</div>
-            <div class="teacher-role">Giáo viên</div>
-          </div>
-          <div class="teacher-logo-wrapper">
-            <img src="assets/logo1.png" alt="" class="teacher-brand-logo">
-          </div>
-        </div>
-      </div>
-      
-      <!-- RIGHT: SCROLLABLE ACCORDION SIDEBAR -->
-      <div class="course-modal-sidebar">
-        <div class="sidebar-header">
-          <span class="sidebar-title">Danh sách bài học</span>
-          <span class="sidebar-badge">Liên kết</span>
-        </div>
-        
-        <div class="sidebar-alert">
-          Trong trường hợp bạn đã mua khóa học nhưng hiển thị không có quyền truy cập hãy đăng xuất sau đấy đăng nhập vào lại (trong trường hợp vẫn không được hãy liên hệ admin)
-        </div>
-        
-        <div class="sidebar-lessons-list" id="course-modal-lessons-list">
-          <!-- Collapsible Accordion sections and items rendered dynamically -->
-        </div>
-      </div>
 
+        <!-- Lesson Info Bar (below video) -->
+        <div class="study-lesson-info-bar" id="study-lesson-info-bar" style="display:none;">
+          <div class="lesson-info-left">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h2 class="study-lesson-title" id="study-lesson-title" style="margin: 0;">Tên bài học</h2>
+              <span class="study-view-count-badge" id="study-lesson-view-badge">
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2.5" style="margin-right: 4px; display: inline-block; vertical-align: middle;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span id="study-lesson-view-count">3</span>
+              </span>
+            </div>
+            <div class="lesson-meta-row" style="margin-top: 6px;">
+              <span class="study-type-badge" id="study-lesson-type-badge">VIDEO</span>
+              <a id="lesson-download-doc-btn" href="#" target="_blank" class="study-doc-link" style="display:none;">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Tải tài liệu đính kèm
+              </a>
+            </div>
+          </div>
+          <div class="lesson-info-right">
+            <button id="lesson-complete-toggle-btn" class="lesson-complete-btn">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" style="margin-right:5px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Đánh dấu hoàn thành</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SCROLLABLE TAB DETAILS SECTION (Học sinh kéo lên xuống) -->
+        <div class="study-classroom-details-container" style="padding: 0 0 24px 0; display: flex; flex-direction: column; gap: 20px;">
+          
+          <!-- TEACHER INFO CARD -->
+          <div class="study-detail-card">
+            <h3 class="study-card-heading">Thông tin giảng viên</h3>
+            <div class="study-teacher-profile-layout" style="display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: flex-start;">
+              <!-- Red Poster Block from index.html -->
+              <div class="study-teacher-left" style="width: 100%; min-width: unset;">
+                <div class="study-teacher-poster-wrap" style="width: 100%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                  <img src="assets/giangvien.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: auto; display: block; object-fit: contain;">
+                </div>
+              </div>
+              
+              <!-- Content block -->
+              <div class="study-teacher-right">
+                <span style="font-size: 10px; font-weight: 800; color: #ef4444; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
+                
+                <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 6px;">
+                  <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
+                  <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900;">✓</span>
+                </div>
+                
+                <p class="study-teacher-subtitle" style="color: #ef4444; font-size: 13.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
+                
+                <p class="study-teacher-bio" style="font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+                  Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
+                </p>
+                
+                <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
+                  <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
+                  <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
+                  <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
+                  <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Cựu học sinh hệ Kỹ sư tài năng Đại học Bách Khoa Hà Nội.</li>
+                  <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Chủ đề giảng dạy tiêu biểu: Vật lý 12, mô hình chủ đề du lịch, bài toán dao động điều hòa.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- STUDENT RATING AND COMMENTS CARD -->
+          <div class="study-detail-card">
+            <h3 class="study-card-heading">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="currentColor" style="color: #f59e0b; margin-right: 4px; display: inline-block; vertical-align: middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              Học viên đánh giá
+            </h3>
+            
+            <div class="rating-overview-row">
+              <div class="rating-big-number">
+                <span class="rating-num">5</span>
+                <div class="rating-stars-row">
+                  <span class="star-active">★</span><span class="star-active">★</span><span class="star-active">★</span><span class="star-active">★</span><span class="star-active">★</span>
+                </div>
+                <span class="rating-count-label">3 Đánh giá</span>
+              </div>
+              
+              <div class="rating-bars-container">
+                <!-- 5 stars -->
+                <div class="rating-bar-row">
+                  <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 100%;"></div></div>
+                  <div class="rating-row-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                  <span class="rating-pct-label">100%</span>
+                </div>
+                <!-- 4 stars -->
+                <div class="rating-bar-row">
+                  <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                  <div class="rating-row-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span class="star-empty">★</span></div>
+                  <span class="rating-pct-label">0%</span>
+                </div>
+                <!-- 3 stars -->
+                <div class="rating-bar-row">
+                  <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                  <div class="rating-row-stars"><span>★</span><span>★</span><span>★</span><span class="star-empty">★</span><span class="star-empty">★</span></div>
+                  <span class="rating-pct-label">0%</span>
+                </div>
+                <!-- 2 stars -->
+                <div class="rating-bar-row">
+                  <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                  <div class="rating-row-stars"><span>★</span><span>★</span><span class="star-empty">★</span><span class="star-empty">★</span><span class="star-empty">★</span></div>
+                  <span class="rating-pct-label">0%</span>
+                </div>
+                <!-- 1 star -->
+                <div class="rating-bar-row">
+                  <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+                  <div class="rating-row-stars"><span>★</span><span class="star-empty">★</span><span class="star-empty">★</span><span class="star-empty">★</span><span class="star-empty">★</span></div>
+                  <span class="rating-pct-label">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMMENTS LIST -->
+            <div class="study-comments-list" style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+              <div class="study-comment-item">
+                <div class="comment-avatar-backing">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="#64748b" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="comment-content-area">
+                  <div class="comment-header-row">
+                    <span class="comment-author-name">Vũ Hoàng Anh</span>
+                    <div class="comment-stars">★★★★★</div>
+                  </div>
+                  <p class="comment-text-body">Thầy dạy dễ hiểu, chữa chi tiết và siêu có tâm ạ!</p>
+                </div>
+              </div>
+
+              <div class="study-comment-item">
+                <div class="comment-avatar-backing">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="#64748b" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="comment-content-area">
+                  <div class="comment-header-row">
+                    <span class="comment-author-name">Nguyễn Minh Đức</span>
+                    <div class="comment-stars">★★★★★</div>
+                  </div>
+                  <p class="comment-text-body">Các phương pháp giải nhanh của thầy Nghiêm Xuân Tân giúp em tiết kiệm cực nhiều thời gian khi thi thử.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div> <!-- Ends course-study-main -->
+
+      <!-- RIGHT SIDEBAR: Mục lục + Bình luận -->
+      <div class="course-study-sidebar">
+
+        <!-- Tab buttons -->
+        <div class="study-sidebar-tabs">
+          <button class="study-sidebar-tab active" data-sidebartab="muc-luc">Mục lục</button>
+          <button class="study-sidebar-tab" data-sidebartab="binh-luan">Bình luận</button>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="study-progress-wrap" id="study-progress-wrap">
+          <div class="study-progress-label">
+            <span>Tiến độ học tập</span>
+            <strong class="study-progress-pct" id="study-progress-pct">0%</strong>
+          </div>
+          <div class="study-progress-track">
+            <div class="study-progress-fill" id="study-progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Mục lục content -->
+        <div class="study-tab-content active" id="study-tab-muc-luc">
+          <div class="sidebar-lessons-list" id="course-modal-lessons-list">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- Bình luận content -->
+        <div class="study-tab-content" id="study-tab-binh-luan">
+          <div style="padding:40px 20px;text-align:center;color:#94a3b8;">
+            <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" fill="none" stroke-width="1.5" style="margin:0 auto 14px;display:block;opacity:0.3;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <p style="font-size:13px;margin:0;">Tính năng bình luận sắp ra mắt!</p>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
