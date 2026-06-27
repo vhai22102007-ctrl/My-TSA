@@ -2866,8 +2866,10 @@
         } catch (e) {}
         
         const category = getExamCategoryLabel(examCode);
-        document.getElementById("result-modal-council").textContent = "TMA Study";
-        document.getElementById("result-modal-room").textContent = "TMA Study Exam Practice Room";
+        const elCouncil = document.getElementById("result-modal-council");
+        if (elCouncil) elCouncil.textContent = "TMA Study";
+        const elRoom = document.getElementById("result-modal-room");
+        if (elRoom) elRoom.textContent = "TMA Study Exam Practice Room";
         
         // Fetch attempts for this specific exam code
         let attempts = [];
@@ -2899,123 +2901,141 @@
         
         function displayAttempt(result) {
           if (result) {
-            const totalQ = result.total_questions || 100;
-            const score100 = ((result.score / totalQ) * 100).toFixed(2);
-            document.getElementById("result-modal-score").textContent = score100;
-            
-            let scoreLabel = "Điểm TSA";
-            if (category === "Bài thi HSA") scoreLabel = "Điểm HSA";
-            else if (category === "Bài thi THPTQG") scoreLabel = "Điểm THPT";
-            else if (category === "Bài thi Luyện tập") scoreLabel = "Điểm thi";
-            document.getElementById("result-modal-score-label").textContent = scoreLabel;
+            // Tính điểm theo thang 100
+            const grandTotal = result.total_questions || 100;
+            const grandCorrect = result.correct_count || 0;
+            const scaledScore = grandTotal > 0 ? Math.round((grandCorrect / grandTotal) * 100) : 0;
 
-            let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học/Giải quyết vấn đề";
-            let count1 = 0, count2 = 0, count3 = 0;
-            
-            if (category === "Bài thi TSA") {
-              label1 = "Tư duy Toán học";
-              label2 = "Tư duy Đọc hiểu";
-              label3 = "Tư duy Khoa học/Giải quyết vấn đề";
-              count1 = Math.round(result.correct_count * 0.4);
-              count2 = Math.round(result.correct_count * 0.2);
-              count3 = result.correct_count - count1 - count2;
-            } else if (category === "Bài thi HSA") {
-              label1 = "Định lượng (Toán)";
-              label2 = "Định tính (Văn)";
-              label3 = "Khoa học (Lý/Hóa...)";
-              count1 = Math.round(result.correct_count / 3);
-              count2 = Math.round(result.correct_count / 3);
-              count3 = result.correct_count - count1 - count2;
-            } else {
-              label1 = "Phần Toán học";
-              label2 = "Phần Ngữ văn";
-              label3 = "Phần Khoa học";
-              count1 = Math.round(result.correct_count * 0.4);
-              count2 = Math.round(result.correct_count * 0.2);
-              count3 = result.correct_count - count1 - count2;
+            // Cập nhật số điểm
+            const scoreEl = document.getElementById("result-modal-score");
+            if (scoreEl) scoreEl.textContent = scaledScore + "/100";
+
+            // Animate vòng tròn tiến độ
+            const circleEl = document.getElementById("result-modal-circle-progress");
+            if (circleEl) {
+              setTimeout(() => { circleEl.style.strokeDashoffset = 515 - (scaledScore / 100) * 515; }, 120);
             }
-            
-            document.getElementById("result-modal-label-1").textContent = label1 + ":";
-            document.getElementById("result-modal-label-2").textContent = label2 + ":";
-            document.getElementById("result-modal-label-3").textContent = label3 + ":";
-            document.getElementById("result-modal-math-count").textContent = count1;
-            document.getElementById("result-modal-reading-count").textContent = count2;
-            document.getElementById("result-modal-science-count").textContent = count3;
-            
+
+            // Tính số câu đúng từng môn
+            let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học";
+            let c1 = 0, t1 = 40, c2 = 0, t2 = 20, c3 = 0, t3 = 40;
+            if (category === "Bài thi HSA") {
+              label1 = "Định lượng (Toán)"; label2 = "Định tính (Văn)"; label3 = "Khoa học (Lý/Hóa...)";
+              t1 = t2 = t3 = Math.round(grandTotal / 3);
+              c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+            } else {
+              t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+              c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+            }
+
+            // Cập nhật từng thẻ phân môn
+            [[1,label1,c1,t1],[2,label2,c2,t2],[3,label3,c3,t3]].forEach(([i,lbl,c,t]) => {
+              const pct = t > 0 ? (c/t)*100 : 0;
+              const elLbl = document.getElementById(`result-modal-subject-label-${i}`);
+              const elCnt = document.getElementById(`result-modal-subject-count-text-${i}`);
+              const elBar = document.getElementById(`result-modal-subject-bar-${i}`);
+              const elSt  = document.getElementById(`result-modal-subject-status-${i}`);
+              if (elLbl) elLbl.textContent = lbl;
+              if (elCnt) elCnt.textContent = `${c}/${t}`;
+              if (elBar) setTimeout(() => { elBar.style.width = pct + "%"; }, 80);
+              if (elSt) {
+                if (pct >= 80) { elSt.textContent = "Xuất sắc"; elSt.style.cssText = "font-size:10px;padding:2px 8px;border-radius:4px;font-weight:800;text-transform:uppercase;background:#e2fbe8;color:#15803d;"; }
+                else if (pct >= 60) { elSt.textContent = "Khá"; elSt.style.cssText = "font-size:10px;padding:2px 8px;border-radius:4px;font-weight:800;text-transform:uppercase;background:#fef3c7;color:#a16207;"; }
+                else { elSt.textContent = "Cần cải thiện"; elSt.style.cssText = "font-size:10px;padding:2px 8px;border-radius:4px;font-weight:800;text-transform:uppercase;background:#fee2e2;color:#b91c1c;"; }
+              }
+
+              // Render danh sách câu hỏi dạng bubble (hình tròn)
+              const qe = document.getElementById(`result-modal-subject-questions-${i}`);
+              if (qe) {
+                qe.innerHTML = "";
+                let max_q = 40;
+                if (category === "Bài thi HSA") {
+                  max_q = 50;
+                } else {
+                  if (i === 1) max_q = 40;
+                  else if (i === 2) max_q = 20;
+                  else if (i === 3) max_q = 40;
+                }
+                for (let j = 1; j <= max_q; j++) {
+                  const bubble = document.createElement("div");
+                  bubble.className = "question-bubble";
+                  bubble.textContent = j;
+                  
+                  // Tô màu các ô câu hỏi theo kết quả (đúng: xanh lá, sai: đỏ, chưa làm: xám)
+                  if (j <= c) {
+                    bubble.classList.add("correct");
+                  } else if (j <= t) {
+                    bubble.classList.add("incorrect");
+                  } else {
+                    bubble.classList.add("unanswered");
+                  }
+                  
+                  qe.appendChild(bubble);
+                }
+              }
+
+              // Gắn sự kiện cho nút "XEM ĐÁP ÁN" của từng phân môn
+              const detailBtn = document.getElementById(`result-modal-detail-btn-${i}`);
+              if (detailBtn) {
+                detailBtn.onclick = () => {
+                  modal.hidden = true;
+                  let page = "exam-math.html";
+                  if (i === 2) page = "exam-reading.html";
+                  if (i === 3) page = "exam-science.html";
+                  launchExamShell(`${page}?exam=${examCode}&mode=solution`);
+                };
+              }
+            });
+
+            // Thời gian hoàn thành
             const submissionDate = new Date(result.created_at);
             const pad = (n) => String(n).padStart(2, '0');
-            const dateStr = `${pad(submissionDate.getDate())}/${pad(submissionDate.getMonth() + 1)}/${submissionDate.getFullYear()}`;
-            
-            document.getElementById("result-modal-prep-time").textContent = `07:00 ${dateStr}`;
-            document.getElementById("result-modal-enter-time").textContent = `07:45 ${dateStr}`;
-            document.getElementById("result-modal-start-time").textContent = `08:30 ${dateStr}`;
-            document.getElementById("result-modal-sbd").textContent = studentSbd;
+            const timeEl = document.getElementById("result-modal-time-text");
+            if (timeEl) timeEl.textContent = `${pad(submissionDate.getHours())}:${pad(submissionDate.getMinutes())}:${pad(submissionDate.getSeconds())} | ${pad(submissionDate.getDate())}/${pad(submissionDate.getMonth()+1)}/${submissionDate.getFullYear()}`;
 
-            const certBtn = document.getElementById("result-modal-cert-btn");
-            if (certBtn) {
-              certBtn.onclick = () => {
-                const certModal = document.getElementById("cert-image-modal");
-                if (certModal) {
-                  certModal.hidden = false;
-                }
-              };
-            }
           } else {
             showNoScore();
           }
         }
         
         function showNoScore() {
-          let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học/Giải quyết vấn đề";
-          let count1 = "--", count2 = "--", count3 = "--";
-          let scoreVal = "--";
-          let scoreLabel = "Điểm TSA";
+          const scoreEl = document.getElementById("result-modal-score");
+          if (scoreEl) scoreEl.textContent = "--/100";
+          const circleEl = document.getElementById("result-modal-circle-progress");
+          if (circleEl) circleEl.style.strokeDashoffset = "515";
 
-          if (category === "Bài thi HSA") {
-            label1 = "Định lượng (Toán)";
-            label2 = "Định tính (Văn)";
-            label3 = "Khoa học (Lý/Hóa...)";
-            scoreLabel = "Điểm HSA";
-          } else if (category === "Bài thi THPTQG") {
-            label1 = "Toán học";
-            label2 = "Ngữ văn";
-            label3 = "Môn tự chọn";
-            scoreLabel = "Điểm THPT";
-          } else if (category === "Bài thi Luyện tập") {
-            label1 = "Phần Toán học";
-            label2 = "Phần Ngữ văn";
-            label3 = "Phần Khoa học";
-            scoreLabel = "Điểm thi";
-          }
+          let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học";
+          if (category === "Bài thi HSA") { label1 = "Định lượng (Toán)"; label2 = "Định tính (Văn)"; label3 = "Khoa học (Lý/Hóa...)"; }
+          else if (category === "Bài thi THPTQG") { label1 = "Toán học"; label2 = "Ngữ văn"; label3 = "Môn tự chọn"; }
 
-          document.getElementById("result-modal-score-label").textContent = scoreLabel;
-          document.getElementById("result-modal-score").textContent = scoreVal;
-          
-          document.getElementById("result-modal-label-1").textContent = label1 + ":";
-          document.getElementById("result-modal-label-2").textContent = label2 + ":";
-          document.getElementById("result-modal-label-3").textContent = label3 + ":";
-          
-          document.getElementById("result-modal-math-count").textContent = count1;
-          document.getElementById("result-modal-reading-count").textContent = count2;
-          document.getElementById("result-modal-science-count").textContent = count3;
-          
-          const today = new Date();
-          const pad = (n) => String(n).padStart(2, '0');
-          const dateStr = `${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()}`;
-          
-          document.getElementById("result-modal-prep-time").textContent = `07:00 ${dateStr}`;
-          document.getElementById("result-modal-enter-time").textContent = `07:45 ${dateStr}`;
-          document.getElementById("result-modal-start-time").textContent = `08:30 ${dateStr}`;
-          document.getElementById("result-modal-sbd").textContent = studentSbd;
+          [[1,label1,"0/40"],[2,label2,"0/20"],[3,label3,"0/40"]].forEach(([i,lbl,cnt]) => {
+            const el = document.getElementById(`result-modal-subject-label-${i}`);
+            if (el) el.textContent = lbl;
+            const ce = document.getElementById(`result-modal-subject-count-text-${i}`);
+            if (ce) ce.textContent = cnt;
+            const be = document.getElementById(`result-modal-subject-bar-${i}`);
+            if (be) be.style.width = "0%";
+            const se = document.getElementById(`result-modal-subject-status-${i}`);
+            if (se) { se.textContent = "--"; se.style.background = "transparent"; }
+            const qe = document.getElementById(`result-modal-subject-questions-${i}`);
+            if (qe) qe.innerHTML = "";
+          });
 
-          const certBtn = document.getElementById("result-modal-cert-btn");
-          if (certBtn) {
-            certBtn.onclick = () => alert("Bạn chưa hoàn thành bài thi này nên chưa thể xem chứng chỉ!");
-          }
+          const timeEl = document.getElementById("result-modal-time-text");
+          if (timeEl) timeEl.textContent = "--:--:-- | --/--/----";
         }
-        
-        // Set main title (e.g. "Đề tổng hợp số 01")
-        document.getElementById("result-modal-title").textContent = examTitle || "Bài thi TSA 2026 chính thức - Đợt 3";
+
+        // Tiêu đề
+        const titleEl = document.getElementById("result-modal-title");
+        if (titleEl) titleEl.textContent = examTitle || "Bài thi TSA";
+
+        // Nút quay lại
+        const backLink = document.getElementById("result-back-to-history");
+        if (backLink) backLink.onclick = (e) => { e.preventDefault(); modal.hidden = true; };
+
+        // Nút làm lại
+        const redoBtn = document.getElementById("result-redo-exam-btn");
+        if (redoBtn) redoBtn.onclick = () => { modal.hidden = true; launchExamShell(`exam-math.html?exam=${examCode}`); };
         
         if (attempts.length > 0) {
           if (selectEl) {
@@ -3023,7 +3043,10 @@
             attempts.forEach((att, idx) => {
               const opt = document.createElement("option");
               opt.value = idx;
-              opt.textContent = ` - Lần ${idx + 1}`;
+              const d = new Date(att.created_at);
+              const pad = (n) => String(n).padStart(2, '0');
+              const dateStr = isNaN(d.getTime()) ? "" : `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+              opt.textContent = `Lần làm bài ${idx + 1} (${dateStr})`;
               selectEl.appendChild(opt);
             });
             
@@ -3036,13 +3059,13 @@
               if (foundIdx !== -1) {
                 selectedIdx = foundIdx;
               }
-              // Hide dropdown when viewing a specific attempt
-              selectEl.style.display = "none";
-            } else if (attempts.length <= 1) {
+            }
+            
+            if (attempts.length <= 1) {
               // Hide dropdown if there is only 1 attempt in total
               selectEl.style.display = "none";
             } else {
-              // Show dropdown for multiple attempts when opened from main menu
+              // Show dropdown for multiple attempts
               selectEl.style.display = "inline-block";
             }
             selectEl.value = selectedIdx;

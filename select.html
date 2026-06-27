@@ -2945,228 +2945,313 @@
     </div>
   </div>
 
-  <!-- EXAM RESULT MODAL -->
+  <!-- EXAM RESULT MODAL (Fullscreen - Spinning Drum) -->
   <div class="tsa-modal-container" id="exam-result-modal" hidden>
-    <div class="tsa-modal-backdrop" id="exam-result-modal-backdrop"></div>
-    <div class="modal" style="position: relative; width: 1000px; height: 529px; background: #ffffff; border-radius: 7px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); z-index: 10; transform: scale(0.75); transform-origin: center;">
-      <style>
-        #exam-result-modal .close {
-          position: absolute;
-          top: 24px;
-          right: 24px;
-          width: 17px;
-          height: 17px;
-          padding: 0;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          display: block;
+    <style>
+      #exam-result-modal:not([hidden]) { display: flex; align-items: center; justify-content: center; }
+      #exam-result-modal {
+        position: fixed; inset: 0; width: 100vw; height: 100vh;
+        z-index: 2000; overflow: hidden;
+        background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,241,243,0.82) 100%),
+                    url('assets/nen.png') center center / cover no-repeat fixed;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+      #exam-result-modal .modal-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 120px;
+        width: 100%;
+        align-items: center;
+      }
+      #result-back-to-history {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1.5px solid rgba(15, 23, 42, 0.08);
+        border-radius: 30px;
+        padding: 9px 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        color: #475569;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+      }
+      #result-back-to-history:hover {
+        background: #ffffff;
+        border-color: #d61030;
+        color: #d61030;
+        transform: translateY(-50%) scale(1.03);
+        box-shadow: 0 6px 20px rgba(214, 16, 48, 0.12);
+      }
+      #result-back-to-history:hover svg {
+        transform: translateX(-3px);
+      }
+      #exam-result-modal .right-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 60px;
+      }
+      #exam-result-modal .subject-card {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 20px;
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s;
+        max-width: 680px;
+      }
+      #exam-result-modal .subject-card:hover {
+        box-shadow: 0 12px 28px rgba(193, 18, 31, 0.05), 0 2px 8px rgba(15, 23, 42, 0.02);
+        background: rgba(255, 255, 255, 0.82);
+      }
+      #exam-result-modal .subject-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      #exam-result-modal .subject-card-bar-wrap {
+        height: 6px;
+        background: rgba(15, 23, 42, 0.04);
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 2px 0 6px 0;
+      }
+      #exam-result-modal .question-bubble {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+      }
+      #exam-result-modal .question-bubble.correct {
+        background: rgba(34, 197, 94, 0.06);
+        border: 1.5px solid #22c55e;
+        color: #15803d;
+      }
+      #exam-result-modal .question-bubble.correct:hover {
+        background: rgba(34, 197, 94, 0.16);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        transform: scale(1.08);
+      }
+      #exam-result-modal .question-bubble.incorrect {
+        background: rgba(239, 68, 68, 0.05);
+        border: 1.5px solid #ef4444;
+        color: #b91c1c;
+      }
+      #exam-result-modal .question-bubble.incorrect:hover {
+        background: rgba(239, 68, 68, 0.15);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        transform: scale(1.08);
+      }
+      #exam-result-modal .question-bubble.unanswered {
+        background: rgba(241, 245, 249, 0.5);
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+      }
+      #exam-result-modal .question-bubble.unanswered:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #334155;
+        transform: scale(1.08);
+      }
+      #exam-result-modal .questions-grid-container {
+        display: grid;
+        grid-template-columns: repeat(20, 1fr);
+        gap: 6px;
+        margin-top: 6px;
+      }
+      #exam-result-modal .subject-card-header button {
+        background: transparent;
+        border-radius: 6px;
+        padding: 5px 13px;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      #exam-result-modal .subject-card-header button:hover {
+        transform: translateY(-1px);
+      }
+      #result-modal-detail-btn-1 {
+        border: 1.5px solid #d61030;
+        color: #d61030;
+      }
+      #result-modal-detail-btn-1:hover {
+        background: #d61030;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(214, 16, 48, 0.2);
+      }
+      #result-modal-detail-btn-2 {
+        border: 1.5px solid #0f3a78;
+        color: #0f3a78;
+      }
+      #result-modal-detail-btn-2:hover {
+        background: #0f3a78;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(15, 58, 120, 0.2);
+      }
+      #result-modal-detail-btn-3 {
+        border: 1.5px solid #0d9488;
+        color: #0d9488;
+      }
+      #result-modal-detail-btn-3:hover {
+        background: #0d9488;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+      }
+      #result-redo-exam-btn:hover {
+        background: #d61030 !important;
+        color: #fff !important;
+        box-shadow: 0 4px 12px rgba(214, 16, 48, 0.2) !important;
+        transform: translateY(-1px) !important;
+      }
+      @media (max-width: 850px) {
+        #exam-result-modal {
+          overflow-y: auto !important; display: block !important; padding: 40px 16px !important;
         }
-
-        #exam-result-modal .close svg {
-          width: 17px;
-          height: 17px;
-          display: block;
+        #exam-result-modal .modal-grid {
+          grid-template-columns: 1fr !important; gap: 40px !important;
         }
+      }
+    </style>
 
-        #exam-result-modal .title-container {
-          position: absolute;
-          top: 37px;
-          left: 33px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          z-index: 10;
-        }
+    <div id="exam-result-modal-backdrop" style="display: none;"></div>
 
-        #exam-result-modal .title {
-          margin: 0;
-          font-size: 26px;
-          line-height: 1;
-          font-weight: 400;
-          color: #333333;
-          letter-spacing: 0.1px;
-          text-transform: none;
-          border: none;
-          padding-bottom: 0;
-        }
+    <div class="content-wrapper-container" style="position: relative; max-width: 1360px; width: 100%; height: 100%; min-height: 100vh; margin: 0 auto; padding: 120px 24px 40px 24px; z-index: 10; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center;">
 
-        #exam-result-modal .divider {
-          position: absolute;
-          top: 96px;
-          left: 35px;
-          width: 938px;
-          height: 1px;
-          background: #eeeeee;
-        }
-
-        #exam-result-modal .score-card {
-          position: absolute;
-          top: 118px;
-          left: 35px;
-          width: 422px;
-          height: 204px;
-          background: #fcf0f2;
-          border-radius: 10px;
-        }
-
-        #exam-result-modal .score-left {
-          position: absolute;
-          top: 32px;
-          left: 26px;
-          width: 116px;
-          text-align: center;
-        }
-
-        #exam-result-modal .score-label {
-          font-size: 18px;
-          line-height: 22px;
-          font-weight: 700;
-          color: #333333;
-          margin-bottom: 8px;
-        }
-
-        #exam-result-modal .score-number {
-          font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-          font-size: 39px;
-          line-height: 41px;
-          font-weight: 600;
-          letter-spacing: 0.8px;
-          color: #cf1f34;
-          -webkit-font-smoothing: antialiased;
-          text-rendering: geometricPrecision;
-        }
-
-        #exam-result-modal .score-detail {
-          position: absolute;
-          top: 23px;
-          left: 148px;
-          font-family: Arial, Helvetica, sans-serif;
-          font-size: 14px;
-          line-height: 1.92;
-          font-weight: 400;
-          color: #333333;
-        }
-
-        #exam-result-modal .score-detail .head {
-          font-weight: 700;
-          color: #222222;
-          margin-bottom: 4px;
-        }
-
-        #exam-result-modal .score-detail .row {
-          font-weight: 400;
-          color: #333333;
-        }
-
-        #exam-result-modal .score-detail .point {
-          font-weight: 600;
-          color: #222222;
-        }
-
-        #exam-result-modal .cert-btn {
-          position: absolute;
-          left: 14px;
-          bottom: 17px;
-          width: 384px;
-          height: 40px;
-          border: none;
-          border-radius: 7px;
-          background: #d61030;
-          color: #ffffff;
-          font-size: 17px;
-          font-weight: 500;
-          letter-spacing: 0.2px;
-          cursor: pointer;
-          font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-        }
-
-        #exam-result-modal .info {
-          position: absolute;
-          top: 119px;
-          left: 504px;
-          width: 462px;
-          font-size: 18px;
-          line-height: 1.44;
-          color: #333333;
-        }
-
-        #exam-result-modal .info-title {
-          margin: 0 0 18px 0;
-          font-size: 19px;
-          line-height: 23px;
-          font-weight: 700;
-          color: #333333;
-          text-transform: none;
-          border: none;
-          padding-bottom: 0;
-          letter-spacing: normal;
-        }
-
-        #exam-result-modal .info p {
-          margin: 0 0 17px 0;
-          font-weight: 400;
-          color: #333333;
-        }
-
-        #exam-result-modal .info a {
-          color: #007cff;
-          text-decoration: none;
-        }
-      </style>
-
-      <button class="close" id="close-result-modal" aria-label="Đóng">
-        <svg viewBox="0 0 17 17" aria-hidden="true">
-          <circle cx="8.5" cy="8.5" r="8.5" fill="#858585"></circle>
-          <line x1="5.9" y1="5.9" x2="11.1" y2="11.1" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></line>
-          <line x1="11.1" y1="5.9" x2="5.9" y2="11.1" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></line>
-        </svg>
-      </button>
-
-      <div class="title-container">
-        <h1 class="title" id="result-modal-title">Bài thi TSA 2026 chính thức - Đợt 3</h1>
-        <select id="result-modal-attempt-select" style="display: none; font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; font-weight: 600; padding: 4px 28px 4px 12px; border: 1px solid #d61030; border-radius: 4px; background: #ffffff url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23d61030\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 9l6 6 6-6\"/></svg>') no-repeat right 8px center; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; color: #d61030; outline: none;"></select>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="score-card">
-        <div class="score-left">
-          <div class="score-label" id="result-modal-score-label">Điểm TSA</div>
-          <div class="score-number" id="result-modal-score">61.49</div>
+      <!-- TOP BAR: Back Link, Title, Attempt Select, Redo Button -->
+      <div style="position: absolute; top: 40px; left: 24px; right: 24px; height: 50px; z-index: 20; display: flex; align-items: center; justify-content: center;">
+        
+        <!-- Back Link (Styled in CSS) -->
+        <a href="#" id="result-back-to-history">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s ease-in-out;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Lịch sử
+        </a>
+        
+        <!-- Center Title -->
+        <div style="text-align: center;">
+          <h1 id="result-modal-title" style="margin: 0; font-size: 18px; font-weight: 850; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px; font-family: 'Inter', system-ui, sans-serif; display: inline;">Đề thi thử TSA</h1>
+          <span style="font-size: 13px; color: #475569; font-weight: 600; margin-left: 8px;">
+            • Thời gian hoàn thành: <span id="result-modal-time-text" style="color: #0f172a;">--:--:-- | --/--/----</span>
+          </span>
         </div>
 
-        <div class="score-detail">
-          <div class="head">Số câu đúng:</div>
-          <div class="row"><span id="result-modal-label-1">Tư duy Toán học:</span> <span class="point" id="result-modal-math-count">28</span></div>
-          <div class="row"><span id="result-modal-label-2">Tư duy Đọc hiểu:</span> <span class="point" id="result-modal-reading-count">9</span></div>
-          <div class="row"><span id="result-modal-label-3">Tư duy Khoa học/Giải quyết vấn đề:</span> <span class="point" id="result-modal-science-count">22</span></div>
+        <!-- Right Controls -->
+        <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px;">
+          <select id="result-modal-attempt-select" style="background: rgba(255,255,255,0.9); border: 1.5px solid #e2e8f0; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #1e293b; cursor: pointer; outline: none; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.02);"></select>
+          <button id="result-redo-exam-btn" style="background: #d61030; color: #fff; border: none; padding: 9px 20px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 4px 12px rgba(214,16,48,0.15);">LÀM LẠI BÀI THI</button>
+        </div>
+      </div>
+
+      <div class="modal-grid">
+
+        <!-- LEFT: Spinning Drum + Circle Score -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; position: relative; transform: translate(30px, -30px);">
+          <div style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+
+            <!-- Spinning Trong Dong Watermark -->
+            <div style="position: absolute; width: 680px; height: 680px; display: flex; justify-content: center; align-items: center; pointer-events: none; z-index: 0; opacity: 0.095; transform: translate(0px, 0px);" aria-hidden="true">
+              <div class="spinning-chim-lac" style="width: 100%; height: 100%;"></div>
+            </div>
+
+            <!-- Circular Score Card -->
+            <div style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; z-index: 10;">
+              <svg width="300" height="300" viewBox="0 0 200 200" style="transform: rotate(-90deg); filter: drop-shadow(0px 8px 24px rgba(193,18,31,0.08));">
+                <circle cx="100" cy="100" r="82" stroke="rgba(15,23,42,0.04)" stroke-width="16" fill="#ffffff"></circle>
+                <circle id="result-modal-circle-progress" cx="100" cy="100" r="82" stroke="#d61030" stroke-width="16" fill="transparent" stroke-dasharray="515" stroke-dashoffset="515" stroke-linecap="round" style="transition: stroke-dashoffset 0.8s ease-out;"></circle>
+              </svg>
+              <div style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; z-index: 12;">
+                <span style="font-size: 16px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">ĐIỂM BÀI THI</span>
+                <div id="result-modal-score" style="font-size: 68px; font-weight: 800; color: #0f172a; margin-top: 6px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">0/100</div>
+              </div>
+            </div>
+
+          </div>
+          <div style="display: none;"><span id="result-modal-accuracy-val">0%</span></div>
+          <div id="result-modal-evaluation" style="display: none;">--</div>
         </div>
 
-        <button class="cert-btn" id="result-modal-cert-btn">XEM CHỨNG CHỈ</button>
+        <!-- RIGHT: Subject Cards -->
+        <div class="right-col">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+
+            <!-- Toan -->
+            <div class="subject-card" style="transform: translate(-30px, -80px);">
+              <div class="subject-card-header">
+                <span id="result-modal-subject-label-1">Tư duy Toán học</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span id="result-modal-subject-count-text-1" style="font-weight: 800; color: #0f172a;">0/40</span>
+                  <span id="result-modal-subject-status-1" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <button id="result-modal-detail-btn-1">XEM ĐÁP ÁN</button>
+                </div>
+              </div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-1" style="height: 100%; background: #d61030; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div id="result-modal-subject-questions-1" class="questions-grid-container"></div>
+            </div>
+
+            <!-- Doc hieu -->
+            <div class="subject-card" style="transform: translate(15px, -30px);">
+              <div class="subject-card-header">
+                <span id="result-modal-subject-label-2">Tư duy Đọc hiểu</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span id="result-modal-subject-count-text-2" style="font-weight: 800; color: #0f172a;">0/20</span>
+                  <span id="result-modal-subject-status-2" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <button id="result-modal-detail-btn-2">XEM ĐÁP ÁN</button>
+                </div>
+              </div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-2" style="height: 100%; background: #0f3a78; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div id="result-modal-subject-questions-2" class="questions-grid-container"></div>
+            </div>
+
+            <!-- Khoa hoc -->
+            <div class="subject-card" style="transform: translate(-30px, 20px);">
+              <div class="subject-card-header">
+                <span id="result-modal-subject-label-3">Tư duy Khoa học</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span id="result-modal-subject-count-text-3" style="font-weight: 800; color: #0f172a;">0/40</span>
+                  <span id="result-modal-subject-status-3" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <button id="result-modal-detail-btn-3">XEM ĐÁP ÁN</button>
+                </div>
+              </div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-3" style="height: 100%; background: #0d9488; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div id="result-modal-subject-questions-3" class="questions-grid-container"></div>
+            </div>
+
+          </div>
+        </div>
       </div>
 
-      <!-- Đã thanh toán thành công 1 bản chứng chỉ được bỏ đi theo yêu cầu -->
-
-      <div class="info">
-        <h2 class="info-title">Thông tin dự thi</h2>
-
-        <p>Hội đồng thi: <strong id="result-modal-council" style="font-weight: 400;">TMA Study</strong></p>
-
-        <p>Thời gian làm thủ tục: <span id="result-modal-prep-time">07:00 16/05/2026</span></p>
-
-        <p>Thời gian vào phòng thi: <span id="result-modal-enter-time">07:45 16/05/2026</span></p>
-
-        <p>Thời gian bắt đầu thi: <span id="result-modal-start-time">08:30 16/05/2026</span></p>
-
-        <p>
-          Phòng thi: <span id="result-modal-room">TMA Study Exam Practice Room</span>
-        </p>
-
-        <p>Số báo danh: <strong id="result-modal-sbd" style="font-weight: 400;">TSA2603-04719</strong></p>
-
-        <p>Giấy báo dự thi: <a href="javascript:void(0)" onclick="const m = document.getElementById('cert-image-modal'); if (m) m.hidden = false;">Xem tại đây</a></p>
-      </div>
+      <div style="display: none;"><p id="result-modal-advice-text"></p></div>
     </div>
   </div>
 
