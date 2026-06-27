@@ -5177,6 +5177,104 @@
       background: #1f2937 !important;
     }
 
+    /* ===== DARK: Tiến độ học tập wrap ===== */
+    #course-study-modal[data-study-theme="dark"] .study-progress-wrap {
+      background: #111827 !important;
+      border-color: #1f2937 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-progress-label,
+    #course-study-modal[data-study-theme="dark"] .study-progress-label span {
+      color: #cbd5e1 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-progress-pct {
+      color: #ffffff !important;
+    }
+
+    /* ===== DARK: Sidebar tabs ===== */
+    #course-study-modal[data-study-theme="dark"] .study-sidebar-tabs {
+      background: #111827 !important;
+      border-color: #1f2937 !important;
+      border-bottom: 1.5px solid #1f2937 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-sidebar-tab {
+      color: #94a3b8 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-sidebar-tab.active {
+      color: #ffffff !important;
+      border-bottom-color: #3b82f6 !important;
+      background: #111827 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-sidebar-tab:hover:not(.active) {
+      color: #f8fafc !important;
+    }
+
+    /* ===== DARK: Tab content area ===== */
+    #course-study-modal[data-study-theme="dark"] .study-tab-content {
+      background: transparent !important;
+      color: #cbd5e1 !important;
+    }
+
+    /* ===== DARK: Teacher info card ===== */
+    #course-study-modal[data-study-theme="dark"] .study-teacher-name-title {
+      color: #f1f5f9 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-teacher-subtitle {
+      color: #f87171 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-teacher-bio {
+      color: #94a3b8 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-teacher-list,
+    #course-study-modal[data-study-theme="dark"] .study-teacher-list li {
+      color: #94a3b8 !important;
+    }
+
+    /* ===== DARK: Classroom details container ===== */
+    #course-study-modal[data-study-theme="dark"] .study-classroom-details-container {
+      background: #0f172a !important;
+    }
+
+    /* ===== DARK: Comment items ===== */
+    #course-study-modal[data-study-theme="dark"] .study-comment-item {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .comment-author-name {
+      color: #f1f5f9 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .comment-text-body {
+      color: #94a3b8 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .comment-avatar-backing {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+
+    /* ===== DARK: Rating section ===== */
+    #course-study-modal[data-study-theme="dark"] .rating-num {
+      color: #f1f5f9 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .rating-count-label {
+      color: #64748b !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .rating-pct-label {
+      color: #64748b !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .rating-bar-track {
+      background: #1e293b !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .rating-row-stars {
+      color: #64748b !important;
+    }
+
+    /* ===== DARK: Study lesson info bar & general text ===== */
+    #course-study-modal[data-study-theme="dark"] .study-lesson-info-bar * {
+      color: #cbd5e1 !important;
+    }
+    #course-study-modal[data-study-theme="dark"] .study-lesson-info-bar strong {
+      color: #f1f5f9 !important;
+    }
+
     /* ===== CLASSROOM DETAILS & RATINGS BOXES ===== */
     .study-classroom-details-container {
       background: #f8fafc;

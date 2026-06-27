@@ -1205,6 +1205,10 @@
           toggle.setAttribute("aria-pressed", mode === "dark" ? "true" : "false");
           toggle.classList.toggle("is-dark", mode === "dark");
         }
+        const label = document.getElementById("study-theme-label");
+        if (label) {
+          label.textContent = mode === "dark" ? "Tối" : "Sáng";
+        }
       }
 
       function initCourseStudyThemeToggle() {
