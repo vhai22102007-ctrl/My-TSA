@@ -105,6 +105,7 @@
           renderStudents();
         }
       }
+      document.getElementById("student-detail-modal").style.display = "none";
     }
 
     async function kickStudent(id) {
@@ -118,7 +119,7 @@
       }
     }
 
-    function viewStudentDetails(id) {
+    async function viewStudentDetails(id) {
       var student = approvedStudents.find(function(s) { return s.id === id; });
       if (student) {
         document.getElementById("modal-student-name").textContent = student.name;
@@ -127,6 +128,77 @@
         document.getElementById("modal-student-phone").textContent = student.phone;
         document.getElementById("modal-student-course").textContent = student.course;
         document.getElementById("modal-student-date").textContent = student.date;
+        
+        var progressContainer = document.getElementById("modal-student-lms-progress");
+        if (progressContainer) {
+          progressContainer.innerHTML = "<p style='color: var(--muted); font-size: 12px; margin: 0;'>Đang tải thông tin tiến độ...</p>";
+          
+          try {
+            var studentCode = student.code || student.email;
+            var enrolledCourses = [];
+            var completedLessonIds = [];
+            
+            if (supabaseClient) {
+              var { data: enrolls } = await supabaseClient
+                .from('enrollments')
+                .select('course_id')
+                .eq('user_email', studentCode);
+              var enrolledIds = (enrolls || []).map(e => e.course_id);
+              
+              enrolledCourses = lmsCourses.filter(c => enrolledIds.includes(c.id));
+              
+              var { data: progress } = await supabaseClient
+                .from('lesson_progress')
+                .select('lesson_id')
+                .eq('user_email', studentCode);
+              completedLessonIds = (progress || []).map(p => p.lesson_id);
+            } else {
+              enrolledCourses = lmsCourses;
+              completedLessonIds = JSON.parse(localStorage.getItem(`tmaTsaLessonProgress_${student.email}`) || "[]");
+            }
+            
+            if (enrolledCourses.length === 0) {
+              progressContainer.innerHTML = "<p style='color: var(--muted); font-size: 12px; margin: 0;'>Chưa tham gia khóa học nào.</p>";
+            } else {
+              progressContainer.innerHTML = "";
+              for (const course of enrolledCourses) {
+                var courseLessons = [];
+                if (supabaseClient) {
+                  var { data: dbLessons } = await supabaseClient
+                    .from('lessons')
+                    .select('*')
+                    .eq('course_id', course.id)
+                    .order('order_index', { ascending: true });
+                  courseLessons = dbLessons || [];
+                } else {
+                  var allMockLessons = JSON.parse(localStorage.getItem("tmaTsaMockLessons") || "[]");
+                  courseLessons = allMockLessons.filter(l => l.course_id === course.id);
+                }
+                
+                var courseLessonsCount = courseLessons.length;
+                var completedInCourse = courseLessons.filter(l => completedLessonIds.includes(l.id));
+                var percent = courseLessonsCount > 0 ? Math.round((completedInCourse.length / courseLessonsCount) * 100) : 0;
+                
+                var section = document.createElement("div");
+                section.style.cssText = "margin-bottom:12px; padding:8px; border:1px solid #e2e8f0; border-radius:6px; background:#f8fafc;";
+                section.innerHTML = `
+                  <div style="font-weight:700; font-size:12px; display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span>${course.title}</span>
+                    <span style="color:#16a34a;">${completedInCourse.length}/${courseLessonsCount} bài (${percent}%)</span>
+                  </div>
+                  <div style="font-size:11px; color:#64748b; padding-left:8px;">
+                    ${completedInCourse.length > 0 ? completedInCourse.map(l => "✅ " + l.title).join("<br>") : "❌ Chưa học bài nào"}
+                  </div>
+                `;
+                progressContainer.appendChild(section);
+              }
+            }
+          } catch (progressErr) {
+            console.error(progressErr);
+            progressContainer.innerHTML = "<p style='color: #b9152a; font-size: 12px; margin: 0;'>Lỗi khi tải thông tin tiến độ.</p>";
+          }
+        }
+        
         document.getElementById("student-detail-modal").style.display = "flex";
       }
     }
@@ -134,6 +206,12 @@
     function closeStudentModal() {
       document.getElementById("student-detail-modal").style.display = "none";
     }
+
+    window.kickStudent = kickStudent;
+    window.viewStudentDetails = viewStudentDetails;
+    window.closeStudentModal = closeStudentModal;
+
+    
 
     function esc(value) {
       return String(value == null ? "" : value)
@@ -588,7 +666,7 @@
       });
 
       // Update sidebar nav active states
-      if (tabId === "approve-students" || tabId === "manage-students" || tabId === "manage-documents" || tabId === "manage-courses" || tabId === "activation-codes") {
+      if (tabId === "approve-students" || tabId === "manage-students" || tabId === "manage-documents" || tabId === "manage-courses" || tabId === "activation-codes" || tabId === "security-logs") {
         document.querySelectorAll("#sidebar-normal-nav .nav-button").forEach(function(btn) {
           var target = btn.getAttribute("data-tab-target");
           btn.classList.toggle("active", target === tabId);
@@ -607,8 +685,16 @@
         renderExamsList();
       } else if (tabId === "manage-documents") {
         renderManageDocuments();
+      } else if (tabId === "manage-courses") {
+        renderManageCourses();
+      } else if (tabId === "activation-codes") {
+        renderActivationCodes();
+      } else if (tabId === "security-logs") {
+        renderSecurityLogs();
       }
     }
+
+    
 
     // Attach normal sidebar listeners (for non-accordion simple buttons)
     document.querySelectorAll("#sidebar-normal-nav > button.nav-button").forEach(function(btn) {
@@ -3106,7 +3192,7 @@
         }
       }
 
-          // ─── LMS COURSE & LESSON & CODE MANAGEMENT (TEACHER PANEL) ───────────
+                  // ─── LMS COURSE & LESSON & CODE & SECURITY MANAGEMENT (TEACHER PANEL) ───────────
     var activeCourseId = null;
     var activeLessonId = null;
     var lmsCourses = [];
@@ -3135,6 +3221,9 @@
 
       var selectDropdown = document.getElementById("lms-new-code-course-select");
       if (selectDropdown) selectDropdown.innerHTML = "";
+
+      var manualEnrollSelect = document.getElementById("lms-enroll-course-select");
+      if (manualEnrollSelect) manualEnrollSelect.innerHTML = "";
 
       try {
         if (supabaseClient) {
@@ -3203,6 +3292,14 @@
           opt.value = course.id;
           opt.textContent = course.title;
           selectDropdown.appendChild(opt);
+        }
+
+        // Populate dropdown select for manual enrollment
+        if (manualEnrollSelect) {
+          var optEnroll = document.createElement("option");
+          optEnroll.value = course.id;
+          optEnroll.textContent = course.title;
+          manualEnrollSelect.appendChild(optEnroll);
         }
       });
 
@@ -3278,12 +3375,13 @@
         if (lesson.type === "write") icon = "✍️";
 
         var previewText = lesson.preview_allowed ? " <span style='font-size:9px; background:#e2fbe8; color:#15803d; padding:1px 5px; border-radius:4px; font-weight:800; text-transform:uppercase;'>Xem thử</span>" : "";
+        var chapterText = `<span style="font-size:9px; background:#fee2e2; color:#b9152a; padding:1px 5px; border-radius:4px; font-weight:800; margin-right:4px;">${lesson.chapter_name || 'Chương 1'}</span>`;
 
         var detailsText = lesson.type === "video" ? `Drive ID: ${lesson.video_drive_id || ""}` : `Doc Link: ${lesson.doc_link || ""}`;
 
         row.innerHTML = `
           <div style="flex: 1;">
-            <h5 style="margin:0; font-size:13px; font-weight:700;">[#${lesson.order_index}] ${icon} ${lesson.title}${previewText}</h5>
+            <h5 style="margin:0; font-size:13px; font-weight:700;">[#${lesson.order_index}] ${chapterText}${icon} ${lesson.title}${previewText}</h5>
             <span style="font-size:11px; color:var(--muted);">${detailsText}</span>
           </div>
           <div style="display:flex; gap:6px;">
@@ -3425,6 +3523,7 @@
       document.getElementById("lms-lesson-modal-title").textContent = "Thêm bài học mới";
       document.getElementById("lms-lesson-modal-id").value = "";
       document.getElementById("lms-lesson-modal-form").reset();
+      document.getElementById("lms-lesson-modal-chapter").value = "Chương 1";
       document.getElementById("lms-lesson-modal-order").value = "0";
       
       openModal("lms-lesson-modal");
@@ -3456,6 +3555,7 @@
 
       document.getElementById("lms-lesson-modal-title").textContent = "Chỉnh sửa bài học";
       document.getElementById("lms-lesson-modal-id").value = lesson.id;
+      document.getElementById("lms-lesson-modal-chapter").value = lesson.chapter_name || "Chương 1";
       document.getElementById("lms-lesson-modal-name").value = lesson.title;
       document.getElementById("lms-lesson-modal-type").value = lesson.type;
       document.getElementById("lms-lesson-modal-drive-id").value = lesson.video_drive_id || "";
@@ -3489,6 +3589,7 @@
       if (e) e.preventDefault();
 
       var id = document.getElementById("lms-lesson-modal-id").value;
+      var chapter = document.getElementById("lms-lesson-modal-chapter").value.trim() || "Chương 1";
       var name = document.getElementById("lms-lesson-modal-name").value.trim();
       var type = document.getElementById("lms-lesson-modal-type").value;
       var driveId = document.getElementById("lms-lesson-modal-drive-id").value.trim();
@@ -3503,6 +3604,7 @@
             var { error } = await supabaseClient
               .from("lessons")
               .update({
+                chapter_name: chapter,
                 title: name,
                 type: type,
                 video_drive_id: driveId,
@@ -3518,6 +3620,7 @@
               .from("lessons")
               .insert({
                 course_id: activeCourseId,
+                chapter_name: chapter,
                 title: name,
                 type: type,
                 video_drive_id: driveId,
@@ -3534,6 +3637,7 @@
           var lessonObj = {
             id: mockId,
             course_id: activeCourseId,
+            chapter_name: chapter,
             title: name,
             type: type,
             video_drive_id: driveId,
@@ -3771,6 +3875,212 @@
       }
     }
 
+    // 3. MANUAL ENROLLMENT
+    async function saveManualEnrollment(e) {
+      if (e) e.preventDefault();
+
+      var emailInput = document.getElementById("lms-enroll-student-email").value.trim();
+      var courseId = document.getElementById("lms-enroll-course-select").value;
+
+      if (!courseId) {
+        await showCustomAlert("Vui lòng tạo khóa học trước khi cấp quyền!");
+        return;
+      }
+
+      try {
+        if (supabaseClient) {
+          var { error } = await supabaseClient
+            .from("enrollments")
+            .insert({
+              user_email: emailInput,
+              course_id: courseId
+            });
+
+          if (error) {
+            if (error.message.toLowerCase().includes("unique")) {
+              await showCustomAlert(`Học sinh "${emailInput}" đã được cấp quyền học khóa này rồi!`);
+            } else {
+              throw error;
+            }
+          } else {
+            await showCustomAlert(`Cấp quyền học tập thành công cho học sinh "${emailInput}"!`);
+            document.getElementById("lms-manual-enroll-form").reset();
+          }
+        } else {
+          // Offline mock save
+          await showCustomAlert(`[Offline Mock] Cấp quyền mở khóa thành công cho học sinh "${emailInput}"!`);
+          document.getElementById("lms-manual-enroll-form").reset();
+        }
+      } catch (err) {
+        console.error(err);
+        await showCustomAlert("Lỗi khi cấp quyền thủ công: " + (err.message || err));
+      }
+    }
+
+    // 4. SECURITY LOGS & AUDITING (ACCOUNT SHARING ANOMALY DETECTION)
+    var lmsLogs = [];
+
+    async function renderSecurityLogs() {
+      var tbody = document.getElementById("lms-security-logs-tbody");
+      var warningsTbody = document.getElementById("lms-security-warnings-tbody");
+      if (!tbody || !warningsTbody) return;
+
+      tbody.innerHTML = "<tr><td colspan='6' style='padding:20px; text-align:center; color:var(--muted);'>Đang tải nhật ký xem video...</td></tr>";
+      warningsTbody.innerHTML = "<tr><td colspan='5' style='padding:20px; text-align:center; color:var(--muted);'>Đang quét cảnh báo...</td></tr>";
+
+      try {
+        if (supabaseClient) {
+          var { data: dbLogs, error: err } = await supabaseClient
+            .from("video_view_logs")
+            .select("*")
+            .order("viewed_at", { ascending: false });
+
+          if (err) throw err;
+          lmsLogs = dbLogs || [];
+        } else {
+          // Offline mock read
+          lmsLogs = JSON.parse(localStorage.getItem("tmaTsaLocalViewLogs") || "[]");
+        }
+      } catch (e) {
+        console.warn("Failed to fetch security logs, using local fallback:", e);
+        lmsLogs = JSON.parse(localStorage.getItem("tmaTsaLocalViewLogs") || "[]");
+      }
+
+      // Filter logs by search query
+      var searchQuery = (document.getElementById("lms-logs-search")?.value || "").trim().toLowerCase();
+      var filteredLogs = lmsLogs.filter(function(log) {
+        return log.user_email.toLowerCase().includes(searchQuery);
+      });
+
+      // Render main logs table
+      if (filteredLogs.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6' style='padding:20px; text-align:center; color:var(--muted);'>Không tìm thấy lượt truy cập nào.</td></tr>";
+      } else {
+        tbody.innerHTML = "";
+        filteredLogs.forEach(function(log) {
+          var tr = document.createElement("tr");
+          tr.style.borderBottom = "1px solid var(--border)";
+          
+          var timeStr = new Date(log.viewed_at).toLocaleString('vi-VN');
+          var uaShort = log.user_agent ? (log.user_agent.includes("Chrome") ? "Chrome/Web" : log.user_agent.includes("Safari") ? "Safari/iOS" : "Mobile/Device") : "Unknown";
+
+          tr.innerHTML = `
+            <td style="padding:12px 16px; font-weight:700; font-size:13px;">${log.user_email}</td>
+            <td style="padding:12px 16px; font-size:13px; font-weight:600;">${log.lesson_title || "Bài học"}</td>
+            <td style="padding:12px 16px; font-size:13px; color:var(--muted);">${log.course_title || "Khóa học"}</td>
+            <td style="padding:12px 16px; font-size:13px; font-family:monospace; color:var(--brand);">${log.ip_address}</td>
+            <td style="padding:12px 16px; font-size:13px;">${timeStr}</td>
+            <td style="padding:12px 16px; font-size:12px; color:var(--muted); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.user_agent}">${uaShort}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Group by user_email to check unique IPs in the last 24 hours
+      var oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      var ipGroups = {};
+
+      lmsLogs.forEach(function(log) {
+        var logTime = new Date(log.viewed_at).getTime();
+        if (logTime < oneDayAgo) return; // only evaluate last 24h anomalies
+
+        if (!ipGroups[log.user_email]) {
+          ipGroups[log.user_email] = {
+            ips: new Set(),
+            lastLesson: log.lesson_title,
+            lastTime: log.viewed_at
+          };
+        }
+        ipGroups[log.user_email].ips.add(log.ip_address);
+      });
+
+      // Filter warnings (emails with > 2 unique IPs within 24h)
+      var warningAccounts = Object.keys(ipGroups).filter(function(email) {
+        return ipGroups[email].ips.size >= 3; // Trigger alert on 3+ distinct IPs in 24h
+      });
+
+      if (warningAccounts.length === 0) {
+        warningsTbody.innerHTML = "<tr><td colspan='5' style='padding:20px; text-align:center; color:#15803d; background:#e2fbe8; font-weight:700;'>✅ Hệ thống an toàn. Chưa phát hiện tài khoản nào nghi ngờ chia sẻ thiết bị trong 24h qua.</td></tr>";
+      } else {
+        warningsTbody.innerHTML = "";
+        warningAccounts.forEach(function(email) {
+          var info = ipGroups[email];
+          var tr = document.createElement("tr");
+          tr.style.cssText = "border-bottom: 1px solid #fee2e2; background:#fff1f2;";
+
+          var lastTimeStr = new Date(info.lastTime).toLocaleString('vi-VN');
+
+          tr.innerHTML = `
+            <td style="padding:12px 16px; font-weight:800; font-size:13px; color:#b91c1c;">🚨 ${email}</td>
+            <td style="padding:12px 16px; font-size:13px; font-weight:800; color:#b91c1c;">${info.ips.size} Địa chỉ IP khác nhau</td>
+            <td style="padding:12px 16px; font-size:13px; font-weight:600;">${info.lastLesson}</td>
+            <td style="padding:12px 16px; font-size:13px;">${lastTimeStr}</td>
+            <td style="padding:12px 16px; text-align:right;">
+              <button class="btn btn-danger btn-xs" type="button" onclick="kickAnomalyStudent('${email}')" style="background:#b91c1c; font-weight:800;">Khóa tài khoản</button>
+            </td>
+          `;
+          warningsTbody.appendChild(tr);
+        });
+      }
+    }
+
+    async function kickAnomalyStudent(email) {
+      if (await showCustomConfirm(`Bạn có chắc chắn muốn KHÓA vĩnh viễn quyền học của tài khoản "${email}" không? Tất cả các khóa học đã mở của học sinh này sẽ bị xóa khỏi hệ thống.`)) {
+        try {
+          if (supabaseClient) {
+            // Delete enrollments for this email
+            var { error } = await supabaseClient
+              .from("enrollments")
+              .delete()
+              .eq("user_email", email);
+            if (error) throw error;
+          } else {
+            // Offline mock kick
+            await showCustomAlert(`[Offline Mock] Đã thu hồi toàn bộ quyền học của học sinh "${email}"`);
+          }
+
+          await showCustomAlert(`Đã khóa thành công tài khoản nghi vấn: "${email}". Quyền truy cập các khóa học đã bị thu hồi.`);
+          
+          // Refresh lists
+          renderStudents();
+          renderSecurityLogs();
+        } catch (err) {
+          console.error(err);
+          await showCustomAlert("Lỗi khi khóa tài khoản: " + (err.message || err));
+        }
+      }
+    }
+
+    async function clearOldSecurityLogs() {
+      if (await showCustomConfirm("Bạn có chắc chắn muốn xóa toàn bộ nhật ký xem video cũ hơn 30 ngày để làm gọn database không?")) {
+        try {
+          var thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          var isoStr = thirtyDaysAgo.toISOString();
+
+          if (supabaseClient) {
+            var { error } = await supabaseClient
+              .from("video_view_logs")
+              .delete()
+              .lt("viewed_at", isoStr);
+            if (error) throw error;
+          } else {
+            var logs = JSON.parse(localStorage.getItem("tmaTsaLocalViewLogs") || "[]");
+            logs = logs.filter(function(log) {
+              return new Date(log.viewed_at).getTime() >= thirtyDaysAgo.getTime();
+            });
+            localStorage.setItem("tmaTsaLocalViewLogs", JSON.stringify(logs));
+          }
+
+          await showCustomAlert("Đã dọn dẹp nhật ký cũ hơn 30 ngày thành công!");
+          renderSecurityLogs();
+        } catch (err) {
+          console.error(err);
+          await showCustomAlert("Lỗi khi dọn dẹp nhật ký: " + (err.message || err));
+        }
+      }
+    }
+
     // Attach listeners on form submissions
     document.addEventListener("DOMContentLoaded", function() {
       var courseForm = document.getElementById("lms-course-modal-form");
@@ -3781,6 +4091,9 @@
 
       var codeForm = document.getElementById("lms-create-code-form");
       if (codeForm) codeForm.addEventListener("submit", saveActivationCode);
+
+      var enrollForm = document.getElementById("lms-manual-enroll-form");
+      if (enrollForm) enrollForm.addEventListener("submit", saveManualEnrollment);
     });
 
     // Expose to window
@@ -3803,6 +4116,11 @@
     window.saveActivationCode = saveActivationCode;
     window.deleteActivationCode = deleteActivationCode;
     window.toggleActivationCodeActive = toggleActivationCodeActive;
+    window.saveManualEnrollment = saveManualEnrollment;
+
+    window.renderSecurityLogs = renderSecurityLogs;
+    window.kickAnomalyStudent = kickAnomalyStudent;
+    window.clearOldSecurityLogs = clearOldSecurityLogs;
 
 
 

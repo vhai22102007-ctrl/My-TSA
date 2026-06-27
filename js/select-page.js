@@ -1186,116 +1186,133 @@
             const lessonsList = document.getElementById("course-modal-lessons-list");
             lessonsList.innerHTML = "";
 
-            const folderName = course.title.includes("Toán") || course.title.includes("THPT") ? "ĐỀ TĂNG TỐC" : "CHUYÊN ĐỀ TĂNG TỐC";
-
-            const group = document.createElement("div");
-            group.className = "accordion-group";
-
-            const accHeader = document.createElement("div");
-            accHeader.className = "accordion-header";
-            accHeader.innerHTML = `
-              <div class="accordion-header-title">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                ${folderName}
-              </div>
-              <svg class="accordion-arrow open" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            `;
-
-            const accContent = document.createElement("div");
-            accContent.className = "accordion-content";
-            accContent.style.display = "flex";
-
-            lessonsArray.forEach((lesson, index) => {
-              const item = document.createElement("div");
-              item.className = "lesson-item";
-              if (activeLessonId === lesson.id) item.classList.add("active");
-              
-              let previewBadge = "";
-              let rightIcon = "";
-
-              const isCompleted = completedLessonIds.includes(lesson.id);
-
-              if (lesson.preview_allowed) {
-                previewBadge = `<span class="lesson-badge-preview">Xem thử</span>`;
-              } else if (!isRegistered) {
-                rightIcon = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#64748b" fill="none" stroke-width="2.5" style="margin-left:auto;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+            // Group lessons by chapter
+            const chapters = {};
+            lessonsArray.forEach(lesson => {
+              const chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
+              if (!chapters[chName]) {
+                chapters[chName] = [];
               }
-
-              // Tick green icon for completed, otherwise type icon
-              let leftIconSvg = getLessonIconSvg(lesson.title);
-              if (isRegistered && isCompleted) {
-                leftIconSvg = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#22c55e" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-              }
-
-              item.innerHTML = `
-                <div class="lesson-icon-wrapper" style="${isRegistered && isCompleted ? 'background:#e2fbe8; color:#22c55e;' : ''}">
-                  ${leftIconSvg}
-                </div>
-                <span class="lesson-title">${lesson.title}</span>
-                ${previewBadge}
-                ${rightIcon}
-              `;
-
-              // Handle Lesson click
-              item.addEventListener("click", () => {
-                if (!isRegistered && !lesson.preview_allowed) {
-                  showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm vào nút "MÃ TRUY CẬP" ở góc phải để nhập mã kích hoạt khóa học này!`);
-                  return;
-                }
-
-                activeLessonId = lesson.id;
-
-                // Mark active item
-                accContent.querySelectorAll(".lesson-item").forEach(el => el.classList.remove("active"));
-                item.classList.add("active");
-
-                // Play/Show content on Left Area
-                document.getElementById("course-player-cover").style.display = "none";
-                iframe.style.display = "block";
-                
-                // Show controls if registered
-                if (isRegistered && controlsBar && completeBtn) {
-                  controlsBar.style.display = "flex";
-                  // Render button state
-                  if (isCompleted) {
-                    completeBtn.className = "lesson-complete-btn completed";
-                    completeBtn.querySelector("span").textContent = "Đã hoàn thành";
-                  } else {
-                    completeBtn.className = "lesson-complete-btn";
-                    completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
-                  }
-                }
-                
-                // Load video/pdf source
-                const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
-                if (isVideo) {
-                  iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
-                  startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
-                } else {
-                  iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
-                  stopWatermark();
-                }
-              });
-
-              accContent.appendChild(item);
+              chapters[chName].push(lesson);
             });
 
-            group.appendChild(accHeader);
-            group.appendChild(accContent);
-            lessonsList.appendChild(group);
+            // Render each chapter as a collapsible accordion
+            Object.keys(chapters).forEach((chName) => {
+              const chapterLessons = chapters[chName];
 
-            // Accordion toggle handler
-            accHeader.addEventListener("click", () => {
-              const isOpen = accContent.style.display !== "none";
-              accContent.style.display = isOpen ? "none" : "flex";
-              const arrow = accHeader.querySelector(".accordion-arrow");
-              if (isOpen) {
-                arrow.classList.remove("open");
-                arrow.style.transform = "rotate(0deg)";
-              } else {
-                arrow.classList.add("open");
-                arrow.style.transform = "rotate(180deg)";
-              }
+              const group = document.createElement("div");
+              group.className = "accordion-group";
+              group.style.marginBottom = "10px";
+
+              const accHeader = document.createElement("div");
+              accHeader.className = "accordion-header";
+              accHeader.innerHTML = `
+                <div class="accordion-header-title">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                  ${chName}
+                </div>
+                <svg class="accordion-arrow open" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              `;
+
+              const accContent = document.createElement("div");
+              accContent.className = "accordion-content";
+              accContent.style.display = "flex";
+
+              chapterLessons.forEach((lesson) => {
+                const item = document.createElement("div");
+                item.className = "lesson-item";
+                if (activeLessonId === lesson.id) item.classList.add("active");
+                
+                let previewBadge = "";
+                let rightIcon = "";
+
+                const isCompleted = completedLessonIds.includes(lesson.id);
+
+                if (lesson.preview_allowed) {
+                  previewBadge = `<span class="lesson-badge-preview">Xem thử</span>`;
+                } else if (!isRegistered) {
+                  rightIcon = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="#64748b" fill="none" stroke-width="2.5" style="margin-left:auto;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+                }
+
+                // Tick green icon for completed, otherwise type icon
+                let leftIconSvg = getLessonIconSvg(lesson.title);
+                if (isRegistered && isCompleted) {
+                  leftIconSvg = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#22c55e" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                }
+
+                item.innerHTML = `
+                  <div class="lesson-icon-wrapper" style="${isRegistered && isCompleted ? 'background:#e2fbe8; color:#22c55e;' : ''}">
+                    ${leftIconSvg}
+                  </div>
+                  <span class="lesson-title">${lesson.title}</span>
+                  ${previewBadge}
+                  ${rightIcon}
+                `;
+
+                // Handle Lesson click
+                item.addEventListener("click", () => {
+                  if (!isRegistered && !lesson.preview_allowed) {
+                    showCustomAlert(`Khóa học chưa được mở. Vui lòng bấm vào nút "MÃ TRUY CẬP" ở góc phải để nhập mã kích hoạt khóa học này!`);
+                    return;
+                  }
+
+                  activeLessonId = lesson.id;
+
+                  // Mark active item (across all accordion sections)
+                  lessonsList.querySelectorAll(".lesson-item").forEach(el => el.classList.remove("active"));
+                  item.classList.add("active");
+
+                  // Play/Show content on Left Area
+                  document.getElementById("course-player-cover").style.display = "none";
+                  iframe.style.display = "block";
+                  
+                  // Show controls if registered
+                  if (isRegistered && controlsBar && completeBtn) {
+                    controlsBar.style.display = "flex";
+                    // Render button state
+                    if (isCompleted) {
+                      completeBtn.className = "lesson-complete-btn completed";
+                      completeBtn.querySelector("span").textContent = "Đã hoàn thành";
+                    } else {
+                      completeBtn.className = "lesson-complete-btn";
+                      completeBtn.querySelector("span").textContent = "Đánh dấu đã hoàn thành";
+                    }
+                  }
+                  
+                  // Load video/pdf source
+                  const isVideo = getLessonIconSvg(lesson.title).includes("polygon");
+                  if (isVideo) {
+                    iframe.src = `https://drive.google.com/file/d/${lesson.video_drive_id || "17l2lP-G4mH0l9X2X1l1X1l1X1l1X1l1"}/preview`;
+                    startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
+                    
+                    // Write video view log (Feature 2)
+                    writeVideoViewLog(studentCode, lesson, course.title);
+                  } else {
+                    iframe.src = lesson.doc_link || "https://example.com/mock-doc.pdf";
+                    stopWatermark();
+                  }
+                });
+
+                accContent.appendChild(item);
+              });
+
+              group.appendChild(accHeader);
+              group.appendChild(accContent);
+              lessonsList.appendChild(group);
+
+              // Accordion toggle handler
+              accHeader.addEventListener("click", () => {
+                const isOpen = accContent.style.display !== "none";
+                accContent.style.display = isOpen ? "none" : "flex";
+                const arrow = accHeader.querySelector(".accordion-arrow");
+                if (isOpen) {
+                  arrow.classList.remove("open");
+                  arrow.style.transform = "rotate(0deg)";
+                } else {
+                  arrow.classList.add("open");
+                  arrow.style.transform = "rotate(180deg)";
+                }
+              });
             });
           }
 
@@ -3560,4 +3577,57 @@
       } else {
         switchTab("overview");
       }
-    })();
+
+      // Helper to log video view event with IP details and check for account sharing (Feature 2)
+      async function writeVideoViewLog(studentEmail, lesson, courseTitle) {
+        if (!supabaseClient) {
+          // Offline fallback
+          const key = 'tmaTsaLocalViewLogs';
+          const logs = JSON.parse(localStorage.getItem(key) || "[]");
+          logs.push({
+            id: 'mock-log-' + Date.now(),
+            user_email: studentEmail,
+            lesson_title: lesson.title,
+            course_title: courseTitle,
+            viewed_at: new Date().toISOString(),
+            ip_address: '127.0.0.1 (Offline)',
+            user_agent: navigator.userAgent
+          });
+          localStorage.setItem(key, JSON.stringify(logs));
+          return;
+        }
+
+        let ip = 'Unknown IP';
+        try {
+          // Fetch IP with 2 seconds timeout to keep page responsive
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2000);
+          
+          const ipRes = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
+          clearTimeout(timeoutId);
+          
+          if (ipRes.ok) {
+            const ipData = await ipRes.json();
+            ip = ipData.ip || 'Unknown IP';
+          }
+        } catch (ipErr) {
+          console.warn("Could not fetch IP, writing log with fallback IP:", ipErr);
+        }
+
+        try {
+          await supabaseClient
+            .from('video_view_logs')
+            .insert({
+              user_email: studentEmail,
+              lesson_id: lesson.id,
+              lesson_title: lesson.title,
+              course_title: courseTitle,
+              ip_address: ip,
+              user_agent: navigator.userAgent
+            });
+        } catch (logErr) {
+          console.warn("Failed to write video view log to Supabase:", logErr);
+        }
+      }
+
+          })();
