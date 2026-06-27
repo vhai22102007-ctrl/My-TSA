@@ -2415,6 +2415,17 @@
       window.updateTopbarQNo = updateTopbarQNo;
 
       function setGlobalEditorRoleView(role) {
+        if (role === "student") {
+          saveDraft();
+          var subject = activeEditorTab;
+          if (subject !== "math" && subject !== "reading" && subject !== "science") {
+            subject = "math";
+          }
+          var qNo = getActiveQuestionNo(subject) || 1;
+          var url = "exam-" + subject + ".html?exam=" + exam.exam_code + "&preview=true&q=" + qNo;
+          window.open(url, "_blank");
+          return;
+        }
         if (activeEditorTab) {
           setEditorRoleView(activeEditorTab, role);
         }
@@ -2635,6 +2646,9 @@
           window.renderQuestion(q, null, function () {}, { bodyEl: bodyEl, answerEl: ansEl });
         } else {
           bodyEl.textContent = q.question;
+        }
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise();
         }
       }
 
