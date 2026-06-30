@@ -9,7 +9,7 @@ const examData = {
   reading: {
     title: "[SHIBA]-Tư Duy Đọc Hiểu-Đề CK 1",
     studentName: "Nguyễn Văn Hải",
-    duration: "30 phút",
+    duration: "20 phút",
     totalQuestions: "40 câu",
     target: "exam-reading.html"
   },

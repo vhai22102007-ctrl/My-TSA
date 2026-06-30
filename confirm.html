@@ -117,17 +117,17 @@
         subjects: {
           math: {
             name: "Tư duy Toán học",
-            duration: 45,
+            duration: 60,
             totalQuestions: 6
           },
           reading: {
             name: "Tư duy Đọc hiểu",
-            duration: 45,
+            duration: 20,
             totalQuestions: 6
           },
           science: {
             name: "Tư duy Khoa học & Giải quyết vấn đề",
-            duration: 45,
+            duration: 60,
             totalQuestions: 6
           }
         }
@@ -135,7 +135,7 @@
       const params = new URLSearchParams(window.location.search);
       const subjectKey = params.get("subject") || "math";
       const selectedSubject = session.subjects[subjectKey] || session.subjects.math;
-      
+
       const elements = {
         candidateId: document.getElementById("candidate-id"),
         checkingPanel: document.querySelector(".checking-panel"),

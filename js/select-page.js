@@ -350,7 +350,7 @@
             }
           }
         });
-        supabaseStorageUrl = 'https://assets.tmastudy.io.vn/data/exams/';
+        supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
       }
 
       /* Giữ giống logic cũ: chưa đăng nhập thì quay về login.html */
@@ -2407,23 +2407,8 @@
       (function loadExamsList() {
         const now = Date.now();
         let shouldFetchIndex = true;
-        try {
-          const cacheTime = localStorage.getItem('tma_tsa_index_cache_time');
-          const lsData = localStorage.getItem('tma_tsa_exam_index');
-          if (lsData && cacheTime && (now - parseInt(cacheTime)) < 1800000) {
-            const parsed = JSON.parse(lsData);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              window.EXAMS_LIST = parsed;
-              shouldFetchIndex = false;
-              const activePanel = document.querySelector(".tab-panel.active");
-              if (activePanel && activePanel.id === "tab-practice") {
-                renderPracticeRoom();
-              }
-            }
-          }
-        } catch (e) {
-          console.warn("localStorage read error:", e);
-        }
+        // Always fetch the latest index from network to get real-time open/closed status from the teacher
+        shouldFetchIndex = true;
 
         if (shouldFetchIndex) {
           // Tải danh sách đề từ Supabase Storage trước
@@ -2439,8 +2424,12 @@
                 localStorage.setItem('tma_tsa_index_cache_time', now.toString());
               } catch (e) {}
               const activePanel = document.querySelector(".tab-panel.active");
-              if (activePanel && activePanel.id === "tab-practice") {
-                renderPracticeRoom();
+              if (activePanel) {
+                if (activePanel.id === "tab-practice") {
+                  renderPracticeRoom();
+                } else if (activePanel.id === "tab-tsa-exam") {
+                  renderExams();
+                }
               }
             })
             .catch(err => {
@@ -2601,7 +2590,13 @@
             let examTitle = "";
             let subjectText = "";
             let redirectUrl = "";
-            let duration = currentTsaPracticeSubtab === "tong-hop" ? "150 phút" : "45 phút";
+                        let duration = (function() {
+              if (currentTsaPracticeSubtab === "math") return "60 phút";
+              if (currentTsaPracticeSubtab === "reading") return "20 phút";
+              if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") return "60 phút";
+              if (currentTsaPracticeSubtab === "tong-hop") return "140 phút";
+              return "45 phút";
+            })();
             let qCount = currentTsaPracticeSubtab === "tong-hop" ? "85 câu" : "6 câu";
 
             const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck);
@@ -2696,16 +2691,40 @@
           subtabsContainer.style.display = "none";
         }
 
-        // Generate exactly 10 practice exams for other categories
+        // Generate only uploaded practice exams for other categories, or show empty state
         const displayCategory = category === "THPT" ? "THPTQG" : category;
+        const uploadedExams = [];
+        
         for (let i = 1; i <= 10; i++) {
           const numStr = String(i).padStart(2, "0");
           const examCodeToCheck = category + numStr;
           const hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck);
           const hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
-          const isUploaded = (i === 1) || hasExamInList || hasLocalDraft;
+          const isUploaded = hasExamInList || hasLocalDraft;
+          
+          if (isUploaded) {
+            uploadedExams.push({
+              index: i,
+              code: examCodeToCheck,
+              title: `Đề ${displayCategory} số ${numStr}`
+            });
+          }
+        }
 
-          const examTitle = `Đề ${displayCategory} số ${numStr}`;
+        if (uploadedExams.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; width: 100%;";
+          emptyState.innerHTML = `
+            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 250px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.85;" />
+            <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
+          `;
+          grid.appendChild(emptyState);
+          return;
+        }
+
+        uploadedExams.forEach((exam) => {
+          const examCodeToCheck = exam.code;
+          const examTitle = exam.title;
 
           const card = document.createElement("div");
           card.className = "exam-card";
@@ -2715,21 +2734,12 @@
           if (category === "HSA") redirectUrl = `exam-reading.html?exam=${examCodeToCheck}`;
           else if (category === "THPT" || category === "VACT" || category === "QDA") redirectUrl = `exam-science.html?exam=${examCodeToCheck}`;
 
-          if (isUploaded) {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
-                <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
-              </footer>
-            `;
-          } else {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
-                <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
-              </footer>
-            `;
-          }
+          actionBtnHtml = `
+            <footer class="exam-card-footer">
+              <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+              <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
+            </footer>
+          `;
 
           card.innerHTML = `
             <header class="exam-card-header">
@@ -2756,10 +2766,10 @@
             ${actionBtnHtml}
           `;
           grid.appendChild(card);
-        }
+        });
       }
 
-      function updatePracticeRoomUI() {
+            function updatePracticeRoomUI() {
         const titleEl = document.getElementById("practice-title");
         const descEl = document.getElementById("practice-desc");
         
@@ -2859,7 +2869,6 @@
           return;
         }
 
-        // ── Các loại khác: giữ logic thẻ đơn từ EXAMS_DATA ──
         if (titleEl) {
           titleEl.textContent = {
             hsa: "Bài thi Đánh giá năng lực - HSA",
@@ -2869,34 +2878,53 @@
           }[currentExamTypeCategory] || "Thi thử";
         }
 
-        const filtered = EXAMS_DATA.filter(e => e.category === currentExamTypeCategory.toUpperCase());
+        const categoryPrefix = currentExamTypeCategory.toUpperCase(); // "HSA", "THPT", "VACT", "QDA"
+        const filtered = (window.EXAMS_LIST || []).filter(e => {
+          return e.exam_code && e.exam_code.toUpperCase().startsWith(categoryPrefix);
+        });
+
+        if (filtered.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; width: 100%;";
+          emptyState.innerHTML = `
+            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 250px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.85;" />
+            <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
+          `;
+          grid.appendChild(emptyState);
+          return;
+        }
+
         filtered.forEach(exam => {
           const card = document.createElement("div");
           card.className = "exam-card";
-          let badgeClass = exam.isOnline ? "badge-green" : "badge-red";
+          
+          let isOpen = exam.is_open === true;
+          let redirectUrl = "waiting.html?exam=" + exam.exam_code;
           let actionBtnHtml = "";
-          if (!exam.uploaded) {
+          
+          if (isOpen) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.id}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
-                <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:600;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
+                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
               </footer>
             `;
           } else {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.id}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
-                <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${exam.actionUrl}')">${exam.actionText}</button>
+                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
               </footer>
             `;
           }
+
           card.innerHTML = `
-            <header class="exam-card-header"><h3>${exam.title}</h3></header>
+            <header class="exam-card-header"><h3 style="text-transform: none;">${exam.title}</h3></header>
             <div class="exam-card-body">
-              <div class="exam-info-row"><span class="info-label">Hình thức thi:</span><span class="${badgeClass}">${exam.typeBadge}</span></div>
-              <div class="exam-info-row"><span class="info-label">Thời gian đăng ký:</span><span class="info-value">${exam.regTime}</span></div>
-              <div class="exam-info-row"><span class="info-label">Lệ phí:</span><span class="info-value font-bold">${exam.fee}</span></div>
-              <div class="exam-info-row"><span class="info-label">Thời gian thi:</span><span class="info-value">${exam.examTime}</span></div>
+              <div class="exam-info-row"><span class="info-label">Hình thức thi:</span><span class="badge-green">Thi trực tuyến</span></div>
+              <div class="exam-info-row"><span class="info-label">Thời gian thi:</span><span class="info-value">${exam.duration_minutes ? exam.duration_minutes + " phút" : "150 phút"}</span></div>
+              <div class="exam-info-row"><span class="info-label">Lệ phí:</span><span class="info-value font-bold">Miễn phí</span></div>
+              <div class="exam-info-row"><span class="info-label">Trạng thái:</span><span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">${isOpen ? "Đang mở" : "Chưa mở"}</span></div>
             </div>
             ${actionBtnHtml}
           `;

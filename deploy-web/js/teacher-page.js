@@ -1,5 +1,6 @@
 // State management for Student lists
     var approvedStudents = [];
+    var lmsCourses = [];
     
     async function loadStudents() {
       if (window.supabaseClient) {
@@ -796,6 +797,7 @@
         supabaseClient = supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey, {
           global: {
             headers: {
+              'Authorization': 'Bearer ' + teacherToken,
               'x-teacher-token': teacherToken || '',
               'x-teacher-email': teacherInfo ? (teacherInfo.email || '') : ''
             }
@@ -808,7 +810,7 @@
           supabaseClient
             .from('students')
             .select('role')
-            .eq('password_hash', teacherToken)
+            .eq('email', teacherInfo ? teacherInfo.email.toLowerCase() : '')
             .eq('role', 'teacher')
             .maybeSingle()
             .then(res => {
@@ -875,12 +877,7 @@
       ].join("|"));
 
       function hasFormulaContent(value) {
-        if (value == null) return false;
-        if (typeof value === "string") return FORMULA_CONTENT_PATTERN.test(value);
-        if (Array.isArray(value)) return value.some(hasFormulaContent);
-        if (typeof value === "object") {
-          return Object.keys(value).some(function (key) { return hasFormulaContent(value[key]); });
-        }
+        // Disabled to allow saving LaTeX and math formulas successfully
         return false;
       }
 
@@ -1600,11 +1597,18 @@
         return found ? found.text : "";
       }
 
-      function renderChoicesForm(q, isMulti) {
+      function renderChoicesForm(q, isMulti, sectionId) {
         var options = q.options || [];
         var ans = q.correct_answer || (isMulti ? [] : "A");
         var containerClass = isMulti ? "is-multiple-choice" : "is-single-choice";
-        var html = '<div class="choices-container ' + containerClass + '">';
+        var optionsAreImages = q.options_are_images === true;
+        
+        var html = '<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+          '<input type="checkbox" id="' + sectionId + '-options-are-images" ' + (optionsAreImages ? 'checked' : '') + ' onchange="toggleTeacherOptionsAreImages(this, \'' + sectionId + '\')" style="width: 16px; height: 16px; cursor: pointer;">' +
+          '<label for="' + sectionId + '-options-are-images" style="font-weight: bold; cursor: pointer; color: var(--text-dark); font-size: 13.5px;">Đáp án bằng hình ảnh (4 lựa chọn là ảnh)</label>' +
+          '</div>';
+
+        html += '<div class="choices-container ' + containerClass + '" style="display: flex; flex-direction: column; gap: 10px;">';
         options.forEach(function (opt) {
           var isSelected = false;
           if (isMulti) {
@@ -1616,10 +1620,29 @@
           var inputType = isMulti ? "checkbox" : "radio";
           var checkedAttr = isSelected ? " checked" : "";
           
-          html += '<div class="choice-item' + selectedClass + '" onclick="toggleTeacherChoiceSelection(this, \'' + opt.key + '\', ' + isMulti + ')">' +
-            '<input type="' + inputType + '" name="choice-correct" value="' + opt.key + '"' + checkedAttr + ' style="display:none;">' +
-            '<input class="choice-input-field" data-choice-key="' + opt.key + '" value="' + attr(opt.text || "") + '" placeholder="Nhập đáp án..." onclick="event.stopPropagation();">' +
-            '</div>';
+          if (optionsAreImages) {
+            html += '<div class="choice-item' + selectedClass + '" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff;">' +
+              '<input type="' + inputType + '" name="choice-correct" value="' + opt.key + '"' + checkedAttr + ' style="display:none;">' +
+              '<div class="choice-item-image-wrap" style="display: flex; flex-direction: column; gap: 6px; flex: 1;" onclick="event.stopPropagation();">' +
+                '<div style="display: flex; gap: 8px; align-items: center; width: 100%;">' +
+                  '<span style="font-weight: bold; color: var(--brand-red); min-width: 20px; font-size: 14px;">' + opt.key + '.</span>' +
+                  '<input class="choice-input-field input" data-choice-key="' + opt.key + '" value="' + attr(opt.text || "") + '" placeholder="Dán link ảnh hoặc bấm nút Tải ảnh..." style="flex: 1; height: 36px; font-size: 13px; padding: 0 10px;" onchange="updateChoiceImagePreview(this)">' +
+                  '<button type="button" class="btn btn-secondary btn-sm" style="height: 36px; padding: 0 12px; font-size: 12px; border-radius: 6px; font-weight: 600;" onclick="triggerChoiceImageUpload(this)">Tải ảnh</button>' +
+                  '<input type="file" accept="image/*" class="choice-image-file-input" style="display: none;" onchange="handleChoiceImageUpload(this, \'' + opt.key + '\', \'' + sectionId + '\')">' +
+                '</div>' +
+                (opt.text ? '<img class="choice-image-preview" src="' + attr(opt.text) + '" style="max-height: 80px; width: auto; max-width: 150px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px;" />' : '') +
+              '</div>' +
+              '<div style="min-width: 80px; text-align: right; font-size: 13px; color: ' + (isSelected ? 'var(--brand-red)' : '#64748b') + '; font-weight: bold; cursor: pointer; user-select: none;" onclick="event.stopPropagation(); toggleTeacherChoiceSelection(this.parentElement, \'' + opt.key + '\', ' + isMulti + ')">' +
+                (isSelected ? '✔️ Đúng' : 'Chọn đúng') +
+              '</div>' +
+              '</div>';
+          } else {
+            html += '<div class="choice-item' + selectedClass + '" onclick="toggleTeacherChoiceSelection(this, \'' + opt.key + '\', ' + isMulti + ')">' +
+              '<input type="' + inputType + '" name="choice-correct" value="' + opt.key + '"' + checkedAttr + ' style="display:none;">' +
+              '<span style="font-weight: bold; color: var(--brand-red); min-width: 20px; font-size: 14px; margin-right: 6px;">' + opt.key + '.</span>' +
+              '<input class="choice-input-field" data-choice-key="' + opt.key + '" value="' + attr(opt.text || "") + '" placeholder="Nhập đáp án..." onclick="event.stopPropagation();" style="flex:1;">' +
+              '</div>';
+          }
         });
         html += '</div>';
         return html;
@@ -1680,7 +1703,7 @@
         if (!box) return;
         box.innerHTML = "";
         if (type === "single_choice" || type === "multiple_choice") {
-          box.innerHTML = renderChoicesForm(q, type === "multiple_choice");
+          box.innerHTML = renderChoicesForm(q, type === "multiple_choice", sectionId);
         } else if (type === "true_false") {
           box.innerHTML = renderTrueFalseForm(q, sectionId);
         } else if (type === "fill_blank") {
@@ -1762,6 +1785,8 @@
             opts.push({ key: input.getAttribute("data-choice-key"), text: input.value.trim() });
           });
           base.options = opts;
+          var isImageOpts = $("#" + sectionId + "-type-fields #" + sectionId + "-options-are-images")?.checked || false;
+          base.options_are_images = isImageOpts;
           if (type === "single_choice") {
             var checkedRadio = $("#"+sectionId+"-type-fields input[name='choice-correct']:checked");
             base.correct_answer = checkedRadio ? checkedRadio.value : "A";
@@ -2282,7 +2307,13 @@
               '</h3>' +
               '<div class="form-grid" style="gap: 18px 20px;">' +
                 '<div class="field full"><label>Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Đọc hiểu số 0' + numberLabel + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + numberLabel + '</label><textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung đoạn văn / ngữ liệu ' + numberLabel + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="field full" style="display:flex; flex-direction:column; gap:6px;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                  '<label style="margin-bottom:0;">Nội dung văn bản / dữ liệu ' + numberLabel + '</label>' +
+                  '<button type="button" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600;" onclick="insertCloudImageIntoGroupText(\'reading\', \'reading-' + gId + '-text\')">🖼️ Chèn ảnh từ Cloud</button>' +
+                '</div>' +
+                '<textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung đoạn văn / ngữ liệu ' + numberLabel + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea>' +
+              '</div>' +
                 '<div class="btn-row" style="margin-top: 8px;">' +
                   '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
                 '</div>' +
@@ -2331,7 +2362,13 @@
               '</h3>' +
               '<div class="form-grid" style="gap: 18px 20px;">' +
                 '<div class="field full"><label>Tiêu đề ngữ liệu ' + gIdx + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Khoa học số 0' + gIdx + '"></div>' +
-                '<div class="field full"><label>Nội dung văn bản / dữ liệu ' + gIdx + '</label><textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung dữ liệu khoa học ' + gIdx + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+                '<div class="field full" style="display:flex; flex-direction:column; gap:6px;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                  '<label style="margin-bottom:0;">Nội dung văn bản / dữ liệu ' + gIdx + '</label>' +
+                  '<button type="button" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600;" onclick="insertCloudImageIntoGroupText(\'science\', \'science-' + gId + '-text\')">🖼️ Chèn ảnh từ Cloud</button>' +
+                '</div>' +
+                '<textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung dữ liệu khoa học ' + gIdx + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea>' +
+              '</div>' +
                 '<div class="field full" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0;">' +
                   '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh ngữ liệu ' + gIdx + ': <span id="science-' + gId + '-image-width-val" style="font-weight:700; color:var(--brand);">' + groupImgWidth + '</span>%</label>' +
                     '<input type="range" class="slider" id="science-' + gId + '-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
@@ -2393,7 +2430,13 @@
         form.innerHTML =
           '<div class="form-grid" style="gap: 12px 14px;">' +
           '<div class="field full"><label>Tiêu đề ngữ liệu</label><input class="input" id="' + sectionId + '-g-title" value="' + attr(group.title) + '"></div>' +
-          '<div class="field full"><label>Nội dung văn bản / dữ liệu</label><textarea class="textarea" id="' + sectionId + '-g-text" style="min-height:180px;">' + esc(group.stimulus?.content || "") + '</textarea></div>' +
+          '<div class="field full" style="display:flex; flex-direction:column; gap:6px;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+              '<label style="margin-bottom:0;">Nội dung văn bản / dữ liệu</label>' +
+              '<button type="button" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600;" onclick="insertCloudImageIntoGroupText(\'' + sectionId + '\', \'' + sectionId + '-g-text\')">🖼️ Chèn ảnh từ Cloud</button>' +
+            '</div>' +
+            '<textarea class="textarea" id="' + sectionId + '-g-text" style="min-height:180px;">' + esc(group.stimulus?.content || "") + '</textarea>' +
+          '</div>' +
           '<div class="field full" style="display: grid; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
             '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh ngữ liệu nếu có</label><input class="input" id="' + sectionId + '-g-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="https://assets.tmastudy.io.vn/assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
             '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh: <span id="' + sectionId + '-g-image-width-val">' + groupImgWidth + '</span>%</label>' +
@@ -2966,6 +3009,9 @@
           }
 
           if (answersToInsert.length > 0) {
+            // Xóa đáp án cũ trước để tránh trùng lặp (unique constraint)
+            await supabaseClient.from('exam_answers').delete().eq('exam_code', newExamCode);
+
             var { error: answersInsertError } = await supabaseClient
               .from('exam_answers')
               .insert(answersToInsert);
@@ -3099,6 +3145,9 @@
           }
 
           if (answersToInsert.length > 0) {
+            // Xóa đáp án cũ trước để tránh trùng lặp (unique constraint)
+            await supabaseClient.from('exam_answers').delete().eq('exam_code', newExamCode);
+
             var { error: answersInsertError } = await supabaseClient
               .from('exam_answers')
               .insert(answersToInsert);
@@ -3412,7 +3461,7 @@
                   // ─── LMS COURSE & LESSON & CODE & SECURITY MANAGEMENT (TEACHER PANEL) ───────────
     var activeCourseId = null;
     var activeLessonId = null;
-    var lmsCourses = [];
+    lmsCourses = [];
 
     // Helper: show modal
     function openModal(modalId) {
@@ -4845,7 +4894,7 @@
 
         // Tải danh sách đề từ Supabase Storage để đồng bộ local storage của giáo viên
         if (window.SUPABASE_CONFIG) {
-          var supabaseStorageUrl = 'https://assets.tmastudy.io.vn/data/exams/';
+          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
           fetch(`${supabaseStorageUrl}index.json`, { cache: "no-store" })
             .then(res => {
               if (res.ok) return res.json();
@@ -4875,6 +4924,132 @@
             .catch(err => console.warn("Cannot sync documents index from Supabase on start:", err));
         }
       }
+
+      function insertCloudImageIntoGroupText(sectionId, elementId) {
+        var textarea = document.getElementById(elementId);
+        if (!textarea) return;
+
+        var url = prompt("Nhập link ảnh từ Cloud R2 hoặc Supabase muốn chèn:");
+        if (!url) return;
+        url = url.trim();
+        if (!url) return;
+
+        var widthPercent = prompt("Nhập kích thước ảnh (%) (Ví dụ: 30, 50, 80):", "80");
+        if (widthPercent === null) return; // User cancelled
+        widthPercent = widthPercent.trim();
+        var widthVal = Number(widthPercent) || 80;
+
+        var imgHtml = '\n<img src="' + url + '" style="max-width: 100%; display: block; margin: 15px auto; border-radius: 8px; width: ' + widthVal + '%;" />\n';
+        
+        // Insert at cursor position
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        var val = textarea.value;
+        textarea.value = val.substring(0, start) + imgHtml + val.substring(end);
+        
+        // Put cursor after the inserted HTML
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + imgHtml.length;
+        
+        // Trigger save draft and preview updates
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        textarea.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      window.insertCloudImageIntoGroupText = insertCloudImageIntoGroupText;
+
+      function toggleTeacherOptionsAreImages(cb, sectionId) {
+        var q = getQuestionDraft(sectionId);
+        q.options_are_images = cb.checked;
+        
+        // Re-render only the choices form
+        var typeFields = document.getElementById(sectionId + "-type-fields");
+        if (typeFields) {
+          typeFields.innerHTML = renderChoicesForm(q, q.question_type === "multiple_choice", sectionId);
+        }
+        updatePreview(sectionId);
+      }
+      window.toggleTeacherOptionsAreImages = toggleTeacherOptionsAreImages;
+
+      function triggerChoiceImageUpload(btn) {
+        var fileInput = btn.nextElementSibling;
+        if (fileInput) fileInput.click();
+      }
+      window.triggerChoiceImageUpload = triggerChoiceImageUpload;
+
+      async function handleChoiceImageUpload(input, key, sectionId) {
+        var file = input.files[0];
+        if (!file) return;
+        
+        var uploadBtn = input.previousElementSibling;
+        var originalText = uploadBtn.textContent;
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Tải...";
+        
+        try {
+          if (!supabaseClient) {
+            alert("Vui lòng kết nối Supabase để tải ảnh lên Cloud!");
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = originalText;
+            return;
+          }
+          
+          var examCode = window.exam?.exam_code || "temp";
+          var questionId = getQuestionDraft(sectionId)?.id || "qtemp";
+          var path = "questions/" + examCode + "/" + questionId + "_" + key + "_" + Date.now() + ".png";
+          
+          var { data, error } = await supabaseClient.storage
+            .from('exams')
+            .upload(path, file, { cacheControl: '3600', upsert: true });
+            
+          if (error) throw error;
+          
+          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
+          var imageUrl = supabaseStorageUrl + path;
+          
+          // Update input value
+          var textInput = uploadBtn.parentElement.querySelector('input[data-choice-key]');
+          if (textInput) {
+            textInput.value = imageUrl;
+            updateChoiceImagePreview(textInput);
+          }
+          
+          // Auto-save this to draft
+          var q = getQuestionDraft(sectionId);
+          if (q && q.options) {
+            var opt = q.options.find(function(o) { return o.key === key; });
+            if (opt) opt.text = imageUrl;
+          }
+          
+          updatePreview(sectionId);
+          
+        } catch (err) {
+          console.error("Option image upload error:", err);
+          alert("Lỗi tải ảnh lên: " + err.message);
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = originalText;
+        }
+      }
+      window.handleChoiceImageUpload = handleChoiceImageUpload;
+
+      function updateChoiceImagePreview(input) {
+        var wrap = input.parentElement.parentElement;
+        var preview = wrap.querySelector('.choice-image-preview');
+        var val = input.value.trim();
+        
+        if (val) {
+          if (!preview) {
+            preview = document.createElement('img');
+            preview.className = 'choice-image-preview';
+            preview.style.cssText = 'max-height: 80px; width: auto; max-width: 150px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px;';
+            wrap.appendChild(preview);
+          }
+          preview.src = val;
+        } else {
+          if (preview) preview.remove();
+        }
+      }
+      window.updateChoiceImagePreview = updateChoiceImagePreview;
 
       document.addEventListener("DOMContentLoaded", init);
     })();

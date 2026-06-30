@@ -112,11 +112,20 @@
     if (!container) return;
     var wrap = document.createElement("div");
     wrap.className = "choices-container is-single-choice";
+    
+    var isImageOptions = question.options_are_images === true;
+    if (isImageOptions) {
+      wrap.classList.add("has-image-options");
+      wrap.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; margin-top: 10px;";
+    }
 
     ensureArray(question.options).forEach(function (opt) {
       var key = opt.key || "";
       var label = document.createElement("label");
       label.className = "choice-item";
+      if (isImageOptions) {
+        label.style.cssText = "display: flex; align-items: center; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s;";
+      }
       if (String(savedAnswer || "") === String(key)) label.classList.add("is-selected");
 
       var input = document.createElement("input");
@@ -128,7 +137,18 @@
 
       var text = document.createElement("span");
       text.className = "choice-text";
-      text.innerHTML = sanitizeHTML(opt.text || ""); // Removed A., B., C., D. prefix
+      
+      if (isImageOptions) {
+        var img = document.createElement("img");
+        img.src = opt.text || "";
+        img.className = "choice-image";
+        img.style.cssText = "max-height: 120px; width: auto; max-width: 100%; object-fit: contain; display: block; border-radius: 4px; transition: transform 0.15s ease;";
+        img.addEventListener("mouseenter", function() { img.style.transform = "scale(1.05)"; });
+        img.addEventListener("mouseleave", function() { img.style.transform = "scale(1.0)"; });
+        text.appendChild(img);
+      } else {
+        text.innerHTML = sanitizeHTML(opt.text || "");
+      }
 
       input.addEventListener("change", function () {
         wrap.querySelectorAll(".choice-item").forEach(function (item) { item.classList.remove("is-selected"); });
@@ -148,11 +168,20 @@
     var current = new Set(Array.isArray(savedAnswer) ? savedAnswer.map(String) : []);
     var wrap = document.createElement("div");
     wrap.className = "choices-container is-multiple-choice";
+    
+    var isImageOptions = question.options_are_images === true;
+    if (isImageOptions) {
+      wrap.classList.add("has-image-options");
+      wrap.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; margin-top: 10px;";
+    }
 
     ensureArray(question.options).forEach(function (opt) {
       var key = opt.key || "";
       var label = document.createElement("label");
       label.className = "choice-item";
+      if (isImageOptions) {
+        label.style.cssText = "display: flex; align-items: center; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s;";
+      }
       if (current.has(String(key))) label.classList.add("is-selected");
 
       var input = document.createElement("input");
@@ -164,7 +193,18 @@
 
       var text = document.createElement("span");
       text.className = "choice-text";
-      text.innerHTML = sanitizeHTML(opt.text || ""); // Removed A., B., C., D. prefix
+      
+      if (isImageOptions) {
+        var img = document.createElement("img");
+        img.src = opt.text || "";
+        img.className = "choice-image";
+        img.style.cssText = "max-height: 120px; width: auto; max-width: 100%; object-fit: contain; display: block; border-radius: 4px; transition: transform 0.15s ease;";
+        img.addEventListener("mouseenter", function() { img.style.transform = "scale(1.05)"; });
+        img.addEventListener("mouseleave", function() { img.style.transform = "scale(1.0)"; });
+        text.appendChild(img);
+      } else {
+        text.innerHTML = sanitizeHTML(opt.text || "");
+      }
 
       input.addEventListener("change", function () {
         if (input.checked) {

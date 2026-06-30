@@ -2,6 +2,14 @@
 <html lang="vi">
 <head>
   <script>
+    window.addEventListener('error', function(e) {
+      alert("LỖI JS: " + e.message + "\ntại " + e.filename + ":" + e.lineno);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      alert("LỖI PROMISE: " + e.reason);
+    });
+  </script>
+  <script>
     try {
       var teacherInfo = localStorage.getItem("teacherInfo");
       if (!teacherInfo) {
@@ -1128,7 +1136,7 @@
     </div>
   </div>
 
-  <script src="js/teacher-page.js"></script>
+  <script src="js/teacher-page.js?v=1.0.2"></script>
 
   
 

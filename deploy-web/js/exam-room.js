@@ -80,7 +80,7 @@
         }
       }
     });
-    supabaseStorageUrl = 'https://assets.tmastudy.io.vn/data/exams/';
+    supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
   } else {
     console.error("Supabase config or library not loaded!");
   }
@@ -266,7 +266,12 @@
       title: rawExam.title || examCode,
       subject: rawExam.subject || subject,
       subject_label: rawExam.subject_label || SECTION_LABELS[subject] || subject,
-      duration_minutes: rawExam.duration_minutes || 45,
+      duration_minutes: (function() {
+        if (rawExam.subject === "math") return 60;
+        if (rawExam.subject === "reading") return 20;
+        if (rawExam.subject === "science") return 60;
+        return rawExam.duration_minutes || 45;
+      })(),
       questions: Array.isArray(rawExam.questions) ? rawExam.questions : [],
       passage: rawExam.passage || rawExam.passageText || ""
     };
@@ -288,7 +293,12 @@
       title: `${title} - ${SECTION_LABELS[subj] || subj}`,
       subject: subj,
       subject_label: section?.section_label || SECTION_LABELS[subj] || subj,
-      duration_minutes: rawExam.duration_minutes || (examMeta && examMeta.duration_minutes) || 45,
+      duration_minutes: (function() {
+        if (subj === "math") return 60;
+        if (subj === "reading") return 20;
+        if (subj === "science") return 60;
+        return rawExam.duration_minutes || (examMeta && examMeta.duration_minutes) || 45;
+      })(),
       questions: []
     };
 
@@ -341,8 +351,9 @@
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
 
-    // 30 minutes cache (1800000 ms)
-    if (cachedData && cachedTime && (now - parseInt(cachedTime)) < 1800000) {
+    // 30 minutes cache (1800000 ms) (Bypassed for index.json to ensure fresh status)
+    const isIndexFile = typeof path === 'string' && path.endsWith('index.json');
+    if (!isIndexFile && cachedData && cachedTime && (now - parseInt(cachedTime)) < 1800000) {
       try {
         console.log(`Loading cached JSON for ${path}`);
         return JSON.parse(cachedData);
@@ -1266,7 +1277,7 @@
           }
         });
 
-        if (supabaseClient) {
+        if (supabaseClient && urlParams.get("preview") !== "true") {
           try {
             const mathRes = await submitExamToServerForSubject("math", mathAnswers);
             const readingRes = await submitExamToServerForSubject("reading", readingAnswers);
@@ -1312,7 +1323,7 @@
         }
       });
 
-      if (supabaseClient) {
+      if (supabaseClient && urlParams.get("preview") !== "true") {
         const res = await submitExamToServer(answers);
         if (res.success) {
           await showCustomAlert(`Nộp bài thành công!\n- Số câu đúng: ${res.correct_count}/${res.total_questions}\n- Điểm số: ${res.score.toFixed(1)}/${res.total_points.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
@@ -1420,7 +1431,12 @@
         }
       }
 
-      remainingSeconds = Number(examData.duration_minutes || 45) * 60;
+      remainingSeconds = Number(examData.duration_minutes || (function() {
+        if (subject === "math") return 60;
+        if (subject === "reading") return 20;
+        if (subject === "science") return 60;
+        return 45;
+      })()) * 60;
 
       loadLocalState();
       initMetadata();

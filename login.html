@@ -81,13 +81,13 @@
 
       body[data-mode="register"] .page,
       body[data-mode="teacher"] .page {
-        padding-top: 22px;
+        padding-top: 60px; /* Pushes the logo and card down from the top */
       }
 
       .brand-mark {
         display: block;
         width: min(100%, 315px);
-        margin: 0 0 16px;
+        margin: 0 0 32px; /* Increases spacing between logo and card */
       }
 
       .brand-mark img {
@@ -107,7 +107,7 @@
       }
 
       body[data-mode="register"] .auth-card {
-        width: min(100%, 680px);
+        width: min(100%, 460px);
         min-height: 0;
         padding-bottom: 22px;
       }
@@ -150,18 +150,15 @@
 
       body[data-mode="register"] #register-form {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px 20px;
+        grid-template-columns: 1fr;
+        gap: 19px;
       }
 
-      body[data-mode="register"] #register-form .field {
-        grid-column: span 1;
-      }
-
+      body[data-mode="register"] #register-form .field,
       body[data-mode="register"] #register-form .field.full-width,
       body[data-mode="register"] #register-form .form-error,
       body[data-mode="register"] #register-form .submit-button {
-        grid-column: span 2;
+        grid-column: span 1;
       }
 
       .form-select {
@@ -452,98 +449,21 @@
             <div class="field">
               <label for="register-name">Họ tên <span class="required">*</span></label>
               <div class="input-wrap">
-                <input id="register-name" type="text" autocomplete="name" placeholder="Họ và tên trên CMND/CCCD">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-dob">Ngày sinh <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-dob" type="date">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-gender">Giới tính <span class="required">*</span></label>
-              <div class="input-wrap">
-                <select id="register-gender" class="form-select">
-                  <option value="">-- Chọn giới tính --</option>
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                  <option value="Khác">Khác</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-cccd">Số CMND/CCCD <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-cccd" type="text" inputmode="numeric" placeholder="Số định danh công dân">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-phone">Số điện thoại <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Số điện thoại liên hệ">
+                <input id="register-name" type="text" autocomplete="name" placeholder="Điền đầy đủ họ tên trên CMND/CCCD">
               </div>
             </div>
 
             <div class="field">
               <label for="register-email">Email <span class="required">*</span></label>
               <div class="input-wrap">
-                <input id="register-email" type="text" autocomplete="username" inputmode="email" placeholder="Địa chỉ email nhận thông báo">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-school">Trường THPT <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-school" type="text" placeholder="Tên trường THPT đang theo học">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-class">Lớp học <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-class" type="text" placeholder="Ví dụ: 12A1, 12 Lý...">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-province">Tỉnh / Thành phố <span class="required">*</span></label>
-              <div class="input-wrap">
-                <select id="register-province" class="form-select">
-                  <option value="">-- Chọn Tỉnh / Thành phố --</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-district">Quận / Huyện <span class="required">*</span></label>
-              <div class="input-wrap" id="district-wrap">
-                <input id="register-district" type="text" placeholder="Nhập Quận / Huyện">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-ward">Phường / Xã <span class="required">*</span></label>
-              <div class="input-wrap" id="ward-wrap">
-                <input id="register-ward" type="text" placeholder="Nhập Phường / Xã">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="register-street">Số nhà, tên đường <span class="required">*</span></label>
-              <div class="input-wrap">
-                <input id="register-street" type="text" placeholder="Số nhà, ngõ, tên đường/phố">
+                <input id="register-email" type="text" autocomplete="username" inputmode="email" placeholder="Điền chính xác email để nhận thông tin">
               </div>
             </div>
 
             <div class="field">
               <label for="register-password">Mật khẩu <span class="required">*</span></label>
               <div class="input-wrap">
-                <input id="register-password" type="password" autocomplete="new-password" placeholder="Mật khẩu từ 6 ký tự">
+                <input id="register-password" type="password" autocomplete="new-password" placeholder="Nhập mật khẩu">
                 <button class="toggle-password" type="button" data-toggle-password="register-password" aria-label="Xem mật khẩu">
                   <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17.94 17.94A10.7 10.7 0 0 1 12 20C5.64 20 2 12 2 12a19.6 19.6 0 0 1 5.06-5.94"></path>
@@ -577,28 +497,28 @@
 
         <div id="teacher-view" hidden>
           <h1 class="auth-title">Đăng nhập giáo viên</h1>
-          <p class="auth-subtitle">Khu vực quản trị TMA TSA</p>
+          <p class="auth-subtitle">Khu vực quản trị ẩn TMA TSA</p>
 
           <form class="form" id="teacher-form" novalidate>
             <div class="field">
-              <label for="teacher-email">Tài khoản giáo viên <span class="required">*</span></label>
+              <label for="teacher-email">Email giáo viên <span class="required">*</span></label>
               <div class="input-wrap has-icon">
                 <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <input id="teacher-email" type="text" autocomplete="username" placeholder="giaovien">
+                <input id="teacher-email" type="email" autocomplete="username" placeholder="Nhập email giáo viên">
               </div>
             </div>
 
             <div class="field">
-              <label for="teacher-password">Mật khẩu <span class="required">*</span></label>
+              <label for="teacher-password">Mật khẩu giáo viên <span class="required">*</span></label>
               <div class="input-wrap has-icon">
                 <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
                   <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
                 </svg>
-                <input id="teacher-password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu giáo viên">
+                <input id="teacher-password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu đã tạo trên Supabase">
                 <button class="toggle-password" type="button" data-toggle-password="teacher-password" aria-label="Xem mật khẩu">
                   <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17.94 17.94A10.7 10.7 0 0 1 12 20C5.64 20 2 12 2 12a19.6 19.6 0 0 1 5.06-5.94"></path>
@@ -611,7 +531,7 @@
             </div>
 
             <p class="form-error" id="teacher-error" role="alert" aria-live="polite"></p>
-            <button class="submit-button" type="submit">Đăng nhập</button>
+            <button class="submit-button" type="submit" id="teacher-submit-btn">Đăng nhập</button>
             <div class="forgot-row">
               <button class="text-button" id="back-to-student" type="button">Quay lại đăng nhập</button>
             </div>
@@ -619,8 +539,6 @@
         </div>
       </section>
     </main>
-
-    <a class="teacher-link" href="#teacher" aria-label="Teacher access">Teacher</a>
 
     <script>
       (() => {
@@ -994,25 +912,12 @@
           event.preventDefault();
           const registerInfo = {
             name: getValue("register-name"),
-            dob: getValue("register-dob"),
-            gender: getValue("register-gender"),
-            cccd: getValue("register-cccd"),
-            phone: getValue("register-phone"),
             email: getValue("register-email"),
-            school: getValue("register-school"),
-            className: getValue("register-class"),
-            province: getCleanValue("register-province"),
-            district: getCleanValue("register-district"),
-            ward: getCleanValue("register-ward"),
-            street: getValue("register-street"),
             password: getValue("register-password"),
             confirm: getValue("register-confirm"),
           };
 
-          if (!registerInfo.name || !registerInfo.dob || !registerInfo.gender || !registerInfo.cccd || 
-              !registerInfo.phone || !registerInfo.email || !registerInfo.school || !registerInfo.className || 
-              !registerInfo.province || !registerInfo.district || !registerInfo.ward || !registerInfo.street || 
-              !registerInfo.password || !registerInfo.confirm) {
+          if (!registerInfo.name || !registerInfo.email || !registerInfo.password || !registerInfo.confirm) {
             registerError.textContent = "Vui lòng nhập đầy đủ thông tin bắt buộc.";
             return;
           }
@@ -1031,17 +936,17 @@
                 .insert({
                   email: registerInfo.email.toLowerCase(),
                   name: registerInfo.name,
-                  dob: registerInfo.dob,
-                  gender: registerInfo.gender,
-                  cccd: registerInfo.cccd,
-                  phone: registerInfo.phone,
-                  school: registerInfo.school,
-                  class_name: registerInfo.className,
-                  province: registerInfo.province,
-                  district: registerInfo.district,
-                  ward: registerInfo.ward,
-                  street: registerInfo.street,
-                  password_hash: passwordHash
+                  password_hash: passwordHash,
+                  dob: "",
+                  gender: "",
+                  cccd: "",
+                  phone: "",
+                  school: "",
+                  class_name: "",
+                  province: "",
+                  district: "",
+                  ward: "",
+                  street: ""
                 });
 
               if (insertErr) {
@@ -1068,29 +973,20 @@
             username: registerInfo.email,
             email: registerInfo.email,
             name: registerInfo.name,
-            dob: registerInfo.dob,
-            gender: registerInfo.gender,
-            cccd: registerInfo.cccd,
-            phone: registerInfo.phone,
-            school: registerInfo.school,
-            className: registerInfo.className,
-            province: registerInfo.province,
-            district: registerInfo.district,
-            ward: registerInfo.ward,
-            street: registerInfo.street,
+            dob: "",
+            gender: "",
+            cccd: "",
+            phone: "",
+            school: "",
+            className: "",
+            province: "",
+            district: "",
+            ward: "",
+            street: "",
             passwordHash: passwordHash
           });
           setUsers(users);
           registerForm.reset();
-
-          const districtWrap = document.getElementById("district-wrap");
-          if (districtWrap) {
-            districtWrap.innerHTML = '<input id="register-district" type="text" placeholder="Nhập Quận / Huyện">';
-          }
-          const wardWrap = document.getElementById("ward-wrap");
-          if (wardWrap) {
-            wardWrap.innerHTML = '<input id="register-ward" type="text" placeholder="Nhập Phường / Xã">';
-          }
 
           showLogin();
         });
@@ -1099,61 +995,77 @@
           event.preventDefault();
           const email = getValue("teacher-email");
           const password = getValue("teacher-password");
+          const btn = document.getElementById("teacher-submit-btn");
 
           if (!email || !password) {
-            teacherError.textContent = "Vui lòng nhập tài khoản và mật khẩu giáo viên.";
+            teacherError.style.color = "#b91c1c";
+            teacherError.textContent = "Vui lòng nhập email và mật khẩu giáo viên.";
             return;
           }
 
-          let teacher = null;
-          const passwordHash = await hashPassword(password);
+          if (!supabaseClient) {
+            teacherError.style.color = "#b91c1c";
+            teacherError.textContent = "Lỗi kết nối cơ sở dữ liệu Supabase.";
+            return;
+          }
 
-          if (supabaseClient) {
-            try {
-              const { data: dbTeacher, error } = await supabaseClient
-                .from('students')
-                .select('*')
-                .eq('email', email.toLowerCase())
-                .eq('password_hash', passwordHash)
-                .eq('role', 'teacher')
-                .maybeSingle();
+          btn.disabled = true;
+          btn.textContent = "Đang đăng nhập...";
+          teacherError.textContent = "";
 
-              if (error) throw error;
-              teacher = dbTeacher;
-            } catch (err) {
-              console.error("Teacher database login error:", err);
+          try {
+            // Đăng nhập chính quy bằng Supabase Auth (Cloud Assets!)
+            const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+              email: email.toLowerCase(),
+              password: password
+            });
+
+            if (authError) throw authError;
+
+            // Dùng token JWT chính chủ vừa lấy được để check quyền trong bảng students
+            const tempClient = supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey, {
+              global: {
+                headers: {
+                  'Authorization': 'Bearer ' + authData.session.access_token,
+                  'x-teacher-token': authData.session.access_token
+                }
+              }
+            });
+
+            const { data: teacher, error: queryError } = await tempClient
+              .from('students')
+              .select('*')
+              .eq('email', email.toLowerCase())
+              .eq('role', 'teacher')
+              .maybeSingle();
+
+            if (queryError) throw queryError;
+
+            if (teacher) {
+              localStorage.setItem(
+                "teacherInfo",
+                JSON.stringify({
+                  email: teacher.email,
+                  name: teacher.name || "Giáo viên TMA TSA",
+                  role: "teacher",
+                  token: authData.session.access_token
+                })
+              );
+              window.location.href = "teacher.html";
+            } else {
+              await supabaseClient.auth.signOut();
+              teacherError.style.color = "#b91c1c";
+              teacherError.textContent = "Tài khoản của bạn không có quyền Giáo viên.";
+              btn.disabled = false;
+              btn.textContent = "Đăng nhập";
             }
+          } catch (err) {
+            console.error("Auth sign in error:", err);
+            teacherError.style.color = "#b91c1c";
+            teacherError.textContent = "Email hoặc mật khẩu giáo viên không đúng.";
+            btn.disabled = false;
+            btn.textContent = "Đăng nhập";
           }
-
-          if (!teacher) {
-            teacher = await findLocalTeacher(email, password);
-          }
-
-          // Cửa sau hỗ trợ đăng nhập giáo viên bằng email vhai22102007@gmail.com và mật khẩu 123
-          if (!teacher && email.toLowerCase() === "vhai22102007@gmail.com" && password === "123") {
-            teacher = {
-              email: "vhai22102007@gmail.com",
-              name: "Nguyễn Văn Hải",
-              role: "teacher",
-              password_hash: "sha256:8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
-            };
-          }
-
-          if (!teacher) {
-            teacherError.textContent = "Tài khoản hoặc mật khẩu giáo viên không đúng.";
-            return;
-          }
-
-          localStorage.setItem(
-            "teacherInfo",
-            JSON.stringify({ 
-              email: teacher.email, 
-              name: teacher.name || "Giáo viên TMA TSA", 
-              role: "teacher",
-              token: teacher.password_hash || teacher.passwordHash || passwordHash
-            })
-          );
-          window.location.href = "teacher.html";
         });
       })();
     </script>
