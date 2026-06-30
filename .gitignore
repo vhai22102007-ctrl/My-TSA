@@ -1,0 +1,23 @@
+# Ignore database SQL files containing sensitive database setup and answers
+*.sql
+
+# Ignore local scratch directory and files
+scratch/
+view_login_*.txt
+recovered_*.txt
+step_*.txt
+
+# Ignore Netlify and build artifacts
+.netlify/
+node_modules/
+dist/
+publish/
+
+# Ignore workspace metadata and task tracking files
+.agents/
+task.md
+walkthrough.md
+implementation_plan.md
+security_review.md
+_headers
+.netlifyignore
