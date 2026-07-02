@@ -25,7 +25,10 @@
       };
 
       [closeResultBtn, resultBackdrop].forEach(el => {
-        if (el) el.addEventListener("click", () => { if (resultModal) resultModal.hidden = true; });
+        if (el) el.addEventListener("click", () => {
+          if (resultModal) resultModal.hidden = true;
+          exitFullscreenIfActive();
+        });
       });
 
       if (certModal && closeCertBtn && certBackdrop) {
@@ -57,6 +60,15 @@
           document.webkitFullscreenElement ||
           document.msFullscreenElement
         );
+      }
+
+      function exitFullscreenIfActive() {
+        if (isRootFullscreen()) {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+          if (exit) {
+            try { Promise.resolve(exit.call(document)).catch(() => {}); } catch (error) {}
+          }
+        }
       }
 
       function requestRootFullscreen() {
@@ -138,11 +150,11 @@
             "position:fixed","inset:0","z-index:2147483601",
             "background:#fff",
             "display:flex","align-items:center","justify-content:center",
-            "opacity:1","transition:opacity 0.45s ease, filter 0.45s ease","font-family:'Times New Roman',serif"
+            "opacity:1","transition:opacity 0.45s ease","font-family:'Times New Roman',serif"
           ].join(";");
           loadingOverlay.innerHTML = `
             <style>
-              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95);filter:blur(5px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
               @keyframes esl-brandDrawLine{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
               @keyframes esl-brandFillLogo{0%,35%{fill:transparent}45%,85%{fill:#000}100%{fill:transparent}}
               @keyframes esl-brandLoadingBar{0%{transform:scaleX(0);transform-origin:left}49%{transform:scaleX(1);transform-origin:left}50%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
@@ -238,13 +250,6 @@
         sessionStorage.removeItem("tsaShouldFullscreen");
         sessionStorage.removeItem("tsaFullscreenStarted");
 
-        // Thoát toàn màn hình nếu đang bật — sau khi nộp bài không cần full màn nữa.
-        if (isRootFullscreen()) {
-          const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-          if (exit) {
-            try { Promise.resolve(exit.call(document)).catch(() => {}); } catch (error) {}
-          }
-        }
       }
 
       function showParentSubmitLoadingOverlay() {
@@ -256,11 +261,11 @@
             "position:fixed","inset:0","z-index:2147483601",
             "background:#fff",
             "display:flex","align-items:center","justify-content:center",
-            "opacity:1","transition:opacity 0.45s ease, filter 0.45s ease","font-family:'Times New Roman',serif"
+            "opacity:1","transition:opacity 0.45s ease","font-family:'Times New Roman',serif"
           ].join(";");
           loadingOverlay.innerHTML = `
             <style>
-              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95);filter:blur(5px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
               @keyframes esl-brandDrawLine{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
               @keyframes esl-brandFillLogo{0%,35%{fill:transparent}45%,85%{fill:#000}100%{fill:transparent}}
               @keyframes esl-brandLoadingBar{0%{transform:scaleX(0);transform-origin:left}49%{transform:scaleX(1);transform-origin:left}50%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
@@ -317,6 +322,8 @@
                 showExamResultModal(finishedExamCode, finishedExamTitle);
               }, 350);
             }
+          } else if (event.data.type === "tsa-exam-submitting") {
+            showParentSubmitLoadingOverlay();
           } else if (event.data.type === "tsa-exam-submitted-loading") {
             const finishedExamCode = event.data.examCode;
             const finishedExamTitle = event.data.examTitle;
@@ -327,6 +334,14 @@
             // Nạp bảng điểm ngay lập tức (bên dưới lớp phủ loading) để không bị trễ
             if (finishedExamCode && typeof showExamResultModal === "function") {
               showExamResultModal(finishedExamCode, finishedExamTitle);
+            }
+
+            // Thêm mã đề vào danh sách đã làm và tải lại các giao diện danh sách đề thi
+            if (finishedExamCode && typeof completedExams !== "undefined") {
+              completedExams.add(finishedExamCode);
+              if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
+              if (typeof updateExamRoomUI === "function") updateExamRoomUI();
+              if (typeof renderExams === "function") renderExams();
             }
 
             // Ẩn lớp phủ loading mượt mà sau 1.2 giây
@@ -389,6 +404,45 @@
         window.location.href = "login.html";
         return;
       }
+
+      const completedExams = new Set();
+
+      async function loadCompletedExams() {
+        // Tải lịch sử thi cục bộ từ localStorage trước
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("tma_tsa_last_local_result_")) {
+            const examCode = key.substring("tma_tsa_last_local_result_".length);
+            completedExams.add(examCode);
+          }
+        }
+
+        // Tải thêm từ Supabase
+        if (supabaseClient && studentEmail) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('exam_results')
+              .select('exam_code')
+              .eq('user_email', studentEmail);
+            if (!error && data) {
+              data.forEach(item => {
+                if (item.exam_code) {
+                  completedExams.add(item.exam_code);
+                }
+              });
+            }
+          } catch (err) {
+            console.error("Lỗi tải danh sách đề đã làm:", err);
+          }
+        }
+      }
+
+      // Khởi chạy tải lịch sử bài làm
+      loadCompletedExams().then(() => {
+        if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
+        if (typeof updateExamRoomUI === "function") updateExamRoomUI();
+        if (typeof renderExams === "function") renderExams();
+      });
 
       const VIETNAM_PROVINCES = [
         "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
@@ -2671,18 +2725,23 @@
             const card = document.createElement("div");
             card.className = "exam-card";
 
+            const hasCompleted = completedExams.has(examCodeToCheck);
+            const xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span></span>`;
+
             let actionBtnHtml = "";
             if (isUploaded) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
                 </footer>
               `;
@@ -2760,14 +2819,14 @@
           const card = document.createElement("div");
           card.className = "exam-card";
 
-          let actionBtnHtml = "";
-          let redirectUrl = "waiting.html";
-          if (category === "HSA") redirectUrl = `exam-reading.html?exam=${examCodeToCheck}`;
-          else if (category === "THPT" || category === "VACT" || category === "QDA") redirectUrl = `exam-science.html?exam=${examCodeToCheck}`;
+          const hasCompleted = completedExams.has(examCodeToCheck);
+          const xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span></span>`;
 
           actionBtnHtml = `
             <footer class="exam-card-footer">
-              <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+              ${xemKetQuaHtml}
               <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
             </footer>
           `;
@@ -2854,18 +2913,23 @@
             const card = document.createElement("div");
             card.className = "exam-card";
 
+            const hasCompleted = completedExams.has(examCode);
+            const xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span></span>`;
+
             let actionBtnHtml = "";
             if (isOpen) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
                 </footer>
               `;
@@ -2933,17 +2997,22 @@
           let redirectUrl = "waiting.html?exam=" + exam.exam_code;
           let actionBtnHtml = "";
           
+          const hasCompleted = completedExams.has(exam.exam_code);
+          const xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span></span>`;
+
           if (isOpen) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                ${xemKetQuaHtml}
                 <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
               </footer>
             `;
           } else {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                ${xemKetQuaHtml}
                 <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
               </footer>
             `;
@@ -3967,7 +4036,11 @@
 
         // Nút quay lại
         const backLink = document.getElementById("result-back-to-history");
-        if (backLink) backLink.onclick = (e) => { e.preventDefault(); modal.hidden = true; };
+        if (backLink) backLink.onclick = (e) => {
+          e.preventDefault();
+          modal.hidden = true;
+          exitFullscreenIfActive();
+        };
 
         // Nút làm lại
         const redoBtn = document.getElementById("result-redo-exam-btn");

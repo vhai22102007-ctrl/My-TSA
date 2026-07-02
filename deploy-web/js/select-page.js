@@ -25,7 +25,10 @@
       };
 
       [closeResultBtn, resultBackdrop].forEach(el => {
-        if (el) el.addEventListener("click", () => { if (resultModal) resultModal.hidden = true; });
+        if (el) el.addEventListener("click", () => {
+          if (resultModal) resultModal.hidden = true;
+          exitFullscreenIfActive();
+        });
       });
 
       if (certModal && closeCertBtn && certBackdrop) {
@@ -57,6 +60,15 @@
           document.webkitFullscreenElement ||
           document.msFullscreenElement
         );
+      }
+
+      function exitFullscreenIfActive() {
+        if (isRootFullscreen()) {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+          if (exit) {
+            try { Promise.resolve(exit.call(document)).catch(() => {}); } catch (error) {}
+          }
+        }
       }
 
       function requestRootFullscreen() {
@@ -138,11 +150,11 @@
             "position:fixed","inset:0","z-index:2147483601",
             "background:#fff",
             "display:flex","align-items:center","justify-content:center",
-            "opacity:1","transition:opacity 0.45s ease, filter 0.45s ease","font-family:'Times New Roman',serif"
+            "opacity:1","transition:opacity 0.45s ease","font-family:'Times New Roman',serif"
           ].join(";");
           loadingOverlay.innerHTML = `
             <style>
-              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95);filter:blur(5px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
               @keyframes esl-brandDrawLine{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
               @keyframes esl-brandFillLogo{0%,35%{fill:transparent}45%,85%{fill:#000}100%{fill:transparent}}
               @keyframes esl-brandLoadingBar{0%{transform:scaleX(0);transform-origin:left}49%{transform:scaleX(1);transform-origin:left}50%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
@@ -238,13 +250,6 @@
         sessionStorage.removeItem("tsaShouldFullscreen");
         sessionStorage.removeItem("tsaFullscreenStarted");
 
-        // Thoát toàn màn hình nếu đang bật — sau khi nộp bài không cần full màn nữa.
-        if (isRootFullscreen()) {
-          const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-          if (exit) {
-            try { Promise.resolve(exit.call(document)).catch(() => {}); } catch (error) {}
-          }
-        }
       }
 
       function showParentSubmitLoadingOverlay() {
@@ -256,11 +261,11 @@
             "position:fixed","inset:0","z-index:2147483601",
             "background:#fff",
             "display:flex","align-items:center","justify-content:center",
-            "opacity:1","transition:opacity 0.45s ease, filter 0.45s ease","font-family:'Times New Roman',serif"
+            "opacity:1","transition:opacity 0.45s ease","font-family:'Times New Roman',serif"
           ].join(";");
           loadingOverlay.innerHTML = `
             <style>
-              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95);filter:blur(5px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
               @keyframes esl-brandDrawLine{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
               @keyframes esl-brandFillLogo{0%,35%{fill:transparent}45%,85%{fill:#000}100%{fill:transparent}}
               @keyframes esl-brandLoadingBar{0%{transform:scaleX(0);transform-origin:left}49%{transform:scaleX(1);transform-origin:left}50%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
@@ -317,6 +322,8 @@
                 showExamResultModal(finishedExamCode, finishedExamTitle);
               }, 350);
             }
+          } else if (event.data.type === "tsa-exam-submitting") {
+            showParentSubmitLoadingOverlay();
           } else if (event.data.type === "tsa-exam-submitted-loading") {
             const finishedExamCode = event.data.examCode;
             const finishedExamTitle = event.data.examTitle;
@@ -3967,7 +3974,11 @@
 
         // Nút quay lại
         const backLink = document.getElementById("result-back-to-history");
-        if (backLink) backLink.onclick = (e) => { e.preventDefault(); modal.hidden = true; };
+        if (backLink) backLink.onclick = (e) => {
+          e.preventDefault();
+          modal.hidden = true;
+          exitFullscreenIfActive();
+        };
 
         // Nút làm lại
         const redoBtn = document.getElementById("result-redo-exam-btn");

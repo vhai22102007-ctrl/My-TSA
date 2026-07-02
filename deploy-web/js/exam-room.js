@@ -1285,6 +1285,16 @@
         window.location.href = `waiting.html?exam=${examCode}`;
         return;
       } else if (subject === "science") {
+        // Hiển thị hiệu ứng loading trên trang cha ngay lập tức khi hoàn thành kíp thi (nộp Science) để ẩn độ trễ kết nối Supabase
+        const inIframe = window.parent && window.parent !== window;
+        if (inIframe) {
+          try {
+            window.parent.postMessage({ type: "tsa-exam-submitting" }, "*");
+          } catch (error) {
+            console.warn("Lỗi gửi postMessage:", error);
+          }
+        }
+
         let totalCorrect = 0;
         let totalQuestionsCount = 0;
         let totalPoints = 0;
@@ -1401,6 +1411,16 @@
         return;
       }
     } else {
+      // Hiển thị hiệu ứng loading trên trang cha ngay lập tức khi nộp đề đơn lẻ để ẩn độ trễ kết nối Supabase
+      const inIframe = window.parent && window.parent !== window;
+      if (inIframe) {
+        try {
+          window.parent.postMessage({ type: "tsa-exam-submitting" }, "*");
+        } catch (error) {
+          console.warn("Lỗi gửi postMessage:", error);
+        }
+      }
+
       let correctCount = 0;
       let totalPoints = 0;
       let scoredPoints = 0;
