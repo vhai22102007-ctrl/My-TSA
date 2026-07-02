@@ -186,12 +186,14 @@
 
         const frame = document.getElementById("exam-fullscreen-frame");
 
-        // Khi iframe load xong: ẩn overlay, hiện iframe (tối thiểu 2 giây)
+        // Khi iframe load xong: ẩn overlay, hiện iframe (tối thiểu 2 giây, nếu xem đáp án thì 200ms cho mượt)
         const overlayShowStart = Date.now();
         function onFrameReady() {
           frame.removeEventListener("load", onFrameReady);
           const elapsed = Date.now() - overlayShowStart;
-          const remaining = Math.max(0, 2000 - elapsed);
+          const isSolution = redirectUrl.includes("mode=solution") || redirectUrl.includes("view_solution");
+          const minDelay = isSolution ? 200 : 2000;
+          const remaining = Math.max(0, minDelay - elapsed);
           setTimeout(() => {
             shell.style.transition = "opacity 0.25s ease";
             shell.style.opacity = "1";
@@ -223,7 +225,13 @@
         if (loadingOverlay) loadingOverlay.remove();
 
         const shell = document.getElementById("exam-fullscreen-shell");
-        if (shell) shell.remove();
+        if (shell) {
+          shell.style.transition = "opacity 0.25s ease";
+          shell.style.opacity = "0";
+          setTimeout(() => {
+            shell.remove();
+          }, 250);
+        }
 
         document.body.style.overflow = "";
 
@@ -239,9 +247,93 @@
         }
       }
 
+      function showParentSubmitLoadingOverlay() {
+        let loadingOverlay = document.getElementById("exam-submit-loading-overlay");
+        if (!loadingOverlay) {
+          loadingOverlay = document.createElement("div");
+          loadingOverlay.id = "exam-submit-loading-overlay";
+          loadingOverlay.style.cssText = [
+            "position:fixed","inset:0","z-index:2147483601",
+            "background:#fff",
+            "display:flex","align-items:center","justify-content:center",
+            "opacity:1","transition:opacity 0.45s ease, filter 0.45s ease","font-family:'Times New Roman',serif"
+          ].join(";");
+          loadingOverlay.innerHTML = `
+            <style>
+              @keyframes esl-brandFadeIn{from{opacity:0;transform:scale(.95);filter:blur(5px)}to{opacity:1;transform:scale(1);filter:blur(0)}}
+              @keyframes esl-brandDrawLine{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+              @keyframes esl-brandFillLogo{0%,35%{fill:transparent}45%,85%{fill:#000}100%{fill:transparent}}
+              @keyframes esl-brandLoadingBar{0%{transform:scaleX(0);transform-origin:left}49%{transform:scaleX(1);transform-origin:left}50%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+              .esl-brand-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;animation:esl-brandFadeIn .8s ease-out forwards}
+              .esl-logo-svg{width:160px;height:160px;margin-bottom:28px;overflow:visible;filter:drop-shadow(0 8px 6px rgba(0,0,0,.12))}
+              .esl-logo-path{fill:transparent;stroke:#000;stroke-width:3;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:200;stroke-dashoffset:200;animation:esl-brandDrawLine 2.5s cubic-bezier(.4,0,.2,1) infinite alternate, esl-brandFillLogo 5s ease-in-out infinite}
+              .esl-face-top{animation-delay:0s,0s}
+              .esl-face-left{animation-delay:.2s,.2s}
+              .esl-face-right{animation-delay:.4s,.4s}
+              .esl-brand-title{margin:0 0 20px;font-family:'Times New Roman',serif;font-size:24px;font-weight:900;letter-spacing:6px;color:#000;text-transform:uppercase;text-align:center}
+              .esl-bar-wrap{position:relative;width:160px;height:2px;background:#e0e0e0;overflow:hidden}
+              .esl-bar-fill{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;transform-origin:left;animation:esl-brandLoadingBar 2s cubic-bezier(.65,0,.35,1) infinite}
+            </style>
+            <div class="esl-brand-loader">
+              <svg class="esl-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="esl-logo-path esl-face-top"  d="M 50 15 L 85 35 L 50 55 L 15 35 Z"/>
+                <path class="esl-logo-path esl-face-left" d="M 15 35 L 50 55 L 50 90 L 15 70 Z"/>
+                <path class="esl-logo-path esl-face-right" d="M 50 55 L 85 35 L 85 70 L 50 90 Z"/>
+              </svg>
+              <div class="esl-brand-title">TMA Study</div>
+              <div class="esl-bar-wrap"><div class="esl-bar-fill"></div></div>
+            </div>
+          `;
+          document.body.appendChild(loadingOverlay);
+        } else {
+          loadingOverlay.style.opacity = "1";
+          loadingOverlay.style.filter = "blur(0)";
+          loadingOverlay.style.pointerEvents = "auto";
+          loadingOverlay.style.display = "flex";
+        }
+      }
+
+      function hideParentSubmitLoadingOverlay() {
+        const loadingOverlay = document.getElementById("exam-submit-loading-overlay");
+        if (loadingOverlay) {
+          loadingOverlay.style.transition = "opacity 0.4s ease, filter 0.4s ease";
+          loadingOverlay.style.opacity = "0";
+          loadingOverlay.style.filter = "blur(8px)";
+          setTimeout(() => {
+            loadingOverlay.style.display = "none";
+          }, 420);
+        }
+      }
+
       window.addEventListener("message", (event) => {
-        if (event && event.data && event.data.type === "tsa-exam-finished") {
-          closeExamShell();
+        if (event && event.data) {
+          if (event.data.type === "tsa-exam-finished") {
+            const finishedExamCode = event.data.examCode;
+            const finishedExamTitle = event.data.examTitle;
+            closeExamShell();
+            
+            if (finishedExamCode && typeof showExamResultModal === "function") {
+              setTimeout(() => {
+                showExamResultModal(finishedExamCode, finishedExamTitle);
+              }, 350);
+            }
+          } else if (event.data.type === "tsa-exam-submitted-loading") {
+            const finishedExamCode = event.data.examCode;
+            const finishedExamTitle = event.data.examTitle;
+            
+            showParentSubmitLoadingOverlay();
+            closeExamShell();
+
+            // Nạp bảng điểm ngay lập tức (bên dưới lớp phủ loading) để không bị trễ
+            if (finishedExamCode && typeof showExamResultModal === "function") {
+              showExamResultModal(finishedExamCode, finishedExamTitle);
+            }
+
+            // Ẩn lớp phủ loading mượt mà sau 1.2 giây
+            setTimeout(() => {
+              hideParentSubmitLoadingOverlay();
+            }, 1200);
+          }
         }
       });
 
@@ -265,67 +357,6 @@
               launchExamShell(redirectUrl);
             });
       };
-
-      // ─── FULL CALENDAR ENGINE ──────────────────────────────────────────
-      const CAL_START_HOUR = 7;  // trục giờ: 7:00 → 23:00
-      const CAL_END_HOUR   = 23;
-      const PX_PER_HOUR    = 80; // pixels mỗi giờ
-      const DAY_NAMES_VN   = ['Chủ Nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
-      const MONTHS_VN      = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
-                               'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
-
-      // Sự kiện học (dayOfWeek: 0=CN,1=T2,...,6=T7; startH/startM; endH/endM)
-      const CAL_EVENTS = [
-        { id:1, title:'Toán tư duy nâng cao', type:'Toán học', teacher:'Thầy Phạm Hùng',
-          room:'Zoom ID: 888 999 666', dayOfWeek:1, startH:19, startM:30, endH:21, endM:30,
-          color:'rgba(255, 237, 213, 0.85)', accent:'#ea580c', textColor:'#7c2d12' },
-        { id:2, title:'Đọc hiểu ngữ văn TSA', type:'Ngữ Văn', teacher:'Cô Linh Trang',
-          room:'Zoom ID: 888 999 666', dayOfWeek:4, startH:19, startM:30, endH:21, endM:30,
-          color:'rgba(255, 228, 230, 0.85)', accent:'#e11d48', textColor:'#4c0519' },
-        { id:3, title:'Luyện đề TSA tổng hợp', type:'Luyện thi', teacher:'Thầy Nguyễn Tuấn',
-          room:'Zoom ID: 777 888 999', dayOfWeek:6, startH:8, startM:0, endH:10, endM:30,
-          color:'rgba(254, 226, 226, 0.85)', accent:'#dc2626', textColor:'#7f1d1d' },
-      ];
-
-      let calActiveEvent = null;
-
-      window.openTimetableModal = function(id) {
-        const ev = CAL_EVENTS.find(e => e.id === id);
-        if (!ev) return;
-        const daysName = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-        const dateStr = daysName[ev.dayOfWeek] + ' hàng tuần';
-        openCalModal(ev, dateStr);
-      };
-
-      function openCalModal(ev, dateStr) {
-        calActiveEvent = ev;
-        document.getElementById('cal-modal-title').textContent   = ev.title;
-        document.getElementById('cal-modal-type').textContent    = ev.type;
-        document.getElementById('cal-modal-time').textContent    =
-          ev.startH.toString().padStart(2,'0')+':'+ev.startM.toString().padStart(2,'0')+' – '+
-          ev.endH.toString().padStart(2,'0')+':'+ev.endM.toString().padStart(2,'0');
-        document.getElementById('cal-modal-teacher').textContent = ev.teacher;
-        document.getElementById('cal-modal-room').textContent    = ev.room;
-        document.getElementById('cal-modal-date').textContent    = dateStr;
-        const calModalBanner = document.getElementById('cal-modal-banner');
-        if (calModalBanner) calModalBanner.style.background = `linear-gradient(90deg, ${ev.accent}, ${ev.color})`;
-        const modal = document.getElementById('cal-event-modal');
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      }
-      window.closeCalModal = function() {
-        document.getElementById('cal-event-modal').style.display = 'none';
-        document.body.style.overflow = '';
-      };
-      window.joinCalClass = function() {
-        if (calActiveEvent) {
-          const zoomId = calActiveEvent.room.replace(/[^0-9 ]/g,'').trim();
-          alert('Đang kết nối phòng học...\n' + calActiveEvent.room + '\nMở Zoom và nhập ID: ' + zoomId);
-        }
-      };
-
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCalModal(); });
-
 
       let studentInfo = null;
       try {
@@ -3684,20 +3715,10 @@
         container.innerHTML = `
           <div style="text-align: center; padding: 40px; color: #64748b;">
             <span class="spinner" style="display:inline-block;width:18px;height:18px;border:2px solid #dc2626;border-radius:50%;border-top-color:transparent;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;"></span>
-            Đang tải lịch sử từ máy chủ...
+            Đang tải lịch sử bài làm...
           </div>
         `;
 
-        if (!supabaseClient) {
-          container.innerHTML = `
-            <div style="text-align: center; padding: 30px; color: #ef4444; font-weight: 600; border: 1px solid var(--border); border-radius: 10px; background: #ffffff;">
-              Không có kết nối với Supabase (Offline)
-            </div>
-          `;
-          return;
-        }
-
-        // Get student info
         let studentCode = studentInfo?.email || "test";
         try {
           const cached = JSON.parse(localStorage.getItem("studentInfo"));
@@ -3706,26 +3727,50 @@
           }
         } catch (e) {}
 
-        try {
-          const { data, error } = await supabaseClient
-            .from('exam_results')
-            .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
-            .eq('user_email', studentCode)
-            .order('created_at', { ascending: false })
-            .limit(50);
-
-          if (error) throw error;
-
-          window.EXAM_HISTORY_DATA = data || [];
-          renderHistoryGroups(window.EXAM_HISTORY_DATA);
-        } catch (err) {
-          console.error("Lỗi khi tải lịch sử:", err);
-          container.innerHTML = `
-            <div style="text-align: center; padding: 30px; color: #ef4444; border: 1px solid var(--border); border-radius: 10px; background: #ffffff;">
-              Gặp lỗi khi tải lịch sử từ máy chủ: ${err.message || err}
-            </div>
-          `;
+        let data = [];
+        if (supabaseClient) {
+          try {
+            const { data: dbData, error } = await supabaseClient
+              .from('exam_results')
+              .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
+              .eq('user_email', studentCode)
+              .order('created_at', { ascending: false })
+              .limit(50);
+            if (!error && dbData) {
+              data = dbData;
+            }
+          } catch (err) {
+            console.error("Lỗi khi tải lịch sử từ Supabase:", err);
+          }
         }
+
+        // Tải lịch sử thi cục bộ từ localStorage
+        let localAttempts = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("tma_tsa_last_local_result_")) {
+            try {
+              const item = JSON.parse(localStorage.getItem(key));
+              if (item && item.exam_code) {
+                localAttempts.push(item);
+              }
+            } catch (e) {}
+          }
+        }
+
+        // Hợp nhất dữ liệu
+        let combined = data || [];
+        localAttempts.forEach(localAtt => {
+          if (!combined.some(c => String(c.id) === String(localAtt.id))) {
+            combined.push(localAtt);
+          }
+        });
+
+        // Sắp xếp theo thứ tự mới nhất đứng trước
+        combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        window.EXAM_HISTORY_DATA = combined;
+        renderHistoryGroups(window.EXAM_HISTORY_DATA);
       }
 
       // EXAM RESULT MODAL HANDLERS
@@ -3758,13 +3803,23 @@
           try {
             const { data, error } = await supabaseClient
               .from('exam_results')
-              .select('*')
+              .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
               .eq('user_email', studentCode)
               .eq('exam_code', examCode)
               .order('created_at', { ascending: true }); // chronological order
             if (!error && data) {
               attempts = data;
             }
+
+            // Merge with local result if exists
+            try {
+              const localRes = JSON.parse(localStorage.getItem("tma_tsa_last_local_result_" + examCode));
+              if (localRes) {
+                if (!attempts.some(a => a.id === localRes.id)) {
+                  attempts.push(localRes);
+                }
+              }
+            } catch (e) {}
           } catch (err) {
             console.error("Lỗi khi tải lịch sử bài thi:", err);
           }
@@ -3967,10 +4022,23 @@
         }
         
         modal.hidden = false;
+        modal.style.opacity = "0";
+        modal.style.transition = "opacity 0.25s ease";
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            modal.style.opacity = "1";
+          });
+        });
       };
       
       function closeResultModalFunc() {
-        if (resultModal) resultModal.hidden = true;
+        if (resultModal) {
+          resultModal.style.transition = "opacity 0.2s ease";
+          resultModal.style.opacity = "0";
+          setTimeout(() => {
+            resultModal.hidden = true;
+          }, 200);
+        }
       }
       
       document.addEventListener("keydown", e => {

@@ -83,7 +83,8 @@
       border-right: 1px solid var(--border);
       z-index: 20;
       box-shadow: 2px 0 10px rgba(15, 23, 42, 0.01);
-      transition: width 0.22s ease;
+      transition: width 0.15s ease;
+      will-change: width;
       display: flex;
       flex-direction: column;
     }
@@ -124,7 +125,7 @@
       color: #374151;
       font-size: 13px;
       font-weight: 500;
-      transition: all 0.15s ease;
+      transition: background 0.12s ease, color 0.12s ease;
       cursor: pointer;
     }
 
@@ -186,7 +187,8 @@
       border-bottom: 1px solid var(--border);
       box-shadow: none;
       z-index: 15;
-      transition: padding-left 0.22s ease;
+      transition: padding-left 0.15s ease;
+      will-change: padding-left;
     }
 
     .sidebar-toggle {
@@ -382,7 +384,8 @@
       height: 100vh;
       margin-left: var(--sidebar-width);
       padding: calc(var(--topbar-height) + 24px) 28px 0;
-      transition: margin-left 0.22s ease;
+      transition: margin-left 0.15s ease;
+      will-change: margin-left;
       z-index: 1;
       display: flex;
       flex-direction: column;
@@ -1382,7 +1385,7 @@
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      animation: spin-slow 150s linear infinite;
+      /* animation: spin-slow 150s linear infinite; */
       transform-origin: center center;
       filter: invert(16%) sepia(85%) saturate(6978%) hue-rotate(349deg) brightness(89%) contrast(97%); /* Brand Red color */
     }
@@ -2690,8 +2693,6 @@
         text-decoration: none;
         color: inherit;
         display: block;
-        animation: courseRiseSel 680ms ease both;
-        animation-delay: var(--delay, 0ms);
         transition: transform 0.22s ease, box-shadow 0.22s ease;
       }
 
@@ -2861,7 +2862,7 @@
       color: #374151;
       font-size: 13px;
       font-weight: 500;
-      transition: all 0.15s ease;
+      transition: background 0.12s ease, color 0.12s ease;
       cursor: pointer;
     }
     

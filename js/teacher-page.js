@@ -2550,7 +2550,7 @@
             subject = "math";
           }
           var qNo = getActiveQuestionNo(subject) || 1;
-          var url = "exam-" + subject + ".html?exam=" + exam.exam_code + "&preview=true&q=" + qNo;
+          var url = "exam-" + subject + ".html?exam=" + exam.exam_code + "&preview=true&preview_qno=" + qNo;
           window.open(url, "_blank");
           return;
         }
@@ -2978,8 +2978,8 @@
                       course_id: examCopy.course_id || null,
                       course_id: clonedExam.course_id || null
                     });
-                    delete q.correct_answer;
-                    delete q.accepted_answers;
+                    // delete q.correct_answer;
+                    // delete q.accepted_answers;
                   }
                 });
               }
@@ -2998,8 +2998,8 @@
                           points: q.points || 1,
                           solution_details: q.explanation || ""
                         });
-                        delete q.correct_answer;
-                        delete q.accepted_answers;
+                        // delete q.correct_answer;
+                        // delete q.accepted_answers;
                       }
                     });
                   }
@@ -3114,8 +3114,8 @@
                       points: q.points || 1,
                       solution_details: q.explanation || ""
                     });
-                    delete q.correct_answer;
-                    delete q.accepted_answers;
+                    // delete q.correct_answer;
+                    // delete q.accepted_answers;
                   }
                 });
               }
@@ -3134,8 +3134,8 @@
                           points: q.points || 1,
                           solution_details: q.explanation || ""
                         });
-                        delete q.correct_answer;
-                        delete q.accepted_answers;
+                        // delete q.correct_answer;
+                        // delete q.accepted_answers;
                       }
                     });
                   }

@@ -909,9 +909,12 @@
         console.warn("Local storage blocked:", error);
       }
 
-      await showCustomAlert("Kíp thi đã được nộp thành công! Chúc mừng bạn đã hoàn tất kỳ thi thử.");
-
-      leaveLobby();
+      // Đăng xuất và điều hướng trực tiếp ra trang đăng nhập
+      if (window.top) {
+        window.top.location.href = "login.html";
+      } else {
+        window.location.href = "login.html";
+      }
     });
 
     function leaveLobby() {
@@ -919,7 +922,11 @@
         try { return window.self !== window.top; } catch (e) { return true; }
       })();
       if (inIframe) {
-        window.parent.postMessage({ type: "tsa-exam-finished" }, "*");
+        window.parent.postMessage({ 
+          type: "tsa-exam-finished",
+          examCode: examCode,
+          examTitle: session ? session.title : ""
+        }, "*");
       } else {
         window.location.href = "select.html";
       }
@@ -931,6 +938,25 @@
     });
 
     renderLobbyData();
+
+    // Tự động hoàn thành kíp thi nếu đã làm đủ tất cả các phần thi
+    (function() {
+      let completed = {};
+      try {
+        completed = JSON.parse(localStorage.getItem("tsaCompletedSubjects") || "{}") || {};
+      } catch (e) {
+        completed = {};
+      }
+      const totalSubjects = session && session.subjects ? Object.keys(session.subjects).length : 0;
+      const completedCount = Object.keys(completed).filter(k => completed[k]).length;
+      if (totalSubjects > 0 && completedCount === totalSubjects) {
+        console.log("Tất cả các môn đã hoàn thành. Tự động nộp kíp thi...");
+        try {
+          localStorage.removeItem("tsaCompletedSubjects");
+        } catch (e) {}
+        leaveLobby();
+      }
+    })();
 
     // Toast control functions
     window.closeToast = function() {

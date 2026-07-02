@@ -83,3 +83,8 @@ a {
 svg {
   display: block;
 }
+
+mjx-container[jax="SVG"] > svg {
+  display: inline !important;
+  max-width: none !important;
+}

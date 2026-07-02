@@ -17,6 +17,26 @@
       .replace(/javascript:\s*/gi, "");
   }
 
+  function typesetMath(elements) {
+    var mathJax = global.MathJax;
+    var targets = ensureArray(elements).filter(Boolean);
+    if (!mathJax || !targets.length) return;
+
+    if (typeof mathJax.typesetPromise === "function") {
+      mathJax.typesetPromise(targets).catch(function () {});
+      return;
+    }
+
+    if (mathJax.startup && mathJax.startup.promise) {
+      mathJax.startup.promise.then(function () {
+        if (typeof mathJax.typesetPromise === "function") {
+          return mathJax.typesetPromise(targets);
+        }
+        return null;
+      }).catch(function () {});
+    }
+  }
+
   function ensureArray(value) {
     return Array.isArray(value) ? value : [];
   }
@@ -617,8 +637,8 @@
       }
     }
 
-    if (options.typeset !== false && global.MathJax && typeof global.MathJax.typesetPromise === "function") {
-      global.MathJax.typesetPromise([bodyEl, answerEl].filter(Boolean)).catch(function () {});
+    if (options.typeset !== false) {
+      typesetMath([bodyEl, answerEl]);
     }
   }
 
@@ -653,8 +673,8 @@
       options.target.appendChild(box);
     }
 
-    if (options.typeset !== false && global.MathJax && typeof global.MathJax.typesetPromise === "function") {
-      global.MathJax.typesetPromise([box]).catch(function () {});
+    if (options.typeset !== false) {
+      typesetMath([box]);
     }
 
     return box;

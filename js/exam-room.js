@@ -223,6 +223,39 @@
     }
   }
 
+  function updateSubmitButtonState() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+
+    const submitBtn = $('[data-action="submit"]');
+    if (submitBtn) {
+      if (viewSolution || isSubmitted) {
+        submitBtn.textContent = "Thoát";
+        submitBtn.style.background = "#dc2626";
+        submitBtn.style.borderColor = "#dc2626";
+        submitBtn.style.color = "#ffffff";
+        // Remove existing submit exam listener and bind exit instead
+        submitBtn.replaceWith(submitBtn.cloneNode(true));
+        const newSubmitBtn = $('[data-action="submit"]');
+        newSubmitBtn.addEventListener("click", leaveExamRoom);
+      }
+    }
+
+    const openBtn = $("#open-submit-menu-btn");
+    if (openBtn) {
+      if (viewSolution || isSubmitted) {
+        openBtn.innerHTML = "<span>Thoát</span>";
+        openBtn.style.background = "#dc2626";
+        openBtn.style.borderColor = "#dc2626";
+        openBtn.style.color = "#ffffff";
+        // Remove existing open drawer listener and bind exit instead
+        openBtn.replaceWith(openBtn.cloneNode(true));
+        const newOpenBtn = $("#open-submit-menu-btn");
+        newOpenBtn.addEventListener("click", leaveExamRoom);
+      }
+    }
+  }
+
   function loadLocalState() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("preview") === "true") {
@@ -239,6 +272,7 @@
     } else {
       isSubmitted = localStorage.getItem(submittedKey) === "true";
     }
+    updateSubmitButtonState();
   }
 
   function saveLocalState() {
@@ -731,6 +765,8 @@
     const urlParams = new URLSearchParams(window.location.search);
     const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
 
+    banner.style.display = "none";
+
     banner.innerHTML = `
       <h3 style="margin:0 0 8px;font-weight:800;font-size:15px;color:#15803d;text-transform:none;">Kết quả làm bài</h3>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;">
@@ -1073,12 +1109,34 @@
   // phòng thi và thoát toàn màn hình — chứ KHÔNG tự điều hướng trong iframe (vì
   // làm vậy chỉ nạp lại select.html bên trong iframe, trang cha vẫn kẹt full màn).
   // Nếu mở trực tiếp file (không có trang cha), điều hướng về select.html.
+  function leaveExamRoomWithLoading() {
+    clearFullscreenRequirement();
+    const inIframe = window.parent && window.parent !== window;
+    if (inIframe) {
+      try {
+        window.parent.postMessage({ 
+          type: "tsa-exam-submitted-loading",
+          examCode: examCode,
+          examTitle: examData ? examData.title : ""
+        }, "*");
+        return;
+      } catch (error) {
+        // Fallback
+      }
+    }
+    window.location.href = "select.html";
+  }
+
   function leaveExamRoom() {
     clearFullscreenRequirement();
     const inIframe = window.parent && window.parent !== window;
     if (inIframe) {
       try {
-        window.parent.postMessage({ type: "tsa-exam-finished" }, "*");
+        window.parent.postMessage({ 
+          type: "tsa-exam-finished",
+          examCode: examCode,
+          examTitle: examData ? examData.title : ""
+        }, "*");
         return;
       } catch (error) {
         // Nếu vì lý do nào đó không gửi được message thì rơi xuống điều hướng.
@@ -1093,9 +1151,10 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
+    const isPreview = urlParams.get("preview") === "true";
     const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingleSubject;
 
-    if (isComposite) {
+    if (isComposite && !isPreview) {
       let completed = {};
       try {
         completed = JSON.parse(localStorage.getItem("tsaCompletedSubjects") || "{}") || {};
@@ -1247,36 +1306,46 @@
           scienceData = examData;
         }
 
+        let mathCorrect = 0, mathTotal = 0, mathPoints = 0, mathScore = 0;
+        let readingCorrect = 0, readingTotal = 0, readingPoints = 0, readingScore = 0;
+        let scienceCorrect = 0, scienceTotal = 0, sciencePoints = 0, scienceScore = 0;
+
         mathData.questions.forEach((q) => {
           const pts = Number(q.points == null ? 1 : q.points);
-          totalPoints += pts;
-          totalQuestionsCount++;
+          mathPoints += pts;
+          mathTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, mathAnswers[q.question_no])) {
-            totalCorrect++;
-            totalScoredPoints += pts;
+            mathCorrect++;
+            mathScore += pts;
           }
         });
 
         readingData.questions.forEach((q) => {
           const pts = Number(q.points == null ? 1 : q.points);
-          totalPoints += pts;
-          totalQuestionsCount++;
+          readingPoints += pts;
+          readingTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, readingAnswers[q.question_no])) {
-            totalCorrect++;
-            totalScoredPoints += pts;
+            readingCorrect++;
+            readingScore += pts;
           }
         });
 
         scienceData.questions.forEach((q) => {
           const pts = Number(q.points == null ? 1 : q.points);
-          totalPoints += pts;
-          totalQuestionsCount++;
+          sciencePoints += pts;
+          scienceTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, scienceAnswers[q.question_no])) {
-            totalCorrect++;
-            totalScoredPoints += pts;
+            scienceCorrect++;
+            scienceScore += pts;
           }
         });
 
+        totalCorrect = mathCorrect + readingCorrect + scienceCorrect;
+        totalQuestionsCount = mathTotal + readingTotal + scienceTotal;
+        totalPoints = mathPoints + readingPoints + sciencePoints;
+        totalScoredPoints = mathScore + readingScore + scienceScore;
+
+        let onlineSuccess = false;
         if (supabaseClient && urlParams.get("preview") !== "true") {
           try {
             const mathRes = await submitExamToServerForSubject("math", mathAnswers);
@@ -1284,24 +1353,46 @@
             const scienceRes = await submitExamToServer(scienceAnswers);
 
             if (mathRes.success && readingRes.success && scienceRes.success) {
-              const combinedCorrect = mathRes.correct_count + readingRes.correct_count + scienceRes.correct_count;
-              const combinedTotal = mathRes.total_questions + readingRes.total_questions + scienceRes.total_questions;
-              const combinedPoints = mathRes.total_points + readingRes.total_points + scienceRes.total_points;
-              const combinedScored = mathRes.score + readingRes.score + scienceRes.score;
+              // Save local result for instant modal display
+              const localResult = {
+                id: "local_" + Date.now(),
+                exam_code: examCode,
+                user_email: studentInfo.email || studentInfo.code || "local",
+                student_name: studentInfo.name || "Học sinh",
+                correct_count: totalCorrect,
+                total_questions: totalQuestionsCount,
+                score: totalScoredPoints,
+                created_at: new Date().toISOString()
+              };
+              localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
 
-              await showCustomAlert(`Nộp bài thành công!\nTổng điểm cả kíp thi (Toán, Đọc hiểu, Khoa học):\n- Số câu đúng: ${combinedCorrect}/${combinedTotal}\n- Điểm số: ${combinedScored.toFixed(1)}/${combinedPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+              onlineSuccess = true;
+              leaveExamRoomWithLoading();
+              return;
             } else {
               throw new Error("Không thể chấm điểm một trong các phần thi.");
             }
           } catch (err) {
             console.error("Lỗi nộp bài kíp thi:", err);
-            await showCustomAlert("Lỗi chấm điểm kíp thi: " + err.message);
-            isSubmitting = false;
-            isSubmitted = false;
-            return;
           }
-        } else {
-          await showCustomAlert(`Nộp bài thành công (Offline)!\nTổng điểm cả kíp thi (Toán, Đọc hiểu, Khoa học):\n- Số câu đúng: ${totalCorrect}/${totalQuestionsCount}\n- Điểm số: ${totalScoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+        }
+
+        if (!onlineSuccess) {
+          // Save local result for fallback
+          const localResult = {
+            id: "local_" + Date.now(),
+            exam_code: examCode,
+            user_email: studentInfo.email || studentInfo.code || "local",
+            student_name: studentInfo.name || "Học sinh",
+            correct_count: totalCorrect,
+            total_questions: totalQuestionsCount,
+            score: totalScoredPoints,
+            created_at: new Date().toISOString()
+          };
+          localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
+
+          leaveExamRoomWithLoading();
+          return;
         }
         try {
           localStorage.removeItem("tsaCompletedSubjects");
@@ -1323,16 +1414,36 @@
         }
       });
 
+      let onlineSuccess = false;
       if (supabaseClient && urlParams.get("preview") !== "true") {
-        const res = await submitExamToServer(answers);
-        if (res.success) {
-          await showCustomAlert(`Nộp bài thành công!\n- Số câu đúng: ${res.correct_count}/${res.total_questions}\n- Điểm số: ${res.score.toFixed(1)}/${res.total_points.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
-        } else {
-          await showCustomAlert("Lỗi nộp bài: " + res.message);
-          isSubmitting = false;
-          isSubmitted = false;
+        try {
+          const res = await submitExamToServer(answers);
+          if (res.success) {
+            // Save local result for instant modal display
+            const localResult = {
+              id: "local_" + Date.now(),
+              exam_code: examCode,
+              user_email: studentInfo.email || studentInfo.code || "local",
+              student_name: studentInfo.name || "Học sinh",
+              correct_count: res.correct_count,
+              total_questions: res.total_questions,
+              score: res.score,
+              created_at: new Date().toISOString()
+            };
+            localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
+
+            onlineSuccess = true;
+            leaveExamRoomWithLoading();
+            return;
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (err) {
+          console.error("Lỗi nộp bài online:", err);
         }
-      } else {
+      }
+      
+      if (!onlineSuccess) {
         // Fallback offline
         let correctCount = 0;
         let totalPoints = 0;
@@ -1345,7 +1456,22 @@
             scoredPoints += pts;
           }
         });
-        await showCustomAlert(`Nộp bài thành công (Offline)!\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
+
+        // Save local result
+        const localResult = {
+          id: "local_" + Date.now(),
+          exam_code: examCode,
+          user_email: studentInfo.email || studentInfo.code || "local",
+          student_name: studentInfo.name || "Học sinh",
+          correct_count: correctCount,
+          total_questions: examData.questions.length,
+          score: scoredPoints,
+          created_at: new Date().toISOString()
+        };
+        localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
+
+        leaveExamRoomWithLoading();
+        return;
       }
       leaveExamRoom();
     }
@@ -1379,10 +1505,7 @@
                 }
               });
             } else {
-              console.warn("Không thể lấy đáp án:", solRes?.message);
-              await showCustomAlert(solRes?.message || "Bạn chưa hoàn thành bài thi này.");
-              leaveExamRoom();
-              return;
+              console.warn("Không thể lấy đáp án từ RPC (sử dụng đáp án cục bộ):", solRes?.message);
             }
           } catch (err) {
             console.error("Lỗi khi tải đáp án từ Supabase:", err);
@@ -1524,7 +1647,20 @@
     const overlay = $("#submit-menu-overlay");
     const finalSubmit = $("#final-submit-btn");
 
-    if (openBtn) openBtn.addEventListener("click", openSubmitDrawer);
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
+
+    if (openBtn) {
+      if (viewSolution || isSubmitted) {
+        openBtn.innerHTML = "<span>Thoát</span>";
+        openBtn.style.background = "#dc2626";
+        openBtn.style.borderColor = "#dc2626";
+        openBtn.style.color = "#ffffff";
+        openBtn.addEventListener("click", leaveExamRoom);
+      } else {
+        openBtn.addEventListener("click", openSubmitDrawer);
+      }
+    }
     if (closeBtn) closeBtn.addEventListener("click", closeSubmitDrawer);
     if (overlay) overlay.addEventListener("click", closeSubmitDrawer);
     if (finalSubmit) finalSubmit.addEventListener("click", submitExam);
@@ -1626,10 +1762,11 @@
 
     const submitBtn = $('[data-action="submit"]');
     if (submitBtn) {
-      if (viewSolution) {
+      if (viewSolution || isSubmitted) {
         submitBtn.textContent = "Thoát";
-        submitBtn.style.background = "#64748b";
-        submitBtn.style.borderColor = "#64748b";
+        submitBtn.style.background = "#dc2626";
+        submitBtn.style.borderColor = "#dc2626";
+        submitBtn.style.color = "#ffffff";
         submitBtn.addEventListener("click", leaveExamRoom);
       } else {
         submitBtn.addEventListener("click", submitExam);

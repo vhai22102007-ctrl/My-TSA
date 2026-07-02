@@ -1,18 +1,16 @@
-- [x] Create attempt selector dropdown element next to title in `select.html`
-- [x] Create certificate image modal container, close button, and backdrop in `select.html`
-- [x] Configure keydown Escape and click triggers to close the certificate modal
-- [x] Update `showExamResultModal` to dynamically fetch attempts from database or local cache in chronological order
-- [x] Populate the attempts selector dropdown and update scores/breakdowns in real-time on change
-- [x] Bind certificate modal display triggers to "XEM CHỨNG CHỈ" button for completed attempts
-- [x] Validate JavaScript syntax on the modified `select.html` with Node.js
-- [x] Center and expand the full title 'Thời Khóa Biểu Cá Nhân' (no abbreviation/emojis/badges)
-- [x] Shrink grid cells (labels, empty cells, and cards) to a compact 85px height
-- [x] Retain card container vertical flex-stretch to fill bottom container space cleanly
-- [x] Replace empty course text alert box under "My courses" tab with core.png image
-- [x] Scale up core.png image width to 720px in select.html
-- [x] Remove the white background card container of the courses tab (set background: transparent)
-- [x] Remove the red gradient stripe line (.featured-rule-line) from CSS and HTML
-- [x] Convert timetable rows to a full 24-hour timeline (00:00 to 23:00) with compact cell heights
-- [x] Clean up and completely remove the obsolete Sáng/Chiều/Tối shift rows leftover remnants
-- [x] Update timetable container overflow to auto for vertical and horizontal scrolling
-- [x] Validate script compilation and update project walkthrough documentation
+- [x] Tối ưu đồ họa CSS (Hardware Acceleration) trong select-page.css và deploy-web/css/select-page.css
+- [x] Tối ưu hóa truy vấn dữ liệu Supabase (Query Columns Filter) trong select-page.js và deploy-web/js/select-page.js
+- [x] Ẩn phần Thông tin Giảng viên (Thầy Nghiêm Xuân Tân) trong index.html và select.html theo yêu cầu
+- [x] Khắc phục thông báo nộp bài kép (chỉ hiện đúng 1 thông báo hiển thị đầy đủ điểm thành phần và điểm tổng)
+- [x] Bảo toàn đáp án đúng trong tệp tin xuất đề thi để chấm điểm cục bộ hoạt động chính xác
+- [x] Tắt hiệu ứng xoay Trống Đồng (giữ làm nền tĩnh) để loại bỏ 100% tình trạng giật lag đồ họa
+- [x] Loại bỏ hoàn toàn bảng kết quả màu xanh (Unconditionally hidden) trong mọi trường hợp (kể cả xem giải hay sau khi nộp bài quay lại)
+- [x] Đồng bộ nút Thoát màu đỏ hiển thị khi học sinh ở cả chế độ xem đáp án và khi đề đã nộp trước đó (isSubmitted) cho tất cả các môn
+- [x] Tối ưu hóa hiệu ứng chuyển cảnh mượt mà khi mở/đóng phòng thi và xem điểm số (Giảm độ trễ chuyển cảnh còn 200ms khi xem đáp án)
+- [x] Đồng bộ hóa Lịch sử làm bài (History Tab) tự động nạp và hiển thị cả các lượt làm bài cục bộ/offline trong localStorage
+- [x] Thiết kế Luồng Nộp bài Cao cấp (Bỏ qua hoàn toàn các hộp thoại alert xấu, chạy hoạt ảnh TMA Study khi nộp bài và tự động mở bảng điểm)
+- [x] Đổi tên nút "Quay lại lịch sử" (Lịch sử) ở bảng điểm kết quả thành "Quay lại trang chủ" (Trang chủ)
+- [x] Loại bỏ hoàn toàn lỗi nháy màn hình chính khi nộp bài (Sử dụng overlay ID độc lập, nạp bảng điểm ngầm và ẩn loading mượt sau 1.2s)
+- [x] Tự động hoàn thành kíp thi (Auto Submit lobby) trong waiting.html khi đã làm xong hết các phân môn (học sinh không cần bấm nút thủ công)
+- [x] Chuyển hướng học sinh ra thẳng màn hình đăng nhập (login.html) khi học sinh bấm "Hoàn thành kíp thi" thủ công và xác nhận OK
+- [x] Kiểm thử và hoàn thành nhiệm vụ tối ưu hiệu năng & logic nộp bài
