@@ -37,6 +37,25 @@
         });
       }
 
+      // HUST Result Modal logic
+      const hustModal = document.getElementById("hust-result-modal");
+      const closeHustBtn = document.getElementById("close-hust-modal");
+      const hustBackdrop = document.getElementById("hust-result-modal-backdrop");
+      const hustCertBtn = document.getElementById("hust-modal-cert-btn");
+
+      [closeHustBtn, hustBackdrop].forEach(el => {
+        if (el) el.addEventListener("click", () => {
+          if (hustModal) hustModal.hidden = true;
+        });
+      });
+
+      if (hustCertBtn && certModal) {
+        hustCertBtn.addEventListener("click", () => {
+          if (hustModal) hustModal.hidden = true;
+          certModal.hidden = false;
+        });
+      }
+
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
       window.scrollTo(0, 0);
       window.addEventListener("pageshow", () => window.scrollTo(0, 0));
@@ -312,12 +331,13 @@
 
       window.addEventListener("message", (event) => {
         if (event && event.data) {
+          const isSolutionMode = event.data.isSolutionMode === true;
           if (event.data.type === "tsa-exam-finished") {
             const finishedExamCode = event.data.examCode;
             const finishedExamTitle = event.data.examTitle;
             closeExamShell();
             
-            if (finishedExamCode && typeof showExamResultModal === "function") {
+            if (!isSolutionMode && finishedExamCode && typeof showExamResultModal === "function") {
               setTimeout(() => {
                 showExamResultModal(finishedExamCode, finishedExamTitle);
               }, 350);
@@ -332,8 +352,16 @@
             closeExamShell();
 
             // Nạp bảng điểm ngay lập tức (bên dưới lớp phủ loading) để không bị trễ
-            if (finishedExamCode && typeof showExamResultModal === "function") {
+            if (!isSolutionMode && finishedExamCode && typeof showExamResultModal === "function") {
               showExamResultModal(finishedExamCode, finishedExamTitle);
+            }
+
+            // Thêm mã đề vào danh sách đã làm và tải lại các giao diện danh sách đề thi
+            if (finishedExamCode && typeof completedExams !== "undefined") {
+              completedExams.add(finishedExamCode);
+              if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
+              if (typeof updateExamRoomUI === "function") updateExamRoomUI();
+              if (typeof renderExams === "function") renderExams();
             }
 
             // Ẩn lớp phủ loading mượt mà sau 1.2 giây
@@ -396,6 +424,45 @@
         window.location.href = "login.html";
         return;
       }
+
+      const completedExams = new Set();
+
+      async function loadCompletedExams() {
+        // Tải lịch sử thi cục bộ từ localStorage trước
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("tma_tsa_last_local_result_")) {
+            const examCode = key.substring("tma_tsa_last_local_result_".length);
+            completedExams.add(examCode);
+          }
+        }
+
+        // Tải thêm từ Supabase
+        if (supabaseClient && studentEmail) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('exam_results')
+              .select('exam_code')
+              .eq('user_email', studentEmail);
+            if (!error && data) {
+              data.forEach(item => {
+                if (item.exam_code) {
+                  completedExams.add(item.exam_code);
+                }
+              });
+            }
+          } catch (err) {
+            console.error("Lỗi tải danh sách đề đã làm:", err);
+          }
+        }
+      }
+
+      // Khởi chạy tải lịch sử bài làm
+      loadCompletedExams().then(() => {
+        if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
+        if (typeof updateExamRoomUI === "function") updateExamRoomUI();
+        if (typeof renderExams === "function") renderExams();
+      });
 
       const VIETNAM_PROVINCES = [
         "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", "Bình Thuận", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
@@ -2678,18 +2745,23 @@
             const card = document.createElement("div");
             card.className = "exam-card";
 
+            const hasCompleted = completedExams.has(examCodeToCheck);
+            const xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span></span>`;
+
             let actionBtnHtml = "";
             if (isUploaded) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
                 </footer>
               `;
@@ -2767,14 +2839,14 @@
           const card = document.createElement("div");
           card.className = "exam-card";
 
-          let actionBtnHtml = "";
-          let redirectUrl = "waiting.html";
-          if (category === "HSA") redirectUrl = `exam-reading.html?exam=${examCodeToCheck}`;
-          else if (category === "THPT" || category === "VACT" || category === "QDA") redirectUrl = `exam-science.html?exam=${examCodeToCheck}`;
+          const hasCompleted = completedExams.has(examCodeToCheck);
+          const xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span></span>`;
 
           actionBtnHtml = `
             <footer class="exam-card-footer">
-              <a href="#" onclick="window.showExamResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+              ${xemKetQuaHtml}
               <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
             </footer>
           `;
@@ -2861,18 +2933,23 @@
             const card = document.createElement("div");
             card.className = "exam-card";
 
+            const hasCompleted = completedExams.has(examCode);
+            const xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showHustResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span></span>`;
+
             let actionBtnHtml = "";
             if (isOpen) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
-                  <a href="#" onclick="window.showExamResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                  ${xemKetQuaHtml}
                   <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
                 </footer>
               `;
@@ -2940,17 +3017,22 @@
           let redirectUrl = "waiting.html?exam=" + exam.exam_code;
           let actionBtnHtml = "";
           
+          const hasCompleted = completedExams.has(exam.exam_code);
+          const xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span></span>`;
+
           if (isOpen) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                ${xemKetQuaHtml}
                 <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
               </footer>
             `;
           } else {
             actionBtnHtml = `
               <footer class="exam-card-footer">
-                <a href="#" onclick="window.showExamResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>
+                ${xemKetQuaHtml}
                 <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
               </footer>
             `;
@@ -3680,7 +3762,11 @@
 
             item.querySelector(".view-detail-btn").addEventListener("click", (e) => {
               e.preventDefault();
-              window.showExamResultModal(row.exam_code, examTitle, row.id || row.created_at);
+              showParentSubmitLoadingOverlay();
+              setTimeout(async () => {
+                await window.showExamResultModal(row.exam_code, examTitle, row.id || row.created_at);
+                hideParentSubmitLoadingOverlay();
+              }, 800);
             });
 
             timeline.appendChild(item);
@@ -3781,6 +3867,106 @@
       }
 
       // EXAM RESULT MODAL HANDLERS
+      window.showHustResultModal = async function(examCode, examTitle, targetAttemptId) {
+        const modal = document.getElementById("hust-result-modal");
+        if (!modal) return;
+
+        let studentCode = studentInfo?.email || "test";
+        try {
+          const cached = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cached) {
+            studentCode = cached.email || cached.username || studentCode;
+          }
+        } catch (e) {}
+
+        const category = getExamCategoryLabel(examCode);
+
+        // Fetch attempts
+        let attempts = [];
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('exam_results')
+              .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
+              .eq('user_email', studentCode)
+              .eq('exam_code', examCode)
+              .order('created_at', { ascending: true });
+            if (!error && data) {
+              attempts = data;
+            }
+          } catch (err) {
+            console.error("Lỗi khi tải lịch sử từ Supabase:", err);
+          }
+        }
+
+        // Merge with local result if exists
+        try {
+          const localRes = JSON.parse(localStorage.getItem("tma_tsa_last_local_result_" + examCode));
+          if (localRes) {
+            if (!attempts.some(a => a.id === localRes.id)) {
+              attempts.push(localRes);
+            }
+          }
+        } catch (e) {}
+
+        let result = null;
+        if (targetAttemptId) {
+          result = attempts.find(a => String(a.id) === String(targetAttemptId) || String(a.created_at) === String(targetAttemptId));
+        } else if (attempts.length > 0) {
+          result = attempts[attempts.length - 1]; // latest
+        }
+
+        if (result) {
+          const grandTotal = result.total_questions || 100;
+          const grandCorrect = result.correct_count || 0;
+          const scaledScore = grandTotal > 0 ? ((grandCorrect / grandTotal) * 100).toFixed(2) : "0.00";
+
+          // Cập nhật số điểm
+          const scoreEl = document.getElementById("hust-modal-score");
+          if (scoreEl) scoreEl.textContent = scaledScore;
+
+          // Cập nhật tên đề
+          const titleEl = document.getElementById("hust-modal-title");
+          if (titleEl) titleEl.textContent = examTitle || "Bài thi TSA";
+
+          // Tính số câu đúng từng môn
+          let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học/Giải quyết vấn đề";
+          let c1 = 0, t1 = 40, c2 = 0, t2 = 20, c3 = 0, t3 = 40;
+          if (category === "Bài thi HSA") {
+            label1 = "Định lượng (Toán)"; label2 = "Định tính (Văn)"; label3 = "Khoa học (Lý/Hóa...)";
+            t1 = t2 = t3 = Math.round(grandTotal / 3);
+            c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+          } else {
+            t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+            c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+          }
+
+          document.getElementById("hust-modal-subject-lbl-1").textContent = label1;
+          document.getElementById("hust-modal-subject-lbl-2").textContent = label2;
+          document.getElementById("hust-modal-subject-lbl-3").textContent = label3;
+
+          document.getElementById("hust-modal-subject-cnt-1").textContent = c1;
+          document.getElementById("hust-modal-subject-cnt-2").textContent = c2;
+          document.getElementById("hust-modal-subject-cnt-3").textContent = c3;
+
+          // Cập nhật thông tin dự thi
+          const d = new Date(result.created_at);
+          const pad = (n) => String(n).padStart(2, '0');
+          const dateStr = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+
+          document.getElementById("hust-modal-prep-time").textContent = `07:00 ${dateStr}`;
+          document.getElementById("hust-modal-enter-time").textContent = `07:45 ${dateStr}`;
+          document.getElementById("hust-modal-start-time").textContent = `08:30 ${dateStr}`;
+          document.getElementById("hust-modal-sbd").textContent = (studentInfo.code || "TSA2603-" + String(studentInfo.username || "00000").substring(0, 5)).toUpperCase();
+          document.getElementById("hust-modal-council").textContent = "TMA Study";
+          document.getElementById("hust-modal-room").textContent = "Phòng thi trực tuyến TMA Study";
+
+          modal.hidden = false;
+        } else {
+          alert("Không tìm thấy kết quả làm bài!");
+        }
+      };
+
       window.showExamResultModal = async function(examCode, examTitle, targetAttemptId) {
         const modal = document.getElementById("exam-result-modal");
         if (!modal) return;
@@ -3980,9 +4166,20 @@
           exitFullscreenIfActive();
         };
 
-        // Nút làm lại
+        // Nút xem đáp án
         const redoBtn = document.getElementById("result-redo-exam-btn");
-        if (redoBtn) redoBtn.onclick = () => { modal.hidden = true; launchExamShell(`exam-math.html?exam=${examCode}`); };
+        if (redoBtn) {
+          redoBtn.onclick = () => {
+            modal.hidden = true;
+            let redirectUrl = `exam-math.html?exam=${examCode}&mode=solution`;
+            if (category === "Bài thi HSA") {
+              redirectUrl = `exam-reading.html?exam=${examCode}&mode=solution`;
+            } else if (category === "Bài thi THPTQG" || category === "Bài thi VACT" || category === "Bài thi QDA") {
+              redirectUrl = `exam-science.html?exam=${examCode}&mode=solution`;
+            }
+            launchExamShell(redirectUrl);
+          };
+        }
         
         if (attempts.length > 0) {
           if (selectEl) {

@@ -2699,7 +2699,7 @@
       /* Ảnh nằm riêng, không có chữ đè lên */
       .course-hero {
         width: 100%;
-        height: 190px;
+        height: 240px;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -2951,7 +2951,7 @@
       gap: 32px;
       border-bottom: 2px solid #e5e7eb;
       width: 100%;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
       padding-bottom: 0;
     }
 
@@ -3733,7 +3733,7 @@
     .course-cover {
       position: relative;
       width: 100%;
-      height: 160px;
+      height: 210px;
       background: #f1f5f9;
       overflow: hidden;
     }

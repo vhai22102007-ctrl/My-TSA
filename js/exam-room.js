@@ -1114,10 +1114,13 @@
     const inIframe = window.parent && window.parent !== window;
     if (inIframe) {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
         window.parent.postMessage({ 
           type: "tsa-exam-submitted-loading",
           examCode: examCode,
-          examTitle: examData ? examData.title : ""
+          examTitle: examData ? examData.title : "",
+          isSolutionMode: viewSolution
         }, "*");
         return;
       } catch (error) {
@@ -1132,10 +1135,13 @@
     const inIframe = window.parent && window.parent !== window;
     if (inIframe) {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
         window.parent.postMessage({ 
           type: "tsa-exam-finished",
           examCode: examCode,
-          examTitle: examData ? examData.title : ""
+          examTitle: examData ? examData.title : "",
+          isSolutionMode: viewSolution
         }, "*");
         return;
       } catch (error) {

@@ -909,15 +909,15 @@
         console.warn("Local storage blocked:", error);
       }
 
-      // Đăng xuất và điều hướng trực tiếp ra trang đăng nhập
-      if (window.top) {
-        window.top.location.href = "login.html";
-      } else {
-        window.location.href = "login.html";
-      }
+      // Quay về trang chủ và hiển thị kết quả
+      leaveLobby();
     });
 
     function leaveLobby() {
+      const params = new URLSearchParams(window.location.search);
+      const examCode = params.get("exam") || params.get("examCode") || params.get("code") || "tsa-exam-1";
+      const examTitle = sessionStorage.getItem("currentExamTitle") || (session && session.exam ? session.exam.title : "");
+
       const inIframe = (function() {
         try { return window.self !== window.top; } catch (e) { return true; }
       })();
@@ -925,7 +925,7 @@
         window.parent.postMessage({ 
           type: "tsa-exam-finished",
           examCode: examCode,
-          examTitle: session ? session.title : ""
+          examTitle: examTitle
         }, "*");
       } else {
         window.location.href = "select.html";

@@ -1906,10 +1906,10 @@
 
     <!-- TAB: PHÒNG KHẢO THÍ (DYNAMIC COURSES VIEW) -->
         <div id="tab-exam-room" class="tab-panel">
-          <div class="featured-section-inner" style="padding-top: 16px;">
+          <div class="featured-section-inner" style="padding-top: 0px;">
             
             <!-- Exam Room Header -->
-            <div style="margin-top: 10px; margin-bottom: 30px;">
+            <div style="margin-top: 0px; margin-bottom: 12px;">
               <div style="display: none;">
                 <h2 id="exam-room-title">Đánh giá tư duy - TSA</h2>
                 <p id="exam-room-desc">Các khóa học thuộc chương trình ôn luyện Đánh giá tư duy Bách Khoa Hà Nội.</p>
@@ -2712,7 +2712,7 @@
         <!-- Right Controls -->
         <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px;">
           <select id="result-modal-attempt-select" style="background: rgba(255,255,255,0.9); border: 1.5px solid #e2e8f0; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #1e293b; cursor: pointer; outline: none; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.02);"></select>
-          <button id="result-redo-exam-btn" style="background: #d61030; color: #fff; border: none; padding: 9px 20px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 4px 12px rgba(214,16,48,0.15);">LÀM LẠI BÀI THI</button>
+          <button id="result-redo-exam-btn" style="background: #d61030; color: #fff; border: none; padding: 9px 20px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 4px 12px rgba(214,16,48,0.15);">XEM ĐÁP ÁN</button>
         </div>
       </div>
 
@@ -3071,6 +3071,78 @@
         <svg viewBox="0 0 17 17" style="width: 12px; height: 12px; display: block; margin: auto;"><line x1="2" y1="2" x2="15" y2="15" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line><line x1="15" y1="2" x2="2" y2="15" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line></svg>
       </button>
       <img src="https://assets.tmastudy.io.vn/assets/chungchi.png" alt="Chứng chỉ" style="max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+    </div>
+  </div>
+
+  <!-- HUST STYLE RESULT MODAL -->
+  <div class="tsa-modal-container" id="hust-result-modal" style="z-index: 2100;" hidden>
+    <div class="tsa-modal-backdrop" id="hust-result-modal-backdrop" style="z-index: 2050; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"></div>
+    <div class="modal" style="position: relative; width: min(680px, calc(100% - 24px)); background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); z-index: 2100; padding: 25px 30px 30px 30px; box-sizing: border-box; display: flex; flex-direction: column; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid rgba(0,0,0,0.05); color: #1a1a1a;">
+      
+      <!-- Circle Cross Close Button -->
+      <button id="close-hust-modal" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: #adb5bd; transition: color 0.15s; padding: 0; display: flex; align-items: center; justify-content: center; outline: none; opacity: 0.85;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+      </button>
+
+      <!-- Modal Title & Thin Line Separator -->
+      <h2 id="hust-modal-title" style="margin: 0; font-size: 22px; font-weight: 500; color: #111111; font-family: inherit; text-transform: none; text-align: left; padding-right: 32px; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 22px; letter-spacing: -0.2px;">Bài thi TSA 2026 chính thức - Đợt 3</h2>
+
+      <!-- Modal Content Grid -->
+      <div style="display: grid; grid-template-columns: 330px 1fr; gap: 24px; align-items: start; text-align: left;">
+        
+        <!-- LEFT COLUMN: Pink box containing Score, Breakdown & Button inside -->
+        <div style="display: flex; flex-direction: column; text-align: left; width: 330px;">
+          
+          <!-- Side-by-Side Pink Score Box -->
+          <div style="background: #fff5f6; border-radius: 8px; padding: 16px 20px; border: none; display: flex; flex-direction: column;">
+            
+            <!-- Score & Breakdown Top Row -->
+            <div style="display: grid; grid-template-columns: 85px 1fr; gap: 12px; align-items: start; margin-bottom: 12px;">
+              <!-- Left: Score -->
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%;">
+                <div style="font-size: 13.5px; font-weight: 600; color: #212529; margin-bottom: 8px; font-family: inherit;">Điểm TSA</div>
+                <div id="hust-modal-score" style="font-size: 45px; font-weight: 500; color: #c92a2a; line-height: 1; letter-spacing: -0.5px; font-family: inherit;">61.49</div>
+              </div>
+              
+              <!-- Right: breakdown list -->
+              <div style="text-align: left; display: flex; flex-direction: column; font-size: 11.5px; color: #212529; font-family: inherit; line-height: 1.45; letter-spacing: -0.1px; padding-top: 2px;">
+                <div style="font-weight: 600; color: #212529; margin-bottom: 4px;">Số câu đúng:</div>
+                <div style="margin-bottom: 1px;">
+                  <span id="hust-modal-subject-lbl-1">Tư duy Toán học</span>: <strong id="hust-modal-subject-cnt-1" style="font-weight: 700; color: #212529;">28</strong>
+                </div>
+                <div style="margin-bottom: 1px;">
+                  <span id="hust-modal-subject-lbl-2">Tư duy Đọc hiểu</span>: <strong id="hust-modal-subject-cnt-2" style="font-weight: 700; color: #212529;">9</strong>
+                </div>
+                <div style="margin-bottom: 1px;">
+                  <span id="hust-modal-subject-lbl-3">Tư duy Khoa học/Giải quyết vấn đề</span>: <strong id="hust-modal-subject-cnt-3" style="font-weight: 700; color: #212529;">22</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Certificate Action Button (Inside Pink Box - Slim design) -->
+            <button id="hust-modal-cert-btn" style="width: 100%; background: #c92a2a; color: #ffffff; border: none; padding: 8px 0; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: none; outline: none; font-family: inherit;">XEM CHỨNG CHỈ</button>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Exam Information list -->
+        <div style="display: flex; flex-direction: column; font-size: 13.5px; color: #212529; line-height: 1.5; text-align: left; font-family: inherit; padding-top: 2px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #212529; text-transform: none; text-align: left; font-family: inherit;">Thông tin dự thi</h3>
+          
+          <div style="margin-bottom: 10px; font-weight: 400;">Hội đồng thi: <span id="hust-modal-council" style="font-weight: 400; color: #212529;">Trường ĐH Thái Bình</span></div>
+          
+          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian làm thủ tục: <span id="hust-modal-prep-time" style="font-weight: 400; color: #212529;">07:00 16/05/2026</span></div>
+          
+          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian vào phòng thi: <span id="hust-modal-enter-time" style="font-weight: 400; color: #212529;">07:45 16/05/2026</span></div>
+          
+          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian bắt đầu thi: <span id="hust-modal-start-time" style="font-weight: 400; color: #212529;">08:30 16/05/2026</span></div>
+          
+          <div style="margin-bottom: 10px; line-height: 1.4; font-weight: 400;">Phòng thi: <span id="hust-modal-room" style="font-weight: 400; color: #212529;">Phòng F-114, Tòa nhà F-Trường ĐH Thái Bình (Phường Thái Bình, tỉnh Hưng Yên)</span></div>
+          
+          <div style="margin-bottom: 10px; font-weight: 400;">Số báo danh: <span id="hust-modal-sbd" style="font-weight: 400; color: #212529; font-family: inherit;">TSA2603-04719</span></div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
