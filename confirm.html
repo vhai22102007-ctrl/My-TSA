@@ -118,17 +118,17 @@
           math: {
             name: "Tư duy Toán học",
             duration: 60,
-            totalQuestions: 6
+            totalQuestions: 40
           },
           reading: {
             name: "Tư duy Đọc hiểu",
             duration: 20,
-            totalQuestions: 6
+            totalQuestions: 20
           },
           science: {
             name: "Tư duy Khoa học & Giải quyết vấn đề",
             duration: 60,
-            totalQuestions: 6
+            totalQuestions: 40
           }
         }
       };
@@ -286,7 +286,8 @@
         }
         
         try {
-          const response = await fetch(`data/exams/${targetCode}.json`);
+          const storageUrl = `${window.SUPABASE_CONFIG.url}/storage/v1/object/public/exams/${targetCode}.json?t=${Date.now()}`;
+          const response = await fetch(storageUrl);
           if (response.ok) {
             const rawExam = await response.json();
             let qCount = 0;

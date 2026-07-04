@@ -1,7 +1,7 @@
 {
   "exam_code": "TSA001",
-  "title": "Thi thử Bài thi Đánh giá tư duy TSA",
-  "duration_minutes": 45,
+  "title": "Đề Thi Thử Đánh Giá Tư Duy Đại Học Bách Khoa Hà Nội",
+  "duration_minutes": 60,
   "status": "published",
   "sections": [
     {
@@ -11,44 +11,113 @@
       "questions": [
         {
           "question_no": 1,
-          "question_type": "multiple_choice",
-          "question": "Cho hàm số \\(f(x)\\) có đạo hàm \\(f'(x) = 2\\sin(x) + \\dfrac{4}{\\cos^2(x)}, \\forall x \\in \\mathbb{R} \\setminus \\left\\{ \\dfrac{k\\pi}{2} \\mid k \\in \\mathbb{Z} \\right\\}\\). Những hàm số nào sau đây có thể là \\(f(x)\\)? (Chọn nhiều đáp án)",
+          "question_type": "single_choice",
+          "question": "Bạn Thảo bắt đầu đếm theo một cấp số cộng tăng dần 1, 3, 5, 7,... và cùng lúc (với cùng tốc độ) bạn Hưng bắt đầu đếm theo một cấp số cộng giảm dần 2025, 2023, 2021,... Tại một thời điểm, cả hai bạn sẽ cùng đếm đến một số \\(n_{0}\\). Giá trị của \\(n_{0}\\) bằng?",
           "image_url": "",
           "options": [
-            { "key": "A", "text": "\\(f(x) = 4\\sqrt{\\dfrac{1}{\\cos^2(x)} - 1} - 2\\cos(x) + \\pi\\)" },
-            { "key": "B", "text": "\\(f(x) = -2\\cos(x) + 4\\tan(x) + 5\\)" },
-            { "key": "C", "text": "\\(f(x) = \\dfrac{4\\sin(x) - 2\\cos^2(x)}{\\cos(x)} + \\pi\\)" },
-            { "key": "D", "text": "\\(f(x) = 2\\cos(x) + 4\\tan(x) - 3\\)" }
+            { "key": "A", "text": "507" },
+            { "key": "B", "text": "506" },
+            { "key": "C", "text": "1015" },
+            { "key": "D", "text": "1013" }
           ],
-          "correct_answer": ["B", "C"],
-          "explanation": "Ta có \\(\\int \\left( 2\\sin(x) + \\dfrac{4}{\\cos^2(x)} \\right) dx = -2\\cos(x) + 4\\tan(x) + C\\). Với phương án C, \\(\\dfrac{4\\sin(x) - 2\\cos^2(x)}{\\cos(x)} + \\pi = 4\\tan(x) - 2\\cos(x) + \\pi\\), cũng là một nguyên hàm.",
+          "correct_answer": "C",
+          "explanation": "",
           "points": 1
         },
         {
           "question_no": 2,
+          "question_type": "multiple_choice",
+          "question": "Cho hàm số \\(y=f(x)\\) thoả mãn \\(f^{\\prime}(x)=\\frac{1}{\\cos^{2}(x)}\\). Khi đó, những hàm số nào sau đây có thể là \\(f(x)\\)? (Chọn nhiều đáp án)",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(y=\\tan(x)+2\\pi\\)" },
+            { "key": "B", "text": "\\(y=\\pi-\\tan(x)\\)" },
+            { "key": "C", "text": "\\(y=\\sqrt{f^{\\prime}(x)-1}\\)" },
+            { "key": "D", "text": "\\(y=\\tan^{2}(x)\\)" }
+          ],
+          "correct_answer": ["A", "C"],
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "single_choice",
+          "question": "Một khối trụ có đường sinh \\(l=4\\) (m) và đường kính đáy \\(d=6\\) (m). Thể tích của khối trụ đó bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(36\\pi\\) (m³)" },
+            { "key": "B", "text": "\\(144\\pi\\) (m³)" },
+            { "key": "C", "text": "\\(45\\pi\\) (m³)" },
+            { "key": "D", "text": "\\(180\\pi\\) (m³)" }
+          ],
+          "correct_answer": "A",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "true_false",
+          "question": "Cho hàm số \\(f(x)=x^{2026}+\\sin(x-\\frac{\\pi}{2})\\). Xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "Hàm số \\(f(x)\\) là hàm số chẵn." },
+            { "id": "b", "text": "Đồ thị hàm số \\(y=f(x)\\) cắt trục hoành tại các điểm có hoành độ \\(x_{1}, x_{2}, x_{3}, ..., x_{n}\\). Tổng \\(\\sum_{k=1}^{n}(x_{k})=1\\)." }
+          ],
+          "correct_answer": {
+            "a": true,
+            "b": false
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "numeric_answer",
+          "question": "Cho dãy số \\((u_{n})\\) có tổng của k số hạng đầu \\((S_{k})\\) được xác định bởi công thức \\(S_{k}=u_{1}+u_{2}+...+u_{k}=k(k-1)(k+2)\\). Giá trị của \\(u_{15}\\) bằng?",
+          "image_url": "",
+          "correct_answer": 658,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 6,
+          "question_type": "true_false",
+          "question": "Trong toán học, để biểu diễn tích của một dãy nhiều hạng tử, ta sử dụng chữ cái Hy Lạp “Pi \\(\\prod\\)”. Chẳng hạn: \\(\\prod_{k=1}^{99}(k^{2})=1^{2}\\times 2^{2}\\times...\\times 98^{2}\\times 99^{2}\\). Xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "\\(\\prod_{i=1}^{2026}(i)=\\prod_{i=0}^{2026}(i)=2026!\\)" },
+            { "id": "b", "text": "Đồ thị hàm số \\(f(x)=\\prod_{n=0}^{99}(x-n)\\) cắt trục tung tại 100 điểm phân biệt." },
+            { "id": "c", "text": "Tồn tại 49 giá trị nguyên của x để \\(\\prod_{k=1}^{49}(x-k)<0\\)." }
+          ],
+          "correct_answer": {
+            "a": true,
+            "b": false,
+            "c": false
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 7,
           "question_type": "drag_drop",
-          "question": "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
+          "question": "Điền số nguyên thích hợp vào chỗ trống.",
           "image_url": "",
           "body": [
-            { "type": "text", "content": "Chủ doanh nghiệp BK Studio muốn tối ưu hóa lợi nhuận từ những buổi biểu diễn nghệ thuật của công ty ông. Theo thống kê, ông ta xác định rằng nếu giá vé vào cửa là 200 nghìn đồng/người thì trung bình có 5000 người tới xem. Nhưng nếu tăng thêm 50 nghìn đồng/người thì sẽ mất 300 khách hàng; hay nếu giảm đi 50 nghìn đồng/người thì sẽ lại có thêm 300 người khách. Biết rằng, trên trung bình, mỗi khách hàng đem lại 5 nghìn đồng/người lợi nhuận cho doanh nghiệp trong các dịch vụ đi kèm và số tiền doanh nghiệp chi ra cho mỗi lần biểu diễn là không đáng kể. Đặt n là số lần tăng giá vé (\\(n \\in \\mathbb{Z}\\)).\n\n- Số khách hàng tới xem sau n lần tăng giá vé là " },
+            { "type": "text", "content": "Cho \\(\\triangle AK_{0}K_{1}\\) có độ dài \\(AK_{0}=K_{0}K_{1}=1\\). Ta thiết lập \\(\\triangle AK_{1}K_{2}\\) vuông góc tại \\(K_{1}\\) sao cho \\(K_{1}K_{2}=1\\), rồi thiết lập \\(\\triangle AK_{2}K_{3}\\) vuông góc tại \\(K_{2}\\) sao cho \\(K_{2}K_{3}=1\\). Cứ làm vậy, ta thiết lập \\(\\triangle AK_{n}K_{n+1}\\) vuông góc tại \\(K_{n}\\) sao cho \\(K_{n}K_{n+1}=1\\) (như hình vẽ bên).\n\na) Độ dài cạnh \\(AK_{3}\\) bằng " },
             { "type": "blank", "id": "o1" },
-            { "type": "text", "content": " (khách).\n- Số tiền mỗi chiếc vé sau n lần tăng giá vé là " },
+            { "type": "text", "content": "\nb) Độ dài cạnh \\(AK_{99}\\) bằng " },
             { "type": "blank", "id": "o2" },
-            { "type": "text", "content": " (nghìn đồng).\n- Lợi nhuận là lớn nhất sau " },
+            { "type": "text", "content": "\nc) Độ dài cạnh \\(K_{101}K_{102}\\) bằng " },
             { "type": "blank", "id": "o3" },
-            { "type": "text", "content": " lần " },
-            { "type": "blank", "id": "o4" },
-            { "type": "text", "content": " giá vé." }
+            { "type": "text", "content": "\nd) Độ dài cạnh huyền của \\(\\triangle AK_{65023}K_{65024}\\) bằng " },
+            { "type": "blank", "id": "o4" }
           ],
           "items": [
-            { "id": "i1", "text": "5000 - 300n" },
-            { "id": "i2", "text": "200 + 50n" },
-            { "id": "i3", "text": "6" },
-            { "id": "i4", "text": "tăng" },
-            { "id": "i5", "text": "giảm" },
-            { "id": "i6", "text": "200 - 50n" },
-            { "id": "i7", "text": "5000 + 300n" },
-            { "id": "i8", "text": "7" }
+            { "id": "i1", "text": "2" },
+            { "id": "i2", "text": "10" },
+            { "id": "i3", "text": "1" },
+            { "id": "i4", "text": "255" }
           ],
           "correct_answer": {
             "o1": "i1",
@@ -56,82 +125,503 @@
             "o3": "i3",
             "o4": "i4"
           },
-          "explanation": "Số khách hàng sau n lần tăng giá là 5000 - 300n. Giá vé là 200 + 50n. Lợi nhuận được tối ưu tại n = 6 lần tăng giá vé.",
+          "explanation": "",
           "points": 1
         },
         {
-          "question_no": 3,
+          "question_no": 8,
+          "question_type": "drag_drop",
+          "question": "Điền số nguyên thích hợp vào chỗ trống.",
+          "image_url": "",
+          "body": [
+            { "type": "text", "content": "Trong không gian Oxyz, cho điểm \\(K(2501;1020;0)\\).\n\na) Khoảng cách từ K đến gốc toạ độ O bằng " },
+            { "type": "blank", "id": "o1" },
+            { "type": "text", "content": "\nb) Góc giữa hai vector \\(\\vec{OK}\\) và \\(\\vec{k}=(0;0;1)\\) bằng " },
+            { "type": "blank", "id": "o2" },
+            { "type": "text", "content": " độ." }
+          ],
+          "items": [
+            { "id": "i1", "text": "2701" },
+            { "id": "i2", "text": "90" }
+          ],
+          "correct_answer": {
+            "o1": "i1",
+            "o2": "i2"
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 9,
           "question_type": "single_choice",
-          "question": "Gieo đồng thời hai con xúc xắc cân đối và đồng chất. Xác suất của biến cố \"Tổng số chấm thu được trên hai mặt nhỏ hơn 5\" bằng?",
+          "question": "Tồn tại bao nhiêu số nguyên m để \\((mx+1)\\sqrt{\\lg(x)+1}=0\\) có hai nghiệm phân biệt?",
           "image_url": "",
           "options": [
-            { "key": "A", "text": "\\(P = \\dfrac{1}{6}\\)" },
-            { "key": "B", "text": "\\(P = \\dfrac{1}{3}\\)" },
-            { "key": "C", "text": "\\(P = \\dfrac{5}{18}\\)" },
-            { "key": "D", "text": "\\(P = \\dfrac{5}{36}\\)" }
+            { "key": "A", "text": "1" },
+            { "key": "B", "text": "9" },
+            { "key": "C", "text": "10" },
+            { "key": "D", "text": "Vô số" }
+          ],
+          "correct_answer": "B",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 10,
+          "question_type": "single_choice",
+          "question": "Một khối lập phương, có độ dài các cạnh bằng a, bị lấy mất đi nhiều khối vuông đơn vị nhỏ có kích thước bằng nhau (như hình vẽ bên). Khi đó, cần gắn lại bao nhiêu khối vuông đơn vị để sửa khối lập phương đã cho về như ban đầu?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "15" },
+            { "key": "B", "text": "54" },
+            { "key": "C", "text": "14" },
+            { "key": "D", "text": "79" }
+          ],
+          "correct_answer": "D",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 11,
+          "question_type": "single_choice",
+          "question": "Cho hàm số \\(y=\\begin{cases}ax+5 & \\text{khi } x \\neq \\pi\\\\ 1 & \\text{khi } x=\\pi\\end{cases}\\) liên tục trên \\(\\mathbb{R}\\). Giá trị của a bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "-4" },
+            { "key": "B", "text": "4" },
+            { "key": "C", "text": "5" },
+            { "key": "D", "text": "-5" }
           ],
           "correct_answer": "A",
-          "explanation": "Các kết quả thuận lợi cho biến cố là (1,1), (1,2), (1,3), (2,1), (2,2), (3,1) -> 6 kết quả. Xác suất là 6/36 = 1/6.",
+          "explanation": "",
           "points": 1
         },
         {
-          "question_no": 4,
-          "question_type": "numeric_answer",
-          "question": "Giới hạn \\(\\lim_{x \\to +\\infty} \\dfrac{2x^2 - 4x + 3}{5x^2 + 4x - 1} = \\dfrac{a}{b}\\) với \\(a, b \\in \\mathbb{N}^*\\) và \\(\\dfrac{a}{b}\\) là phân số tối giản. Khi đó, hiệu \\(b - a\\) bằng?",
+          "question_no": 12,
+          "question_type": "single_choice",
+          "question": "Cho hàm số \\(y=f(x)\\) có đồ thị (C) như hình vẽ bên. Tồn tại bao nhiêu tiếp tuyến của (C) song song với trục hoành?",
           "image_url": "",
-          "correct_answer": 3,
-          "tolerance": 0,
-          "explanation": "Ta có giới hạn bằng 2/5. Do đó a = 2, b = 5. Hiệu b - a = 5 - 2 = 3.",
+          "options": [
+            { "key": "A", "text": "0" },
+            { "key": "B", "text": "1" },
+            { "key": "C", "text": "2" },
+            { "key": "D", "text": "3" }
+          ],
+          "correct_answer": "C",
+          "explanation": "",
           "points": 1
         },
         {
-          "question_no": 5,
+          "question_no": 13,
+          "question_type": "numeric_answer",
+          "question": "Bạn Tú viết lên bảng một số n có ba chữ số, rồi viết thêm số 1 vào đằng trước nó để thu được một số m thoả mãn \\(m=3n\\). Giá trị của m bằng?",
+          "image_url": "",
+          "correct_answer": 1500,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 14,
+          "question_type": "drag_drop",
+          "question": "Xét khai triển \\((x+\\frac{1}{3})^{10}\\).",
+          "image_url": "",
+          "body": [
+            { "type": "text", "content": "Xét khai triển \\((x+\\frac{1}{3})^{10}\\).\n\na) Hệ số của \\(x^{7}\\) là " },
+            { "type": "blank", "id": "o1" },
+            { "type": "text", "content": "\nb) Hệ số của \\(x^{9}\\) là " },
+            { "type": "blank", "id": "o2" },
+            { "type": "text", "content": "\nc) Hệ số của số hạng không chứa x là " },
+            { "type": "blank", "id": "o3" }
+          ],
+          "items": [
+            { "id": "i1", "text": "\\frac{40}{9}" },
+            { "id": "i2", "text": "\\frac{10}{3}" },
+            { "id": "i3", "text": "\\frac{1}{59049}" }
+          ],
+          "correct_answer": {
+            "o1": "i1",
+            "o2": "i2",
+            "o3": "i3"
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 15,
+          "question_type": "numeric_answer",
+          "question": "Cho hàm số \\(f(x)\\) thoả mãn \\(f(4)=10\\). Giá trị của \\(\\lim_{x_{0}\\rightarrow 4}(\\frac{160}{x_{0}-4}\\int_{4}^{x_{0}}f(x)dx)\\) bằng?",
+          "image_url": "",
+          "correct_answer": 1600,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 16,
+          "question_type": "single_choice",
+          "question": "Trong không gian Oxyz, cho hai đường thẳng \\(d: \\frac{x+1}{2}=\\frac{y-2}{1}=\\frac{z+3}{-2}\\) và \\(\\Delta: \\begin{cases}x=3-4t\\\\ y=-3-2t\\\\ z=2+4t\\end{cases}\\). Vị trí tương đối giữa d và \\(\\Delta\\) là?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(\\Delta \\equiv d\\)" },
+            { "key": "B", "text": "\\(\\Delta\\) và d chéo nhau" },
+            { "key": "C", "text": "\\(\\Delta \\parallel d\\)" },
+            { "key": "D", "text": "\\(\\Delta\\) và d cắt nhau" }
+          ],
+          "correct_answer": "C",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 17,
           "question_type": "true_false",
-          "question": "Trong hóa học, để xác định tính acid/base của một dung dịch, ta sử dụng sơ đồ pH. Độ pH của một dung dịch được cho bởi công thức \\(\\text{pH} = -\\lg[\\text{H}^+]\\), với \\([\\text{H}^+]\\) (mol/L) là nồng độ cation \\(\\text{H}^+\\) trong dung dịch đang xét. Trong phòng thí nghiệm, một dung dịch được coi là \"chuẩn\" nếu \\(10^{-13} \\le [\\text{H}^+] \\le 10^{-8}\\) (mol/L). Xét tính đúng/sai của các mệnh đề sau:",
+          "question": "Cho hàm số \\(y=f(x)\\) liên tục và đồng biến trên khoảng [a; b]. Xét tính đúng/sai của các mệnh đề sau:",
           "image_url": "",
           "statements": [
-            { "id": "a", "text": "Độ pH tối thiểu của dung dịch \"chuẩn\" bằng 8" },
-            { "id": "b", "text": "Độ pH tối đa của dung dịch \"chuẩn\" bằng 14" }
+            { "id": "a", "text": "\\(f(\\frac{9}{8})-f(\\frac{2}{5})>0\\)." },
+            { "id": "b", "text": "\\(\\forall x_{1}, x_{2}\\in[a;b]\\) thoả mãn \\(x_{2}>x_{1}\\) thì \\(\\frac{f(x_{2})-f(x_{1})}{x_{2}-x_{1}}<0\\)." },
+            { "id": "c", "text": "Nếu \\(f(a)<0\\) và \\(f(b)>0\\) thì \\(\\exists x_{0}\\in[a;b]\\) sao cho \\(f(x_{0})=0\\)." }
           ],
           "correct_answer": {
             "a": true,
-            "b": false
+            "b": false,
+            "c": true
           },
-          "explanation": "Từ \\(10^{-13} \\le [\\text{H}^+] \\le 10^{-8}\\) suy ra \\(8 \\le \\text{pH} \\le 13\\). Do đó pH tối thiểu là 8 (Đúng) và pH tối đa là 13 (Mệnh đề nói bằng 14 là Sai).",
+          "explanation": "",
           "points": 1
         },
         {
-          "question_no": 6,
+          "question_no": 18,
+          "question_type": "single_choice",
+          "question": "Có bao nhiêu cách để chia đều 10 viên kẹo khác nhau cho 5 bạn?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "252" },
+            { "key": "B", "text": "126" },
+            { "key": "C", "text": "113400" },
+            { "key": "D", "text": "30240" }
+          ],
+          "correct_answer": "C",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 19,
+          "question_type": "numeric_answer",
+          "question": "Cho hai số thực a, b thoả mãn \\(a<b\\). Đặt \\(M=\\int_{a}^{b}(x^{2}-6x+5)dx\\). Khi M đạt giá trị nhỏ nhất thì \\(b-a\\) bằng?",
+          "image_url": "",
+          "correct_answer": 4,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 20,
+          "question_type": "numeric_answer",
+          "question": "Một quả bóng (đặc) được đặt vừa vặn vào trong chiếc hộp hình lập phương có cạnh bằng 20 (dm) như hình vẽ bên. Người ta đổ đầy nước vào phần trống còn lại của chiếc hộp sao cho mực nước cách đỉnh hộp 5 (dm). Thể tích nước cần dùng là bao nhiêu lít? (kết quả được làm tròn đến hàng đơn vị)",
+          "image_url": "",
+          "correct_answer": 2466,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 21,
+          "question_type": "single_choice",
+          "question": "Cho hình chóp S.ABC có đáy ABC là tam giác đều cạnh a. Biết hình chiếu vuông góc của S lên mặt phẳng đáy là điểm H nằm trên cạnh AB sao cho \\(HA=2HB\\) và \\(SC=a\\sqrt{3}\\). Thể tích khối chóp S.ABC bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(\\frac{a^{3}\\sqrt{15}}{24}\\)" },
+            { "key": "B", "text": "\\(\\frac{a^{3}\\sqrt{3}}{12}\\)" },
+            { "key": "C", "text": "\\(\\frac{a^{3}\\sqrt{21}}{48}\\)" },
+            { "key": "D", "text": "\\(\\frac{a^{3}\\sqrt{15}}{18}\\)" }
+          ],
+          "correct_answer": "D",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 22,
+          "question_type": "numeric_answer",
+          "question": "Số nghiệm \\(x\\in[0;2022\\pi]\\) của phương trình \\(2\\cos(x)-\\cos(2x)=1\\) là?",
+          "image_url": "",
+          "correct_answer": 3034,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 23,
+          "question_type": "numeric_answer",
+          "question": "Có bao nhiêu cặp số nguyên dương (x; y) thoả mãn \\(2y2^{x}=\\log_{2}(1+\\frac{2x}{y})+2y+3x\\)?",
+          "image_url": "",
+          "correct_answer": 1,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 24,
+          "question_type": "single_choice",
+          "question": "Cho hai số thực a, b thoả mãn \\(1+\\log_{4}(a)=2+\\log_{3}(b)=\\log_{12}(a+b)\\). Giá trị của biểu thức \\(\\frac{1}{a}+\\frac{1}{b}\\) bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "36" },
+            { "key": "B", "text": "72" },
+            { "key": "C", "text": "18" },
+            { "key": "D", "text": "9" }
+          ],
+          "correct_answer": "A",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 25,
           "question_type": "drag_drop",
-          "question": "Điền số nguyên thích hợp vào chỗ trống:",
+          "question": "Trong hệ trục toạ độ Oxy, cho hai hàm số \\(f(x)=x^{3}-2x(x+1)\\) và \\(g(x)=x^{2}(x^{2}-3)-2\\) và tham số nguyên m.",
           "image_url": "",
           "body": [
-            { "type": "text", "content": "Trong một nhà máy sản xuất, người ta dự định dùng hai loại nguyên liệu để chiết xuất ít nhất 140 (kg) chất A và 9 (kg) chất B. Từ mỗi tấn nguyên liệu loại I giá 4 triệu đồng, có thể chiết xuất được 20 (kg) chất A và 0,6 (kg) chất B. Từ mỗi tấn nguyên liệu loại II giá 3 triệu đồng có thể chiết xuất được 10 (kg) chất A và 1,5 (kg) chất B. Biết rằng cơ sở cung cấp nguyên liệu chỉ có thể cung cấp không quá 10 tấn nguyên liệu loại I và không quá 9 tấn nguyên liệu loại II.\n\n- Cần dùng " },
+            { "type": "text", "content": "Trong hệ trục toạ độ Oxy, cho hai hàm số \\(f(x)=x^{3}-2x(x+1)\\) và \\(g(x)=x^{2}(x^{2}-3)-2\\) và tham số nguyên m.\n\na) Tồn tại " },
             { "type": "blank", "id": "o1" },
-            { "type": "text", "content": " tấn nguyên liệu loại I để chi phí mua nguyên liệu là ít nhất.\n- Cần dùng " },
+            { "type": "text", "content": " giá trị của m để phương trình \\(f(x)=m\\) có 3 nghiệm thực phân biệt.\nb) Tồn tại " },
             { "type": "blank", "id": "o2" },
-            { "type": "text", "content": " tấn nguyên liệu loại II để chi phí mua nguyên liệu là ít nhất." }
+            { "type": "text", "content": " giá trị của m để phương trình \\(g(x)=m\\) có 4 nghiệm thực phân biệt.\nc) Với mọi \\(m\\in[-4;-2)\\), đồ thị hàm số \\(y=m\\) có " },
+            { "type": "blank", "id": "o3" },
+            { "type": "text", "content": " giao điểm với hai đồ thị hàm số \\(y=f(x)\\) và \\(y=g(x)\\)." }
+          ],
+          "items": [
+            { "id": "i1", "text": "5" },
+            { "id": "i2", "text": "2" },
+            { "id": "i3", "text": "12" }
           ],
           "correct_answer": {
-            "o1": "5",
-            "o2": "4"
+            "o1": "i1",
+            "o2": "i2",
+            "o3": "i3"
           },
-          "explanation": "Bài toán quy hoạch tuyến tính tối ưu chi phí C = 4x + 3y. Điểm cực tiểu đạt được tại x = 5 (tấn loại I) và y = 4 (tấn loại II).",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 26,
+          "question_type": "single_choice",
+          "question": "Số 2,4096096096096... có thể được viết dưới dạng phân số tối giản \\(\\frac{a}{b}\\). Hiệu \\(a-b\\) bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "365" },
+            { "key": "B", "text": "2347" },
+            { "key": "C", "text": "881" },
+            { "key": "D", "text": "381" }
+          ],
+          "correct_answer": "B",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 27,
+          "question_type": "single_choice",
+          "question": "Cho hàm số \\(f(x)=\\log_{2}(\\frac{4^{x}+8}{m})\\), với m là tham số thực. Tổng các giá trị của m để đồ thị hàm số \\(y=f(x)\\) cắt đường thẳng \\(y=x\\) tại hai điểm phân biệt có hoành độ \\(x_{1}, x_{2}\\) thoả mãn \\(2x_{1}+x_{2}=5\\) bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "0" },
+            { "key": "B", "text": "\\(2\\sqrt{6}\\)" },
+            { "key": "C", "text": "2" },
+            { "key": "D", "text": "\\(\\sqrt{6}\\)" }
+          ],
+          "correct_answer": "A",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 28,
+          "question_type": "single_choice",
+          "question": "Vào một buổi chiều rảnh rỗi, bạn Linh viết lên bảng một chữ số 1, hai chữ số 2, ba chữ số 3, bốn chữ cố 4,... và cứ như vậy đến hết 99 lần số 99. Khi đó, chữ số thứ 2026 mà bạn Linh đã viết lên bảng là?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "6" },
+            { "key": "B", "text": "4" },
+            { "key": "C", "text": "7" },
+            { "key": "D", "text": "5" }
+          ],
+          "correct_answer": "B",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 29,
+          "question_type": "true_false",
+          "question": "Cho hai số nguyên a, b. Xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "\\(a^{2}+b^{2}=(a+b)^{2}-2ab\\)." },
+            { "id": "b", "text": "\\(a^{5}+b^{5}=(a+b)^{5}-5a^{4}b+10a^{3}b^{2}-10a^{2}b^{3}+5ab^{4}\\)." },
+            { "id": "c", "text": "Nếu \\(a=b+3\\) thì \\((a^{3}+b^{3}) \\vdots 9\\)." }
+          ],
+          "correct_answer": {
+            "a": true,
+            "b": false,
+            "c": true
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 30,
+          "question_type": "multiple_choice",
+          "question": "Trong một bộ bài 52 lá bài gồm 13 lá mỗi chất (Bích, Tép, Rô, Cơ), trong đó các lá thuộc chất Bích và Tép có màu đen và các lá thuộc chất Rô và Cơ có màu đỏ. Lấy ngẫu nhiên một lá bài, Đặt A là biến cố “Lấy được lá Bích”, B là biến cố “Lấy được lá có màu đen” và C là biến cố “Lấy được lá có màu đỏ”. Những mệnh đề nào sau đây đúng? (Chọn nhiều đáp án)",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(P(B)P(C)>P(BC)\\)" },
+            { "key": "B", "text": "\\(P(AC)>0\\)" },
+            { "key": "C", "text": "\\(P(A)P(B)>P(AB)\\)" },
+            { "key": "D", "text": "\\(P(AB)=P(A)\\)" }
+          ],
+          "correct_answer": ["A", "C", "D"],
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 31,
+          "question_type": "single_choice",
+          "question": "Cho hàm số \\(f(x)\\) có tính chất \\(f(kx)=\\frac{k}{2}f(x)\\) \\(\\forall x, k\\in\\mathbb{R}\\). Biết \\(3f(4)+\\frac{2}{3}f(6)=8\\), giá trị của \\(f(2)\\) bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "1" },
+            { "key": "B", "text": "2" },
+            { "key": "C", "text": "3" },
+            { "key": "D", "text": "-3" }
+          ],
+          "correct_answer": "B",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 32,
+          "question_type": "numeric_answer",
+          "question": "Số \\(7^{2026}\\) có dạng abcd..., với a, b, c, d là bốn chữ số đầu tiên. Tổng \\(a+b+c+d\\) bằng?",
+          "image_url": "",
+          "correct_answer": 16,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 33,
+          "question_type": "single_choice",
+          "question": "Cho 2006 đồng xu được đánh số thứ tự từ 1 đến 2006 xếp thành hàng, tất cả đều đang nằm ngửa. Lần thứ nhất, lật tất cả các đồng xu có số thứ tự là bội của 1. Lần thứ hai, lật tất cả các đồng xu có số thứ tự là bội của 2. Lần thứ ba, lật tất cả các đồng xu có số thứ tự là bội của 3. Cứ như vậy, đến lần thứ 2006, lật tất cả các đồng xu có số thứ tự là bội của 2006. Sau 2006 lần lật, có bao nhiêu đồng xu nằm xấp?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "44" },
+            { "key": "B", "text": "42" },
+            { "key": "C", "text": "48" },
+            { "key": "D", "text": "46" }
+          ],
+          "correct_answer": "A",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 34,
+          "question_type": "true_false",
+          "question": "Tích phân suy rộng là một dạng tích phân có một (hoặc cả hai) cận tiến đến vô cùng. Để tính toán, ta coi cận vô cùng là một ẩn số rồi đi xác định giới hạn của tích phân khi ẩn đó tiến đến vô cùng, cụ thể: \\(\\int_{a}^{+\\infty}f(x)dx=\\lim_{b\\rightarrow+\\infty}\\int_{a}^{b}f(x)dx\\). Ví dụ: \\(\\int_{0}^{+\\infty}(\\frac{1}{2})^{x}dx=\\lim_{b\\rightarrow+\\infty}\\int_{0}^{b}(\\frac{1}{2})^{x}dx=\\lim_{b\\rightarrow+\\infty}\\frac{(\\frac{1}{2})^{x}}{\\ln(\\frac{1}{2})}\\Big|_{0}^{b}=\\lim_{b\\rightarrow+\\infty}[\\frac{(\\frac{1}{2})^{b}}{\\ln(\\frac{1}{2})}-\\frac{1}{\\ln(\\frac{1}{2})}]=\\frac{1}{\\ln(2)}\\). Xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "\\(\\int_{0}^{+\\infty}e^{-x}dx=1\\)." },
+            { "id": "b", "text": "\\(\\int_{-\\infty}^{0}2^{\\varphi}d\\varphi=\\int_{0}^{+\\infty}\\frac{1}{2^{x}}dx\\)." },
+            { "id": "c", "text": "“Kèn của Grabiel” là một vật thể được tạo thành khi xoay phần diện tích giới hạn bởi đường cong \\(y=\\frac{1}{x}\\), đường thẳng \\(x=1\\) và \\(y=0\\) quanh trục hoành. Thể tích của chiếc kèn đó bé hơn 4, nhưng lớn hơn 3." }
+          ],
+          "correct_answer": {
+            "a": false,
+            "b": true,
+            "c": true
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 35,
+          "question_type": "true_false",
+          "question": "Cho dãy số \\((u_{n})_{n\\ge 1}\\) thoả mãn \\(\\begin{cases}u_{1}=3\\\\ u_{n+1}=4(u_{n}+\\frac{1}{2})\\end{cases} (n\\in\\mathbb{N}^{*})\\). Xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "Dãy số \\((u_{n})\\) là cấp số cộng." },
+            { "id": "b", "text": "Biết rằng công thức tổng quát của \\((u_{n})\\) có dạng \\(u_{n}=a4^{n-1}-b\\) (\\(a,b\\in\\mathbb{Q}\\)). Khi đó, \\(a+b=\\frac{13}{3}\\)." },
+            { "id": "c", "text": "Số dư khi chia \\(u_{16}\\) cho 7 bằng 3." }
+          ],
+          "correct_answer": {
+            "a": false,
+            "b": true,
+            "c": true
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 36,
+          "question_type": "numeric_answer",
+          "question": "Cho hàm số \\(f(x)=35\\pi+\\sin(7\\pi \\sin(5x))\\). Số nghiệm của phương trình \\(f(x)=35\\pi\\) trên đoạn [0; 2π] là?",
+          "image_url": "",
+          "correct_answer": 141,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 37,
+          "question_type": "single_choice",
+          "question": "Cho hình vuông ABCD có độ dài các cạnh bằng 1, hai cặp đỉnh AB và CD lần lượt nằm trên hai đường tròn đáy của một hình trụ (H). Biết mặt phẳng (ABCD) tạo với đáy trụ một góc \\(45^{\\circ}\\), thể tích của (H) bằng?",
+          "image_url": "",
+          "options": [
+            { "key": "A", "text": "\\(\\frac{\\pi\\sqrt{3}}{16}\\)" },
+            { "key": "B", "text": "\\(\\frac{2\\pi\\sqrt{3}}{16}\\)" },
+            { "key": "C", "text": "\\(\\frac{\\pi\\sqrt{2}}{16}\\)" },
+            { "key": "D", "text": "\\(\\frac{3\\pi\\sqrt{3}}{16}\\)" }
+          ],
+          "correct_answer": "D",
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 38,
+          "question_type": "numeric_answer",
+          "question": "Cho 16 điểm được đặt cách đều nhau trên một lưới \\(4\\times 4\\) như hình vẽ sau. Chọn ngẫu nhiên 4 điểm, xác suất để 4 điểm đó lập thành một hình chữ nhật là p. Giá trị của 455p bằng?",
+          "image_url": "",
+          "correct_answer": 11,
+          "tolerance": 0,
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 39,
+          "question_type": "true_false",
+          "question": "Cho năm số nguyên a, b, c, d, e khác 0 thoả mãn \\(a+b+c+d\\) chẵn. Xét đa thức \\(P(x)=ax^{4}+bx^{3}+cx^{2}+dx+e\\). Nếu số nguyên k là nghiệm của phương trình \\(P(x)=0\\) thì tồn tại đa thức \\(Q(x)\\) với các hệ số nguyên sao cho \\(P(x)=(x-k)Q(x)\\). Biết rằng \\(P(1)\\) là một số chẵn, xét tính đúng/sai của các mệnh đề sau:",
+          "image_url": "",
+          "statements": [
+            { "id": "a", "text": "e là một số lẻ." },
+            { "id": "b", "text": "Nếu Q(0) là một số lẻ thì k là một số chẵn." },
+            { "id": "c", "text": "Nếu Q(0) là một số lẻ thì \\(Q(1)\\) là một số chẵn." },
+            { "id": "d", "text": "Nếu Q(0) là một số chẵn thì k có thể lẻ hoặc chẵn." }
+          ],
+          "correct_answer": {
+            "a": false,
+            "b": true,
+            "c": true,
+            "d": true
+          },
+          "explanation": "",
+          "points": 1
+        },
+        {
+          "question_no": 40,
+          "question_type": "numeric_answer",
+          "question": "Đặt \\(\\alpha=\\sqrt[401]{4}-1\\) và \\(\\beta_{n}=C_{n}^{1}+C_{n}^{2}\\alpha+C_{n}^{3}\\alpha^{2}+...+C_{n}^{n}\\alpha^{n-1}\\). Hiệu \\(\\beta_{2006}-\\beta_{2005}\\) bằng?",
+          "image_url": "",
+          "correct_answer": 1024,
+          "tolerance": 0,
+          "explanation": "",
           "points": 1
         }
       ]
-    },
-    {
-      "section_id": "reading",
-      "section_label": "Đọc hiểu",
-      "layout": "passage",
-      "groups": []
-    },
-    {
-      "section_id": "science",
-      "section_label": "Khoa học",
-      "layout": "passage",
-      "groups": []
     }
   ]
 }

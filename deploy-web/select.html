@@ -2749,7 +2749,7 @@
           <div style="display: flex; flex-direction: column; gap: 20px;">
 
             <!-- Toan -->
-            <div class="subject-card" style="transform: translate(-30px, -80px);">
+            <div class="subject-card" id="result-modal-subject-card-1" style="transform: translate(-30px, -80px);">
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-1">Tư duy Toán học</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -2763,7 +2763,7 @@
             </div>
 
             <!-- Doc hieu -->
-            <div class="subject-card" style="transform: translate(15px, -30px);">
+            <div class="subject-card" id="result-modal-subject-card-2" style="transform: translate(15px, -30px);">
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-2">Tư duy Đọc hiểu</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -2777,7 +2777,7 @@
             </div>
 
             <!-- Khoa hoc -->
-            <div class="subject-card" style="transform: translate(-30px, 20px);">
+            <div class="subject-card" id="result-modal-subject-card-3" style="transform: translate(-30px, 20px);">
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-3">Tư duy Khoa học</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -2864,7 +2864,7 @@
             </div>
             <div class="mockup-cover-text" id="course-player-cover-text">Chọn bài học để bắt đầu</div>
           </div>
-          <iframe id="course-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen style="display:none;border:none;width:100%;height:100%;"></iframe>
+          <iframe id="course-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms" style="display:none;border:none;width:100%;height:100%;"></iframe>
           <div class="video-watermark-overlay" id="video-watermark-overlay" style="display:none;">Nguyễn Văn Hải - 0987654321</div>
         </div>
 
@@ -3101,7 +3101,7 @@
               <!-- Left: Score -->
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%;">
                 <div style="font-size: 13.5px; font-weight: 600; color: #212529; margin-bottom: 8px; font-family: inherit;">Điểm TSA</div>
-                <div id="hust-modal-score" style="font-size: 45px; font-weight: 500; color: #c92a2a; line-height: 1; letter-spacing: -0.5px; font-family: inherit;">61.49</div>
+                <div id="hust-modal-score" style="font-size: 36px; font-weight: 500; color: #c92a2a; line-height: 1; letter-spacing: -0.5px; font-family: inherit;">61.49</div>
               </div>
               
               <!-- Right: breakdown list -->

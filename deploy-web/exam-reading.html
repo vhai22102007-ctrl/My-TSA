@@ -170,7 +170,14 @@
         tex: {
           inlineMath: [['$', '$'], ['\\(', '\\)']],
           displayMath: [['$$', '$$'], ['\\[', '\\]']],
-          processEscapes: true
+          processEscapes: true,
+          macros: {
+            frac: ["\\dfrac{#1}{#2}", 2],
+            int: ["\\int\\limits", 0],
+            sum: ["\\sum\\limits", 0],
+            prod: ["\\prod\\limits", 0],
+            lim: ["\\lim\\limits", 0]
+          }
         },
         options: {
           ignoreHtmlClass: 'tex2jax_ignore',

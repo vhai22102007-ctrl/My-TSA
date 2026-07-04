@@ -418,6 +418,9 @@
     window.clearAllDocumentLinks = clearAllDocumentLinks;
 
     function renderPracticeRoom() {
+      function normalizeCode(value) {
+        return String(value || "TSA001").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "") || "TSA001";
+      }
       var grid = document.getElementById("practice-grid-dynamic");
       if (!grid) return;
       grid.innerHTML = "";
@@ -463,11 +466,13 @@
 
         // Generate dynamic count of exams for selected TSA subtab
         var maxPracticeIndex = 10;
+        var practiceIndexList = [];
         try {
           var rawIdx = localStorage.getItem("tma_tsa_exam_index");
           if (rawIdx) {
             var parsedIdx = JSON.parse(rawIdx);
             if (Array.isArray(parsedIdx)) {
+              practiceIndexList = parsedIdx;
               parsedIdx.forEach(e => {
                 if (e.exam_code && e.exam_code.startsWith("TSA_PRACTICE_FULL_")) {
                   var parts = e.exam_code.split("_");
@@ -495,6 +500,9 @@
             examTitle = `Đề TSA số ${numStr} - Khoa học`;
           }
 
+          var inList = practiceIndexList.find(e => normalizeCode(e.exam_code) === normalizeCode(examCode));
+          var hasExam = !!inList;
+
           var card = document.createElement("div");
           card.className = "exam-card";
           card.innerHTML = `
@@ -503,24 +511,29 @@
             </header>
             <div class="exam-card-body">
               <div class="exam-info-row">
-                <span class="info-label">Hình thức thi:</span>
-                <span class="badge-green">Thi trực tuyến</span>
+                <span class="info-label">Mã đề:</span>
+                <span class="info-value font-bold">${examCode}</span>
               </div>
               <div class="exam-info-row">
-                <span class="info-label">Thời gian đăng ký:</span>
-                <span class="info-value">Hằng ngày</span>
+                <span class="info-label">Trạng thái:</span>
+                <span class="${hasExam ? 'badge-green' : 'badge-red'}" style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                  ${hasExam ? 'ĐÃ CÓ ĐỀ' : 'CHƯA CÓ ĐỀ'}
+                </span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Hình thức:</span>
+                <span class="info-value font-bold">Thi trực tuyến</span>
               </div>
               <div class="exam-info-row">
                 <span class="info-label">Lệ phí:</span>
                 <span class="info-value font-bold">Miễn phí</span>
               </div>
-              <div class="exam-info-row">
-                <span class="info-label">Thời gian thi:</span>
-                <span class="info-value">Hằng ngày</span>
-              </div>
             </div>
-            <footer class="exam-card-footer">
-              <button class="btn btn-sm btn-primary" style="font-weight: 800;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
+            <footer class="exam-card-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+              <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
+              ${hasExam ? `
+                <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border-color: #ef4444; color: #fff;" onclick="deleteExamPermanently('${examCode}', '${examTitle}')">Xóa đề</button>
+              ` : ''}
             </footer>
           `;
           grid.appendChild(card);
@@ -3345,6 +3358,14 @@
         $("#editor-subtitle").textContent = `Đang chỉnh sửa: ${title} (${cleanCode})`;
         syncMetadataToForm();
         saveDraft();
+
+        // Load saved Gemini Key if exists
+        try {
+          var savedKey = localStorage.getItem("tma_gemini_api_key") || "";
+          var keyInput = document.getElementById("ai-gemini-key");
+          if (keyInput) keyInput.value = savedKey;
+        } catch (e) {}
+
         switchEditorTab("setup");
       }
 
@@ -3363,6 +3384,79 @@
       // Expose to window object so clicking edit buttons work
       window.startEditingExam = startEditingExam;
       window.exitEditingMode = exitEditingMode;
+
+      async function deleteExamPermanently(examCode, examTitle) {
+        var cleanCode = normalizeCode(examCode);
+        if (!window.confirm(`⚠️ CẢNH BÁO CỰC KỲ QUAN TRỌNG!\n\nBạn có chắc chắn muốn XÓA TẬN GỐC đề thi:\n"${examTitle}" (${cleanCode}) không?\n\nHành động này sẽ:\n1. Xóa vĩnh viễn tệp đề JSON trên Supabase Storage.\n2. Gỡ bỏ đề khỏi danh sách mục lục hiển thị của học sinh.\n3. Xóa toàn bộ điểm số và bài làm của tất cả học sinh liên quan đến đề này trong cơ sở dữ liệu.\n\nHÀNH ĐỘNG NÀY KHÔNG THỂ KHÔI PHỤC!`)) {
+          return;
+        }
+
+        var confirmCode = window.prompt(`Để xác nhận xóa, vui lòng nhập chính xác mã đề "${cleanCode}":`);
+        if (confirmCode !== cleanCode) {
+          window.alert("Nhập mã đề không khớp! Đã hủy lệnh xóa.");
+          return;
+        }
+
+        try {
+          // 1. Xóa file JSON của đề trên Storage
+          var examFileName = cleanCode + ".json";
+          var { error: delStorageError } = await supabaseClient.storage
+            .from('exams')
+            .remove([examFileName]);
+          if (delStorageError) {
+            console.warn("Storage deletion warning/error:", delStorageError);
+          }
+
+          // 2. Cập nhật file mục lục index.json
+          var indexList = [];
+          var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+          if (rawIdx) {
+            try { indexList = JSON.parse(rawIdx); } catch(e) {}
+          }
+          
+          indexList = indexList.filter(e => normalizeCode(e.exam_code) !== cleanCode);
+          
+          var indexJsonStr = JSON.stringify(indexList, null, 2);
+          var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
+          var { error: uploadIndexError } = await supabaseClient.storage
+            .from('exams')
+            .upload('index.json', indexBlob, {
+              cacheControl: '3600',
+              upsert: true
+            });
+          if (uploadIndexError) throw uploadIndexError;
+
+          localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
+
+          // 3. Xóa điểm số và bài làm trong Database
+          var { error: delAnswersError } = await supabaseClient
+            .from('exam_answers')
+            .delete()
+            .eq('exam_code', cleanCode);
+          if (delAnswersError) {
+            console.warn("DB exam_answers deletion warning:", delAnswersError);
+          }
+
+          var { error: delResultsError } = await supabaseClient
+            .from('exam_results')
+            .delete()
+            .eq('exam_code', cleanCode);
+          if (delResultsError) {
+            console.warn("DB exam_results deletion warning:", delResultsError);
+          }
+
+          localStorage.removeItem("tma_tsa_draft_" + cleanCode);
+
+          window.alert("✓ Đã xóa tận gốc đề thi và toàn bộ dữ liệu liên quan thành công!");
+          
+          renderPracticeRoom();
+          renderExamsList();
+        } catch (error) {
+          console.error(error);
+          window.alert("Lỗi khi thực hiện xóa đề:\n" + (error.message || error));
+        }
+      }
+      window.deleteExamPermanently = deleteExamPermanently;
 
       function bindEvents() {
         document.addEventListener("click", function (event) {
@@ -3430,6 +3524,331 @@
         if (dlExamBtn) {
           dlExamBtn.addEventListener("click", function () {
             downloadJson(exam.exam_code + ".json", exam);
+          });
+        }
+        var importExamBtn = $("#import-exam-button");
+        if (importExamBtn) {
+          importExamBtn.addEventListener("click", function () {
+            var fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.accept = ".json";
+            fileInput.addEventListener("change", function (e) {
+              var file = e.target.files[0];
+              if (!file) return;
+              var reader = new FileReader();
+              reader.onload = function (evt) {
+                try {
+                  var imported = JSON.parse(evt.target.result);
+                  if (!imported || !imported.exam_code) {
+                    window.alert("File JSON không hợp lệ! Thiếu trường 'exam_code'.");
+                    return;
+                  }
+                  if (window.confirm("Bạn có chắc chắn muốn nhập đề thi từ file này không? Toàn bộ câu hỏi hiện tại trong trình soạn thảo sẽ bị ghi đè.")) {
+                    exam = imported;
+                    ensureSchema();
+                    syncMetadataToForm();
+                    saveDraft();
+                    renderAll();
+                    window.alert("✓ Đã nhập đề thi từ file JSON thành công! Hãy kiểm tra lại các câu hỏi và nhấn 'Lưu lên Supabase Cloud' để lưu đề.");
+                  }
+                } catch (err) {
+                  window.alert("Lỗi khi đọc file JSON: " + err.message);
+                }
+              };
+              reader.readAsText(file);
+            });
+            fileInput.click();
+          });
+        }
+        var aiRunBtn = $("#ai-run-button");
+        if (aiRunBtn) {
+          aiRunBtn.addEventListener("click", async function () {
+            var apiKeyInput = $("#ai-gemini-key");
+            var examTextInput = $("#ai-exam-text");
+            var importSectionSelect = $("#ai-import-section");
+            if (!apiKeyInput || !examTextInput) return;
+
+            var apiKey = apiKeyInput.value.trim();
+            var rawText = examTextInput.value.trim();
+            var selectedSection = importSectionSelect ? importSectionSelect.value : "math";
+
+            if (!apiKey) {
+              window.alert("Vui lòng nhập Gemini API Key để sử dụng tính năng này!");
+              apiKeyInput.focus();
+              return;
+            }
+            if (!rawText) {
+              window.alert("Vui lòng dán nội dung đề thi vào ô văn bản!");
+              examTextInput.focus();
+              return;
+            }
+
+            // Save key to local storage
+            localStorage.setItem("tma_gemini_api_key", apiKey);
+
+            var originalText = aiRunBtn.textContent;
+            aiRunBtn.disabled = true;
+            aiRunBtn.textContent = "AI đang phân tích & tách câu hỏi... (5-10s)";
+
+            try {
+              var jsonStructureText = "";
+              if (selectedSection === "math") {
+                jsonStructureText = JSON.stringify({
+                  exam_code: exam.exam_code || "TSA001",
+                  title: exam.title || "Đề thi",
+                  duration_minutes: exam.duration_minutes || 60,
+                  status: "published",
+                  sections: [
+                    {
+                      section_id: "math",
+                      section_label: "Tư duy Toán học",
+                      layout: "single",
+                      questions: []
+                    }
+                  ]
+                }, null, 2);
+              } else if (selectedSection === "reading" || selectedSection === "science") {
+                var sLabel = selectedSection === "reading" ? "Đọc hiểu" : "Khoa học";
+                jsonStructureText = JSON.stringify({
+                  exam_code: exam.exam_code || "TSA001",
+                  title: exam.title || "Đề thi",
+                  duration_minutes: exam.duration_minutes || 60,
+                  status: "published",
+                  sections: [
+                    {
+                      section_id: selectedSection,
+                      section_label: sLabel,
+                      layout: "split",
+                      groups: [
+                        {
+                          group_id: "g1",
+                          title: "Tiêu đề văn bản/ngữ liệu số 01",
+                          stimulus: {
+                            type: "text",
+                            content: "Nội dung văn bản dài..."
+                          },
+                          questions: []
+                        }
+                      ]
+                    }
+                  ]
+                }, null, 2);
+              } else {
+                jsonStructureText = JSON.stringify({
+                  exam_code: exam.exam_code || "TSA001",
+                  title: exam.title || "Đề thi",
+                  duration_minutes: exam.duration_minutes || 60,
+                  status: "published",
+                  sections: [
+                    {
+                      section_id: "math",
+                      section_label: "Tư duy Toán học",
+                      layout: "single",
+                      questions: []
+                    },
+                    {
+                      section_id: "reading",
+                      section_label: "Đọc hiểu",
+                      layout: "split",
+                      groups: [
+                        {
+                          group_id: "g1",
+                          title: "Tiêu đề văn bản Đọc hiểu số 01",
+                          stimulus: { type: "text", content: "..." },
+                          questions: []
+                        }
+                      ]
+                    },
+                    {
+                      section_id: "science",
+                      section_label: "Khoa học",
+                      layout: "split",
+                      groups: [
+                        {
+                          group_id: "g1",
+                          title: "Tiêu đề văn bản Khoa học số 01",
+                          stimulus: { type: "text", content: "..." },
+                          questions: []
+                        }
+                      ]
+                    }
+                  ]
+                }, null, 2);
+              }
+
+              var systemInstruction = `
+Bạn là một trợ lý AI chuyên môn cao về EdTech. Bạn được yêu cầu chuyển đổi văn bản đề thi thô thành định dạng JSON cấu trúc đúng như sau.
+
+CHỈ THỊ PHÂN LOẠI PHẦN THI CHỌN LỰA:
+- Giáo viên đã chọn nạp đề thi này vào phần thi: "${selectedSection.toUpperCase()}".
+- Nếu chọn "math", toàn bộ câu hỏi được phân tích phải nằm trong mảng "questions" của phần "math" (Danh sách phẳng không gom nhóm).
+- Nếu chọn "reading" hoặc "science", toàn bộ câu hỏi phải được gom nhóm theo đoạn văn ngữ liệu tương ứng và đặt trong mảng "groups" (mỗi nhóm gồm văn bản đọc hiểu/khoa học và các câu hỏi đi kèm, mã nhóm bắt đầu là g1, g2, g3...).
+- Nếu chọn "auto", bạn hãy tự động phân tách đề bài thành 3 phần Toán học (math), Đọc hiểu (reading) và Khoa học (science) theo đúng cấu trúc đề thi TSA.
+
+CẤU TRÚC JSON ĐẦU RA YÊU CẦU:
+${jsonStructureText}
+
+CÁC DẠNG CÂU HỎI HỖ TRỢ:
+
+1. Trắc nghiệm chọn 1 đáp án (single_choice):
+{
+  "question_no": 1,
+  "question_type": "single_choice",
+  "question": "Nội dung câu hỏi (sử dụng LaTeX \\( ... \\) cho công thức toán)",
+  "image_url": "",
+  "options": [
+    { "key": "A", "text": "Phương án A" },
+    { "key": "B", "text": "Phương án B" },
+    { "key": "C", "text": "Phương án C" },
+    { "key": "D", "text": "Phương án D" }
+  ],
+  "correct_answer": "B", // Phím đáp án đúng (A, B, C hoặc D)
+  "explanation": "Giải thích...",
+  "points": 1
+}
+
+2. Trắc nghiệm chọn nhiều đáp án (multiple_choice):
+{
+  "question_no": 2,
+  "question_type": "multiple_choice",
+  "question": "Nội dung câu hỏi...",
+  "image_url": "",
+  "options": [
+    { "key": "A", "text": "Phương án A" },
+    { "key": "B", "text": "Phương án B" }
+  ],
+  "correct_answer": ["A", "B"], // Mảng các đáp án đúng
+  "explanation": "Giải thích...",
+  "points": 1
+}
+
+3. Câu hỏi Đúng/Sai (true_false):
+{
+  "question_no": 3,
+  "question_type": "true_false",
+  "question": "Nội dung câu dẫn...",
+  "image_url": "",
+  "statements": [
+    { "id": "a", "text": "Mệnh đề a..." },
+    { "id": "b", "text": "Mệnh đề b..." }
+  ],
+  "correct_answer": {
+    "a": true, // Đúng
+    "b": false // Sai
+  },
+  "explanation": "Giải thích...",
+  "points": 1
+}
+
+4. Câu hỏi kéo thả / điền chỗ trống (drag_drop):
+Dùng dạng này khi đề thi yêu cầu điền vào các ô trống trong đoạn văn.
+{
+  "question_no": 4,
+  "question_type": "drag_drop",
+  "question": "Nội dung câu dẫn...",
+  "image_url": "",
+  "body": [
+    { "type": "text", "content": "Văn bản trước ô trống thứ nhất " },
+    { "type": "blank", "id": "o1" },
+    { "type": "text", "content": " văn bản trước ô trống thứ hai " },
+    { "type": "blank", "id": "o2" }
+  ],
+  "items": [ // Các thẻ từ để kéo thả (nếu có) hoặc các từ khóa đáp án
+    { "id": "i1", "text": "đáp án đúng 1" },
+    { "id": "i2", "text": "đáp án đúng 2" },
+    { "id": "i3", "text": "đáp án gây nhiễu" }
+  ],
+  "correct_answer": {
+    "o1": "i1",
+    "o2": "i2"
+  },
+  "explanation": "Giải thích...",
+  "points": 1
+}
+
+5. Điền số (numeric_answer):
+{
+  "question_no": 5,
+  "question_type": "numeric_answer",
+  "question": "Nội dung câu hỏi...",
+  "image_url": "",
+  "correct_answer": 12.5, // Số thực hoặc số nguyên đáp án đúng
+  "tolerance": 0,
+  "explanation": "Giải thích...",
+  "points": 1
+}
+
+YÊU CẦU QUAN TRỌNG:
+- Trả về cấu trúc JSON hợp lệ hoàn toàn dựa theo cấu trúc trên.
+- Sử dụng chuẩn toán học LaTeX với ký hiệu \\( ... \\) cho công thức nội dòng (inline) và \\[ ... \\] cho công thức khối (display math). Ví dụ: \\(f(x) = x^2\\). Hãy chắc chắn escape đúng các ký tự chéo ngược \\ thành \\\\ trong chuỗi JSON.
+- ĐỂ CÔNG THỨC TOÁN HIỂN THỊ TO RÕ ĐẸP MẮT: BẮT BUỘC sử dụng lệnh \\dfrac thay vì \\frac cho tất cả các phân số. Đối với các ký hiệu tổng hoặc tích, sử dụng thêm \\limits (ví dụ: \\sum\\limits_{k=1}^{n} hoặc \\prod\\limits_{i=1}^{2026}) để giới hạn hiển thị ngay ngắn phía trên và phía dưới ký hiệu và có kích thước to rõ như sách giáo khoa.
+- Nếu câu hỏi có liên quan đến hình ảnh, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
+`;
+
+              var apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+              var response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  contents: [
+                    {
+                      role: "user",
+                      parts: [
+                        {
+                          text: systemInstruction + "\n\nNỘI DUNG ĐỀ THI CẦN PHÂN TÍCH:\n" + rawText
+                        }
+                      ]
+                    }
+                  ],
+                  generationConfig: {
+                    responseMimeType: "application/json"
+                  }
+                })
+              });
+
+              if (!response.ok) {
+                var errBody = await response.text();
+                throw new Error(`Gemini API trả về lỗi: ${response.status} - ${errBody}`);
+              }
+
+              var resData = await response.json();
+              var jsonText = resData.candidates[0].content.parts[0].text;
+              var imported = JSON.parse(jsonText.trim());
+
+              if (!imported || !imported.sections) {
+                throw new Error("Không thể trích xuất cấu trúc đề thi hợp lệ từ AI!");
+              }
+
+              if (window.confirm("✓ AI đã phân tích đề thành công! Bạn có chắc chắn muốn nạp toàn bộ câu hỏi này vào phần cấu trúc đề hiện tại không?")) {
+                if (!exam.sections) exam.sections = [];
+                
+                imported.sections.forEach(function (newSec) {
+                  var existSecIdx = exam.sections.findIndex(function (s) { return s.section_id === newSec.section_id; });
+                  if (existSecIdx !== -1) {
+                    if (newSec.section_id === "math") {
+                      exam.sections[existSecIdx].questions = newSec.questions || [];
+                    } else {
+                      exam.sections[existSecIdx].groups = newSec.groups || [];
+                    }
+                  } else {
+                    exam.sections.push(newSec);
+                  }
+                });
+
+                ensureSchema();
+                saveDraft();
+                renderAll();
+                window.alert("✓ Đã nạp thành công toàn bộ câu hỏi từ AI! Bạn có thể chuyển qua các tab Toán, Đọc hiểu, Khoa học để kiểm tra và sau đó bấm 'Lưu lên Supabase Cloud' để hoàn tất.");
+              }
+            } catch (err) {
+              console.error(err);
+              window.alert("Có lỗi xảy ra khi gọi AI phân tích đề:\n" + err.message);
+            } finally {
+              aiRunBtn.disabled = false;
+              aiRunBtn.textContent = originalText;
+            }
           });
         }
         var dlIdxBtn = $("#download-index-button");

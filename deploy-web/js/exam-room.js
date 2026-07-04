@@ -184,8 +184,20 @@
       .replace(/"/g, "&quot;");
   }
 
+  function preprocessMathContent(text) {
+    if (!text) return "";
+    return String(text)
+      .replace(/\\\(/g, '\\(\\displaystyle ')
+      .replace(/\$(?!\$)/g, '$\\displaystyle ')
+      .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
+      .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
+      .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
+      .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
+      .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+  }
+
   function sanitizeHtml(value) {
-    const html = String(value == null ? "" : value);
+    const html = preprocessMathContent(String(value == null ? "" : value));
     if (typeof DOMPurify !== "undefined" && DOMPurify.sanitize) {
       return DOMPurify.sanitize(html);
     }
@@ -385,9 +397,9 @@
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
 
-    // 30 minutes cache (1800000 ms) (Bypassed for index.json to ensure fresh status)
+    // 5 seconds cache to prevent duplicate requests on same load
     const isIndexFile = typeof path === 'string' && path.endsWith('index.json');
-    if (!isIndexFile && cachedData && cachedTime && (now - parseInt(cachedTime)) < 1800000) {
+    if (!isIndexFile && cachedData && cachedTime && (now - parseInt(cachedTime)) < 5000) {
       try {
         console.log(`Loading cached JSON for ${path}`);
         return JSON.parse(cachedData);
@@ -396,7 +408,8 @@
       }
     }
 
-    const response = await fetch(path);
+    const separator = path.indexOf('?') !== -1 ? '&' : '?';
+    const response = await fetch(path + separator + 't=' + Date.now());
     if (!response.ok) throw new Error(`Không tải được ${path}`);
     const data = await response.json();
 
@@ -1378,7 +1391,13 @@
                 correct_count: totalCorrect,
                 total_questions: totalQuestionsCount,
                 score: totalScoredPoints,
-                created_at: new Date().toISOString()
+                created_at: new Date().toISOString(),
+                math_correct: mathCorrect,
+                math_total: mathTotal,
+                reading_correct: readingCorrect,
+                reading_total: readingTotal,
+                science_correct: scienceCorrect,
+                science_total: scienceTotal
               };
               localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
 
@@ -1403,7 +1422,13 @@
             correct_count: totalCorrect,
             total_questions: totalQuestionsCount,
             score: totalScoredPoints,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            math_correct: mathCorrect,
+            math_total: mathTotal,
+            reading_correct: readingCorrect,
+            reading_total: readingTotal,
+            science_correct: scienceCorrect,
+            science_total: scienceTotal
           };
           localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
 
@@ -1454,7 +1479,13 @@
               correct_count: res.correct_count,
               total_questions: res.total_questions,
               score: res.score,
-              created_at: new Date().toISOString()
+              created_at: new Date().toISOString(),
+              math_correct: subject === "math" ? res.correct_count : 0,
+              math_total: subject === "math" ? res.total_questions : 0,
+              reading_correct: subject === "reading" ? res.correct_count : 0,
+              reading_total: subject === "reading" ? res.total_questions : 0,
+              science_correct: subject === "science" ? res.correct_count : 0,
+              science_total: subject === "science" ? res.total_questions : 0
             };
             localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
 
@@ -1492,7 +1523,13 @@
           correct_count: correctCount,
           total_questions: examData.questions.length,
           score: scoredPoints,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          math_correct: subject === "math" ? correctCount : 0,
+          math_total: subject === "math" ? examData.questions.length : 0,
+          reading_correct: subject === "reading" ? correctCount : 0,
+          reading_total: subject === "reading" ? examData.questions.length : 0,
+          science_correct: subject === "science" ? correctCount : 0,
+          science_total: subject === "science" ? examData.questions.length : 0
         };
         localStorage.setItem("tma_tsa_last_local_result_" + examCode, JSON.stringify(localResult));
 

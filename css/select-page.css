@@ -4,7 +4,7 @@
       --brand-red: #c1121f;
       --brand-red-dark: #9f0f1a;
       --brand-red-light: #fff1f2;
-      --page-bg: #ffffff;
+      --page-bg: #f5f7fa;
       --card-bg: #ffffff;
       --text: #111827;
       --muted: #6b7280;
@@ -83,7 +83,7 @@
       border-right: 1px solid var(--border);
       z-index: 20;
       box-shadow: 2px 0 10px rgba(15, 23, 42, 0.01);
-      transition: width 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       will-change: width;
       display: flex;
       flex-direction: column;
@@ -187,7 +187,7 @@
       border-bottom: 1px solid var(--border);
       box-shadow: none;
       z-index: 15;
-      transition: padding-left 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       will-change: padding-left;
     }
 
@@ -384,7 +384,7 @@
       height: 100vh;
       margin-left: var(--sidebar-width);
       padding: calc(var(--topbar-height) + 24px) 28px 0;
-      transition: margin-left 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       will-change: margin-left;
       z-index: 1;
       display: flex;
@@ -1357,7 +1357,10 @@
     /* BRAND LOGO WITH SPINNING CHIM LAC WATERMARK EFFECT */
     .brand-watermark-container {
       position: fixed;
-      inset: var(--topbar-height) 0 0 0;
+      top: var(--topbar-height);
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - var(--topbar-height));
       display: flex;
       justify-content: center;
       align-items: center;
@@ -1365,14 +1368,23 @@
       z-index: 0;
       opacity: 0.055; /* Subtle watermark opacity */
       overflow: hidden;
+      transform: translate3d(130px, 0, 0);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      will-change: transform;
+    }
+    .tsa-shell.sidebar-collapsed .brand-watermark-container {
+      transform: translate3d(36px, 0, 0);
     }
     .chim-lac-logo-wrapper {
       position: relative;
-      width: min(680px, 95vw);
-      height: min(680px, 95vw);
+      width: 1400px;
+      height: 1400px;
       display: flex;
       justify-content: center;
       align-items: center;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      will-change: transform;
     }
     .spinning-chim-lac {
       position: absolute;
@@ -1385,24 +1397,29 @@
       /* animation: spin-slow 150s linear infinite; */
       transform-origin: center center;
       filter: invert(16%) sepia(85%) saturate(6978%) hue-rotate(349deg) brightness(89%) contrast(97%); /* Brand Red color */
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
     .static-logo-backing {
       position: absolute;
-      width: 290px;
-      height: 290px;
+      width: 390px;
+      height: 390px;
       background: #ffffff; /* Solid white background to completely mask the central star of the drum */
       border-radius: 50%;
       z-index: 2;
+      transform: translate3d(0, 0, 0);
     }
     .static-logo {
       position: absolute;
-      width: 250px;
-      height: 250px;
+      width: 350px;
+      height: 350px;
       background-image: url('https://assets.tmastudy.io.vn/assets/logo1.png');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
       z-index: 3;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
     @keyframes spin-slow {
       from {

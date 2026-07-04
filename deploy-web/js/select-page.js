@@ -333,15 +333,7 @@
         if (event && event.data) {
           const isSolutionMode = event.data.isSolutionMode === true;
           if (event.data.type === "tsa-exam-finished") {
-            const finishedExamCode = event.data.examCode;
-            const finishedExamTitle = event.data.examTitle;
             closeExamShell();
-            
-            if (!isSolutionMode && finishedExamCode && typeof showExamResultModal === "function") {
-              setTimeout(() => {
-                showExamResultModal(finishedExamCode, finishedExamTitle);
-              }, 350);
-            }
           } else if (event.data.type === "tsa-exam-submitting") {
             showParentSubmitLoadingOverlay();
           } else if (event.data.type === "tsa-exam-submitted-loading") {
@@ -2517,7 +2509,7 @@
 
         if (shouldFetchIndex) {
           // Tải danh sách đề từ Supabase Storage trước
-          fetch(`${supabaseStorageUrl}index.json`, { cache: "default" })
+          fetch(`${supabaseStorageUrl}index.json?t=${Date.now()}`)
             .then(res => {
               if (!res.ok) throw new Error("Failed to fetch from Supabase");
               return res.json();
@@ -2581,7 +2573,7 @@
 
         if (shouldFetchLinks) {
           // Tải danh sách link Drive tài liệu từ Supabase Storage
-          fetch(`${supabaseStorageUrl}drive_links.json`, { cache: "default" })
+          fetch(`${supabaseStorageUrl}drive_links.json?t=${Date.now()}`)
             .then(res => {
               if (res.ok) return res.json();
             })
@@ -2702,7 +2694,13 @@
               if (currentTsaPracticeSubtab === "tong-hop") return "140 phút";
               return "45 phút";
             })();
-            let qCount = currentTsaPracticeSubtab === "tong-hop" ? "85 câu" : "6 câu";
+            let qCount = (function() {
+              if (currentTsaPracticeSubtab === "math") return "40 câu";
+              if (currentTsaPracticeSubtab === "reading") return "20 câu";
+              if (currentTsaPracticeSubtab === "science") return "40 câu";
+              if (currentTsaPracticeSubtab === "tong-hop") return "100 câu";
+              return "40 câu";
+            })();
 
             const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck);
             if (matchingExam) {
@@ -4028,7 +4026,7 @@
         
         const selectEl = document.getElementById("result-modal-attempt-select");
         
-        function displayAttempt(result) {
+        async function displayAttempt(result) {
           if (result) {
             // Tính điểm theo thang 100
             const grandTotal = result.total_questions || 100;
@@ -4048,13 +4046,65 @@
             // Tính số câu đúng từng môn
             let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học";
             let c1 = 0, t1 = 40, c2 = 0, t2 = 20, c3 = 0, t3 = 40;
+
+            if (result.math_correct !== undefined) {
+              c1 = result.math_correct; t1 = result.math_total || 0;
+              c2 = result.reading_correct; t2 = result.reading_total || 0;
+              c3 = result.science_correct; t3 = result.science_total || 0;
+            } else if (supabaseClient) {
+              try {
+                const { data: answersData, error: answersError } = await supabaseClient
+                  .from('exam_answers')
+                  .select('subject, is_correct')
+                  .eq('user_email', result.user_email)
+                  .eq('exam_code', result.exam_code);
+                  
+                if (!answersError && answersData && answersData.length > 0) {
+                  const mathRows = answersData.filter(a => a.subject === "math");
+                  const readingRows = answersData.filter(a => a.subject === "reading");
+                  const scienceRows = answersData.filter(a => a.subject === "science");
+
+                  t1 = mathRows.length;
+                  c1 = mathRows.filter(a => a.is_correct === true).length;
+
+                  t2 = readingRows.length;
+                  c2 = readingRows.filter(a => a.is_correct === true).length;
+
+                  t3 = scienceRows.length;
+                  c3 = scienceRows.filter(a => a.is_correct === true).length;
+                } else {
+                  // Proportional Fallback
+                  if (category === "Bài thi HSA") {
+                    t1 = t2 = t3 = Math.round(grandTotal / 3);
+                    c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+                  } else {
+                    t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+                    c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+                  }
+                }
+              } catch (e) {
+                console.error("Lỗi khi tải chi tiết đáp án:", e);
+                if (category === "Bài thi HSA") {
+                  t1 = t2 = t3 = Math.round(grandTotal / 3);
+                  c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+                } else {
+                  t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+                  c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+                }
+              }
+            } else {
+              // Proportional Fallback
+              if (category === "Bài thi HSA") {
+                t1 = t2 = t3 = Math.round(grandTotal / 3);
+                c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+              } else {
+                t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+                c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+              }
+            }
+
             if (category === "Bài thi HSA") {
               label1 = "Định lượng (Toán)"; label2 = "Định tính (Văn)"; label3 = "Khoa học (Lý/Hóa...)";
-              t1 = t2 = t3 = Math.round(grandTotal / 3);
-              c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
-            } else {
-              t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
-              c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
             }
 
             // Cập nhật từng thẻ phân môn
@@ -4064,6 +4114,16 @@
               const elCnt = document.getElementById(`result-modal-subject-count-text-${i}`);
               const elBar = document.getElementById(`result-modal-subject-bar-${i}`);
               const elSt  = document.getElementById(`result-modal-subject-status-${i}`);
+              const elCard = document.getElementById(`result-modal-subject-card-${i}`);
+              
+              if (elCard) {
+                if (t === 0) {
+                  elCard.style.display = "none";
+                } else {
+                  elCard.style.display = "block";
+                }
+              }
+
               if (elLbl) elLbl.textContent = lbl;
               if (elCnt) elCnt.textContent = `${c}/${t}`;
               if (elBar) setTimeout(() => { elBar.style.width = pct + "%"; }, 80);
@@ -4077,14 +4137,7 @@
               const qe = document.getElementById(`result-modal-subject-questions-${i}`);
               if (qe) {
                 qe.innerHTML = "";
-                let max_q = 40;
-                if (category === "Bài thi HSA") {
-                  max_q = 50;
-                } else {
-                  if (i === 1) max_q = 40;
-                  else if (i === 2) max_q = 20;
-                  else if (i === 3) max_q = 40;
-                }
+                let max_q = t;
                 for (let j = 1; j <= max_q; j++) {
                   const bubble = document.createElement("div");
                   bubble.className = "question-bubble";

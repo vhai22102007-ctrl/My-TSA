@@ -1,17 +1,32 @@
 /**
  * Common question renderers for the static TSA exam system.
+/**
+ * Common question renderers for the static TSA exam system.
  * Supports:
  * single_choice, multiple_choice, true_false, fill_blank, numeric_answer, drag_drop.
  */
 (function (global) {
   "use strict";
 
+  function preprocessMathContent(text) {
+    if (!text) return "";
+    return String(text)
+      .replace(/\\\(/g, '\\(\\displaystyle ')
+      .replace(/\$(?!\$)/g, '$\\displaystyle ')
+      .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
+      .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
+      .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
+      .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
+      .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+  }
+
   function sanitizeHTML(html) {
     if (!html) return "";
+    var processed = preprocessMathContent(html);
     if (typeof DOMPurify !== "undefined" && DOMPurify.sanitize) {
-      return DOMPurify.sanitize(html);
+      return DOMPurify.sanitize(processed);
     }
-    return String(html)
+    return String(processed)
       .replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "")
       .replace(/on\w+\s*=\s*(['"\s])[\s\S]*?\1/gi, "")
       .replace(/javascript:\s*/gi, "");
