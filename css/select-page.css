@@ -1394,11 +1394,12 @@
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      /* animation: spin-slow 150s linear infinite; */
+      animation: spin-slow 150s linear infinite;
       transform-origin: center center;
       filter: invert(16%) sepia(85%) saturate(6978%) hue-rotate(349deg) brightness(89%) contrast(97%); /* Brand Red color */
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
+      will-change: transform;
     }
     .static-logo-backing {
       position: absolute;
@@ -1423,10 +1424,10 @@
     }
     @keyframes spin-slow {
       from {
-        transform: rotate(0deg);
+        transform: translate3d(0, 0, 0) rotate(0deg);
       }
       to {
-        transform: rotate(360deg);
+        transform: translate3d(0, 0, 0) rotate(360deg);
       }
     }
 

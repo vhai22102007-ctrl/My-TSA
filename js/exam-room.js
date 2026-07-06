@@ -199,7 +199,11 @@
   function sanitizeHtml(value) {
     const html = preprocessMathContent(String(value == null ? "" : value));
     if (typeof DOMPurify !== "undefined" && DOMPurify.sanitize) {
-      return DOMPurify.sanitize(html);
+      return DOMPurify.sanitize(html, {
+        USE_PROFILES: { html: true, svg: true, mathMl: true },
+        ADD_TAGS: ["style"],
+        ADD_ATTR: ["stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
+      });
     }
     return esc(html);
   }
@@ -314,7 +318,7 @@
       subject_label: rawExam.subject_label || SECTION_LABELS[subject] || subject,
       duration_minutes: (function() {
         if (rawExam.subject === "math") return 60;
-        if (rawExam.subject === "reading") return 20;
+        if (rawExam.subject === "reading") return 30;
         if (rawExam.subject === "science") return 60;
         return rawExam.duration_minutes || 45;
       })(),
@@ -341,7 +345,7 @@
       subject_label: section?.section_label || SECTION_LABELS[subj] || subj,
       duration_minutes: (function() {
         if (subj === "math") return 60;
-        if (subj === "reading") return 20;
+        if (subj === "reading") return 30;
         if (subj === "science") return 60;
         return rawExam.duration_minutes || (examMeta && examMeta.duration_minutes) || 45;
       })(),
@@ -905,17 +909,58 @@
       // Update grid selection in sidebar/drawer
       updateGridSelection();
       
-      // Enable/disable navigation buttons based on new currentQuestionIndex
-      const prevBtn = $('[data-action="previous"]');
-      const nextBtn = $('[data-action="next"]');
-      if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
-      if (nextBtn) {
-        const labelSpan = nextBtn.querySelector(".button-label");
-        if (labelSpan) labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
-      }
+      updateNavigationButtons();
       
       // Update timer display immediately
       setText("#question-time", formatTime(questionElapsedSeconds));
+    }
+  }
+
+  function getGroupNavigationInfo() {
+    if (subject === "math" || !examData || !examData.questions.length) {
+      return null;
+    }
+    const uniqueGroups = [];
+    examData.questions.forEach(q => {
+      if (q.group_id && uniqueGroups.indexOf(q.group_id) === -1) {
+        uniqueGroups.push(q.group_id);
+      }
+    });
+    if (uniqueGroups.length <= 1) return null;
+    
+    const curQ = examData.questions[currentQuestionIndex];
+    const curGroupId = curQ ? curQ.group_id : null;
+    const groupIdx = curGroupId ? uniqueGroups.indexOf(curGroupId) : -1;
+    
+    return {
+      groups: uniqueGroups,
+      currentIndex: groupIdx,
+      isFirst: groupIdx <= 0,
+      isLast: groupIdx === uniqueGroups.length - 1
+    };
+  }
+
+  function updateNavigationButtons() {
+    const prevBtn = $('[data-action="previous"]');
+    const nextBtn = $('[data-action="next"]');
+    
+    const navInfo = getGroupNavigationInfo();
+    if (navInfo) {
+      if (prevBtn) prevBtn.disabled = navInfo.isFirst;
+      if (nextBtn) {
+        const labelSpan = nextBtn.querySelector(".button-label");
+        if (labelSpan) {
+          labelSpan.textContent = navInfo.isLast ? "Hoàn thành" : "Câu tiếp";
+        }
+      }
+    } else {
+      if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+      if (nextBtn) {
+        const labelSpan = nextBtn.querySelector(".button-label");
+        if (labelSpan) {
+          labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
+        }
+      }
     }
   }
 
@@ -942,14 +987,7 @@
         updateSidebarStats();
       });
 
-      const prevBtn = $('[data-action="previous"]');
-      const nextBtn = $('[data-action="next"]');
-      if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
-      if (nextBtn) {
-        const labelSpan = nextBtn.querySelector(".button-label");
-        if (labelSpan) labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
-      }
-
+      updateNavigationButtons();
       updateGridSelection();
       if (isSubmitted) showQuestionFeedback(question);
 
@@ -1084,14 +1122,7 @@
     }
 
     // Navigation and Grid
-    const prevBtn = $('[data-action="previous"]');
-    const nextBtn = $('[data-action="next"]');
-    if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
-    if (nextBtn) {
-      const labelSpan = nextBtn.querySelector(".button-label");
-      if (labelSpan) labelSpan.textContent = currentQuestionIndex === examData.questions.length - 1 ? "Hoàn thành" : "Câu tiếp";
-    }
-
+    updateNavigationButtons();
     updateGridSelection();
   }
 
@@ -1619,7 +1650,7 @@
 
       remainingSeconds = Number(examData.duration_minutes || (function() {
         if (subject === "math") return 60;
-        if (subject === "reading") return 20;
+        if (subject === "reading") return 30;
         if (subject === "science") return 60;
         return 45;
       })()) * 60;
@@ -1781,10 +1812,24 @@
     const prevBtn = $('[data-action="previous"]');
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
-        if (currentQuestionIndex > 0) {
-          currentQuestionIndex--;
-          questionElapsedSeconds = 0;
-          renderActiveQuestion();
+        if (!examData) return;
+        const navInfo = getGroupNavigationInfo();
+        if (navInfo) {
+          if (!navInfo.isFirst) {
+            const prevGroup = navInfo.groups[navInfo.currentIndex - 1];
+            const prevIdx = examData.questions.findIndex(q => q.group_id === prevGroup);
+            if (prevIdx !== -1) {
+              currentQuestionIndex = prevIdx;
+              questionElapsedSeconds = 0;
+              renderActiveQuestion();
+            }
+          }
+        } else {
+          if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            questionElapsedSeconds = 0;
+            renderActiveQuestion();
+          }
         }
       });
     }
@@ -1796,15 +1841,34 @@
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         if (!examData) return;
-        if (currentQuestionIndex < examData.questions.length - 1) {
-          currentQuestionIndex++;
-          questionElapsedSeconds = 0;
-          renderActiveQuestion();
-        } else {
-          if (viewSolution) {
-            leaveExamRoom();
+        const navInfo = getGroupNavigationInfo();
+        if (navInfo) {
+          if (!navInfo.isLast) {
+            const nextGroup = navInfo.groups[navInfo.currentIndex + 1];
+            const nextIdx = examData.questions.findIndex(q => q.group_id === nextGroup);
+            if (nextIdx !== -1) {
+              currentQuestionIndex = nextIdx;
+              questionElapsedSeconds = 0;
+              renderActiveQuestion();
+            }
           } else {
-            submitExam();
+            if (viewSolution) {
+              leaveExamRoom();
+            } else {
+              submitExam();
+            }
+          }
+        } else {
+          if (currentQuestionIndex < examData.questions.length - 1) {
+            currentQuestionIndex++;
+            questionElapsedSeconds = 0;
+            renderActiveQuestion();
+          } else {
+            if (viewSolution) {
+              leaveExamRoom();
+            } else {
+              submitExam();
+            }
           }
         }
       });

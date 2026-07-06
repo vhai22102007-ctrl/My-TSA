@@ -170,7 +170,10 @@
         tex: {
           inlineMath: [['$', '$'], ['\\(', '\\)']],
           displayMath: [['$$', '$$'], ['\\[', '\\]']],
-          processEscapes: true
+          processEscapes: true,
+          macros: {
+            frac: ["\\dfrac{#1}{#2}", 2]
+          }
         },
         options: {
           ignoreHtmlClass: 'tex2jax_ignore',

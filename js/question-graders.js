@@ -67,6 +67,7 @@
 
   var QUESTION_GRADERS = {
     single_choice: gradeSingleChoice,
+    single_choice_2: gradeSingleChoice,
     multiple_choice: gradeMultipleChoice,
     true_false: gradeTrueFalse,
     fill_blank: gradeFillBlank,

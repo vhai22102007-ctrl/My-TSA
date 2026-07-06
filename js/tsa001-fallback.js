@@ -1,4 +1,5 @@
-{
+// Pre-embedded fallback data for TSA001 to work offline / file:// protocol
+window.TSA001_FALLBACK_DATA = {
   "exam_code": "TSA_EXAM_01",
   "title": "Đề thi thử TSA",
   "duration_minutes": 150,
@@ -6927,4 +6928,4 @@
       ]
     }
   ]
-}
+};

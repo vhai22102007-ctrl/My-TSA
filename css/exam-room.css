@@ -981,6 +981,7 @@ body[data-subject="science"] .passage-pane {
   line-height: 1.6;
   scrollbar-width: none; /* Hide Firefox scrollbar */
   -ms-overflow-style: none; /* Hide IE/Edge scrollbar */
+  white-space: pre-wrap; /* Preserve newlines from teacher editor */
 }
 
 body[data-subject="reading"] .passage-pane::-webkit-scrollbar,
@@ -1705,7 +1706,7 @@ body[data-subject="science"] .true-false-answer-shell {
   line-height: 2.0; /* Adjusted to look completely natural and normal */
   font-size: 15px;
   color: #1e293b;
-  white-space: pre-line; /* Respect newlines */
+  white-space: pre-wrap; /* Preserve leading spaces and respect newlines */
 }
 
 .drop-zone {
@@ -1791,13 +1792,15 @@ body[data-subject="science"] .true-false-answer-shell {
   background: transparent !important;
   outline: none !important;
   font-size: 15px !important;
-  font-weight: 400 !important; /* Changed to match prompt font-weight */
+  font-weight: 500 !important;
   color: #000000 !important; /* Black text when filled */
   width: 140px !important;
   text-align: center !important;
   padding: 0px 6px 1px 6px !important; /* Zero top/bottom padding to bring text closer to border */
   height: 20px !important;
   margin: 2px 4px !important; /* Reduced vertical margin to restore normal flow */
+  cursor: text !important;
+  transition: border-bottom-color 0.2s !important;
 }
 
 .inline-blank-input:focus {

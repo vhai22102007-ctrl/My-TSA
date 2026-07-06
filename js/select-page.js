@@ -2680,6 +2680,9 @@
               // Các phần đơn môn (Toán, Đọc hiểu, Khoa học) đều đọc chung từ đề tổng hợp FULL để tránh tạo nhiều file thừa
               examCodeToCheck = "TSA_PRACTICE_FULL_" + numStr2;
             }
+            let openStatus = {};
+            try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
             const hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck);
             const hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
             const isUploaded = (i === 1) || hasExamInList || hasLocalDraft;
@@ -2687,9 +2690,9 @@
             let examTitle = "";
             let subjectText = "";
             let redirectUrl = "";
-                        let duration = (function() {
+            let duration = (function() {
               if (currentTsaPracticeSubtab === "math") return "60 phút";
-              if (currentTsaPracticeSubtab === "reading") return "20 phút";
+              if (currentTsaPracticeSubtab === "reading") return "30 phút";
               if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") return "60 phút";
               if (currentTsaPracticeSubtab === "tong-hop") return "140 phút";
               return "45 phút";
@@ -2721,6 +2724,8 @@
               } catch (e) {}
             }
 
+            const isOpen = (matchingExam && matchingExam.is_open !== false && openStatus[examCodeToCheck] !== false) || (!matchingExam && openStatus[examCodeToCheck] !== false);
+
             if (currentTsaPracticeSubtab === "tong-hop") {
               examTitle = `Đề tổng hợp số ${numStr}`;
               subjectText = "Toán học, Đọc hiểu, Khoa học";
@@ -2749,7 +2754,7 @@
               : `<span></span>`;
 
             let actionBtnHtml = "";
-            if (isUploaded) {
+            if (isUploaded && isOpen) {
               actionBtnHtml = `
                 <footer class="exam-card-footer">
                   ${xemKetQuaHtml}

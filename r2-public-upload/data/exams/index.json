@@ -15,7 +15,7 @@
         "subject": "reading",
         "subject_label": "Đọc hiểu",
         "duration_minutes": 45,
-        "question_count": 0,
+        "question_count": 20,
         "file": "data/exams/tsa001.json",
         "status": "published"
     },
@@ -25,7 +25,7 @@
         "subject": "science",
         "subject_label": "Khoa học",
         "duration_minutes": 45,
-        "question_count": 0,
+        "question_count": 40,
         "file": "data/exams/tsa001.json",
         "status": "published"
     }

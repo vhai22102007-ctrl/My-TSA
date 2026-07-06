@@ -1,9 +1,7 @@
 /**
  * Common question renderers for the static TSA exam system.
-/**
- * Common question renderers for the static TSA exam system.
  * Supports:
- * single_choice, multiple_choice, true_false, fill_blank, numeric_answer, drag_drop.
+ * single_choice, single_choice_2, multiple_choice, true_false, fill_blank, numeric_answer, drag_drop.
  */
 (function (global) {
   "use strict";
@@ -24,7 +22,11 @@
     if (!html) return "";
     var processed = preprocessMathContent(html);
     if (typeof DOMPurify !== "undefined" && DOMPurify.sanitize) {
-      return DOMPurify.sanitize(processed);
+      return DOMPurify.sanitize(processed, {
+        USE_PROFILES: { html: true, svg: true, mathMl: true },
+        ADD_TAGS: ["style"],
+        ADD_ATTR: ["stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
+      });
     }
     return String(processed)
       .replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "")
@@ -147,6 +149,9 @@
     if (!container) return;
     var wrap = document.createElement("div");
     wrap.className = "choices-container is-single-choice";
+    if (question.question_type === "single_choice_2") {
+      wrap.classList.add("is-single-choice-2");
+    }
     
     var isImageOptions = question.options_are_images === true;
     if (isImageOptions) {
@@ -416,18 +421,9 @@
           input.type = "text";
           input.className = "inline-blank-input";
           input.value = current[part.id] || "";
+          input.placeholder = "";
 
           input.style.width = "180px";
-          input.style.height = "20px"; // Bring underline closer to text baseline
-          input.style.border = "none";
-          input.style.borderBottom = "1px solid #93c5fd"; // Thin light blue underline
-          input.style.background = "transparent";
-          input.style.outline = "none";
-          input.style.padding = "0px 6px 1px 6px"; // Zero top/bottom padding to bring text closer to border
-          input.style.fontSize = "15px";
-          input.style.textAlign = "center";
-          input.style.color = "#000000"; // Black text when filled
-          input.style.fontWeight = "500";
 
           input.addEventListener("input", function () {
             current[part.id] = input.value;
@@ -614,6 +610,7 @@
 
   var QUESTION_RENDERERS = {
     single_choice: renderSingleChoice,
+    single_choice_2: renderSingleChoice,
     multiple_choice: renderMultipleChoice,
     true_false: renderTrueFalse,
     fill_blank: renderFillBlank,
@@ -641,14 +638,78 @@
     question = JSON.parse(JSON.stringify(question));
     preprocessQuestionMath(question);
 
-    renderQuestionText(question, bodyEl);
-    if (answerEl) {
-      clear(answerEl);
-      var renderer = QUESTION_RENDERERS[getType(question)];
-      if (renderer) {
-        renderer(question, savedAnswer, onAnswerChange, answerEl);
-      } else {
-        answerEl.innerHTML = '<div class="render-error">Không hỗ trợ dạng câu hỏi: ' + getType(question) + '</div>';
+    var type = getType(question);
+    var rawText = question.question || question.prompt || "";
+    
+    if (type === "fill_blank" && (rawText.indexOf("[o1]") !== -1 || rawText.indexOf("[blank]") !== -1)) {
+      if (bodyEl) {
+        clear(bodyEl);
+        
+        var lead = document.createElement("div");
+        lead.className = "question-lead";
+        
+        var phrasesToBold = [
+          "\\(Chọn nhiều đáp án\\)",
+          "Chọn nhiều đáp án",
+          "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
+          "Kéo thả từ/cụm từ phù hợp vào chỗ trống:",
+          "Điền số nguyên thích hợp vào chỗ trống:",
+          "Điền số thích hợp vào chỗ trống:",
+          "Xét tính đúng/sai của các mệnh đề sau:",
+          "Xét tính đúng sai của các mệnh đề sau:",
+          "Xác định tính đúng sai của các nhận định dưới đây dựa vào văn bản.",
+          "Chọn cụm từ phù hợp vào các chỗ trống để hoàn thiện câu tóm tắt.",
+          "Xét tính đúng sai của các phát biểu sau về thuyết tiến hóa của Darwin.",
+          "Chọn cụm từ phù hợp vào các chỗ trống để hoàn thiện nhận định khoa học."
+        ];
+        phrasesToBold.forEach(function (phrase) {
+          var regex = new RegExp("(" + phrase + ")", "gi");
+          rawText = rawText.replace(regex, "<strong>$1</strong>");
+        });
+
+        var marker = rawText.indexOf("[o1]") !== -1 ? "[o1]" : "[blank]";
+        var parts = rawText.split(marker);
+        
+        var spanBefore = document.createElement("span");
+        spanBefore.innerHTML = sanitizeHTML(parts[0]);
+        lead.appendChild(spanBefore);
+        
+        var input = document.createElement("input");
+        input.type = "text";
+        input.className = "inline-blank-input";
+        input.value = savedAnswer == null ? "" : savedAnswer;
+        input.placeholder = "";
+        input.style.width = "180px";
+        
+        input.addEventListener("input", function () {
+          notify(onAnswerChange, input.value);
+        });
+        lead.appendChild(input);
+        
+        if (parts[1]) {
+          var spanAfter = document.createElement("span");
+          spanAfter.innerHTML = sanitizeHTML(parts[1]);
+          lead.appendChild(spanAfter);
+        }
+        
+        bodyEl.appendChild(lead);
+        if (question.image_url) {
+          bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || ""), question.image_width));
+        }
+      }
+      if (answerEl) {
+        clear(answerEl);
+      }
+    } else {
+      renderQuestionText(question, bodyEl);
+      if (answerEl) {
+        clear(answerEl);
+        var renderer = QUESTION_RENDERERS[type];
+        if (renderer) {
+          renderer(question, savedAnswer, onAnswerChange, answerEl);
+        } else {
+          answerEl.innerHTML = '<div class="render-error">Không hỗ trợ dạng câu hỏi: ' + type + '</div>';
+        }
       }
     }
 

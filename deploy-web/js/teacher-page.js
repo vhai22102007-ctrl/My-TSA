@@ -484,6 +484,9 @@
           }
         } catch(e) {}
 
+        let openStatus = {};
+        try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
         for (let i = 1; i <= maxPracticeIndex; i++) {
           var numStr = String(i).padStart(2, "0");
           var examTitle = "";
@@ -502,6 +505,7 @@
 
           var inList = practiceIndexList.find(e => normalizeCode(e.exam_code) === normalizeCode(examCode));
           var hasExam = !!inList;
+          const isOpen = inList && (inList.is_open === true || openStatus[examCode] === true);
 
           var card = document.createElement("div");
           card.className = "exam-card";
@@ -521,6 +525,12 @@
                 </span>
               </div>
               <div class="exam-info-row">
+                <span class="info-label">Trạng thái phòng thi:</span>
+                <span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">
+                  ${isOpen ? 'Đang mở đề' : 'Đang đóng đề'}
+                </span>
+              </div>
+              <div class="exam-info-row">
                 <span class="info-label">Hình thức:</span>
                 <span class="info-value font-bold">Thi trực tuyến</span>
               </div>
@@ -532,7 +542,16 @@
             <footer class="exam-card-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
               <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
               ${hasExam ? `
-                <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border-color: #ef4444; color: #fff;" onclick="deleteExamPermanently('${examCode}', '${examTitle}')">Xóa đề</button>
+                ${isOpen ? `
+                  <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border-color: #ef4444; color: #fff;" onclick="toggleExamOpen('${examCode}', false)">
+                    Đóng đề
+                  </button>
+                ` : `
+                  <button class="btn btn-sm" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #16a34a; border-color: #16a34a; color: #fff;" onclick="toggleExamOpen('${examCode}', true)">
+                    Mở đề
+                  </button>
+                `}
+                <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #94a3b8; border-color: #94a3b8; color: #fff;" onclick="deleteExamPermanently('${examCode}', '${examTitle}')">Xóa đề</button>
               ` : ''}
             </footer>
           `;
@@ -843,7 +862,8 @@
       }
 
       var QUESTION_TYPES = [
-        ["single_choice", "Trắc nghiệm 1 đáp án"],
+        ["single_choice", "Trắc nghiệm 4 đáp án"],
+        ["single_choice_2", "Trắc nghiệm 2 đáp án"],
         ["multiple_choice", "Trắc nghiệm nhiều đáp án"],
         ["true_false", "Đúng / Sai"],
         ["fill_blank", "Điền đáp án"],
@@ -1067,6 +1087,9 @@
             readingSec.groups.push(g1);
           }
           if (!Array.isArray(g1.questions)) g1.questions = [];
+          if (g1.questions.length > 10) {
+            g1.questions = g1.questions.slice(0, 10);
+          }
           // Strip legacy demo placeholder text if still present
           if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
           if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
@@ -1106,6 +1129,9 @@
             readingSec.groups.push(g2);
           }
           if (!Array.isArray(g2.questions)) g2.questions = [];
+          if (g2.questions.length > 10) {
+            g2.questions = g2.questions.slice(0, 10);
+          }
           // Strip legacy demo placeholder text if still present
           if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
           if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
@@ -1167,6 +1193,9 @@
               scienceSec.groups.push(group);
             }
             if (!Array.isArray(group.questions)) group.questions = [];
+            if (group.questions.length > 5) {
+              group.questions = group.questions.slice(0, 5);
+            }
             // Strip legacy demo placeholder text if still present
             if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
             if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
@@ -1483,6 +1512,7 @@
       function typeTabsHtml(sectionId, selected) {
         var icons = {
           single_choice: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>',
+          single_choice_2: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>',
           multiple_choice: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
           true_false: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>',
           fill_blank: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m14 4 4 4"/><path d="M21.5 2.5a2.12 2.12 0 0 1 0 3l-12 12-4 1-1-4 12-12a2.12 2.12 0 0 1 3 0Z"/><path d="M3 22h18"/></svg>',
@@ -1579,13 +1609,17 @@
       }
 
       function applyTypeDefaults(q) {
-        if (q.question_type === "single_choice" || q.question_type === "multiple_choice") {
-          if (!Array.isArray(q.options) || !q.options.length) {
+        if (q.question_type === "single_choice_2") {
+          if (!Array.isArray(q.options) || q.options.length !== 2) {
+            q.options = [{ key: "A", text: "Đúng" }, { key: "B", text: "Sai" }];
+          }
+        } else if (q.question_type === "single_choice" || q.question_type === "multiple_choice") {
+          if (!Array.isArray(q.options) || q.options.length !== 4) {
             q.options = [{ key: "A", text: "" }, { key: "B", text: "" }, { key: "C", text: "" }, { key: "D", text: "" }];
           }
-          if (q.question_type === "single_choice" && Array.isArray(q.correct_answer)) q.correct_answer = q.correct_answer[0] || "A";
-          if (q.question_type === "multiple_choice" && !Array.isArray(q.correct_answer)) q.correct_answer = q.correct_answer ? [q.correct_answer] : [];
         }
+        if ((q.question_type === "single_choice" || q.question_type === "single_choice_2") && Array.isArray(q.correct_answer)) q.correct_answer = q.correct_answer[0] || "A";
+        if (q.question_type === "multiple_choice" && !Array.isArray(q.correct_answer)) q.correct_answer = q.correct_answer ? [q.correct_answer] : [];
         if (q.question_type === "true_false") {
           q.statements = q.statements || [{ id: "a", text: "" }, { id: "b", text: "" }, { id: "c", text: "" }, { id: "d", text: "" }];
           q.correct_answer = q.correct_answer && typeof q.correct_answer === "object" && !Array.isArray(q.correct_answer) ? q.correct_answer : { a: true, b: false, c: true, d: false };
@@ -1715,7 +1749,7 @@
         var type = q.question_type || "single_choice";
         if (!box) return;
         box.innerHTML = "";
-        if (type === "single_choice" || type === "multiple_choice") {
+        if (type === "single_choice" || type === "single_choice_2" || type === "multiple_choice") {
           box.innerHTML = renderChoicesForm(q, type === "multiple_choice", sectionId);
         } else if (type === "true_false") {
           box.innerHTML = renderTrueFalseForm(q, sectionId);
@@ -1792,7 +1826,7 @@
           points: 1
         };
         var type = base.question_type;
-        if (type === "single_choice" || type === "multiple_choice") {
+        if (type === "single_choice" || type === "single_choice_2" || type === "multiple_choice") {
           var opts = [];
           $all("#" + sectionId + "-type-fields input[data-choice-key]").forEach(function (input) {
             opts.push({ key: input.getAttribute("data-choice-key"), text: input.value.trim() });
@@ -1800,7 +1834,7 @@
           base.options = opts;
           var isImageOpts = $("#" + sectionId + "-type-fields #" + sectionId + "-options-are-images")?.checked || false;
           base.options_are_images = isImageOpts;
-          if (type === "single_choice") {
+          if (type === "single_choice" || type === "single_choice_2") {
             var checkedRadio = $("#"+sectionId+"-type-fields input[name='choice-correct']:checked");
             base.correct_answer = checkedRadio ? checkedRadio.value : "A";
           } else {
@@ -2065,6 +2099,36 @@
         renderAll();
       }
       window.clearAllQuestions = clearAllQuestions;
+
+      async function clearSectionContent(sectionId) {
+        var label = sectionId === "math" ? "Toán" : (sectionId === "reading" ? "Đọc hiểu" : "Khoa học");
+        if (!await showCustomConfirm("Bạn có chắc chắn muốn xóa SẠCH TOÀN BỘ nội dung (bao gồm đề bài, đoạn văn ngữ liệu, tất cả câu hỏi và đáp án) của phần " + label + " không? Hành động này sẽ đưa phần " + label + " về trạng thái trống ban đầu và không thể hoàn tác!")) {
+          return;
+        }
+        ensureSchema();
+        if (sectionId === "math") {
+          var targetSection = getSection("math");
+          targetSection.questions = [];
+          activeMathQuestionNo = 1;
+          editingQuestion["math"] = null;
+        } else {
+          var targetSection = getSection(sectionId);
+          targetSection.groups = [];
+          if (sectionId === "reading") {
+            activeReadingGroupIdx = 0;
+            activeReadingQuestionNo = 1;
+            editingQuestion["reading"] = null;
+          } else if (sectionId === "science") {
+            activeScienceGroupIdx = 0;
+            activeScienceQuestionNo = 1;
+            editingQuestion["science"] = null;
+          }
+        }
+        ensureSchema();
+        saveDraft();
+        renderAll();
+      }
+      window.clearSectionContent = clearSectionContent;
 
       function cloneQuestion(sectionId, index) {
         ensureSchema();
@@ -2870,7 +2934,11 @@
           }
         }
 
-        renderExamsList();
+        if (examCode.startsWith("TSA_PRACTICE_") || examCode.startsWith("TSA_PRACTICE_FULL_")) {
+          renderPracticeRoom();
+        } else {
+          renderExamsList();
+        }
       }
       window.toggleExamOpen = toggleExamOpen;
 
@@ -3369,6 +3437,134 @@
         switchEditorTab("setup");
       }
 
+      async function syncExamFromSource() {
+        if (!exam || !exam.exam_code) return;
+        var code = exam.exam_code;
+        var cleanCode = normalizeCode(code);
+        if (!confirm("Bạn có chắc chắn muốn xóa bản nháp hiện tại và tải lại dữ liệu đề " + cleanCode + " từ File/Cloud không?\nMọi thay đổi chưa lưu trên giao diện sẽ bị mất.")) {
+          return;
+        }
+        
+        var btn = document.getElementById("btn-reload-exam");
+        var originalText = btn ? btn.innerHTML : "";
+        if (btn) btn.innerHTML = "Đang tải dữ liệu...";
+        
+        try {
+          var fetchedData = null;
+          var fetched = false;
+          
+          // 0a. If running via file:// protocol, prioritize pre-embedded fallback data
+          if (window.location.protocol === "file:" && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
+            fetchedData = JSON.parse(JSON.stringify(window.TSA001_FALLBACK_DATA));
+            fetched = true;
+            console.log("Loaded exam from pre-embedded fallback script (file:// protocol).");
+          }
+
+          // 0b. If running locally on a server, try local file first to prioritize local updates
+          if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+            var possibleFiles = [
+              "data/exams/" + cleanCode.toLowerCase() + ".json",
+              "data/exams/" + cleanCode + ".json"
+            ];
+            for (var fPath of possibleFiles) {
+              try {
+                var response = await fetch(fPath, { cache: "no-store" });
+                if (response.ok) {
+                  var data = await response.json();
+                  if (data && data.exam_code) {
+                    fetchedData = data;
+                    fetched = true;
+                    console.log("Loaded exam from local file:", fPath);
+                    break;
+                  }
+                }
+              } catch (err) {}
+            }
+          }
+
+          // 1. Try fetching from Cloud (Supabase Storage) - works on both http/https and file:// protocols due to CORS wildcard
+          if (!fetched) {
+            var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
+            var possibleUrls = [
+              supabaseStorageUrl + cleanCode + ".json",
+              supabaseStorageUrl + cleanCode.toLowerCase() + ".json"
+            ];
+            
+            // Cross-check fallback codes
+            if (cleanCode === "TSA001") {
+              possibleUrls.push(supabaseStorageUrl + "TSA_EXAM_01.json");
+            } else if (cleanCode === "TSA_EXAM_01") {
+              possibleUrls.push(supabaseStorageUrl + "TSA001.json");
+            }
+            
+            for (var url of possibleUrls) {
+              try {
+                var response = await fetch(url, { cache: "no-store" });
+                if (response.ok) {
+                  var data = await response.json();
+                  if (data && data.exam_code) {
+                    fetchedData = data;
+                    fetched = true;
+                    break;
+                  }
+                }
+              } catch (err) {}
+            }
+          }
+          
+          // 2. If running locally on a server and cloud failed, fall back to local files
+          if (!fetched && window.location.protocol !== "file:") {
+            var possibleFiles = [
+              "data/exams/" + cleanCode.toLowerCase() + ".json",
+              "data/exams/" + cleanCode + ".json",
+              "data/exams/tsa001.json"
+            ];
+            for (var fPath of possibleFiles) {
+              try {
+                var response = await fetch(fPath, { cache: "no-store" });
+                if (response.ok) {
+                  var data = await response.json();
+                  if (data && data.exam_code) {
+                    fetchedData = data;
+                    fetched = true;
+                    break;
+                  }
+                }
+              } catch (err) {}
+            }
+          }
+          
+          // 3. Last resort offline fallback for TSA001 / TSA_EXAM_01
+          if (!fetched && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
+            fetchedData = JSON.parse(JSON.stringify(window.TSA001_FALLBACK_DATA));
+            fetched = true;
+            console.log("Loaded exam from pre-embedded fallback script.");
+          }
+          
+          if (!fetched) {
+            throw new Error("Không thể kết nối đến Cloud hoặc tệp tin để tải đề.");
+          }
+          
+          if (fetchedData) {
+            exam = fetchedData;
+            ensureSchema();
+            // Reset active editing state to prevent stale editor inputs from overwriting newly synced questions
+            ["math", "reading", "science"].forEach(function (sectionId) {
+              editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
+            });
+            saveDraft();
+            renderAll();
+            alert("✓ Đã đồng bộ và tải lại đề thi thành công!");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Lỗi khi tải đề: " + error.message);
+        } finally {
+          if (btn) btn.innerHTML = originalText;
+        }
+      }
+      window.syncExamFromSource = syncExamFromSource;
+
       function exitEditingMode() {
         document.getElementById("editor-container").style.display = "none";
         document.getElementById("sidebar-editor-nav").style.display = "none";
@@ -3462,6 +3658,7 @@
         document.addEventListener("click", function (event) {
           var target = event.target.closest("button");
           if (!target) return;
+          if (target.id === "btn-reload-exam") { syncExamFromSource(); return; }
           var tab = target.getAttribute("data-editor-tab-target");
           if (tab) { switchEditorTab(tab); return; }
           var reset = target.getAttribute("data-reset-question");
@@ -3782,7 +3979,8 @@ YÊU CẦU QUAN TRỌNG:
 - Trả về cấu trúc JSON hợp lệ hoàn toàn dựa theo cấu trúc trên.
 - Sử dụng chuẩn toán học LaTeX với ký hiệu \\( ... \\) cho công thức nội dòng (inline) và \\[ ... \\] cho công thức khối (display math). Ví dụ: \\(f(x) = x^2\\). Hãy chắc chắn escape đúng các ký tự chéo ngược \\ thành \\\\ trong chuỗi JSON.
 - ĐỂ CÔNG THỨC TOÁN HIỂN THỊ TO RÕ ĐẸP MẮT: BẮT BUỘC sử dụng lệnh \\dfrac thay vì \\frac cho tất cả các phân số. Đối với các ký hiệu tổng hoặc tích, sử dụng thêm \\limits (ví dụ: \\sum\\limits_{k=1}^{n} hoặc \\prod\\limits_{i=1}^{2026}) để giới hạn hiển thị ngay ngắn phía trên và phía dưới ký hiệu và có kích thước to rõ như sách giáo khoa.
-- Nếu câu hỏi có liên quan đến hình ảnh, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
+- BẮT BUỘC GIỮ NGUYÊN các đoạn mã vẽ hình vector <svg>...</svg> hoặc bảng dữ liệu <table>...</table> có sẵn trong văn bản đề thi thô. Hãy lồng trực tiếp các đoạn mã này vào nội dung câu hỏi "question" hoặc phần ngữ liệu của nhóm mà không được tự ý xóa bỏ hay lược dịch thành chữ.
+- Nếu câu hỏi có liên quan đến hình ảnh tải lên từ máy tính, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
 `;
 
               var apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
@@ -3827,10 +4025,46 @@ YÊU CẦU QUAN TRỌNG:
                 imported.sections.forEach(function (newSec) {
                   var existSecIdx = exam.sections.findIndex(function (s) { return s.section_id === newSec.section_id; });
                   if (existSecIdx !== -1) {
+                    var existSec = exam.sections[existSecIdx];
                     if (newSec.section_id === "math") {
-                      exam.sections[existSecIdx].questions = newSec.questions || [];
+                      existSec.questions = existSec.questions || [];
+                      (newSec.questions || []).forEach(function (newQ) {
+                        var existQIdx = existSec.questions.findIndex(function (q) { return q.question_no === newQ.question_no; });
+                        if (existQIdx !== -1) {
+                          existSec.questions[existQIdx] = newQ;
+                        } else {
+                          existSec.questions.push(newQ);
+                        }
+                      });
+                      existSec.questions.sort(function (a, b) { return (a.question_no || 0) - (b.question_no || 0); });
                     } else {
-                      exam.sections[existSecIdx].groups = newSec.groups || [];
+                      existSec.groups = existSec.groups || [];
+                      (newSec.groups || []).forEach(function (newG) {
+                        var existGIdx = existSec.groups.findIndex(function (g) {
+                          return g.group_id === newG.group_id || g.title === newG.title;
+                        });
+                        if (existGIdx !== -1) {
+                          var existG = existSec.groups[existGIdx];
+                          if (newG.stimulus && newG.stimulus.content) {
+                            existG.stimulus = newG.stimulus;
+                          }
+                          if (newG.title) {
+                            existG.title = newG.title;
+                          }
+                          existG.questions = existG.questions || [];
+                          (newG.questions || []).forEach(function (newQ) {
+                            var existQIdx = existG.questions.findIndex(function (q) { return q.question_no === newQ.question_no; });
+                            if (existQIdx !== -1) {
+                              existG.questions[existQIdx] = newQ;
+                            } else {
+                              existG.questions.push(newQ);
+                            }
+                          });
+                          existG.questions.sort(function (a, b) { return (a.question_no || 0) - (b.question_no || 0); });
+                        } else {
+                          existSec.groups.push(newG);
+                        }
+                      });
                     }
                   } else {
                     exam.sections.push(newSec);
@@ -5358,7 +5592,19 @@ YÊU CẦU QUAN TRỌNG:
         widthPercent = widthPercent.trim();
         var widthVal = Number(widthPercent) || 80;
 
-        var imgHtml = '\n<img src="' + url + '" style="max-width: 100%; display: block; margin: 15px auto; border-radius: 8px; width: ' + widthVal + '%;" />\n';
+        var alignOption = prompt("Chọn vị trí căn lề của ảnh:\n1 - Căn giữa (dòng mới riêng biệt)\n2 - Nằm bên trái (chữ bao quanh bên phải)\n3 - Nằm bên phải (chữ bao quanh bên trái)", "1");
+        if (alignOption === null) return;
+
+        var styleStr = "max-width: 100%; border-radius: 8px; width: " + widthVal + "%;";
+        if (alignOption === "2") {
+          styleStr += " float: left; margin: 8px 15px 15px 0;";
+        } else if (alignOption === "3") {
+          styleStr += " float: right; margin: 8px 0 15px 15px;";
+        } else {
+          styleStr += " display: block; margin: 15px auto;";
+        }
+
+        var imgHtml = '\n<img src="' + url + '" style="' + styleStr + '" />\n';
         
         // Insert at cursor position
         var start = textarea.selectionStart;
@@ -5370,9 +5616,8 @@ YÊU CẦU QUAN TRỌNG:
         textarea.focus();
         textarea.selectionStart = textarea.selectionEnd = start + imgHtml.length;
         
-        // Trigger save draft and preview updates
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        textarea.dispatchEvent(new Event('change', { bubbles: true }));
+        // Trigger change event to update exam draft
+        textarea.dispatchEvent(new Event('input'));
       }
       window.insertCloudImageIntoGroupText = insertCloudImageIntoGroupText;
 
@@ -5468,7 +5713,83 @@ YÊU CẦU QUAN TRỌNG:
           if (preview) preview.remove();
         }
       }
-      window.updateChoiceImagePreview = updateChoiceImagePreview;
+      function triggerPassageImageUpload(btn) {
+        var fileInp = btn.nextElementSibling;
+        if (fileInp) fileInp.click();
+      }
+      window.triggerPassageImageUpload = triggerPassageImageUpload;
+
+      async function handlePassageImageUpload(input, sectionId, elementId) {
+        var file = input.files[0];
+        if (!file) return;
+
+        var uploadBtn = input.previousElementSibling;
+        var originalText = uploadBtn.textContent;
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Tải...";
+
+        try {
+          if (!supabaseClient) {
+            alert("Vui lòng kết nối Supabase để tải ảnh lên Cloud!");
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = originalText;
+            return;
+          }
+
+          var ext = file.name.split('.').pop() || "png";
+          var examCode = window.exam?.exam_code || "temp";
+          var path = "passages/" + examCode + "/" + Date.now() + "." + ext;
+
+          var { data, error } = await supabaseClient.storage
+            .from('exams')
+            .upload(path, file, { cacheControl: '3600', upsert: true });
+
+          if (error) throw error;
+
+          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
+          var publicUrl = supabaseStorageUrl + path;
+
+          var widthPercent = prompt("Ảnh tải lên thành công! Nhập kích thước ảnh (%) (Ví dụ: 30, 50, 80):", "80");
+          if (widthPercent === null) widthPercent = "80"; // default if cancelled
+          widthPercent = widthPercent.trim();
+          var widthVal = Number(widthPercent) || 80;
+
+          var alignOption = prompt("Chọn vị trí căn lề của ảnh:\n1 - Căn giữa (dòng mới riêng biệt)\n2 - Nằm bên trái (chữ bao quanh bên phải)\n3 - Nằm bên phải (chữ bao quanh bên trái)", "1");
+          if (alignOption === null) alignOption = "1";
+
+          var styleStr = "max-width: 100%; border-radius: 8px; width: " + widthVal + "%;";
+          if (alignOption === "2") {
+            styleStr += " float: left; margin: 8px 15px 15px 0;";
+          } else if (alignOption === "3") {
+            styleStr += " float: right; margin: 8px 0 15px 15px;";
+          } else {
+            styleStr += " display: block; margin: 15px auto;";
+          }
+
+          var imgHtml = '\n<img src="' + publicUrl + '" style="' + styleStr + '" />\n';
+
+          var textarea = document.getElementById(elementId);
+          if (textarea) {
+            var start = textarea.selectionStart;
+            var end = textarea.selectionEnd;
+            var text = textarea.value;
+            textarea.value = text.substring(0, start) + imgHtml + text.substring(end);
+            
+            // Trigger change event to update exam draft
+            textarea.dispatchEvent(new Event('input'));
+          }
+
+          alert("✓ Đã tải và chèn ảnh thành công!");
+        } catch (err) {
+          console.error("Passage image upload error:", err);
+          alert("Lỗi tải ảnh lên: " + err.message);
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = originalText;
+          input.value = ""; // clear file input
+        }
+      }
+      window.handlePassageImageUpload = handlePassageImageUpload;
 
       document.addEventListener("DOMContentLoaded", init);
     })();
