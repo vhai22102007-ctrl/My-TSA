@@ -477,8 +477,8 @@
 
       .materials-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 62px 54px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 20px;
         width: min(100% - 44px, 1180px);
         margin: 0 auto;
       }
@@ -502,10 +502,10 @@
         margin: 0 auto;
         aspect-ratio: 1 / 1.414;
         overflow: hidden;
-        border: 1.5px dashed #dddddd;
+        border: 1px solid #e2e8f0; /* Solid border instead of dashed */
         background: #ffffff;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -514,11 +514,12 @@
       }
 
       .material-card.has-drive .document-preview {
-        border-color: var(--red-bright);
+        border-color: #cbd5e1;
       }
 
       .material-card:hover .document-preview {
-        box-shadow: 0 12px 30px rgba(193, 18, 31, 0.12);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-color: #a1a1aa;
       }
 
       .document-preview img {
@@ -536,24 +537,25 @@
         justify-content: center;
         background: #fdfdfd;
         color: #888888;
-        font-size: 14px;
+        font-size: 11px;
         font-family: Arial, sans-serif;
-        border: 1.5px dashed #cccccc;
-        gap: 12px;
+        border: 1px solid #e2e8f0;
+        gap: 8px;
         width: 100%;
         height: 100%;
-        padding: 20px;
+        padding: 12px;
         box-sizing: border-box;
+        border-radius: 6px;
       }
 
       .document-preview.is-empty::before {
         content: "📄";
-        font-size: 54px;
+        font-size: 32px;
         opacity: 0.5;
       }
 
       .document-preview.is-empty::after {
-        content: "Tài liệu chưa được gắn link";
+        content: "Chưa gắn link";
         font-weight: 500;
         color: #999999;
       }

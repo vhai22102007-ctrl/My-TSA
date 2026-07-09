@@ -22,18 +22,18 @@
         <img src="https://assets.tmastudy.io.vn/assets/logo1.png" alt="" onerror="this.style.display='none'">
       </a>
 
+      <!-- Profile Box (Clickable, replaces "Tổng quan") -->
+      <a class="sidebar-profile active" href="#overview" data-tab="overview" id="sidebar-profile-button">
+        <div class="sidebar-avatar-circle">
+          <span id="sidebar-avatar-char">H</span>
+        </div>
+        <div class="sidebar-profile-info">
+          <span class="sidebar-profile-name" id="sidebar-student-name">Học sinh</span>
+          <span class="sidebar-profile-username" id="sidebar-student-username">yeuthichvatli</span>
+        </div>
+      </a>
+
       <nav class="tsa-menu" aria-label="Menu chính">
-        <a class="menu-item active" href="#overview" data-tab="overview">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-              <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-            </svg>
-          </span>
-          <span>Tổng quan</span>
-        </a>
 
         <!-- 1a. Khóa học của tôi collapsible group -->
         <div class="menu-group" data-group="my-courses">
@@ -350,30 +350,76 @@
         </svg>
       </button>
 
-      <div class="topbar-account">
-        <div class="topbar-icon" style="position: relative; cursor: default; pointer-events: none;">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        </div>
-        <button class="topbar-icon" type="button" aria-label="Thông báo">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      <!-- Center navigation icons -->
+      <div class="topbar-nav-middle">
+        <button class="topbar-nav-btn active" id="topbar-btn-home" onclick="switchTab('overview'); switchDashboardTab('home');" title="Trang chủ">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
         </button>
+        <button class="topbar-nav-btn" id="topbar-btn-courses" onclick="switchTab('courses');" title="Khóa học">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        </button>
+        <button class="topbar-nav-btn" id="topbar-btn-documents" onclick="switchTab('documents');" title="Kho tài liệu">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </button>
+        <button class="topbar-nav-btn" id="topbar-btn-exams" onclick="switchTab('exams');" title="Thi thử">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </button>
+        <button class="topbar-nav-btn" id="topbar-btn-community" onclick="switchTab('overview'); switchDashboardTab('community');" title="Cộng đồng">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 13.5a2 2 0 0 0 2-2V4.5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v1.5"></path>
+            <path d="M17 17.5H7l-4 4V8.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="topbar-account">
+        <!-- Activate Card button -->
+        <button class="topbar-activate-btn" type="button" onclick="switchTab('account')">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+          </svg>
+          <span>Kích hoạt thẻ</span>
+        </button>
+
+        <span class="topbar-separator"></span>
+
+        <!-- Notifications -->
+        <button class="topbar-icon topbar-icon-bell" type="button" aria-label="Thông báo">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 22a2.006 2.006 0 0 0 2-2h-4a2.006 2.006 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path>
+          </svg>
+        </button>
+
+        <!-- User profile -->
         <div class="account-menu-container">
-          <div class="account-menu">
-            <img src="https://assets.tmastudy.io.vn/assets/avt.png" alt="" onerror="this.style.display='none'">
-            <span id="student-display-name">Học sinh</span>
-            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button class="account-menu" type="button" aria-label="Menu tài khoản">
+            <div class="topbar-avatar-circle-wrapper">
+              <img id="topbar-avatar-img" src="https://assets.tmastudy.io.vn/assets/avt.png" alt="" onerror="this.style.display='none'; document.getElementById('topbar-avatar-char-container').style.display='flex';">
+              <div id="topbar-avatar-char-container" class="topbar-avatar-circle" style="display: none;">
+                <span id="topbar-avatar-char">H</span>
+              </div>
+            </div>
+            <svg class="chevron-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-          </div>
+          </button>
           <div class="account-dropdown">
+            <div class="dropdown-header">
+              <span id="student-display-name">Học sinh</span>
+            </div>
             <button class="dropdown-item" type="button" onclick="switchTab('account')">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -393,1516 +439,241 @@
         </div>
       </div>
     </header>
-
+    
     <main class="tsa-content">
       <!-- Watermark Hoạt cảnh Xe tăng 390 húc đổ cổng Dinh Độc Lập -->
-      <!-- Watermark Bản đồ Việt Nam với Hoàng Sa & Trường Sa -->
-      <!-- Watermark Bản đồ Việt Nam đỏ sao vàng và Chim Lạc bay lượn -->
-      <!-- Watermark Logo thương hiệu kết hợp vòng tròn Chim Lạc xoay chậm -->
-      <div class="brand-watermark-container" aria-hidden="true">
-        <div class="chim-lac-logo-wrapper">
-          <div class="spinning-chim-lac"></div>
-          <div class="static-logo-backing"></div>
-          <div class="static-logo"></div>
-        </div>
-      </div>
-
-      <div class="content-container">
-        <!-- TAB 1: TỔNG QUAN -->
-        <div id="tab-overview" class="tab-panel active">
-          <!-- Selector chọn kỳ thi -->
-          <div class="exam-selector-container">
-            <button type="button" class="exam-selector-btn active" onclick="switchOverviewExam('tsa')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              TSA (Bách Khoa)
-            </button>
-            <button type="button" class="exam-selector-btn" onclick="switchOverviewExam('hsa')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              HSA (ĐHQG Hà Nội)
-            </button>
-            <button type="button" class="exam-selector-btn" onclick="switchOverviewExam('vact')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v6l4 2"></path></svg>
-              VACT (ĐHQG TP.HCM)
-            </button>
-            <button type="button" class="exam-selector-btn" onclick="switchOverviewExam('qda')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              QDA (Quân Đội)
-            </button>
+      <div id="tab-overview" class="tab-panel active">
+        <!-- Dashboard Header Row (Tabs on left, Activate Card on right) -->
+          <div class="dashboard-header-row">
+            <div class="dashboard-tabs">
+              <button class="dashboard-tab-btn active" id="dash-btn-home" onclick="switchDashboardTab('home')">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 6px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Trang chủ
+              </button>
+              <button class="dashboard-tab-btn" id="dash-btn-community" onclick="switchDashboardTab('community')">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Cộng đồng
+              </button>
+            </div>
+            <!-- Activate Card Section (Kích hoạt thẻ) -->
+            <div class="activate-card-container">
+              <button class="activate-card-btn" type="button" onclick="switchTab('account')">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 8px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                Kích hoạt thẻ
+              </button>
+            </div>
           </div>
 
-          <!-- Overview Sub-tabs Segment Controller -->
-          <div class="overview-tabs-container">
-            <button type="button" class="overview-tab-btn active" onclick="switchOverviewSubTab('intro')">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-              Giới thiệu Kỳ thi
-            </button>
-            <button type="button" class="overview-tab-btn" onclick="switchOverviewSubTab('stats')">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              Phổ điểm 2025 - 2026
-            </button>
-            <button type="button" class="overview-tab-btn" onclick="switchOverviewSubTab('cutoffs')">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              Điểm chuẩn 2025
-            </button>
-            <button type="button" class="overview-tab-btn" onclick="switchOverviewSubTab('schools')">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-              Trường xét tuyển
-            </button>
+          <!-- Tab Content: Home -->
+          <div id="dash-panel-home" class="dashboard-sub-panel active">
+            <div class="dashboard-layout">
+              <!-- Main Content (Left Column) -->
+              <div class="dashboard-main-col">
+                <!-- Banner Slider -->
+                <div class="dashboard-banner-wrapper">
+                  <img src="trungtam.png" class="central-banner-img" alt="Banner" onerror="this.src='https://assets.tmastudy.io.vn/assets/anhnen.png'">
+                </div>
+
+                <!-- Welcome Greeting -->
+                <div class="welcome-greeting-bar">
+                  <div class="welcome-text">
+                    Xin chào <strong id="welcome-student-name-bold">Học sinh</strong> !
+                  </div>
+                  <div class="welcome-date">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span id="welcome-current-date">Thứ Năm - 09/07/2026</span>
+                  </div>
+                </div>
+
+                <!-- Metric Cards -->
+                <div class="metric-cards-grid">
+                  <div class="metric-card blue-card">
+                    <div class="metric-icon-circle">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                    </div>
+                    <div class="metric-info">
+                      <span class="metric-val" id="metric-enrolled-count">2</span>
+                      <span class="metric-label">Khoá đang học</span>
+                    </div>
+                  </div>
+                  <div class="metric-card orange-card">
+                    <div class="metric-icon-circle">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="metric-info">
+                      <span class="metric-val" id="metric-study-hours">0</span>
+                      <span class="metric-label">Giờ học tuần này</span>
+                    </div>
+                  </div>
+                  <div class="metric-card purple-card">
+                    <div class="metric-icon-circle">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </div>
+                    <div class="metric-info">
+                      <span class="metric-val" id="metric-lessons-completed">0</span>
+                      <span class="metric-label">Bài đã học tuần này</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Activity Contribution Graph (Hoạt động học tập) -->
+                <div class="recent-activity-section">
+                  <div class="activity-graph-header">
+                    <div class="year-badge">2026</div>
+                  </div>
+                  <div class="activity-graph-container">
+                    <div class="month-labels">
+                      <span>Th.1</span>
+                      <span>Th.2</span>
+                      <span>Th.3</span>
+                      <span>Th.4</span>
+                      <span>Th.5</span>
+                      <span>Th.6</span>
+                      <span>Th.7</span>
+                      <span>Th.8</span>
+                      <span>Th.9</span>
+                      <span>Th.10</span>
+                      <span>Th.11</span>
+                      <span>Th.12</span>
+                    </div>
+                    <div class="graph-grid-wrapper">
+                      <div class="graph-grid" id="activity-graph-grid"></div>
+                    </div>
+                    <div class="graph-footer">
+                      <span class="total-exams-count">40 bài thi trong năm</span>
+                      <div class="graph-legend">
+                        <span>Ít</span>
+                        <div class="legend-cells">
+                          <div class="legend-cell level-0"></div>
+                          <div class="legend-cell level-1"></div>
+                          <div class="legend-cell level-2"></div>
+                          <div class="legend-cell level-3"></div>
+                          <div class="legend-cell level-4"></div>
+                        </div>
+                        <span>Nhiều</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column -->
+              <div class="dashboard-side-col">
+
+                <!-- Request Consulting Form (Liên hệ tư vấn) -->
+                <div class="consultation-form-card">
+                  <h4 class="form-title">Liên hệ tư vấn</h4>
+                  <form id="dashboard-consulting-form" onsubmit="handleConsultingSubmit(event)">
+                    <div class="form-group-compact">
+                      <input type="text" id="consult-name" placeholder="* Họ và tên" required>
+                    </div>
+                    <div class="form-group-compact">
+                      <input type="tel" id="consult-phone" placeholder="* Số điện thoại" required>
+                    </div>
+                    <div class="form-group-compact">
+                      <input type="text" id="consult-facebook" placeholder="Link Facebook">
+                    </div>
+                    <div class="form-row-compact">
+                      <div class="form-group-compact">
+                        <select id="consult-class">
+                          <option value="">* Lớp</option>
+                          <option value="10">Lớp 10</option>
+                          <option value="11">Lớp 11</option>
+                          <option value="12">Lớp 12</option>
+                          <option value="Luyện thi">Luyện thi</option>
+                        </select>
+                      </div>
+                      <div class="form-group-compact">
+                        <select id="consult-subject">
+                          <option value="">* Môn học</option>
+                          <option value="Toán">Toán</option>
+                          <option value="Vật lý">Vật lý</option>
+                          <option value="Hóa học">Hóa học</option>
+                          <option value="Sinh học">Sinh học</option>
+                          <option value="Tổng hợp">Tổng hợp</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group-compact">
+                      <textarea id="consult-message" rows="3" placeholder="* Nhập tên khoá học quan tâm hoặc nội dung cần tư vấn"></textarea>
+                    </div>
+                    <button class="consult-submit-btn" type="submit">Gửi</button>
+                  </form>
+                </div>
+
+                <!-- News Section (Tin tức) -->
+                <div class="dashboard-news-card">
+                  <div class="card-header-compact">
+                    <span class="card-title-compact">Tin tức</span>
+                    <a href="javascript:void(0)" class="see-all-link">Xem tất cả</a>
+                  </div>
+                  <div class="news-list">
+                    <div class="news-item" onclick="alert('Đang tải chi tiết tin tức...')">
+                      <div class="news-thumb">
+                        <div class="news-thumb-placeholder news-blue">
+                          <span>HƯỚNG DẪN XỬ LÝ LỖI XEM VIDEO</span>
+                        </div>
+                      </div>
+                      <div class="news-details">
+                        <h5 class="news-title">Thông báo xử lý lỗi xem video</h5>
+                        <span class="news-date">17:25 - 25/6/2026</span>
+                      </div>
+                    </div>
+                    <div class="news-item" onclick="alert('Đang tải chi tiết tin tức...')">
+                      <div class="news-thumb">
+                        <div class="news-thumb-placeholder news-orange">
+                          <span>GỢI Ý ĐÁP ÁN MÔN TOÁN THPT 2026</span>
+                        </div>
+                      </div>
+                      <div class="news-details">
+                        <h5 class="news-title">Gợi ý đáp án đề thi môn Toán tốt nghiệp THPT 2026</h5>
+                        <span class="news-date">15:19 - 6/6/2026</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- PHÂN HỆ 1: GIỚI THIỆU KỲ THI -->
-          <div id="overview-panel-intro" class="overview-sub-panel active">
-
-            <!-- NỘI DUNG KỲ THI 1: TSA -->
-            <div id="intro-exam-tsa" class="intro-exam-panel active">
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--brand-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--brand-red); padding-bottom: 8px;">
-                I. KỲ THI ĐÁNH GIÁ TƯ DUY (TSA) LÀ GÌ?
-              </h3>
-              <div style="font-size: 12.5px; color: var(--text); line-height: 1.6; margin-bottom: 24px; text-align: justify;">
-                <p style="margin-bottom: 12px;">Với mong muốn mang kỳ thi Đánh giá tư duy của các nước phát triển trên thế giới về với học sinh Việt Nam, trong những năm qua, Đại học Bách khoa Hà Nội đã tiến hành nghiên cứu, thiết kế và triển khai tổ chức Kỳ thi Đánh giá tư duy (Thinking Skills Assessment - TSA). Mục tiêu của Bài thi TSA là đánh giá ba năng lực tư duy nền tảng của học sinh, bao gồm: <strong>Tư duy Toán học</strong>, <strong>Tư duy Đọc hiểu</strong> và <strong>Tư duy Khoa học/Giải quyết vấn đề</strong> - những yếu tố quan trọng giúp học sinh có thể học tập tốt nhất tại môi trường giáo dục đại học. Theo đó, Bài thi sẽ không trực tiếp kiểm tra kiến thức của môn học cụ thể nào, mà thông qua các câu hỏi để đánh giá năng lực tư duy của thí sinh. Ba mức độ tư duy được đánh giá qua Bài thi là: Tư duy tái hiện (M1), Tư duy suy luận (M2) và Tư duy bậc cao (M3). Kỳ thi TSA được tổ chức theo hướng tinh gọn, hiệu quả, ứng dụng những công nghệ khảo thí tiên tiến, tiếp cận với các kỳ thi đánh giá tư duy hiện đại trên thế giới, như SAT, ACT...</p>
+          <!-- Tab Content: Community (Only Bách Khoa 2025 cut-off scores table) -->
+          <div id="dash-panel-community" class="dashboard-sub-panel">
+            <div class="card hust-cutoff-card" style="margin-top: 16px; border: 1px solid var(--border) !important;">
+              <div class="hust-cutoff-heading">
+                <div>
+                  <h3 style="font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Điểm chuẩn tuyển sinh Đại học Bách khoa Hà Nội năm 2025
+                  </h3>
+                  <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Đối chiếu điểm chuẩn theo 4 phương thức: THPT, XTTN 1.2, XTTN 1.3 và ĐGTD (TSA).</p>
+                </div>
+                <div class="search-premium-box">
+                  <input type="text" id="cutoff-search-input" placeholder="Tìm tên ngành, mã ngành..." onkeyup="filterCutoffTable()">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="#6b7280" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
               </div>
-
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--brand-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--brand-red); padding-bottom: 8px;">
-                II. HƯỚNG DẪN ĐĂNG KÝ THI
-              </h3>
-              <div style="font-size: 12.5px; color: var(--text); line-height: 1.6; margin-bottom: 24px;">
-                <p style="margin-bottom: 10px;">Thời gian mở đăng ký thi đánh giá tư duy thường từ trước <strong>2 tuần - 3 tuần</strong> tại thời điểm diễn ra Đợt thi. Thí sinh thực hiện đăng ký bằng cách làm theo hướng dẫn khi truy cập vào Cổng thông tin Tuyển sinh - Hướng nghiệp tại địa chỉ: <a href="https://ts-hn.hust.edu.vn" target="_blank" style="color: var(--brand-red); font-weight: 700; text-decoration: underline;">https://ts-hn.hust.edu.vn</a>.</p>
-                <p style="margin-bottom: 10px;">Sau đó, nhấp chuột vào biểu tượng <strong>"Kỳ thi ĐGTD (TSA)"</strong>, chọn <strong>Đăng ký</strong> để tiếp tục.</p>
-                <p style="margin-bottom: 10px;"><strong>Lưu ý quan trọng:</strong> Thí sinh cần chuẩn bị sẵn thẻ <strong>Căn cước công dân (CCCD)</strong> để thực hiện xác minh và đăng ký tài khoản trực tuyến trên cổng: <a href="https://tsa.hust.edu.vn/dk" target="_blank" style="color: var(--brand-red); font-weight: 700; text-decoration: underline;">https://tsa.hust.edu.vn/dk</a>.</p>
-              </div>
-
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--brand-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--brand-red); padding-bottom: 8px;">
-                III. CẤU TRÚC BÀI THI ĐÁNH GIÁ TƯ DUY
-              </h3>
-              <div style="font-size: 12.5px; color: var(--text); line-height: 1.6; margin-bottom: 20px; text-align: justify;">
-                <p style="margin-bottom: 12px;">Để phù hợp với chương trình giáo dục phổ thông mới của Bộ Giáo dục và Đào tạo, từ năm 2022, cấu trúc và nội dung các phần thi trong Bài thi Đánh giá tư duy của Đại học Bách khoa Hà Nội đã được thiết kế theo hướng gọn nhẹ, hiện đại, xóa bỏ tư duy theo tổ hợp môn học. Theo đó, tổng thời gian của Bài thi là 150 phút, bao gồm 100 câu hỏi trắc nghiệm cho 3 phần thi. Cụ thể:</p>
-                <ul style="padding-left: 20px; margin-bottom: 20px; list-style-type: disc;">
-                  <li style="margin-bottom: 10px;"><strong>Phần thi Tư duy Toán học (60 phút, 40 câu hỏi, 40 điểm):</strong> Đánh giá khả năng tư duy và vận dụng những kiến thức cơ bản của Toán học vào giải quyết những bài toán trong thực tế, đồng thời đánh giá khả năng học toán và các môn khoa học liên quan ở bậc đại học của thí sinh. Nội dung phần thi nằm trong chương trình THPT gồm kiến thức về số học, đại số, hàm số, hình học, thống kê và xác suất. Cấu trúc câu hỏi đòi hỏi phải có ý nghĩa về vấn đề và ngữ cảnh, đại diện cho các mối quan hệ Toán học; truy cập các kiến thức thực tế nhớ; kết hợp với thông tin đã cho; mô hình hóa, tính toán và thao tác Toán học; biện giải; áp dụng các kỹ năng lập luận, đưa ra quyết định dựa trên Toán học và thuật toán/tựa thuật toán phù hợp.</li>
-                  <li style="margin-bottom: 10px;"><strong>Phần thi Tư duy Đọc hiểu (30 phút, 20 câu hỏi, 20 điểm):</strong> Đọc hiểu là một trong những năng lực cốt lõi, cần thiết cho việc tự học và học tập suốt đời. Do đó, phần thi này tập trung đánh giá kỹ năng đọc nhanh, hiểu đúng, cùng với năng lực phân tích, lý giải văn bản, khái quát, tổng hợp, biện luận về logic và suy luận từ các văn bản tiếng Việt có độ dài từ 800 đến 1.000 từ. Nội dung đọc hiểu trong đề thi đa dạng, phong phú, liên quan tới những chủ đề về khoa học, công nghệ, kinh tế, kỹ thuật, công nghiệp, nông nghiệp, tài chính, ngân hàng, y dược...</li>
-                  <li style="margin-bottom: 10px;"><strong>Phần thi Tư duy Khoa học/Giải quyết vấn đề (60 phút, 40 câu hỏi, 40 điểm):</strong> Đánh giá khả năng vận dụng kiến thức tổng hợp để giải quyết các vấn đề khoa học một cách hợp lý nhất. Các câu hỏi ở dạng tích hợp các vấn đề liên quan tới các lĩnh vực về khoa học tự nhiên và khoa học công nghệ, theo sau đó là các câu hỏi trắc nghiệm nhằm đo lường khả năng tìm kiếm dữ liệu, chỉ ra được phương án phù hợp với sơ đồ, tóm tắt nghiên cứu (mô tả một hoặc nhiều thí nghiệm liên quan) hoặc quan điểm xung đột (hai hoặc nhiều tóm tắt mô hình lý thuyết, hiện tượng phù hợp với nhau).</li>
-                </ul>
-              </div>
-
-              <!-- Bảng cấu trúc -->
-              <div class="table-responsive-compact" style="margin-bottom: 24px;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <div class="hust-cutoff-table-wrap" role="region" aria-label="Bảng điểm chuẩn Đại học Bách khoa Hà Nội năm 2025" tabindex="0">
+                <table id="hust-cutoff-table">
                   <thead>
-                    <tr style="background: var(--brand-red-light); border-bottom: 1px solid var(--border);">
-                      <th style="padding: 10px; text-align: center; font-weight: 700;">TT</th>
-                      <th style="padding: 10px; text-align: left; font-weight: 700;">Phần thi</th>
-                      <th style="padding: 10px; text-align: center; font-weight: 700;">Số câu (câu)</th>
-                      <th style="padding: 10px; text-align: center; font-weight: 700;">Tỷ lệ M1:M2:M3</th>
-                      <th style="padding: 10px; text-align: center; font-weight: 700;">Thời gian thi (phút)</th>
-                      <th style="padding: 10px; text-align: right; font-weight: 700; padding-right: 16px;">Điểm tối đa</th>
+                    <tr>
+                      <th>STT</th>
+                      <th>Mã xét tuyển</th>
+                      <th>Tên mã xét tuyển</th>
+                      <th>Tổ hợp gốc</th>
+                      <th>Điểm chuẩn THPT (thang 30)</th>
+                      <th>Điểm chuẩn XTTN 1.2 (thang 100)</th>
+                      <th>Điểm chuẩn XTTN 1.3 (thang 100)</th>
+                      <th>Điểm chuẩn ĐGTD (thang 100)</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td style="padding: 10px; text-align: center;">1</td>
-                      <td style="padding: 10px; font-weight: 600;">Tư duy Toán học</td>
-                      <td style="padding: 10px; text-align: center;">40</td>
-                      <td style="padding: 10px; text-align: center;">4:3:3</td>
-                      <td style="padding: 10px; text-align: center;">60</td>
-                      <td style="padding: 10px; text-align: right; font-weight: 600; padding-right: 16px;">40 điểm</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 10px; text-align: center;">2</td>
-                      <td style="padding: 10px; font-weight: 600;">Tư duy Đọc hiểu</td>
-                      <td style="padding: 10px; text-align: center;">20</td>
-                      <td style="padding: 10px; text-align: center;">4:3:3</td>
-                      <td style="padding: 10px; text-align: center;">30</td>
-                      <td style="padding: 10px; text-align: right; font-weight: 600; padding-right: 16px;">20 điểm</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 10px; text-align: center;">3</td>
-                      <td style="padding: 10px; font-weight: 600;">Tư duy Khoa học / Giải quyết vấn đề</td>
-                      <td style="padding: 10px; text-align: center;">40</td>
-                      <td style="padding: 10px; text-align: center;">4:3:3</td>
-                      <td style="padding: 10px; text-align: center;">60</td>
-                      <td style="padding: 10px; text-align: right; font-weight: 600; padding-right: 16px;">40 điểm</td>
-                    </tr>
-                    <tr style="background: #f8fafc; font-weight: 700; color: var(--text); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-                      <td style="padding: 10px; text-align: center;"></td>
-                      <td style="padding: 10px;">Tổng cộng</td>
-                      <td style="padding: 10px; text-align: center;">100 câu</td>
-                      <td style="padding: 10px; text-align: center;">4:3:3</td>
-                      <td style="padding: 10px; text-align: center;">150 phút</td>
-                      <td style="padding: 10px; text-align: right; padding-right: 16px;">100 điểm</td>
-                    </tr>
+                  <tbody id="hust-cutoff-tbody">
+                    <!-- Dynamically populated via JS -->
                   </tbody>
                 </table>
               </div>
-
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--brand-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--brand-red); padding-bottom: 8px;">
-                IV. CÁC MỨC ĐỘ TƯ DUY VÀ DẠNG CÂU HỎI TRẮC NGHIỆM
-              </h3>
-              <div style="font-size: 12.5px; color: var(--text); line-height: 1.6; margin-bottom: 24px;">
-                <p style="margin-bottom: 12px;">Các câu hỏi trong Bài thi Đánh giá tư duy được chia thành ba mức độ tư duy khác nhau từ thấp đến cao:</p>
-                <ul style="padding-left: 20px; margin-bottom: 20px; list-style-type: square;">
-                  <li style="margin-bottom: 8px;"><strong>Mức độ 1: Tư duy tái hiện.</strong> Thể hiện khả năng nhớ lại kiến thức, thực hiện tư duy theo những quy trình đã biết (xác định, tìm kiếm, lựa chọn, nhắc lại, đặt tên, ghép nối...).</li>
-                  <li style="margin-bottom: 8px;"><strong>Mức độ 2: Tư duy suy luận.</strong> Thể hiện khả năng lập luận có căn cứ, thực hiện tư duy phân tích, tổng hợp dựa trên vận dụng quy trình thích ứng với điều kiện (phân loại, so sánh, chứng minh, biện giải, giải thích, áp dụng, tóm tắt...).</li>
-                  <li style="margin-bottom: 12px;"><strong>Mức độ 3: Tư duy bậc cao.</strong> Thiết lập và thực hiện các mô hình đánh giá, giải thích dựa trên bằng chứng (phân tích, đánh giá, phân biệt, phán đoán, lập luận nhiều bước, kiểm tra giả thuyết...).</li>
-                </ul>
-                <p style="margin-bottom: 8px;"><strong>Kiểu câu hỏi đánh giá tư duy:</strong> Bài thi sử dụng các câu hỏi trắc nghiệm hiện đại đa dạng hình thức khách quan, bao gồm các dạng sau:</p>
-                <ol style="padding-left: 20px; list-style-type: decimal;">
-                  <li style="margin-bottom: 4px;">Chọn 1 trong 4 đáp án đúng.</li>
-                  <li style="margin-bottom: 4px;">Chọn đáp án Đúng/Sai đối với chuỗi phát biểu liên quan.</li>
-                  <li style="margin-bottom: 4px;">Chọn nhiều đáp án đúng cho một câu hỏi phức hợp.</li>
-                  <li style="margin-bottom: 4px;">Kéo thả đáp án đúng vào những vị trí trống được cho sẵn.</li>
-                  <li>Điền đáp án ngắn (thí sinh tự tính toán và nhập giá trị số cụ thể).</li>
-                </ol>
-                <p style="margin-top: 10px; font-size: 11.5px; color: var(--muted); font-style: italic;">* Lưu ý: Đối với các dạng câu hỏi trắc nghiệm hiện đại này, thí sinh phải trả lời đúng tất cả các ý trong câu hỏi mới được tính điểm tối đa cho câu hỏi đó.</p>
-              </div>
-
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--brand-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--brand-red); padding-bottom: 8px;">
-                V. KẾ HOẠCH TỔ CHỨC VÀ ĐỊA ĐIỂM THI NĂM 2026
-              </h3>
-              <div style="font-size: 12.5px; color: var(--text); line-height: 1.6; margin-bottom: 24px;">
-                <p style="margin-bottom: 12px;"><strong>1. Kế hoạch các đợt thi năm 2026:</strong> Thí sinh đăng ký dự thi chính thức qua cổng trực tuyến. Dưới đây là thông tin chi tiết về thời gian thi và hạn đăng ký:</p>
-                <div class="table-responsive-compact" style="margin-bottom: 16px;">
-                  <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                    <thead>
-                      <tr style="background: var(--brand-red-light); border-bottom: 1px solid var(--border);">
-                        <th style="padding: 8px 10px; text-align: center; font-weight: 700;">Đợt thi</th>
-                        <th style="padding: 8px 10px; text-align: center; font-weight: 700;">Ngày thi chính thức</th>
-                        <th style="padding: 8px 10px; text-align: center; font-weight: 700;">Thời gian mở đăng ký</th>
-                        <th style="padding: 8px 10px; text-align: center; font-weight: 700;">Trạng thái</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td style="padding: 8px 10px; text-align: center; font-weight: 600;">Đợt 1</td>
-                        <td style="padding: 8px 10px; text-align: center;">Ngày 24 - 25/01/2026</td>
-                        <td style="padding: 8px 10px; text-align: center;">Từ 05 - 15/12/2025</td>
-                        <td style="padding: 8px 10px; text-align: center; color: var(--muted); font-style: italic;">Đã hoàn tất</td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 10px; text-align: center; font-weight: 600;">Đợt 2</td>
-                        <td style="padding: 8px 10px; text-align: center;">Ngày 14 - 15/03/2026</td>
-                        <td style="padding: 8px 10px; text-align: center;">Từ 05 - 15/02/2026</td>
-                        <td style="padding: 8px 10px; text-align: center; color: var(--muted); font-style: italic;">Đã hoàn tất</td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 10px; text-align: center; font-weight: 600;">Đợt 3</td>
-                        <td style="padding: 8px 10px; text-align: center;">Ngày 16 - 17/05/2026</td>
-                        <td style="padding: 8px 10px; text-align: center;">Từ 05 - 15/04/2026</td>
-                        <td style="padding: 8px 10px; text-align: center; color: var(--muted); font-style: italic;">Đã hoàn tất</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p style="font-size: 11.5px; color: var(--muted); margin-bottom: 16px;">* Lưu ý: Số lượng đăng ký tại từng địa điểm thi là hữu hạn, hệ thống đăng ký sẽ tự động khóa địa điểm thi khi đã đạt giới hạn tối đa.</p>
-                
-                <p style="margin-bottom: 8px; font-weight: 700; color: var(--text);">2. Các địa điểm tổ chức thi trên toàn quốc:</p>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px; color: var(--muted); background: #ffffff; border: 1px solid var(--border); padding: 14px; border-radius: 8px;">
-                  <div>• <strong>Tại Hà Nội:</strong> ĐHBK Hà Nội, ĐH Kinh tế Quốc dân, ĐH Xây dựng HN, ĐH Thủy lợi, ĐH Giao thông vận tải, ĐH Công nghiệp HN, Học viện Công nghệ BCVT, ĐH Kinh tế Kỹ thuật công nghiệp, ĐH Đại Nam, ĐH Phenikaa, ĐH Công nghệ Đông Á.</div>
-                  <div>• <strong>Tại Hưng Yên:</strong> ĐH Sư phạm Kỹ thuật Hưng Yên, ĐH Thái Bình.</div>
-                  <div>• <strong>Tại Thái Nguyên:</strong> Trung tâm Khảo thí và Đảm bảo chất lượng GD - ĐH Thái Nguyên.</div>
-                  <div>• <strong>Tại Ninh Bình:</strong> ĐH Sư phạm Nghệ thuật TW, ĐH KTKT Công nghiệp, ĐH Hoa Lư.</div>
-                  <div>• <strong>Tại Hải Phòng:</strong> ĐH Sao đỏ (Hải Dương), ĐH Hàng hải Việt Nam.</div>
-                  <div>• <strong>Tại Quảng Ninh:</strong> Trường Đại học Hạ Long.</div>
-                  <div>• <strong>Tại Thanh Hóa:</strong> Trường Đại học Hồng Đức.</div>
-                  <div>• <strong>Tại Lào Cai:</strong> Phân hiệu ĐH Thái Nguyên tại Lào Cai.</div>
-                  <div>• <strong>Tại Sơn La:</strong> Trường Đại học Tây Bắc.</div>
-                  <div>• <strong>Tại Nghệ An:</strong> Trường Đại học Vinh.</div>
-                  <div>• <strong>Tại Hà Tĩnh:</strong> Trường Đại học Hà Tĩnh.</div>
-                  <div>• <strong>Tại Đà Nẵng:</strong> Trường ĐH Bách khoa - ĐH Đà Nẵng.</div>
-                </div>
-              </div>
-
-              
-            </div>
-
-            <!-- NỘI DUNG KỲ THI 2: HSA -->
-            <div id="intro-exam-hsa" class="intro-exam-panel">
-              <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                Kỳ thi Đánh giá Năng lực - Đại học Quốc gia Hà Nội (HSA)
-              </h3>
-              
-              <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 20px;">
-                <p style="margin-bottom: 10px;"><strong>Đơn vị tổ chức:</strong> Trung tâm Khảo thí Đại học Quốc gia Hà Nội (VNU Hanoi).</p>
-                <p style="margin-bottom: 10px;"><strong>Mục đích:</strong> Đánh giá năng lực của học sinh THPT theo chương trình phổ thông nhằm phân loại và xét tuyển đại học. Kết quả thi được sử dụng để xét tuyển vào tất cả các trường thành viên của ĐHQGHN và hơn 90 trường đại học khác trên toàn quốc.</p>
-                <p style="margin-bottom: 10px;"><strong>Hình thức thi:</strong> Làm bài trực tiếp trên máy tính tại các điểm thi chuẩn hóa do ĐHQGHN tổ chức. Bài thi được bảo mật tuyệt đối, mỗi thí sinh có một đề thi được sinh ngẫu nhiên từ ngân hàng câu hỏi chuẩn hóa.</p>
-              </div>
-
-              <h4 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">CẤU TRÚC BÀI THI CHUẨN HÓA</h4>
-              <div class="spec-grid" style="margin-bottom: 24px;">
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Tư duy Định lượng (Toán)<br>(70 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Tư duy Định tính (Văn)<br>(60 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Khoa học (Tự nhiên & XH)<br>(65 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card" style="background: var(--brand-red-light); border-color: rgba(201, 21, 37, 0.15);">
-                  <span class="spec-num" style="color: var(--brand-red);">150</span>
-                  <span class="spec-label" style="font-weight: 700; color: var(--brand-red);">Tổng điểm tối đa<br>(195 phút / 150 câu)</span>
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12.5px; margin-bottom: 24px;">
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Cơ cấu kiến thức phần Khoa học:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;"><strong>Lĩnh vực Tự nhiên:</strong> Vật lý, Hóa học, Sinh học (đóng vai trò tư duy suy luận khoa học).</li>
-                    <li><strong>Lĩnh vực Xã hội:</strong> Lịch sử, Địa lý (đánh giá khả năng hiểu biết và phân tích xã hội).</li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Các dạng câu hỏi trắc nghiệm:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;">Trắc nghiệm lựa chọn 1 trong 4 đáp án đúng</li>
-                    <li>Điền đáp án trực tiếp (phần toán học và một số câu khoa học tự nhiên)</li>
-                  </ul>
-                </div>
-              </div>
-
-
-            </div>
-
-            <!-- NỘI DUNG KỲ THI 3: VACT / APT -->
-            <div id="intro-exam-vact" class="intro-exam-panel">
-              <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                Kỳ thi Đánh giá Năng lực - Đại học Quốc gia TP.HCM (VACT / APT)
-              </h3>
-              
-              <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 20px;">
-                <p style="margin-bottom: 10px;"><strong>Đơn vị tổ chức:</strong> Đại học Quốc gia Thành phố Hồ Chí Minh (VNU-HCM).</p>
-                <p style="margin-bottom: 10px;"><strong>Mục đích:</strong> Đánh giá các năng lực cơ bản để học tập đại học của thí sinh như sử dụng ngôn ngữ, tư duy logic, xử lý số liệu và giải quyết vấn đề. Kết quả được sử dụng xét tuyển vào các trường thành viên của ĐHQG-HCM và hơn 100 trường đại học khác.</p>
-                <p style="margin-bottom: 10px;"><strong>Hình thức thi:</strong> Thi viết trắc nghiệm trên giấy tại các cụm thi lớn do ĐHQG-HCM tổ chức (thường có 2 đợt thi hàng năm để học sinh cải thiện điểm số).</p>
-              </div>
-
-              <h4 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">CẤU TRÚC BÀI THI CHUẨN HÓA</h4>
-              <div class="spec-grid" style="margin-bottom: 24px;">
-                <div class="spec-card">
-                  <span class="spec-num">400</span>
-                  <span class="spec-label">Sử dụng ngôn ngữ (Anh/Việt)<br>(40 câu hỏi trắc nghiệm)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">300</span>
-                  <span class="spec-label">Toán, Logic & Xử lý số liệu<br>(30 câu hỏi trắc nghiệm)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">500</span>
-                  <span class="spec-label">Giải quyết vấn đề (Khoa học)<br>(50 câu hỏi trắc nghiệm)</span>
-                </div>
-                <div class="spec-card" style="background: var(--brand-red-light); border-color: rgba(201, 21, 37, 0.15);">
-                  <span class="spec-num" style="color: var(--brand-red);">1200</span>
-                  <span class="spec-label" style="font-weight: 700; color: var(--brand-red);">Tổng điểm tối đa<br>(150 phút / 120 câu)</span>
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12.5px; margin-bottom: 24px;">
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Nội dung phần Sử dụng ngôn ngữ:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;"><strong>Tiếng Việt (20 câu):</strong> Đánh giá năng lực đọc hiểu, cảm thụ văn học, lỗi dùng từ ngữ phổ thông.</li>
-                    <li><strong>Tiếng Anh (20 câu):</strong> Đánh giá năng lực sử dụng từ vựng, ngữ pháp cơ bản, đọc và trích thông tin.</li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Nội dung phần Giải quyết vấn đề:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;"><strong>Khoa học Tự nhiên:</strong> Hóa học, Vật lý, Sinh học.</li>
-                    <li><strong>Khoa học Xã hội:</strong> Lịch sử, Địa lý.</li>
-                  </ul>
-                </div>
-              </div>
-
-
-            </div>
-
-            <!-- NỘI DUNG KỲ THI 4: QDA -->
-            <div id="intro-exam-qda" class="intro-exam-panel">
-              <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                Kỳ thi Đánh giá Năng lực Khối trường Quân đội (QDA)
-              </h3>
-              
-              <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 20px;">
-                <p style="margin-bottom: 10px;"><strong>Đơn vị tổ chức:</strong> Ban Tuyển sinh Quân sự Bộ Quốc phòng tổ chức (bắt đầu áp dụng chính thức từ năm 2026).</p>
-                <p style="margin-bottom: 10px;"><strong>Mục đích:</strong> Đánh giá năng lực học tập chuyên sâu và định hướng tư duy nghiệp vụ của thí sinh đăng ký xét tuyển đại học, cao đẳng vào các học viện, trường sĩ quan khối Quân đội. Cổng thông tin chính thức: <a href="https://qda.edu.vn" target="_blank" style="color: var(--brand-red); font-weight: 600; text-decoration: underline;">qda.edu.vn</a>.</p>
-                <p style="margin-bottom: 10px;"><strong>Hình thức thi:</strong> Thi trực tiếp trên máy tính tại các trung tâm khảo thí quân đội được chuẩn bị kỹ lưỡng về cơ sở vật chất, hệ thống chấm điểm tự động.</p>
-              </div>
-
-              <h4 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">CẤU TRÚC BÀI THI CHUẨN HÓA</h4>
-              <div class="spec-grid" style="margin-bottom: 24px;">
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Toán & Xử lý số liệu<br>(80 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Văn học & Ngôn ngữ<br>(55 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card">
-                  <span class="spec-num">50</span>
-                  <span class="spec-label">Khoa học hoặc Tiếng Anh<br>(60 phút / 50 câu hỏi)</span>
-                </div>
-                <div class="spec-card" style="background: var(--brand-red-light); border-color: rgba(201, 21, 37, 0.15);">
-                  <span class="spec-num" style="color: var(--brand-red);">150</span>
-                  <span class="spec-label" style="font-weight: 700; color: var(--brand-red);">Tổng điểm tối đa<br>(195 phút / 150 câu)</span>
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12.5px; margin-bottom: 24px;">
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Cơ chế chọn học phần thi thứ 3:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;"><strong>Lựa chọn 1 (Khoa học):</strong> Tích hợp câu hỏi Vật lý, Hóa học, Sinh học, Lịch sử, Địa lý cấp trung học phổ thông.</li>
-                    <li><strong>Lựa chọn 2 (Tiếng Anh):</strong> Đánh giá năng lực ngoại ngữ chuyên sâu cho khối ngành ngoại giao, biên phòng, kỹ thuật.</li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 style="font-weight: 700; color: var(--text); margin-bottom: 8px;">Hình thức nộp hồ sơ xét tuyển:</h5>
-                  <ul style="padding-left: 18px; color: var(--muted); list-style-type: square; line-height: 1.5;">
-                    <li style="margin-bottom: 4px;">Đăng ký thi và xét tuyển qua cổng thông tin <a href="https://qda.edu.vn" target="_blank" style="color: var(--brand-red); font-weight: 600;">qda.edu.vn</a>.</li>
-                    <li>Thí sinh bắt buộc phải trải qua vòng sơ tuyển sức khỏe và lý lịch chính trị tại Ban Chỉ huy Quân sự cấp quận/huyện.</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div style="padding: 16px; background: var(--brand-red-light); border-radius: 8px; border: 1px solid rgba(193, 18, 31, 0.15); font-size: 12px; line-height: 1.6;">
-                <span style="font-weight: 700; color: var(--text); display: block; margin-bottom: 6px;">Danh sách 23 Học viện, Trường Sĩ quan quân đội xét tuyển kết quả QDA:</span>
-                <p style="color: var(--muted);">Học viện Kỹ thuật Quân sự, Học viện Quân y, Học viện Khoa học Quân sự, Học viện Hậu cần, Học viện Phòng không - Không quân, Trường Sĩ quan Lục quân 1, Trường Sĩ quan Lục quân 2, Trường Sĩ quan Công binh, Trường Sĩ quan Thông tin, Học viện Biên phòng, Học viện Hải quân...</p>
             </div>
           </div>
         </div>
-
-          <!-- PHÂN HỆ 2: THỐNG KÊ PHỔ ĐIỂM -->
-          <div id="overview-panel-stats" class="overview-sub-panel">
-            <!-- NỘI DUNG PHỔ ĐIỂM TSA -->
-            <div id="stats-exam-tsa" class="stats-exam-panel active">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                  Phổ điểm thi TSA năm 2025 và 2026 (Cả 3 đợt)
-                </h3>
-
-                <!-- Toggle so sánh đợt thi -->
-                <div class="chart-tab-container" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                  <button type="button" class="chart-tab-btn active" onclick="toggleTsaYear('2026')">Phổ điểm TSA 2026</button>
-                  <button type="button" class="chart-tab-btn" onclick="toggleTsaYear('2025')">Phổ điểm TSA 2025</button>
-                </div>
-
-                <!-- Nội dung phổ điểm 2026 -->
-                <div id="tsa-data-2026" class="tsa-year-panel active">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">54.96</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình cả năm</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">98.98</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn đợt</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">~60K</span>
-                      <span class="tsa-stat-lbl">Tổng lượt thí sinh dự thi</span>
-                    </div>
-                  </div>
-
-                  <!-- Phân bố cột biểu đồ CSS 2026 -->
-                  <h4 style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">Phân bố mức điểm TSA 2026 (Cả 3 đợt)</h4>
-                  <div <div class="tsa-bar-chart">
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 3%;"></div>
-                      <span class="chart-label">&lt;30</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 6%;"></div>
-                      <span class="chart-label">30</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 12%;"></div>
-                      <span class="chart-label">35</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 22%;"></div>
-                      <span class="chart-label">40</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 38%;"></div>
-                      <span class="chart-label">45</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 58%;"></div>
-                      <span class="chart-label">50</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 78%;"></div>
-                      <span class="chart-label">55</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 88%;"></div>
-                      <span class="chart-label">60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 82%;"></div>
-                      <span class="chart-label">65</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 65%;"></div>
-                      <span class="chart-label">70</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 42%;"></div>
-                      <span class="chart-label">75</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 22%;"></div>
-                      <span class="chart-label">80</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 9%;"></div>
-                      <span class="chart-label">85</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 3%;"></div>
-                      <span class="chart-label">90</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 1%;"></div>
-                      <span class="chart-label">>95</span>
-                    </div>
-                  </div>
-
-                  <!-- Mốc thống kê 2026 -->
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt xuất sắc trên <strong>90 điểm</strong>:</span>
-                      <strong style="color: var(--brand-red);">13 thí sinh</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt điểm giỏi trên <strong>80 điểm</strong>:</span>
-                      <strong>175 thí sinh</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức trên <strong>70 điểm</strong>:</span>
-                      <strong>1.577 thí sinh</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Trung bình Đợt 1 / Đợt 3:</span>
-                      <strong>54.01 / 53.17 điểm</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Nội dung phổ điểm 2025 -->
-                <div id="tsa-data-2025" class="tsa-year-panel">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">54.64</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình cả năm</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">98.61</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn đợt</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">~40K</span>
-                      <span class="tsa-stat-lbl">Tổng lượt thí sinh dự thi</span>
-                    </div>
-                  </div>
-
-                  <!-- Phân bố cột biểu đồ CSS 2025 -->
-                  <h4 style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">Phân bố mức điểm TSA 2025 (Cả 3 đợt)</h4>
-                  <div <div class="tsa-bar-chart">
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 2%;"></div>
-                      <span class="chart-label">&lt;30</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 5%;"></div>
-                      <span class="chart-label">30</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 10%;"></div>
-                      <span class="chart-label">35</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 20%;"></div>
-                      <span class="chart-label">40</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 35%;"></div>
-                      <span class="chart-label">45</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 55%;"></div>
-                      <span class="chart-label">50</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 75%;"></div>
-                      <span class="chart-label">55</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 85%;"></div>
-                      <span class="chart-label">60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 80%;"></div>
-                      <span class="chart-label">65</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 60%;"></div>
-                      <span class="chart-label">70</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 38%;"></div>
-                      <span class="chart-label">75</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 18%;"></div>
-                      <span class="chart-label">80</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 8%;"></div>
-                      <span class="chart-label">85</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 2%;"></div>
-                      <span class="chart-label">90</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 0.5%;"></div>
-                      <span class="chart-label">>95</span>
-                    </div>
-                  </div>
-
-                  <!-- Mốc thống kê 2025 -->
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Khoảng điểm tập trung nhiều nhất:</span>
-                      <strong>52 - 55 điểm</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Điểm trung bình các đợt thi:</span>
-                      <strong>54.39 - 54.89 điểm</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thang điểm đánh giá chung:</span>
-                      <strong>100 điểm trắc nghiệm</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Phương thức tổ chức:</span>
-                      <strong>Thi trên máy tại trung tâm</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG PHỔ ĐIỂM HSA -->
-            <div id="stats-exam-hsa" class="stats-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                  Phổ điểm thi HSA năm 2025 và 2026 (ĐHQG Hà Nội)
-                </h3>
-
-                <!-- Toggle so sánh đợt thi HSA -->
-                <div class="chart-tab-container" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                  <button type="button" class="chart-tab-btn hsa-chart-tab-btn active" onclick="toggleHsaYear('2026')">Phổ điểm HSA 2026</button>
-                  <button type="button" class="chart-tab-btn hsa-chart-tab-btn" onclick="toggleHsaYear('2025')">Phổ điểm HSA 2025</button>
-                </div>
-
-                <!-- Nội dung phổ điểm HSA 2026 -->
-                <div id="hsa-data-2026" class="hsa-year-panel active">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">79.39</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình (150đ)</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">133</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn đợt</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">116.8K</span>
-                      <span class="tsa-stat-lbl">Tổng lượt thí sinh dự thi</span>
-                    </div>
-                  </div>
-
-                  <h4 style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">Phân bố mức điểm HSA 2026</h4>
-                  <div <div class="tsa-bar-chart">
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 2%;"></div>
-                      <span class="chart-label">&lt;60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 5%;"></div>
-                      <span class="chart-label">60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 9%;"></div>
-                      <span class="chart-label">65</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 15%;"></div>
-                      <span class="chart-label">70</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 25%;"></div>
-                      <span class="chart-label">75</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 40%;"></div>
-                      <span class="chart-label">80</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 60%;"></div>
-                      <span class="chart-label">85</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 82%;"></div>
-                      <span class="chart-label">90</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 90%;"></div>
-                      <span class="chart-label">95</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 84%;"></div>
-                      <span class="chart-label">100</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 70%;"></div>
-                      <span class="chart-label">105</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 52%;"></div>
-                      <span class="chart-label">110</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 35%;"></div>
-                      <span class="chart-label">115</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 18%;"></div>
-                      <span class="chart-label">120</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 8%;"></div>
-                      <span class="chart-label">125</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 3%;"></div>
-                      <span class="chart-label">130</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 1%;"></div>
-                      <span class="chart-label">>135</span>
-                    </div>
-                  </div>
-
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh xuất sắc đạt từ **105 điểm trở lên**:</span>
-                      <strong style="color: var(--brand-red);">5.18% (Khoảng 6.000 thí sinh)</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức giỏi từ **100 điểm trở lên**:</span>
-                      <strong>10.11%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức khá từ **90 điểm trở lên**:</span>
-                      <strong>26.19%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức từ **80 điểm trở lên**:</span>
-                      <strong>48.77%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức đạt từ **75 điểm trở lên**:</span>
-                      <strong>61.07%</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Nội dung phổ điểm HSA 2025 -->
-                <div id="hsa-data-2025" class="hsa-year-panel">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">78.80</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình (150đ)</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">130</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn đợt</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">~100K</span>
-                      <span class="tsa-stat-lbl">Tổng lượt thí sinh dự thi</span>
-                    </div>
-                  </div>
-
-                  <h4 style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">Phân bố mức điểm HSA 2025</h4>
-                  <div <div class="tsa-bar-chart">
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 2%;"></div>
-                      <span class="chart-label">&lt;60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 4%;"></div>
-                      <span class="chart-label">60</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 8%;"></div>
-                      <span class="chart-label">65</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 14%;"></div>
-                      <span class="chart-label">70</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 23%;"></div>
-                      <span class="chart-label">75</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 38%;"></div>
-                      <span class="chart-label">80</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 57%;"></div>
-                      <span class="chart-label">85</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 80%;"></div>
-                      <span class="chart-label">90</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 88%;"></div>
-                      <span class="chart-label">95</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 82%;"></div>
-                      <span class="chart-label">100</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 68%;"></div>
-                      <span class="chart-label">105</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 50%;"></div>
-                      <span class="chart-label">110</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 32%;"></div>
-                      <span class="chart-label">115</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 16%;"></div>
-                      <span class="chart-label">120</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 7%;"></div>
-                      <span class="chart-label">125</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 2%;"></div>
-                      <span class="chart-label">130</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 0.8%;"></div>
-                      <span class="chart-label">>135</span>
-                    </div>
-                  </div>
-
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh xuất sắc đạt từ **105 điểm trở lên**:</span>
-                      <strong style="color: var(--brand-red);">3.94%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức khá từ **90 điểm trở lên**:</span>
-                      <strong>23.70%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức từ **80 điểm trở lên**:</span>
-                      <strong>47.20%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức đạt từ **75 điểm trở lên**:</span>
-                      <strong>60.20%</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG PHỔ ĐIỂM VACT -->
-            <div id="stats-exam-vact" class="stats-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                  Phổ điểm thi ĐGNL ĐHQG TP.HCM năm 2025 và 2026 (VACT)
-                </h3>
-
-                <!-- Toggle so sánh đợt thi VACT -->
-                <div class="chart-tab-container" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                  <button type="button" class="chart-tab-btn vact-chart-tab-btn active" onclick="toggleVactYear('2026')">Phổ điểm VACT 2026</button>
-                  <button type="button" class="chart-tab-btn vact-chart-tab-btn" onclick="toggleVactYear('2025')">Phổ điểm VACT 2025</button>
-                </div>
-
-                <!-- Nội dung phổ điểm VACT 2026 -->
-                <div id="vact-data-2026" class="vact-year-panel active">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">682.0</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình Đợt 1 (1200đ)</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">1139</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn năm (Đợt 2)</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">100K+</span>
-                      <span class="tsa-stat-lbl">Tổng lượt thí sinh đăng ký</span>
-                    </div>
-                  </div>
-
-                  <h4 style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 10px;">Phân bố mức điểm VACT 2026 (Đợt 2)</h4>
-                  <div <div class="tsa-bar-chart">
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 1%;"></div>
-                      <span class="chart-label">&lt;400</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 3%;"></div>
-                      <span class="chart-label">400</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 7%;"></div>
-                      <span class="chart-label">450</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 14%;"></div>
-                      <span class="chart-label">500</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 26%;"></div>
-                      <span class="chart-label">550</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 45%;"></div>
-                      <span class="chart-label">600</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 68%;"></div>
-                      <span class="chart-label">650</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 86%;"></div>
-                      <span class="chart-label">700</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 92%;"></div>
-                      <span class="chart-label">750</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 84%;"></div>
-                      <span class="chart-label">800</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 68%;"></div>
-                      <span class="chart-label">850</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 48%;"></div>
-                      <span class="chart-label">900</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 30%;"></div>
-                      <span class="chart-label">950</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 16%;"></div>
-                      <span class="chart-label">1000</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 8%;"></div>
-                      <span class="chart-label">1050</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 3%;"></div>
-                      <span class="chart-label">1100</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                      <div class="chart-bar" style="height: 1%;"></div>
-                      <span class="chart-label">>1100</span>
-                    </div>
-                  </div>
-
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh xuất sắc đạt từ **900 điểm trở lên**:</span>
-                      <strong style="color: var(--brand-red);">Khoảng 8.00%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức giỏi từ **800 điểm trở lên**:</span>
-                      <strong>Khoảng 22.00%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt mức khá từ **700 điểm trở lên**:</span>
-                      <strong>Khoảng 42.00%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt điểm dưới **600 điểm**:</span>
-                      <strong>Khoảng 35.00%</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Điểm trung bình và trung vị Đợt 1:</span>
-                      <strong>Đều đạt 682 điểm</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Nội dung phổ điểm VACT 2025 -->
-                <div id="vact-data-2025" class="vact-year-panel">
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">662.8</span>
-                      <span class="tsa-stat-lbl">Điểm trung bình cả năm (1200đ)</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val" style="color: var(--brand-red);">1122</span>
-                      <span class="tsa-stat-lbl">Thủ khoa toàn đợt</span>
-                    </div>
-                    <div class="tsa-stat-box">
-                      <span class="tsa-stat-val">159.8</span>
-                      <span class="tsa-stat-lbl">Độ lệch chuẩn điểm số</span>
-                    </div>
-                  </div>
-
-                  <div class="tsa-stats-bullets" style="margin-top: 16px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Điểm trung vị cả năm:</span>
-                      <strong>653 điểm</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Thí sinh đạt điểm thấp nhất:</span>
-                      <strong>120 điểm</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                      <span>Nhận xét:</span>
-                      <strong>Biểu đồ phân bố điểm chuẩn hóa rất đẹp, đảm bảo tính phân hóa cực cao của đề thi.</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG PHỔ ĐIỂM QDA -->
-            <div id="stats-exam-qda" class="stats-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                  Phổ điểm thi ĐGNL khối trường Quân đội năm 2026 (QDA)
-                </h3>
-                <div style="padding: 20px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; line-height: 1.6; color: var(--muted); text-align: justify; margin-bottom: 16px;">
-                  <p style="margin-bottom: 10px;"><strong>Lưu ý quan trọng:</strong> Kỳ thi QDA năm 2026 là <strong>kỳ thi riêng lần đầu tiên</strong> do Ban Tuyển sinh Quân sự Bộ Quốc phòng tổ chức tuyển sinh độc lập. Kỳ thi vừa được diễn ra từ ngày <strong>19/6 đến 21/6/2026</strong>.</p>
-                  <p>Do kỳ thi mới được thực hiện và kết quả điểm số đang được tổng hợp, <strong>phổ điểm chung của kỳ thi QDA hiện đang được cập nhật</strong>. Thí sinh có thể biết kết quả ca thi trực tiếp trên máy tính ngay khi nộp bài và theo dõi phổ điểm chính thức được công bố trên các phương tiện truyền thông của Bộ Quốc phòng.</p>
-                </div>
-                <div class="tsa-stats-bullets" style="font-size: 12px; line-height: 1.6; color: var(--text);">
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                    <span>Thang điểm tối đa bài thi QDA:</span>
-                    <strong>150 điểm</strong>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                    <span>Thời gian tổ chức thi đợt đầu:</span>
-                    <strong>19/06 - 21/06/2026</strong>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
-                    <span>Phương thức quy đổi điểm xét tuyển:</span>
-                    <strong>Quy đổi về thang điểm 30 để xét tuyển chung</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PHÂN HỆ 3: ĐIỂM CHUẨN TUYỂN SINH -->
-          <div id="overview-panel-cutoffs" class="overview-sub-panel">
-            <!-- NỘI DUNG ĐIỂM CHUẨN TSA -->
-            <div id="cutoffs-exam-tsa" class="cutoffs-exam-panel active">
-              <div class="card hust-cutoff-card">
-                <div class="hust-cutoff-heading">
-                  <div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;">
-                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                      Điểm chuẩn tuyển sinh Đại học Bách khoa Hà Nội năm 2025
-                    </h3>
-                    <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Đối chiếu điểm chuẩn theo 4 phương thức: THPT, XTTN 1.2, XTTN 1.3 và ĐGTD (TSA).</p>
-                  </div>
-
-                  <!-- Hộp tìm kiếm nhanh -->
-                  <div class="search-premium-box">
-                    <input type="text" id="cutoff-search-input" placeholder="Tìm tên ngành, mã ngành..." onkeyup="filterCutoffTable()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="#6b7280" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  </div>
-                </div>
-
-                <!-- Bảng dữ liệu điểm chuẩn -->
-                <div class="hust-cutoff-table-wrap" role="region" aria-label="Bảng điểm chuẩn Đại học Bách khoa Hà Nội năm 2025" tabindex="0">
-                  <table id="hust-cutoff-table">
-                    <colgroup>
-                      <col><col><col><col><col><col><col><col>
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th>STT</th>
-                        <th>Mã xét tuyển</th>
-                        <th>Tên mã xét tuyển</th>
-                        <th>Tổ hợp<br>gốc</th>
-                        <th>Điểm chuẩn<span class="score-scale">THPT (thang 30)</span></th>
-                        <th>Điểm chuẩn<span class="score-scale">XTTN 1.2 (thang 100)</span></th>
-                        <th>Điểm chuẩn<span class="score-scale">XTTN 1.3 (thang 100)</span></th>
-                        <th>Điểm chuẩn<span class="score-scale">ĐGTD (thang 100)</span></th>
-                      </tr>
-                    </thead>
-                    <tbody id="hust-cutoff-tbody">
-                      <!-- Được hiển thị động qua JS -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG ĐIỂM CHUẨN HSA -->
-            <div id="cutoffs-exam-hsa" class="cutoffs-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
-                  <div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;">
-                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                      Điểm chuẩn xét tuyển bằng kết quả HSA năm 2025 - 2026 (Tham khảo)
-                    </h3>
-                    <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Danh sách các trường đại học hàng đầu sử dụng điểm thi HSA để xét tuyển và khoảng điểm chuẩn nhận hồ sơ.</p>
-                  </div>
-                  <!-- Hộp tìm kiếm HSA -->
-                  <div class="search-premium-box">
-                    <input type="text" id="hsa-cutoff-search" placeholder="Tìm trường, khoảng điểm..." onkeyup="filterHsaTable()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="#6b7280" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  </div>
-                </div>
-
-                <div class="table-responsive-compact">
-                  <table id="hsa-cutoff-table" style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
-                    <thead>
-                      <tr style="background: var(--brand-red-light); border-bottom: 2px solid var(--border);">
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text); width: 12%;">Mã trường</th>
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text);">Tên cơ sở đào tạo / Trường Đại học</th>
-                        <th style="padding: 10px 12px; text-align: center; font-weight: 600; color: var(--text); width: 25%;">Khoảng điểm xét tuyển HSA (Thang 150)</th>
-                        <th style="padding: 10px 12px; text-align: right; font-weight: 600; color: var(--text); padding-right: 16px; width: 30%;">Ghi chú xét tuyển</th>
-                      </tr>
-                    </thead>
-                    <tbody id="hsa-cutoff-tbody">
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QHI</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Công nghệ – ĐHQGHN</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">85.0 - 110.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Xét tuyển trực tiếp theo ngành</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QHT</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Khoa học Tự nhiên – ĐHQGHN</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">80.0 - 105.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Điểm tối thiểu từ 80 điểm</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QHE</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Kinh tế – ĐHQGHN</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">85.0 - 100.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Yêu cầu Tiếng Anh đạt chuẩn</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QHY</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Y Dược – ĐHQGHN</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">95.0 - 115.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Ngành Y khoa tuyển từ 95đ trở lên</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">NHT</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Ngoại thương (Phía Bắc)</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">90.0 - 110.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Mức điểm xét tuyển kết hợp cao</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">KHA</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Kinh tế Quốc dân</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">85.0 - 105.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Quy đổi điểm về thang 30 xét tuyển</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">NHH</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Học viện Ngân hàng</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">80.0 - 95.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Nhận hồ sơ xét tuyển từ 80đ</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">DCN</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Công nghiệp Hà Nội</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">75.0 - 90.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Tuyển nhiều chỉ tiêu khối Kỹ thuật</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">PTIT</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Học viện Công nghệ Bưu chính Viễn thông</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">80.0 - 98.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Áp dụng tại Cơ sở đào tạo Hà Nội</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">HANU</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Hà Nội</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">80.0 - 95.0</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Kết hợp kiểm tra năng lực ngoại ngữ</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG ĐIỂM CHUẨN VACT -->
-            <div id="cutoffs-exam-vact" class="cutoffs-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
-                  <div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;">
-                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                      Điểm chuẩn xét tuyển bằng kết quả VACT năm 2025 - 2026 (Tham khảo)
-                    </h3>
-                    <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Danh sách các trường đại học sử dụng kết quả đánh giá năng lực ĐHQG TP.HCM để xét tuyển.</p>
-                  </div>
-                  <!-- Hộp tìm kiếm VACT -->
-                  <div class="search-premium-box">
-                    <input type="text" id="vact-cutoff-search" placeholder="Tìm trường, khoảng điểm..." onkeyup="filterVactTable()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="#6b7280" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  </div>
-                </div>
-
-                <div class="table-responsive-compact">
-                  <table id="vact-cutoff-table" style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
-                    <thead>
-                      <tr style="background: var(--brand-red-light); border-bottom: 2px solid var(--border);">
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text); width: 12%;">Mã trường</th>
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text);">Tên cơ sở đào tạo / Trường Đại học</th>
-                        <th style="padding: 10px 12px; text-align: center; font-weight: 600; color: var(--text); width: 25%;">Khoảng điểm xét tuyển VACT (Thang 1200)</th>
-                        <th style="padding: 10px 12px; text-align: right; font-weight: 600; color: var(--text); padding-right: 16px; width: 30%;">Ghi chú xét tuyển</th>
-                      </tr>
-                    </thead>
-                    <tbody id="vact-cutoff-tbody">
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QSG</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Bách khoa – ĐHQG TP.HCM</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">800 - 1030</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Tuyển nhiều bằng phương thức kết hợp</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QSC</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Khoa học Tự nhiên – ĐHQG TP.HCM</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">700 - 980</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Các ngành khoa học máy tính điểm cao</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QSE</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Kinh tế - Luật – ĐHQG TP.HCM</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">750 - 950</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Ngành Kinh tế đối ngoại, Luật thương mại</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">QST</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Công nghệ Thông tin – ĐHQG TP.HCM</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">800 - 980</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Trí tuệ nhân tạo, Khoa học dữ liệu</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">KSA</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Đại học Kinh tế TP.HCM (UEH)</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">750 - 950</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Xét tuyển cho tất cả các chương trình</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">SPK</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Sư phạm Kỹ thuật TP.HCM</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">700 - 900</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Điểm xét hồ sơ từ 700đ trở lên</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">NTS</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Đại học Ngoại thương (Cơ sở II TP.HCM)</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">850 - 1000</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Cơ chế cạnh tranh cực kỳ gắt gao</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">SGD</td>
-                        <td style="padding: 10px 12px; font-weight: 600;">Trường Đại học Sài Gòn</td>
-                        <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: var(--brand-red);">700 - 880</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Nhận hồ sơ đăng ký xét tuyển từ 700đ</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- NỘI DUNG ĐIỂM CHUẨN QDA -->
-            <div id="cutoffs-exam-qda" class="cutoffs-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                  Danh sách 23 trường Học viện, Sĩ quan khối Quân đội xét tuyển QDA 2026
-                </h3>
-                <div style="padding: 16px; background: var(--brand-red-light); border-radius: 8px; border: 1px solid rgba(193, 18, 31, 0.15); font-size: 12px; line-height: 1.6; color: var(--text); margin-bottom: 16px;">
-                  <strong>Thông tin tuyển sinh QDA 2026:</strong> Vì đây là năm đầu tiên tổ chức kỳ thi đánh giá năng lực riêng QDA của Bộ Quốc phòng, các trường quân đội chưa có mốc điểm chuẩn xét tuyển lịch sử cho kỳ thi này. Thí sinh cần trải qua vòng sơ tuyển sức khỏe và chính trị trước khi đăng ký xét tuyển.
-                </div>
-                <div class="table-responsive-compact">
-                  <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
-                    <thead>
-                      <tr style="background: var(--brand-red-light); border-bottom: 2px solid var(--border);">
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text); width: 25%;">Nhóm trường</th>
-                        <th style="padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text);">Tên học viện / Trường Sĩ quan</th>
-                        <th style="padding: 10px 12px; text-align: right; font-weight: 600; color: var(--text); padding-right: 16px; width: 30%;">Phương thức kết hợp khác</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">Học viện Quân sự</td>
-                        <td style="padding: 10px 12px;">Học viện Kỹ thuật Quân sự, Học viện Quân y, Học viện Khoa học Quân sự, Học viện Hậu cần, Học viện Hải quân, Học viện Phòng không - Không quân, Học viện Biên phòng</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Điểm thi TN THPT, ĐGNL ĐHQGHN/ĐHQG-HCM</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">Trường Sĩ quan chỉ huy</td>
-                        <td style="padding: 10px 12px;">Trường Sĩ quan Lục quân 1, Trường Sĩ quan Lục quân 2, Trường Sĩ quan Pháo binh, Trường Sĩ quan Đặc công, Trường Sĩ quan Tăng thiết giáp, Trường Sĩ quan Không quân</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Sơ tuyển trực tiếp tại địa phương</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 10px 12px; font-weight: 700; color: var(--brand-red);">Trường Sĩ quan chuyên môn</td>
-                        <td style="padding: 10px 12px;">Trường Sĩ quan Công binh, Trường Sĩ quan Thông tin, Trường Sĩ quan Phòng hóa, Trường Sĩ quan Kỹ thuật Quân sự (Vin-Hem-Pich)</td>
-                        <td style="padding: 10px 12px; text-align: right; color: var(--muted); padding-right: 16px;">Xét tuyển thí sinh nam toàn quốc</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-        </div>
-      
-          <!-- PHÂN HỆ 4: TRƯỜNG XÉT TUYỂN LIÊN KẾT -->
-          <div id="overview-panel-schools" class="overview-sub-panel">
-            <!-- TRƯỜNG XÉT TUYỂN TSA -->
-            <div id="schools-exam-tsa" class="schools-exam-panel active">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-                  Danh sách các Trường Đại học xét tuyển bằng kết quả TSA
-                </h3>
-                <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Tính đến năm học tuyển sinh mới nhất, có <strong>50 trường Đại học</strong> sử dụng kết quả Bài thi Đánh giá tư duy (TSA) của Đại học Bách khoa Hà Nội. Dưới đây là danh sách chi tiết được viết đầy đủ không viết tắt:</p>
-                <div class="table-responsive-compact" style="margin-bottom: 16px;">
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div>1. Trường Đại học Bách khoa Hà Nội</div>
-                    <div>2. Trường Đại học Ngoại thương</div>
-                    <div>3. Trường Đại học Kinh tế Quốc dân</div>
-                    <div>4. Trường Đại học Công nghệ Giao thông vận tải</div>
-                    <div>5. Trường Đại học Giao thông vận tải</div>
-                    <div>6. Trường Đại học Thủy lợi</div>
-                    <div>7. Trường Đại học Xây dựng Hà Nội</div>
-                    <div>8. Trường Đại học Mỏ - Địa chất</div>
-                    <div>9. Trường Đại học Sư phạm Kỹ thuật Hưng Yên</div>
-                    <div>10. Trường Đại học Kinh tế - Kỹ thuật Công nghiệp</div>
-                    <div>11. Trường Đại học Thương mại</div>
-                    <div>12. Trường Đại học Công nghiệp Hà Nội</div>
-                    <div>13. Trường Đại học Dược Hà Nội</div>
-                    <div>14. Trường Đại học Mở Hà Nội</div>
-                    <div>15. Trường Đại học Hà Nội</div>
-                    <div>16. Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội</div>
-                    <div>17. Học viện Công nghệ Bưu chính Viễn thông</div>
-                    <div>18. Học viện Tài chính</div>
-                    <div>19. Học viện Ngân hàng</div>
-                    <div>20. Học viện Kỹ thuật Mật mã</div>
-                    <div>21. Trường Đại học Thăng Long</div>
-                    <div>22. Trường Đại học Phenikaa</div>
-                    <div>23. Trường Đại học Sư phạm Kỹ thuật Nam Định</div>
-                    <div>24. Trường Đại học Tài nguyên và Môi trường Hà Nội</div>
-                    <div>25. Trường Đại học Hạ Long</div>
-                    <div>26. Học viện Quản lý Giáo dục</div>
-                    <div>27. Học viện Chính sách và Phát triển</div>
-                    <div>28. Trường Đại học Kinh tế Nghệ An</div>
-                    <div>29. Trường Đại học Vinh</div>
-                    <div>30. Trường Đại học Hồng Đức</div>
-                    <div>31. Trường Đại học Dầu khí Việt Nam</div>
-                    <div>32. Trường Đại học Công nghệ và Quản lý Hữu nghị</div>
-                    <div>33. Trường Đại học Quy Nhơn</div>
-                    <div>34. Trường Đại học Nguyễn Trãi</div>
-                    <div>35. Trường Đại học Đông Đô</div>
-                    <div>36. Trường Đại học Chu Văn An</div>
-                    <div>37. Trường Đại học Hải Phòng</div>
-                    <div>38. Trường Đại học Sư phạm Kỹ thuật Vinh</div>
-                    <div>39. Trường Đại học Quốc tế Bắc Hà</div>
-                    <div>40. Trường Đại học Khoa học - Đại học Thái Nguyên</div>
-                    <div>41. Trường Đại học Thái Bình</div>
-                    <div>42. Trường Đại học Văn Lang</div>
-                    <div>43. Trường Đại học Lao động - Xã hội</div>
-                    <div>44. Trường Đại học Hòa Bình</div>
-                    <div>45. Trường Đại học Sư phạm Kỹ thuật Vinh</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TRƯỜNG XÉT TUYỂN HSA -->
-            <div id="schools-exam-hsa" class="schools-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-                  Danh sách các Trường Đại học xét tuyển bằng kết quả HSA
-                </h3>
-                <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Đại học Quốc gia Hà Nội công bố có hơn <strong>90 trường Đại học, Học viện</strong> sử dụng kết quả HSA để xét tuyển. Dưới đây là danh sách đầy đủ các trường tiêu biểu:</p>
-                <div class="table-responsive-compact" style="margin-bottom: 16px;">
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div>1. Trường Đại học Công nghệ - Đại học Quốc gia Hà Nội</div>
-                    <div>2. Trường Đại học Khoa học Tự nhiên - Đại học Quốc gia Hà Nội</div>
-                    <div>3. Trường Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia Hà Nội</div>
-                    <div>4. Trường Đại học Ngoại ngữ - Đại học Quốc gia Hà Nội</div>
-                    <div>5. Trường Đại học Kinh tế - Đại học Quốc gia Hà Nội</div>
-                    <div>6. Trường Đại học Y Dược - Đại học Quốc gia Hà Nội</div>
-                    <div>7. Trường Đại học Luật - Đại học Quốc gia Hà Nội</div>
-                    <div>8. Trường Đại học Giáo dục - Đại học Quốc gia Hà Nội</div>
-                    <div>9. Trường Đại học Việt Nhật - Đại học Quốc gia Hà Nội</div>
-                    <div>10. Trường Đại học Ngoại thương (Cơ sở phía Bắc)</div>
-                    <div>11. Trường Đại học Kinh tế Quốc dân</div>
-                    <div>12. Học viện Công nghệ Bưu chính Viễn thông</div>
-                    <div>13. Trường Đại học Thương mại</div>
-                    <div>14. Trường Đại học Công nghiệp Hà Nội</div>
-                    <div>15. Trường Đại học Mở Hà Nội</div>
-                    <div>16. Trường Đại học Tài nguyên và Môi trường Hà Nội</div>
-                    <div>17. Học viện Ngân hàng</div>
-                    <div>18. Học viện Tài chính</div>
-                    <div>19. Trường Đại học Sư phạm Hà Nội</div>
-                    <div>20. Trường Đại học Hồng Đức</div>
-                    <div>21. Trường Đại học Vinh</div>
-                    <div>22. Trường Đại học Hùng Vương</div>
-                    <div>23. Trường Đại học Sư phạm Kỹ thuật Hưng Yên</div>
-                    <div>24. Trường Đại học Sư phạm Kỹ thuật Nam Định</div>
-                    <div>25. Trường Đại học Sư phạm Kỹ thuật Vinh</div>
-                    <div>26. Trường Đại học Kinh tế - Kỹ thuật Công nghiệp</div>
-                    <div>27. Trường Đại học Mỏ - Địa chất</div>
-                    <div>28. Trường Đại học Xây dựng Hà Nội</div>
-                    <div>29. Trường Đại học Giao thông vận tải</div>
-                    <div>30. Trường Đại học Thủy lợi</div>
-                    <div>31. Học viện Kỹ thuật Mật mã</div>
-                    <div>32. Học viện Nông nghiệp Việt Nam</div>
-                    <div>33. Học viện Toà án</div>
-                    <div>34. Trường Đại học Sư phạm Hà Nội 2</div>
-                    <div>35. Trường Đại học Hải Phòng</div>
-                    <div>36. Trường Đại học Phenikaa</div>
-                    <div>37. Trường Đại học Thăng Long</div>
-                    <div>38. Trường Đại học Đại Nam</div>
-                    <div>39. Trường Đại học Phương Đông</div>
-                    <div>40. Trường Đại học Công nghiệp Việt - Hung</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TRƯỜNG XÉT TUYỂN VACT -->
-            <div id="schools-exam-vact" class="schools-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-                  Danh sách các Trường Đại học xét tuyển bằng kết quả VACT
-                </h3>
-                <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Có hơn <strong>100 trường Đại học, Cao đẳng</strong> sử dụng kết quả đánh giá năng lực của Đại học Quốc gia Thành phố Hồ Chí Minh để xét tuyển. Dưới đây là danh sách tiêu biểu:</p>
-                <div class="table-responsive-compact" style="margin-bottom: 16px;">
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div>1. Trường Đại học Bách khoa - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>2. Trường Đại học Khoa học Tự nhiên - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>3. Trường Đại học Khoa học Xã hội và Nhân văn - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>4. Trường Đại học Quốc tế - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>5. Trường Đại học Công nghệ Thông tin - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>6. Trường Đại học Kinh tế - Luật - Đại học Quốc gia Thành phố Hồ Chí Minh</div>
-                    <div>7. Phân hiệu Đại học Quốc gia Thành phố Hồ Chí Minh tại tỉnh Bến Tre</div>
-                    <div>8. Trường Đại học Kinh tế Thành phố Hồ Chí Minh</div>
-                    <div>9. Trường Đại học Sư phạm Kỹ thuật Thành phố Hồ Chí Minh</div>
-                    <div>10. Trường Đại học Ngoại thương (Cơ sở phía Nam)</div>
-                    <div>11. Trường Đại học Công nghệ Thành phố Hồ Chí Minh</div>
-                    <div>12. Trường Đại học Kinh tế - Tài chính Thành phố Hồ Chí Minh</div>
-                    <div>13. Trường Đại học Luật Thành phố Hồ Chí Minh</div>
-                    <div>14. Trường Đại học Nông Lâm Thành phố Hồ Chí Minh</div>
-                    <div>15. Trường Đại học Tôn Đức Thắng</div>
-                    <div>16. Trường Đại học Công nghiệp Thành phố Hồ Chí Minh</div>
-                    <div>17. Trường Đại học Sài Gòn</div>
-                    <div>18. Trường Đại học Tài chính - Marketing</div>
-                    <div>19. Trường Đại học Mở Thành phố Hồ Chí Minh</div>
-                    <div>20. Trường Đại học Kiến trúc Thành phố Hồ Chí Minh</div>
-                    <div>21. Trường Đại học Y Dược Thành phố Hồ Chí Minh</div>
-                    <div>22. Trường Đại học Sư phạm Thành phố Hồ Chí Minh</div>
-                    <div>23. Trường Đại học Văn Lang</div>
-                    <div>24. Trường Đại học Hoa Sen</div>
-                    <div>25. Trường Đại học Nguyễn Tất Thành</div>
-                    <div>26. Trường Đại học Công thương Thành phố Hồ Chí Minh</div>
-                    <div>27. Trường Đại học Giao thông vận tải Thành phố Hồ Chí Minh</div>
-                    <div>28. Trường Đại học Ngoại ngữ - Tin học Thành phố Hồ Chí Minh</div>
-                    <div>29. Trường Đại học Tài nguyên và Môi trường Thành phố Hồ Chí Minh</div>
-                    <div>30. Trường Đại học Y khoa Phạm Ngọc Thạch</div>
-                    <div>31. Trường Đại học Ngân hàng Thành phố Hồ Chí Minh</div>
-                    <div>32. Trường Đại học Giao thông vận tải (Phân hiệu Thành phố Hồ Chí Minh)</div>
-                    <div>33. Học viện Hàng không Việt Nam</div>
-                    <div>34. Trường Đại học Thủ Dầu Một</div>
-                    <div>35. Trường Đại học Bình Dương</div>
-                    <div>36. Trường Đại học Tiền Giang</div>
-                    <div>37. Trường Đại học Cần Thơ</div>
-                    <div>38. Trường Đại học Sư phạm kỹ thuật Vĩnh Long</div>
-                    <div>39. Trường Đại học Đồng Tháp</div>
-                    <div>40. Trường Đại học Lạc Hồng</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TRƯỜNG XÉT TUYỂN QDA -->
-            <div id="schools-exam-qda" class="schools-exam-panel">
-              <div class="card" style="padding: 24px;">
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="var(--brand-red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-                  Danh sách các Học viện, Trường Sĩ quan Quân đội xét tuyển bằng kết quả QDA
-                </h3>
-                <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">Có đúng <strong>17 Học viện, Trường Sĩ quan Quân đội</strong> chính thức xét tuyển bằng kết quả bài thi đánh giá năng lực QDA năm 2026. Dưới đây là danh sách đầy đủ được viết đầy đủ không viết tắt:</p>
-                <div class="table-responsive-compact" style="margin-bottom: 16px;">
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px; font-size: 12px; line-height: 1.6; color: var(--text);">
-                    <div><strong>I. Học viện Quân sự (7 Học viện)</strong></div>
-                    <div><strong>II. Trường Sĩ quan chỉ huy & chuyên môn (10 Trường)</strong></div>
-                    <div>1. Học viện Kỹ thuật Quân sự</div>
-                    <div>8. Trường Sĩ quan Lục quân 1 (Trường Đại học Trần Quốc Tuấn)</div>
-                    <div>2. Học viện Quân y</div>
-                    <div>9. Trường Sĩ quan Lục quân 2 (Trường Đại học Nguyễn Huệ)</div>
-                    <div>3. Học viện Khoa học Quân sự</div>
-                    <div>10. Trường Sĩ quan Chính trị (Trường Đại học Chính trị)</div>
-                    <div>4. Học viện Hậu cần</div>
-                    <div>11. Trường Sĩ quan Pháo binh</div>
-                    <div>5. Học viện Biên phòng</div>
-                    <div>12. Trường Sĩ quan Công binh (Trường Đại học Ngô Quyền)</div>
-                    <div>6. Học viện Hải quân</div>
-                    <div>13. Trường Sĩ quan Thông tin (Trường Đại học Thông tin liên lạc)</div>
-                    <div>7. Học viện Phòng không - Không quân</div>
-                    <div>14. Trường Sĩ quan Đặc công</div>
-                    <div>&nbsp;</div>
-                    <div>15. Trường Sĩ quan Tăng thiết giáp</div>
-                    <div>&nbsp;</div>
-                    <div>16. Trường Sĩ quan Phòng hóa</div>
-                    <div>&nbsp;</div>
-                    <div>17. Trường Sĩ quan Không quân</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
 
     <!-- TAB: PHÒNG KHẢO THÍ (DYNAMIC COURSES VIEW) -->
         <div id="tab-exam-room" class="tab-panel">
@@ -1986,8 +757,13 @@
             </div>
             <select id="material-filter-select" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; outline: none; background: var(--bg); color: var(--text); cursor: pointer; min-width: 180px; box-sizing: border-box; height: 39px;">
               <option value="all">Tất cả tài liệu</option>
-              <option value="linked">Đã gắn link Drive</option>
-              <option value="unlinked">Chưa gắn link Drive</option>
+              <option value="tohop">Tổ hợp - Xác suất</option>
+              <option value="oxyz">Hình học Oxyz</option>
+              <option value="hamso">Hàm số & Đồ thị</option>
+              <option value="mulogarit">Mũ & Lôgarit</option>
+              <option value="tichphan">Tích phân & Ứng dụng</option>
+              <option value="dayso">Dãy số & Giới hạn</option>
+              <option value="thongke">Thống kê & Số liệu</option>
             </select>
           </div>
 
@@ -2063,7 +839,7 @@
               <p class="tab-header-desc">Xem lại kết quả các bài thi đã thực hiện.</p>
             </div>
             <div class="search-box-wrapper" style="position: relative; width: 300px;">
-              <input type="text" id="history-search-input" class="history-search-input" placeholder="Tìm kiếm bài thi..." oninput="filterHistoryTable()">
+              <input type="text" id="history-search-input" class="history-search-input" placeholder="Tìm kiểm bài thi..." oninput="filterHistoryTable()">
               <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
           </div>
@@ -2074,269 +850,166 @@
 
         <!-- TAB 10: TÀI KHOẢN -->
         <div id="tab-account" class="tab-panel">
-          
-          <!-- Flat Profile Header Card -->
-          <div style="background: rgba(255, 255, 255, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.01); margin-bottom: 20px; position: relative;">
-            
-            <!-- Hero User Info -->
-            <div style="padding: 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; position: relative; z-index: 5;">
-              <!-- Avatar -->
-              <div style="flex-shrink: 0; width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 3px solid var(--brand-red-light); box-shadow: 0 4px 10px rgba(0,0,0,0.06); background: #ffffff;">
-                <img src="https://assets.tmastudy.io.vn/assets/avt.png" alt="Avatar" id="account-avatar-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://assets.tmastudy.io.vn/assets/avt.png'">
+          <div class="account-container-layout">
+            <!-- Left Column: Navigation Sidebar -->
+            <aside class="account-sidebar-card">
+              <div class="account-profile-summary">
+                <div class="account-avatar-circle" id="account-avatar-placeholder">Y</div>
+                <h3 class="account-profile-name" id="account-profile-display-name">Nghiêm Đức Tùng</h3>
+                <p class="account-profile-email" id="account-profile-display-email">nghiemtan@gmail.com</p>
               </div>
-              
-              <!-- Title Info -->
-              <div style="flex-grow: 1;">
-                <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin: 0; display: inline-flex; align-items: center; gap: 8px;" id="account-student-name">
-                  Học sinh
-                </h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
-                  <span id="account-student-sub" style="font-size: 12px; background: var(--brand-red-light); color: var(--brand-red); padding: 3px 10px; border-radius: 999px; font-weight: 600;">
-                    Lớp chuyên sâu TSA 2026
+              <nav class="account-nav-menu">
+                <button class="account-nav-item active" onclick="switchAccountSubTab('info')">
+                  <span class="nav-item-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="nav-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Thông tin cá nhân
                   </span>
-                  <span style="font-size: 12px; background: var(--brand-red-light); color: var(--brand-red); padding: 3px 10px; border-radius: 999px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
-                    Học viên
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" class="chevron-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button class="account-nav-item" onclick="switchAccountSubTab('my-courses')">
+                  <span class="nav-item-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="nav-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+                    Khóa học của tôi
                   </span>
-                </div>
-              </div>
-              
-              <!-- Action Buttons -->
-              <div style="display: flex; gap: 8px;">
-                <button type="button" class="btn btn-primary btn-xs" id="edit-profile-btn" style="background: var(--brand-red); border-color: var(--brand-red); font-size: 12px; padding: 6px 12px;">Sửa thông tin</button>
-                <button type="button" class="btn btn-outline btn-xs" id="change-pwd-btn" style="font-size: 12px; padding: 6px 12px;">Đổi mật khẩu</button>
-                <button type="button" class="btn btn-outline btn-xs" id="account-logout-btn" style="color: var(--brand-red); border-color: rgba(193, 18, 31, 0.3); font-size: 12px; padding: 6px 12px;">Đăng xuất</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Details Grid (Sleek cards, not locked in input boxes) -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px;">
-            <!-- Full Name Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Tên đầy đủ</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-full-name">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- CCCD Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
-                  <line x1="7" y1="8" x2="17" y2="8"></line>
-                  <line x1="7" y1="12" x2="11" y2="12"></line>
-                  <line x1="7" y1="16" x2="13" y2="16"></line>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Số CMND / CCCD</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-cccd">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Date of Birth Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Ngày sinh</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-dob">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Gender Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Giới tính</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-gender">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Phone Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Số điện thoại</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-phone">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Email Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Địa chỉ Email</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-email">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- School Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                  <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Trường THPT</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-school">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Class Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Lớp học</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-class">Chưa cập nhật</div>
-              </div>
-            </div>
-            
-            <!-- Address Card -->
-            <div style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.35); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); grid-column: 1 / -1; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.35)';">
-              <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--brand-red-light); color: var(--brand-red); display: grid; place-items: center; flex-shrink: 0;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-              </div>
-              <div>
-                <div style="font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Địa chỉ hiện tại</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px;" id="account-address">Chưa cập nhật</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Activity Heatmap / Chart Section -->
-          <div style="background: rgba(255, 255, 255, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 20px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.01); margin-top: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 16px;">
-              <h3 style="font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; margin: 0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;">
-                  <line x1="18" y1="20" x2="18" y2="10"></line>
-                  <line x1="12" y1="20" x2="12" y2="4"></line>
-                  <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                Biểu đồ hoạt động ôn luyện (Tuần này)
-              </h3>
-              <span style="font-size: 11px; background: var(--brand-red-light); color: var(--brand-red); padding: 2px 8px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                Tích cực
-              </span>
-            </div>
-            
-            <div style="display: flex; gap: 30px; align-items: flex-end; flex-wrap: wrap;">
-              <!-- Chart Visual (Bar chart) -->
-              <div style="flex: 2; min-width: 280px; display: flex; flex-direction: column; justify-content: flex-end; height: 180px;">
-                <!-- Bar Chart Elements -->
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 140px; border-bottom: 2px solid #e2e8f0; padding: 0 10px;">
-                  <!-- Mon: 2h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 2: 2 giờ học bài">
-                    <div style="height: 60px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Tue: 3.5h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 3: 3.5 giờ luyện đề">
-                    <div style="height: 105px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Wed: 1.5h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 4: 1.5 giờ tự học">
-                    <div style="height: 45px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Thu: 4h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 5: 4 giờ ôn thi chuyên đề">
-                    <div style="height: 120px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Fri: 2.5h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 6: 2.5 giờ ôn Vật lý">
-                    <div style="height: 75px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Sat: 5h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Thứ 7: 5 giờ làm đề thi thử TSA">
-                    <div style="height: 135px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
-                  </div>
-                  <!-- Sun: 1h -->
-                  <div style="display: flex; flex-direction: column; align-items: center; width: calc(100% / 7); position: relative; cursor: pointer;" title="Chủ Nhật: 1 giờ xem lại lý thuyết">
-                    <div style="height: 30px; width: 24px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--brand-red), #ff4d52); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'"></div>
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" class="chevron-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button class="account-nav-item" onclick="switchAccountSubTab('saved-courses')">
+                  <span class="nav-item-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="nav-icon"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                    Khóa học đã lưu
+                  </span>
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" class="chevron-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button class="account-nav-item" onclick="switchAccountSubTab('saved-questions')">
+                  <span class="nav-item-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="nav-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Câu hỏi đã lưu
+                  </span>
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" class="chevron-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button class="account-nav-item" onclick="switchAccountSubTab('items')">
+                  <span class="nav-item-left">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="nav-icon"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                    Kho vật phẩm
+                  </span>
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" class="chevron-icon"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </nav>
+            </aside>
+
+            <!-- Right Column: Active Content Panel -->
+            <main class="account-content-card">
+              <!-- SUB-TAB 1: THÔNG TIN CÁ NHÂN -->
+              <section id="account-sub-info" class="account-sub-panel active">
+                <h2 class="account-sub-title">Thông tin cá nhân</h2>
+                <div class="account-info-header">
+                  <div class="account-info-avatar" id="account-info-avatar-placeholder">Y</div>
+                  <div class="account-info-actions">
+                    <button type="button" class="btn-edit-profile" id="edit-profile-btn">Chỉnh sửa thông tin</button>
+                    <button type="button" class="btn-change-pwd" id="change-pwd-btn">Thay đổi mật khẩu</button>
                   </div>
                 </div>
-                
-                <!-- X-axis labels -->
-                <div style="display: flex; justify-content: space-between; padding-top: 6px; color: var(--muted); font-size: 11px; font-weight: 600; text-align: center;">
-                  <span style="width: calc(100% / 7);">T2</span>
-                  <span style="width: calc(100% / 7);">T3</span>
-                  <span style="width: calc(100% / 7);">T4</span>
-                  <span style="width: calc(100% / 7);">T5</span>
-                  <span style="width: calc(100% / 7);">T6</span>
-                  <span style="width: calc(100% / 7);">T7</span>
-                  <span style="width: calc(100% / 7);">CN</span>
-                </div>
-              </div>
-              
-              <!-- Stats Panel next to chart -->
-              <div style="flex: 1; min-width: 200px; display: grid; gap: 10px;">
-                <div style="background: rgba(255, 255, 255, 0.22); border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 8px; padding: 10px 14px;">
-                  <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase;">Tổng số giờ học</div>
-                  <div style="font-size: 20px; font-weight: 800; color: var(--brand-red); margin-top: 2px;">19.5 giờ</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.22); border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 8px; padding: 10px 14px;">
-                  <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase;">Hiệu suất học tập</div>
-                  <div style="font-size: 20px; font-weight: 800; color: var(--brand-red); margin-top: 2px;">
-                    +15% <span style="font-size: 11px; font-weight: 500; color: var(--muted);">so tuần trước</span>
+                <div class="account-info-grid">
+                  <div class="info-row">
+                    <span class="info-label">Họ và tên</span>
+                    <span class="info-value" id="account-full-name">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Tài khoản</span>
+                    <span class="info-value" id="account-username">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="account-email">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Số điện thoại</span>
+                    <span class="info-value" id="account-phone">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Giới tính</span>
+                    <span class="info-value" id="account-gender">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Năm sinh</span>
+                    <span class="info-value" id="account-dob">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Link Facebook</span>
+                    <span class="info-value" id="account-facebook">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Tỉnh thành</span>
+                    <span class="info-value" id="account-province">Chưa cập nhật</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Trường học</span>
+                    <span class="info-value" id="account-school">Chưa cập nhật</span>
                   </div>
                 </div>
-                <div style="background: rgba(255, 255, 255, 0.22); border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 8px; padding: 10px 14px;">
-                  <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase;">Chuỗi chuyên cần</div>
-                  <div style="font-size: 20px; font-weight: 800; color: var(--brand-red); margin-top: 2px; display: flex; align-items: center; gap: 6px;">
-                    5 ngày
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: middle;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                  </div>
+              </section>
+
+              <!-- SUB-TAB 2: KHÓA HỌC CỦA TÔI -->
+              <section id="account-sub-my-courses" class="account-sub-panel">
+                <h2 class="account-sub-title">Khóa học của tôi</h2>
+                <div class="account-empty-state">
+                  <svg viewBox="0 0 24 24" width="80" height="80" stroke="#cbd5e1" fill="none" stroke-width="1.5" class="empty-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+                  <p class="empty-text">Bạn chưa đăng ký khóa học nào</p>
                 </div>
-              </div>
-            </div>
+              </section>
+
+              <!-- SUB-TAB 3: KHÓA HỌC ĐÃ LƯU -->
+              <section id="account-sub-saved-courses" class="account-sub-panel">
+                <h2 class="account-sub-title">Khóa học đã lưu</h2>
+                <div class="account-empty-state">
+                  <svg viewBox="0 0 24 24" width="80" height="80" stroke="#cbd5e1" fill="none" stroke-width="1.5" class="empty-icon"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                  <p class="empty-text">Bạn chưa lưu khóa học nào</p>
+                </div>
+              </section>
+
+              <!-- SUB-TAB 4: CÂU HỎI ĐÃ LƯU -->
+              <section id="account-sub-saved-questions" class="account-sub-panel">
+                <h2 class="account-sub-title">Câu hỏi đã lưu</h2>
+                <div class="account-empty-state">
+                  <svg viewBox="0 0 24 24" width="80" height="80" stroke="#cbd5e1" fill="none" stroke-width="1.5" class="empty-icon"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <p class="empty-text">Bạn chưa lưu câu hỏi nào</p>
+                </div>
+              </section>
+
+              <!-- SUB-TAB 5: KHO VẬT PHẨM -->
+              <section id="account-sub-items" class="account-sub-panel">
+                <h2 class="account-sub-title">Kho vật phẩm</h2>
+                <div class="account-empty-state">
+                  <svg viewBox="0 0 200 160" width="200" height="160" class="empty-illustration-svg" style="display: block; margin: 0 auto;">
+                    <circle cx="100" cy="80" r="50" fill="#f1f5f9" />
+                    <!-- desk lamp -->
+                    <path d="M130 110 l-25 -40 l10 -15" stroke="#105e9f" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M110 50 a12 12 0 0 1 24 0 z" fill="#1e293b"/>
+                    <!-- light yellow glow -->
+                    <polygon points="122 58, 60 110, 95 110" fill="#fef08a" opacity="0.4"/>
+                    <!-- girl reading -->
+                    <circle cx="80" cy="85" r="10" fill="#fbcfe8"/>
+                    <path d="M70 110 c0 -15 20 -15 20 0 z" fill="#105e9f"/>
+                    <path d="M72 85 a6 6 0 0 1 12 0" fill="#1e293b"/>
+                    <!-- book -->
+                    <path d="M68 98 l12 -4 l12 4" stroke="#1e293b" stroke-width="2" fill="none"/>
+                    <!-- clock -->
+                    <circle cx="145" cy="105" r="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+                    <path d="M145 100 v5 h5" stroke="#f97316" stroke-width="1.5" fill="none"/>
+                    <!-- small plant -->
+                    <path d="M50 110 v-10 c0 -5 -10 -5 -10 0 v10" stroke="#22c55e" stroke-width="3" fill="none"/>
+                    <rect x="36" y="110" width="18" height="10" rx="2" fill="#d97706"/>
+                  </svg>
+                  <p class="empty-text" style="margin-top: 16px; font-weight: 700; color: #1e293b; font-size: 15px;">Bạn chưa có vật phẩm nào</p>
+                </div>
+              </section>
+            </main>
           </div>
         </div>
 
-      </div>
-    </main>
-  </div>
+        </main>
 
-  <!-- EDIT PROFILE MODAL -->
+    <!-- EDIT PROFILE MODAL -->
   <div class="tsa-modal-container" id="edit-profile-modal" hidden>
     <div class="tsa-modal-backdrop" id="edit-profile-backdrop"></div>
     <div class="tsa-modal-content wide">
@@ -2945,7 +1618,10 @@
               <span>Thích</span>
             </button>
             <button id="lesson-complete-toggle-btn" class="lesson-complete-btn">
-              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" style="margin-right:5px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; flex-shrink: 0;">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
               <span>Đánh dấu hoàn thành</span>
             </button>
           </div>
@@ -3220,6 +1896,6 @@
     </div>
   </div>
 
-  <script src="js/select-page.js?v=1.0.2"></script>
+  <script src="js/select-page.js?v=1.0.3"></script>
 </body>
 </html>

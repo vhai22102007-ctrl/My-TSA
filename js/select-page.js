@@ -495,16 +495,213 @@
         return dateStr;
       }
 
+      window.renderDashboardHistory = function() {
+        const grid = document.getElementById("activity-graph-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        const activityMap = {};
+        const historyData = window.EXAM_HISTORY_DATA || [];
+        let totalExamsThisYear = 0;
+
+        // Group attempts by date string 'YYYY-MM-DD'
+        historyData.forEach(attempt => {
+          if (!attempt.created_at) return;
+          const d = new Date(attempt.created_at);
+          if (isNaN(d.getTime())) return;
+          
+          // Only count for current year (2026)
+          if (d.getFullYear() === 2026) {
+            totalExamsThisYear++;
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            activityMap[dateStr] = (activityMap[dateStr] || 0) + 1;
+          }
+        });
+
+        // Map count to level (0-4)
+        const getLevelForCount = (count) => {
+          if (!count) return 0;
+          if (count === 1) return 1;
+          if (count === 2) return 2;
+          if (count === 3) return 3;
+          return 4; // 4 or more
+        };
+
+        // Update total count footer text in DOM if exists
+        const totalCountSpan = document.querySelector(".total-exams-count");
+        if (totalCountSpan) {
+          totalCountSpan.textContent = `${totalExamsThisYear} bài thi trong năm`;
+        }
+
+        const startDate = new Date(2026, 0, 1);
+        const dayOfWeek = startDate.getDay(); // Thursday
+
+        // Draw preceding empty cells in the first column
+        let currentCol = document.createElement("div");
+        currentCol.className = "graph-col";
+        for (let i = 0; i < dayOfWeek; i++) {
+          const emptyCell = document.createElement("div");
+          emptyCell.className = "graph-cell empty";
+          currentCol.appendChild(emptyCell);
+        }
+
+        // Loop through 365 days of 2026
+        let tempDate = new Date(startDate);
+        while (tempDate.getFullYear() === 2026) {
+          const year = tempDate.getFullYear();
+          const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+          const day = String(tempDate.getDate()).padStart(2, '0');
+          const dateStr = `${year}-${month}-${day}`;
+          const count = activityMap[dateStr] || 0;
+          const level = getLevelForCount(count);
+
+          const cell = document.createElement("div");
+          cell.className = `graph-cell level-${level}`;
+          
+          const pad = (n) => String(n).padStart(2, '0');
+          cell.title = `${pad(tempDate.getDate())}/${pad(tempDate.getMonth() + 1)}/${2026}: ${count > 0 ? count + ' bài thi' : 'Không có bài thi'}`;
+          currentCol.appendChild(cell);
+
+          if (currentCol.children.length === 7) {
+            grid.appendChild(currentCol);
+            currentCol = document.createElement("div");
+            currentCol.className = "graph-col";
+          }
+
+          tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        // Append the last column if it has cells
+        if (currentCol.children.length > 0) {
+          while (currentCol.children.length < 7) {
+            const emptyCell = document.createElement("div");
+            emptyCell.className = "graph-cell empty";
+            currentCol.appendChild(emptyCell);
+          }
+          grid.appendChild(currentCol);
+        }
+      };
+
+      async function loadHistoryDataOnly() {
+        let studentCode = studentInfo?.email || "test";
+        try {
+          const cached = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cached) {
+            studentCode = cached.email || cached.username || studentCode;
+          }
+        } catch (e) {}
+
+        let data = [];
+        if (supabaseClient) {
+          try {
+            const { data: dbData, error } = await supabaseClient
+              .from('exam_results')
+              .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
+              .eq('user_email', studentCode)
+              .order('created_at', { ascending: false })
+              .limit(50);
+            if (!error && dbData) {
+              data = dbData;
+            }
+          } catch (err) {
+            console.error("Lỗi khi tải lịch sử từ Supabase:", err);
+          }
+        }
+
+        let localAttempts = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("tma_tsa_last_local_result_")) {
+            try {
+              const item = JSON.parse(localStorage.getItem(key));
+              if (item && item.exam_code) {
+                localAttempts.push(item);
+              }
+            } catch (e) {}
+          }
+        }
+
+        let combined = data || [];
+        localAttempts.forEach(localAtt => {
+          if (!combined.some(c => String(c.id) === String(localAtt.id))) {
+            combined.push(localAtt);
+          }
+        });
+
+        combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        window.EXAM_HISTORY_DATA = combined;
+        if (typeof window.renderDashboardHistory === "function") {
+          window.renderDashboardHistory();
+        }
+      }
+
       function updateAccountUI() {
         if (!studentInfo) return;
         const displayName = (studentInfo.name || studentInfo.username || studentInfo.email || "Tài khoản test").replace(/[▪■•]/g, "").trim();
         
-        document.getElementById("student-display-name").textContent = displayName;
-        document.getElementById("logout-display-name").textContent = displayName;
+        const dispNameEl = document.getElementById("student-display-name");
+        if (dispNameEl) dispNameEl.textContent = displayName;
+        const logDispNameEl = document.getElementById("logout-display-name");
+        if (logDispNameEl) logDispNameEl.textContent = displayName;
         
         const welcomeStudentName = document.getElementById("welcome-student-name");
         if (welcomeStudentName) welcomeStudentName.textContent = displayName;
 
+        // Welcome name in bold dashboard greeting
+        const welcomeStudentNameBold = document.getElementById("welcome-student-name-bold");
+        if (welcomeStudentNameBold) welcomeStudentNameBold.textContent = displayName;
+
+        // Sidebar Profile Box update
+        const sidebarStudentName = document.getElementById("sidebar-student-name");
+        if (sidebarStudentName) sidebarStudentName.textContent = displayName;
+
+        const sidebarStudentUsername = document.getElementById("sidebar-student-username");
+        if (sidebarStudentUsername) {
+          const username = studentInfo.username || (studentInfo.email ? studentInfo.email.split('@')[0] : "yeuthichvatli");
+          sidebarStudentUsername.textContent = username;
+        }
+
+        const sidebarAvatarChar = document.getElementById("sidebar-avatar-char");
+        if (sidebarAvatarChar && displayName) {
+          sidebarAvatarChar.textContent = displayName.charAt(0).toUpperCase();
+        }
+        const topbarAvatarChar = document.getElementById("topbar-avatar-char");
+        if (topbarAvatarChar && displayName) {
+          topbarAvatarChar.textContent = displayName.charAt(0).toUpperCase();
+        }
+
+        // Dashboard date update
+        const welcomeCurrentDate = document.getElementById("welcome-current-date");
+        if (welcomeCurrentDate && typeof getVietnameseCurrentDate === "function") {
+          welcomeCurrentDate.textContent = getVietnameseCurrentDate();
+        }
+
+        // Metrics update
+        const metricEnrolledCount = document.getElementById("metric-enrolled-count");
+        if (metricEnrolledCount && typeof getRegisteredCourseIds === "function") {
+          metricEnrolledCount.textContent = getRegisteredCourseIds().length;
+        }
+
+        const metricLessonsCompleted = document.getElementById("metric-lessons-completed");
+        if (metricLessonsCompleted && window.completedLessonIds) {
+          metricLessonsCompleted.textContent = window.completedLessonIds.length;
+        }
+
+        const metricStudyHours = document.getElementById("metric-study-hours");
+        if (metricStudyHours) {
+          const completedCount = window.completedLessonIds ? window.completedLessonIds.length : 0;
+          metricStudyHours.textContent = Math.round(completedCount * 0.4 * 10) / 10;
+        }
+
+        // Render dashboard elements
+        if (typeof window.renderDashboardHistory === "function") window.renderDashboardHistory();
+        if (typeof window.renderDashboardCourses === "function") window.renderDashboardCourses();
+        if (typeof loadHistoryDataOnly === "function") loadHistoryDataOnly();
+        
         const accountStudentName = document.getElementById("account-student-name");
         if (accountStudentName) accountStudentName.textContent = displayName;
         
@@ -514,23 +711,69 @@
         }
 
         // Detailed profile fields
-        document.getElementById("account-full-name").textContent = studentInfo.name || "Chưa cập nhật";
-        document.getElementById("account-cccd").textContent = studentInfo.cccd || "Chưa cập nhật";
-        document.getElementById("account-dob").textContent = studentInfo.dob ? formatDate(studentInfo.dob) : "Chưa cập nhật";
-        document.getElementById("account-gender").textContent = studentInfo.gender || "Chưa cập nhật";
-        document.getElementById("account-phone").textContent = studentInfo.phone || "Chưa cập nhật";
-        document.getElementById("account-email").textContent = studentInfo.email || "Chưa cập nhật";
-        document.getElementById("account-school").textContent = studentInfo.school || "Chưa cập nhật";
-        document.getElementById("account-class").textContent = studentInfo.className || "Chưa cập nhật";
+        const fullNameEl = document.getElementById("account-full-name");
+        if (fullNameEl) fullNameEl.textContent = studentInfo.name || "Chưa cập nhật";
+        
+        const usernameEl = document.getElementById("account-username");
+        if (usernameEl) usernameEl.textContent = studentInfo.username || "Chưa cập nhật";
 
-        // Format address: street, ward, district, province
-        const addrParts = [];
-        if (studentInfo.street) addrParts.push(studentInfo.street);
-        if (studentInfo.ward) addrParts.push(studentInfo.ward);
-        if (studentInfo.district) addrParts.push(studentInfo.district);
-        if (studentInfo.province) addrParts.push(studentInfo.province);
-        document.getElementById("account-address").textContent = addrParts.join(", ") || "Chưa cập nhật";
+        const dobEl = document.getElementById("account-dob");
+        if (dobEl) dobEl.textContent = studentInfo.dob ? formatDate(studentInfo.dob) : "Chưa cập nhật";
+
+        const genderEl = document.getElementById("account-gender");
+        if (genderEl) genderEl.textContent = studentInfo.gender || "Chưa cập nhật";
+
+        const phoneEl = document.getElementById("account-phone");
+        if (phoneEl) phoneEl.textContent = studentInfo.phone || "Chưa cập nhật";
+
+        const emailEl = document.getElementById("account-email");
+        if (emailEl) emailEl.textContent = studentInfo.email || "Chưa cập nhật";
+
+        const schoolEl = document.getElementById("account-school");
+        if (schoolEl) schoolEl.textContent = studentInfo.school || "Chưa cập nhật";
+
+        const facebookEl = document.getElementById("account-facebook");
+        if (facebookEl) facebookEl.textContent = studentInfo.facebook || "Chưa cập nhật";
+
+        const provinceEl = document.getElementById("account-province");
+        if (provinceEl) provinceEl.textContent = studentInfo.province || "Chưa cập nhật";
+
+        // Profile summary and avatar text
+        const displayProfName = document.getElementById("account-profile-display-name");
+        if (displayProfName) displayProfName.textContent = displayName;
+
+        const displayProfEmail = document.getElementById("account-profile-display-email");
+        if (displayProfEmail) displayProfEmail.textContent = studentInfo.email || "";
+
+        const firstChar = displayName ? displayName.trim().charAt(0).toUpperCase() : "Y";
+        const avatarPlaceholder = document.getElementById("account-avatar-placeholder");
+        if (avatarPlaceholder) avatarPlaceholder.textContent = firstChar;
+
+        const infoAvatarPlaceholder = document.getElementById("account-info-avatar-placeholder");
+        if (infoAvatarPlaceholder) infoAvatarPlaceholder.textContent = firstChar;
       }
+
+      window.switchAccountSubTab = function(subTabId) {
+        // Toggle active nav item
+        const items = document.querySelectorAll(".account-nav-item");
+        items.forEach(item => {
+          if (item.getAttribute("onclick") && item.getAttribute("onclick").includes(subTabId)) {
+            item.classList.add("active");
+          } else {
+            item.classList.remove("active");
+          }
+        });
+
+        // Toggle active panel
+        const panels = document.querySelectorAll(".account-sub-panel");
+        panels.forEach(panel => {
+          if (panel.id === `account-sub-${subTabId}`) {
+            panel.classList.add("active");
+          } else {
+            panel.classList.remove("active");
+          }
+        });
+      };
 
       // KHO TÀI LIỆU INTEGRATION
       const MATERIAL_LINKS_KEY = "tmaTsaDriveLinks";
@@ -660,10 +903,22 @@
             if (!cleanTitle.includes(cleanKeyword)) return false;
           }
           
-          // Link status filter
-          const driveUrl = String(m.url || "").trim();
-          if (filterVal === "linked" && !driveUrl) return false;
-          if (filterVal === "unlinked" && driveUrl) return false;
+          // Chapter Filter
+          if (filterVal !== "all") {
+            const cleanTitle = removeAccents(m.title);
+            const keywordMap = {
+              tohop: ["to hop", "xac suat"],
+              oxyz: ["oxyz", "o xyz", "toa do", "khong gian"],
+              hamso: ["ham so", "do thi", "cuc tri", "tiem can", "khao sat", "bien thien"],
+              mulogarit: ["mu", "logarit", "lo ga rit", "luy thua"],
+              tichphan: ["tich phan", "nguyen ham", "tich-phan", "nguyen-ham"],
+              dayso: ["day so", "cap so", "gioi han", "lim"],
+              thongke: ["thong ke", "so lieu", "bieu do"]
+            };
+            const keywords = keywordMap[filterVal] || [];
+            const matches = keywords.some(kw => cleanTitle.includes(kw));
+            if (!matches) return false;
+          }
           
           return true;
         });
@@ -1258,6 +1513,10 @@
 
           grid.appendChild(card);
         });
+
+        if (typeof window.renderDashboardCourses === "function") {
+          window.renderDashboardCourses();
+        }
       }
 
       function renderOverviewCourses() {
@@ -3267,17 +3526,23 @@
 
       function openLogoutDialog() {
         logoutDialog.hidden = false;
-        logoutButton.setAttribute("aria-expanded", "true");
+        if (logoutButton) {
+          logoutButton.setAttribute("aria-expanded", "true");
+        }
         confirmLogoutButton.focus();
       }
 
       function closeLogoutDialog() {
         logoutDialog.hidden = true;
-        logoutButton.setAttribute("aria-expanded", "false");
-        logoutButton.focus();
+        if (logoutButton) {
+          logoutButton.setAttribute("aria-expanded", "false");
+          logoutButton.focus();
+        }
       }
 
-      logoutButton.addEventListener("click", openLogoutDialog);
+      if (logoutButton) {
+        logoutButton.addEventListener("click", openLogoutDialog);
+      }
       if (accountLogoutBtn) {
         accountLogoutBtn.addEventListener("click", openLogoutDialog);
       }
@@ -3299,7 +3564,7 @@
       let currentExamTypeCategory = "tsa"; // 'tsa', 'hsa', 'thpt'
       let currentMaterialCategory = "tsa"; // 'tsa', 'hsa', 'thpt'
 
-      const menuItems = document.querySelectorAll(".tsa-menu a[data-tab]");
+      const menuItems = document.querySelectorAll(".tsa-menu a[data-tab], a.sidebar-profile[data-tab]");
       const tabPanels = document.querySelectorAll(".tab-panel");
       const quickActionTargets = document.querySelectorAll("[data-target-tab]");
 
@@ -4024,6 +4289,28 @@
         if (isDocumentsRoom) updateDocumentsUI();
         if (tabId === 'history') renderExamHistory();
 
+        // Update topbar nav buttons active states
+        document.querySelectorAll('.topbar-nav-btn').forEach(btn => btn.classList.remove('active'));
+        if (tabId === 'overview') {
+          const isCommunity = document.getElementById('dash-btn-community') && document.getElementById('dash-btn-community').classList.contains('active');
+          if (isCommunity) {
+            const btn = document.getElementById('topbar-btn-community');
+            if (btn) btn.classList.add('active');
+          } else {
+            const btn = document.getElementById('topbar-btn-home');
+            if (btn) btn.classList.add('active');
+          }
+        } else if (isExamRoom || tabId.includes('courses')) {
+          const btn = document.getElementById('topbar-btn-courses');
+          if (btn) btn.classList.add('active');
+        } else if (isDocumentsRoom || tabId.includes('documents')) {
+          const btn = document.getElementById('topbar-btn-documents');
+          if (btn) btn.classList.add('active');
+        } else if (isExamList || tabId === 'history') {
+          const btn = document.getElementById('topbar-btn-exams');
+          if (btn) btn.classList.add('active');
+        }
+
         window.scrollTo({ top: 0, behavior: "smooth" });
         setTimeout(() => {
           const activePanel = document.querySelector(".tab-panel.active");
@@ -4717,6 +5004,9 @@
 
         window.EXAM_HISTORY_DATA = combined;
         renderHistoryGroups(window.EXAM_HISTORY_DATA);
+        if (typeof window.renderDashboardHistory === "function") {
+          window.renderDashboardHistory();
+        }
       }
 
       // EXAM RESULT MODAL HANDLERS
@@ -5268,4 +5558,102 @@
           renderOverviewCourses();
         }
       });
+
+      // ==========================================================================
+      // PREMIUM DASHBOARD FUNCTIONS
+      // ==========================================================================
+
+      function getVietnameseCurrentDate() {
+        const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+        const now = new Date();
+        const dayName = days[now.getDay()];
+        const date = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        return `${dayName} - ${date}/${month}/${year}`;
+      }
+
+      window.switchDashboardTab = function(tabName) {
+        document.querySelectorAll('.dashboard-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.dashboard-sub-panel').forEach(panel => panel.classList.remove('active'));
+        
+        // Remove active class from overview-related topbar buttons
+        const topbarHome = document.getElementById('topbar-btn-home');
+        const topbarComm = document.getElementById('topbar-btn-community');
+        if (topbarHome) topbarHome.classList.remove('active');
+        if (topbarComm) topbarComm.classList.remove('active');
+
+        if (tabName === 'home') {
+          const btn = document.getElementById('dash-btn-home');
+          if (btn) btn.classList.add('active');
+          const panel = document.getElementById('dash-panel-home');
+          if (panel) panel.classList.add('active');
+          if (topbarHome) topbarHome.classList.add('active');
+        } else {
+          const btn = document.getElementById('dash-btn-community');
+          if (btn) btn.classList.add('active');
+          const panel = document.getElementById('dash-panel-community');
+          if (panel) panel.classList.add('active');
+          if (topbarComm) topbarComm.classList.add('active');
+          // Render cutoff table on community tab display
+          if (typeof renderCutoffTable === 'function') renderCutoffTable();
+        }
+      };
+
+      window.handleConsultingSubmit = function(event) {
+        event.preventDefault();
+        const name = document.getElementById("consult-name").value;
+        const phone = document.getElementById("consult-phone").value;
+        const facebook = document.getElementById("consult-facebook").value;
+        const className = document.getElementById("consult-class").value;
+        const subject = document.getElementById("consult-subject").value;
+        const message = document.getElementById("consult-message").value;
+
+        if (typeof showCustomAlert === "function") {
+          showCustomAlert("Gửi thông tin tư vấn thành công! Đội ngũ tuyển sinh TMA sẽ liên hệ với bạn sớm nhất.", "success");
+        } else {
+          alert("Gửi thông tin tư vấn thành công! Đội ngũ tuyển sinh TMA sẽ liên hệ với bạn sớm nhất.");
+        }
+        event.target.reset();
+      };
+
+      window.renderDashboardCourses = function() {
+        const container = document.getElementById("dashboard-courses-thumbnails");
+        if (!container) return;
+        
+        container.innerHTML = "";
+        if (!COURSES_DATA || COURSES_DATA.length === 0) {
+          container.innerHTML = `<div class="no-activity-message">Không có khóa học nào.</div>`;
+          return;
+        }
+        
+        COURSES_DATA.forEach(course => {
+          let heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
+          const titleLower = course.title.toLowerCase();
+          if (titleLower.includes("tsa")) {
+            heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
+          } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
+            heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+          }
+          
+          const item = document.createElement("div");
+          item.className = "dashboard-course-thumb-card";
+          item.title = course.title;
+          item.innerHTML = `
+            <img src="${heroImage}" alt="${course.title}">
+            <div class="thumb-card-overlay">
+              <span>${course.title}</span>
+            </div>
+          `;
+          
+          item.addEventListener("click", () => {
+            if (typeof openClassroomModal === 'function') {
+              openClassroomModal(course.id);
+            }
+          });
+          
+          container.appendChild(item);
+        });
+      };
+
     })();
