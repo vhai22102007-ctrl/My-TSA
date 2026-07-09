@@ -502,6 +502,35 @@
 
     // Fallback tải cục bộ hoặc localStorage
     if (!rawExam) {
+      const cleanCodes = [targetFetchCode, examCode, "TSA001"].map(c => String(c || "").trim().toLowerCase()).filter(Boolean);
+      for (const cCode of cleanCodes) {
+        try {
+          const folderPath = `data/exams/${cCode}.json/`;
+          const [mathData, readingData, scienceData] = await Promise.all([
+            fetchJson(folderPath + "math.json"),
+            fetchJson(folderPath + "reading.json"),
+            fetchJson(folderPath + "science.json")
+          ]);
+          if (mathData && readingData && scienceData) {
+            rawExam = {
+              exam_code: targetFetchCode,
+              title: mathData.title || targetFetchCode,
+              duration_minutes: mathData.duration_minutes || 150,
+              status: mathData.status || "published",
+              sections: [
+                (mathData.sections && mathData.sections[0]) ? mathData.sections[0] : mathData,
+                (readingData.sections && readingData.sections[0]) ? readingData.sections[0] : readingData,
+                (scienceData.sections && scienceData.sections[0]) ? scienceData.sections[0] : scienceData
+              ]
+            };
+            console.log("Loaded split exam sections from directory:", folderPath);
+            break;
+          }
+        } catch (e) {}
+      }
+    }
+
+    if (!rawExam) {
       try {
         rawExam = await fetchJson(`data/exams/${encodeURIComponent(targetFetchCode)}.json`);
       } catch (e) {}
@@ -629,8 +658,20 @@
     passagePane.style.display = "block";
     if (divider) divider.style.display = "flex";
 
+    // Tìm dải câu hỏi tự động thuộc cùng nhóm group_id
+    let rangeText = "";
+    if (question.group_id && examData && Array.isArray(examData.questions)) {
+      const groupQs = examData.questions.filter(q => q.group_id === question.group_id);
+      if (groupQs.length > 0) {
+        const startNo = groupQs[0].question_no;
+        const endNo = groupQs[groupQs.length - 1].question_no;
+        rangeText = `Dựa vào thông tin dưới đây và trả lời các câu hỏi sau từ câu ${startNo} - ${endNo}:`;
+      }
+    }
+
     const group = {
       title: question.group_title || "Ngữ liệu",
+      rangeText: rangeText,
       stimulus: {
         type: "text",
         content: question.passage || "",
@@ -639,7 +680,7 @@
     };
 
     if (typeof renderStimulusGroup === "function") {
-      renderStimulusGroup(group, { target: passagePane });
+      renderStimulusGroup(group, { target: passagePane, typeset: false });
     } else {
       passagePane.innerHTML = `<h3>${sanitizeHtml(group.title)}</h3><div>${sanitizeHtml(group.stimulus.content)}</div>`;
     }
@@ -674,6 +715,10 @@
           const item = (question.items || []).find((it) => it.id === question.correct_answer[key]);
           return `${key}: ${item ? item.text : question.correct_answer[key]}`;
         }).join("; ");
+      } else if (qType === "fill_blank" && typeof question.correct_answer === "object" && question.correct_answer !== null) {
+        correctText = Object.keys(question.correct_answer).map(k => `${k}: ${question.correct_answer[k]}`).join("; ");
+      } else if (qType === "fill_blank" && typeof question.correct_answer === "string" && question.correct_answer.includes("=")) {
+        correctText = question.correct_answer.split("|").map(s => s.trim()).join("; ");
       } else {
         correctText = question.correct_answer;
       }
@@ -760,7 +805,7 @@
     let scoredPoints = 0;
 
     examData.questions.forEach((q) => {
-      const pts = Number(q.points == null ? 1 : q.points);
+      const pts = 1;
       totalPoints += pts;
       if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
         correctCount++;
@@ -994,6 +1039,9 @@
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise().catch(() => {});
       }
+      if (typeof window.makeElementsEditable === "function") {
+        window.makeElementsEditable();
+      }
       return;
     }
 
@@ -1124,9 +1172,13 @@
     // Navigation and Grid
     updateNavigationButtons();
     updateGridSelection();
+    if (typeof window.makeElementsEditable === "function") {
+      window.makeElementsEditable();
+    }
   }
 
   function startTimer() {
+    if (isPreviewMode) return;
     setText("#countdown", formatTime(remainingSeconds));
     setText("#submit-countdown", formatTime(remainingSeconds));
 
@@ -1242,7 +1294,7 @@
         }
 
         mathData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           totalPoints += pts;
           totalQuestionsCount++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, mathAnswers[q.question_no])) {
@@ -1252,7 +1304,7 @@
         });
 
         readingData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           totalPoints += pts;
           totalQuestionsCount++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, readingAnswers[q.question_no])) {
@@ -1262,7 +1314,7 @@
         });
 
         scienceData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           totalPoints += pts;
           totalQuestionsCount++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, scienceAnswers[q.question_no])) {
@@ -1285,7 +1337,7 @@
       let scoredPoints = 0;
 
       examData.questions.forEach((q) => {
-        const pts = Number(q.points == null ? 1 : q.points);
+        const pts = 1;
         totalPoints += pts;
         if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
           correctCount++;
@@ -1371,7 +1423,7 @@
         let scienceCorrect = 0, scienceTotal = 0, sciencePoints = 0, scienceScore = 0;
 
         mathData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           mathPoints += pts;
           mathTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, mathAnswers[q.question_no])) {
@@ -1381,7 +1433,7 @@
         });
 
         readingData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           readingPoints += pts;
           readingTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, readingAnswers[q.question_no])) {
@@ -1391,7 +1443,7 @@
         });
 
         scienceData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           sciencePoints += pts;
           scienceTotal++;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, scienceAnswers[q.question_no])) {
@@ -1488,7 +1540,7 @@
       let scoredPoints = 0;
 
       examData.questions.forEach((q) => {
-        const pts = Number(q.points == null ? 1 : q.points);
+        const pts = 1;
         totalPoints += pts;
         if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
           correctCount++;
@@ -1537,7 +1589,7 @@
         let totalPoints = 0;
         let scoredPoints = 0;
         examData.questions.forEach((q) => {
-          const pts = Number(q.points == null ? 1 : q.points);
+          const pts = 1;
           totalPoints += pts;
           if (typeof gradeQuestion === "function" && gradeQuestion(q, answers[q.question_no])) {
             correctCount++;
@@ -1576,7 +1628,10 @@
       const loaded = await loadRawExam();
       rawExamData = loaded.rawExam;
       examMetaGlobal = loaded.examMeta;
-      examData = normalizeExamForSubject(loaded.rawExam, loaded.examMeta);
+      if (typeof migrateImagesToHtml === "function") {
+        migrateImagesToHtml();
+      }
+      examData = normalizeExamForSubject(rawExamData, loaded.examMeta);
 
       const viewSolution = urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution";
       if (viewSolution) {
@@ -1798,9 +1853,644 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    bindDrawerControls();
-    loadExamData();
+    // --- DI CƯ HÌNH ẢNH VÀO TRONG HTML ĐỂ CHỈNH SỬA NHƯ WORD ---
+    function migrateImagesToHtml() {
+      if (!isPreviewMode || !rawExamData) return;
+      
+      function migrateQ(q) {
+        if (q.image_url) {
+          const w = q.image_width || 100;
+          const imgHtml = `<br><img class="tma-inline-img" src="${q.image_url}" style="width:${w}%; max-width:100%; height:auto; display:block; margin:10px auto;">`;
+          
+          if (q.question !== undefined) {
+            if (!q.question.includes(q.image_url)) {
+              q.question = (q.question || "") + imgHtml;
+            }
+          } else if (q.prompt !== undefined) {
+            if (!q.prompt.includes(q.image_url)) {
+              q.prompt = (q.prompt || "") + imgHtml;
+            }
+          }
+          delete q.image_url;
+        }
+        if (q.passage_image_url) {
+          delete q.passage_image_url;
+        }
+      }
+
+      function migrateGroup(g) {
+        if (g.stimulus && g.stimulus.image_url) {
+          const w = g.stimulus.image_width || 100;
+          const imgHtml = `<br><img class="tma-inline-img" src="${g.stimulus.image_url}" style="width:${w}%; max-width:100%; height:auto; display:block; margin:10px auto;">`;
+          
+          if (!g.stimulus.content.includes(g.stimulus.image_url)) {
+            g.stimulus.content = (g.stimulus.content || "") + imgHtml;
+          }
+          delete g.stimulus.image_url;
+        }
+      }
+
+      if (Array.isArray(rawExamData.questions)) {
+        rawExamData.questions.forEach(migrateQ);
+      }
+      if (Array.isArray(rawExamData.sections)) {
+        rawExamData.sections.forEach(sec => {
+          if (Array.isArray(sec.questions)) sec.questions.forEach(migrateQ);
+          if (Array.isArray(sec.groups)) {
+            sec.groups.forEach(g => {
+              migrateGroup(g);
+              if (Array.isArray(g.questions)) g.questions.forEach(migrateQ);
+            });
+          }
+        });
+      }
+    }
+
+    // --- CHẾ ĐỘ BIÊN TẬP VIÊN KHI XEM THỬ ---
+    function initTeacherEditor() {
+      if (!isPreviewMode) return;
+
+      // Ghi đè CSS chặn kéo thả ảnh của base.css và toàn bộ thẻ cha, đồng thời ẩn exam-header cho rộng
+      const overrideStyle = document.createElement("style");
+      overrideStyle.innerHTML = `
+        .tma-inline-img {
+          -webkit-user-drag: element !important;
+          user-drag: element !important;
+          -webkit-user-select: auto !important;
+          user-select: auto !important;
+          cursor: move !important;
+          display: block !important;
+          margin: 10px auto !important;
+        }
+        .passage-pane, .question-column, .question-body, .question-lead, .stimulus-content, .stimulus-card, #question-text-content, .split-question-row, .stimulus-card * {
+          -webkit-user-select: text !important;
+          user-select: text !important;
+          -webkit-user-drag: auto !important;
+          user-drag: auto !important;
+        }
+        .exam-header {
+          display: none !important;
+        }
+        .exam-footer {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(overrideStyle);
+
+      const bar = document.createElement("div");
+      bar.id = "tma-teacher-editor-bar";
+      bar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        background: rgba(30, 41, 59, 0.95);
+        backdrop-filter: blur(8px);
+        z-index: 9999999;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-bottom: 2px solid #c1121f;
+      `;
+      
+      let isTeacherEditMode = true;
+
+      bar.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:#c1121f; color:#fff; padding:2px 8px; border-radius:4px; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:1px;">Biên tập</span>
+          <span style="font-weight:600; margin-right:10px;">Chỉnh sửa như Word</span>
+          <div id="tma-fmt-controls-wrap" style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:4px; background:#334155; padding:3px 6px; border-radius:6px; margin-right:10px;">
+              <button id="tma-fmt-bold" type="button" title="In đậm (Ctrl+B)" style="background:transparent; color:#fff; border:none; padding:4px 8px; font-weight:bold; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">B</button>
+            </div>
+            <span style="color:#94a3b8; font-size:11px; margin-right:4px;">Chèn ký hiệu mục:</span>
+            <div style="display:flex; align-items:center; gap:2px; background:#334155; padding:3px 6px; border-radius:6px; margin-right:15px;">
+              <button class="tma-symbol-btn" data-symbol="▶" type="button" title="Chèn ▶" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">▶</button>
+              <button class="tma-symbol-btn" data-symbol="➤" type="button" title="Chèn ➤" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">➤</button>
+              <button class="tma-symbol-btn" data-symbol="•" type="button" title="Chèn •" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">•</button>
+              <button class="tma-symbol-btn" data-symbol="–" type="button" title="Chèn –" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">–</button>
+              <button class="tma-symbol-btn" data-symbol="▪" type="button" title="Chèn ▪" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">▪</button>
+              <button class="tma-symbol-btn" data-symbol="✔" type="button" title="Chèn ✔" style="background:transparent; color:#fff; border:none; padding:4px 6px; cursor:pointer; font-size:12px; border-radius:4px; outline:none;">✔</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span id="tma-editor-status" style="color:#94a3b8; font-style:italic;">Chưa có thay đổi</span>
+          <button id="tma-editor-toggle-preview" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">👁 Xem học sinh</button>
+          <button id="tma-editor-save-local" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">Lưu nháp</button>
+          <button id="tma-editor-save-cloud" style="background:#c1121f; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">Đồng bộ Cloud</button>
+        </div>
+      `;
+      document.body.appendChild(bar);
+      document.body.style.paddingTop = "48px";
+
+      let isModified = false;
+      function setModified(modified) {
+        isModified = modified;
+        const statusEl = document.getElementById("tma-editor-status");
+        if (statusEl) {
+          statusEl.textContent = modified ? "Có thay đổi chưa lưu!" : "Đã lưu nháp";
+          statusEl.style.color = modified ? "#ef4444" : "#22c55e";
+        }
+      }
+
+      async function saveLocalDraft() {
+        if (!rawExamData) return;
+        writeLocalJson(`tma_tsa_teacher_draft_${examCode}`, rawExamData);
+        writeLocalJson(`tma_tsa_exam_${examCode}`, rawExamData);
+        setModified(false);
+      }
+
+      async function saveCloud() {
+        if (!rawExamData) return;
+        await saveLocalDraft();
+        
+        const statusEl = document.getElementById("tma-editor-status");
+        if (statusEl) {
+          statusEl.textContent = "Đang đồng bộ Cloud...";
+          statusEl.style.color = "#3b82f6";
+        }
+
+        if (!supabaseClient) {
+          alert("Supabase Client chưa được khởi tạo. Không thể lưu lên Cloud.");
+          setModified(true);
+          return;
+        }
+
+        try {
+          const examFileName = (rawExamData.exam_code || examCode) + ".json";
+          const examJsonStr = JSON.stringify(rawExamData, null, 2);
+          const examBlob = new Blob([examJsonStr], { type: "application/json" });
+
+          // Cập nhật đáp án trong bảng exam_answers trên Supabase (nếu có)
+          const answersToInsert = [];
+          if (Array.isArray(rawExamData.sections)) {
+            rawExamData.sections.forEach((sec) => {
+              const secId = sec.section_id || sec.id || rawExamData.subject;
+              if (Array.isArray(sec.questions)) {
+                sec.questions.forEach((q) => {
+                  if (q.correct_answer !== undefined) {
+                    answersToInsert.push({
+                      exam_code: rawExamData.exam_code,
+                      subject: secId,
+                      question_no: q.question_no,
+                      question_type: q.question_type || q.type || "single_choice",
+                      correct_answer: JSON.stringify(q.correct_answer),
+                      accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
+                      points: q.points || 1,
+                      solution_details: q.explanation || ""
+                    });
+                  }
+                });
+              }
+              if (Array.isArray(sec.groups)) {
+                sec.groups.forEach((g) => {
+                  if (Array.isArray(g.questions)) {
+                    g.questions.forEach((q) => {
+                      if (q.correct_answer !== undefined) {
+                        answersToInsert.push({
+                          exam_code: rawExamData.exam_code,
+                          subject: secId,
+                          question_no: q.question_no,
+                          question_type: q.question_type || q.type || "single_choice",
+                          correct_answer: JSON.stringify(q.correct_answer),
+                          accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
+                          points: q.points || 1,
+                          solution_details: q.explanation || ""
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else if (Array.isArray(rawExamData.questions)) {
+            rawExamData.questions.forEach((q) => {
+              if (q.correct_answer !== undefined) {
+                answersToInsert.push({
+                  exam_code: rawExamData.exam_code,
+                  subject: rawExamData.subject,
+                  question_no: q.question_no,
+                  question_type: q.question_type || q.type || "single_choice",
+                  correct_answer: JSON.stringify(q.correct_answer),
+                  accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
+                  points: q.points || 1,
+                  solution_details: q.explanation || ""
+                });
+              }
+            });
+          }
+
+          if (answersToInsert.length > 0) {
+            await supabaseClient.from('exam_answers').delete().eq('exam_code', rawExamData.exam_code);
+            const { error: answersInsertError } = await supabaseClient
+              .from('exam_answers')
+              .insert(answersToInsert);
+            if (answersInsertError) throw answersInsertError;
+          }
+
+          // Tải file JSON lên bucket exams
+          const { error: uploadError } = await supabaseClient.storage
+            .from('exams')
+            .upload(examFileName, examBlob, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadError) throw uploadError;
+
+          alert("✓ Đồng bộ đề thi lên Supabase Cloud thành công!");
+          setModified(false);
+        } catch (err) {
+          console.error("Lỗi đồng bộ Cloud:", err);
+          alert("Lỗi đồng bộ Cloud: " + (err.message || err));
+          setModified(true);
+        }
+      }
+
+      function toggleTeacherEditMode(enabled) {
+        isTeacherEditMode = enabled;
+        const toggleBtn = document.getElementById("tma-editor-toggle-preview");
+        if (toggleBtn) {
+          toggleBtn.innerHTML = enabled ? "👁 Xem học sinh" : "✏️ Vào chỉnh sửa";
+          toggleBtn.style.background = enabled ? "#0284c7" : "#16a34a";
+        }
+        const fmtWrap = document.getElementById("tma-fmt-controls-wrap");
+        if (fmtWrap) {
+          fmtWrap.style.display = enabled ? "flex" : "none";
+        }
+        if (!enabled && activeResizer) {
+          activeResizer.remove();
+          activeResizer = null;
+          document.querySelectorAll("img.tma-editing-active").forEach(el => {
+            el.classList.remove("tma-editing-active");
+            el.style.borderColor = "transparent";
+          });
+        }
+        if (typeof window.makeElementsEditable === "function") {
+          window.makeElementsEditable();
+        }
+      }
+
+      document.getElementById("tma-editor-toggle-preview").addEventListener("click", () => {
+        toggleTeacherEditMode(!isTeacherEditMode);
+      });
+
+      document.getElementById("tma-editor-save-local").addEventListener("click", saveLocalDraft);
+      document.getElementById("tma-editor-save-cloud").addEventListener("click", saveCloud);
+
+      // Định dạng nút bấm Word (mousedown mới không làm mất tiêu điểm)
+      document.getElementById("tma-fmt-bold").addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        document.execCommand("bold", false, null);
+        setModified(true);
+      });
+
+      function insertSymbolAtCursor(sym) {
+        const sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        
+        // Kiểm tra xem vị trí con trỏ có nằm trong phần tử contenteditable không
+        const container = range.startContainer;
+        const editableNode = container.nodeType === 3 ? container.parentNode : container;
+        if (!editableNode.closest("[contenteditable='true']")) {
+          return;
+        }
+        
+        range.deleteContents();
+        const textNode = document.createTextNode(sym + " ");
+        range.insertNode(textNode);
+        
+        // Di chuyển con trỏ ra sau ký tự vừa chèn
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        
+        // Kích hoạt cập nhật dữ liệu DOM ngay lập tức
+        const lead = editableNode.closest(".question-lead");
+        const passageContent = editableNode.closest(".stimulus-content");
+        if (lead) updateQuestionTextFromDom(lead);
+        else if (passageContent) updatePassageTextFromDom(passageContent);
+      }
+
+      document.querySelectorAll(".tma-symbol-btn").forEach(btn => {
+        btn.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          const sym = btn.getAttribute("data-symbol");
+          insertSymbolAtCursor(sym);
+          setModified(true);
+        });
+      });
+
+      function updateQuestionTextFromDom(lead) {
+        const newText = lead.innerHTML;
+        const currentQ = examData.questions[currentQuestionIndex];
+        if (currentQ) {
+          const originalNo = currentQ.original_question_no || currentQ.question_no;
+          const rawQ = findQuestionInRaw(originalNo);
+          if (rawQ) {
+            if (rawQ.question !== undefined) rawQ.question = newText;
+            else rawQ.prompt = newText;
+            
+            if (currentQ.question !== undefined) currentQ.question = newText;
+            else currentQ.prompt = newText;
+          }
+        }
+      }
+
+      function updatePassageTextFromDom(passageContent) {
+        const newText = passageContent.innerHTML;
+        const currentQ = examData.questions[currentQuestionIndex];
+        if (currentQ && currentQ.group_id) {
+          const rawGroup = findGroupInRaw(currentQ.group_id);
+          if (rawGroup && rawGroup.stimulus) {
+            rawGroup.stimulus.content = newText;
+            
+            currentQ.passage = newText;
+            if (currentQ.stimulus) currentQ.stimulus.content = newText;
+          }
+        }
+      }
+
+      window.makeElementsEditable = function() {
+        const enabled = isTeacherEditMode;
+
+        // 1. Chỉnh sửa đề bài
+        const lead = document.querySelector(".question-lead");
+        if (lead) {
+          lead.setAttribute("contenteditable", enabled ? "true" : "false");
+          lead.setAttribute("spellcheck", "false");
+          lead.style.border = enabled ? "1px dashed #cbd5e1" : "none";
+          lead.style.padding = enabled ? "8px" : "0";
+          lead.style.borderRadius = "4px";
+          lead.style.outline = "none";
+          
+          if (!lead.dataset.hasListeners) {
+            lead.dataset.hasListeners = "true";
+            lead.addEventListener("blur", () => {
+              if (isTeacherEditMode) {
+                updateQuestionTextFromDom(lead);
+                setModified(true);
+              }
+            });
+            lead.addEventListener("input", () => {
+              if (isTeacherEditMode) {
+                updateQuestionTextFromDom(lead);
+                setModified(true);
+              }
+            });
+            lead.addEventListener("drop", () => {
+              if (isTeacherEditMode) {
+                setTimeout(() => {
+                  updateQuestionTextFromDom(lead);
+                  setModified(true);
+                }, 100);
+              }
+            });
+          }
+        }
+
+        // 2. Chỉnh sửa ngữ liệu
+        const passageContent = document.querySelector(".stimulus-content");
+        if (passageContent) {
+          passageContent.setAttribute("contenteditable", enabled ? "true" : "false");
+          passageContent.setAttribute("spellcheck", "false");
+          passageContent.style.border = enabled ? "1px dashed #cbd5e1" : "none";
+          passageContent.style.padding = enabled ? "8px" : "0";
+          passageContent.style.borderRadius = "4px";
+          passageContent.style.outline = "none";
+
+          if (!passageContent.dataset.hasListeners) {
+            passageContent.dataset.hasListeners = "true";
+            passageContent.addEventListener("blur", () => {
+              if (isTeacherEditMode) {
+                updatePassageTextFromDom(passageContent);
+                setModified(true);
+              }
+            });
+            passageContent.addEventListener("input", () => {
+              if (isTeacherEditMode) {
+                updatePassageTextFromDom(passageContent);
+                setModified(true);
+              }
+            });
+            passageContent.addEventListener("drop", () => {
+              if (isTeacherEditMode) {
+                setTimeout(() => {
+                  updatePassageTextFromDom(passageContent);
+                  setModified(true);
+                }, 100);
+              }
+            });
+          }
+        }
+
+        // 3. Tương tác hình ảnh
+        const images = document.querySelectorAll(".question-lead img, .stimulus-content img");
+        images.forEach((img) => {
+          img.style.cursor = enabled ? "pointer" : "default";
+          img.style.border = enabled ? "2px solid transparent" : "none";
+          
+          if (!img.dataset.hasListeners) {
+            img.dataset.hasListeners = "true";
+            img.addEventListener("mouseenter", () => {
+              if (isTeacherEditMode) img.style.borderColor = "#c1121f";
+            });
+            img.addEventListener("mouseleave", () => {
+              if (isTeacherEditMode) {
+                if (!img.classList.contains("tma-editing-active")) {
+                  img.style.borderColor = "transparent";
+                }
+              }
+            });
+
+            img.addEventListener("click", (e) => {
+              if (!isTeacherEditMode) return;
+              e.stopPropagation();
+              showImageController(img);
+            });
+
+            img.addEventListener("dragstart", (e) => {
+              if (!isTeacherEditMode) {
+                e.preventDefault();
+                return;
+              }
+              if (activeResizer) {
+                activeResizer.remove();
+                activeResizer = null;
+              }
+            });
+          }
+        });
+      };
+
+      function findQuestionInRaw(originalNo) {
+        if (!rawExamData) return null;
+        if (Array.isArray(rawExamData.questions)) {
+          return rawExamData.questions.find(q => q.question_no === originalNo);
+        }
+        if (Array.isArray(rawExamData.sections)) {
+          for (const sec of rawExamData.sections) {
+            if (Array.isArray(sec.questions)) {
+              const found = sec.questions.find(q => q.question_no === originalNo);
+              if (found) return found;
+            }
+            if (Array.isArray(sec.groups)) {
+              for (const grp of sec.groups) {
+                if (Array.isArray(grp.questions)) {
+                  const found = grp.questions.find(q => q.question_no === originalNo);
+                  if (found) return found;
+                }
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      function findGroupInRaw(groupId) {
+        if (!rawExamData || !rawExamData.sections) return null;
+        for (const sec of rawExamData.sections) {
+          if (Array.isArray(sec.groups)) {
+            const found = sec.groups.find(g => g.group_id === groupId);
+            if (found) return found;
+          }
+        }
+        return null;
+      }
+
+      let activeResizer = null;
+      function showImageController(img) {
+        if (!isTeacherEditMode) return;
+        if (activeResizer) activeResizer.remove();
+        document.querySelectorAll("img.tma-editing-active").forEach(el => {
+          el.classList.remove("tma-editing-active");
+          el.style.borderColor = "transparent";
+        });
+
+        img.classList.add("tma-editing-active");
+        img.style.borderColor = "#c1121f";
+
+        const resizer = document.createElement("div");
+        resizer.id = "tma-img-resizer";
+        resizer.style.cssText = `
+          position: absolute;
+          border: 1px dashed #c1121f;
+          z-index: 2147483600;
+          pointer-events: none;
+          box-sizing: border-box;
+        `;
+
+        const corners = ["tl", "tr", "bl", "br"];
+        corners.forEach((c) => {
+          const h = document.createElement("div");
+          h.style.cssText = `
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border: 1.5px solid #c1121f;
+            border-radius: 50%;
+            pointer-events: auto;
+            box-sizing: border-box;
+          `;
+          if (c === "tl") { h.style.top = "-4px"; h.style.left = "-4px"; h.style.cursor = "nwse-resize"; }
+          else if (c === "tr") { h.style.top = "-4px"; h.style.right = "-4px"; h.style.cursor = "nesw-resize"; }
+          else if (c === "bl") { h.style.bottom = "-4px"; h.style.left = "-4px"; h.style.cursor = "nesw-resize"; }
+          else if (c === "br") { h.style.bottom = "-4px"; h.style.right = "-4px"; h.style.cursor = "nwse-resize"; }
+
+          resizer.appendChild(h);
+
+          h.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const startX = e.clientX;
+            const startWidth = img.offsetWidth;
+            const parentWidth = img.parentElement.offsetWidth;
+
+            function onMouseMove(moveEvent) {
+              const deltaX = moveEvent.clientX - startX;
+              let newWidth = startWidth;
+              if (c === "tr" || c === "br") {
+                newWidth = startWidth + deltaX;
+              } else {
+                newWidth = startWidth - deltaX;
+              }
+
+              if (newWidth < 20) newWidth = 20;
+              if (newWidth > parentWidth) newWidth = parentWidth;
+
+              const pct = Math.round((newWidth / parentWidth) * 100);
+
+              img.setAttribute("style", `width:${pct}%; max-width:100%; height:auto; display:block; margin:10px auto;`);
+              img.style.width = `${pct}%`;
+
+              updateResizerPos();
+              setModified(true);
+            }
+
+            function onMouseUp() {
+              document.removeEventListener("mousemove", onMouseMove);
+              document.removeEventListener("mouseup", onMouseUp);
+
+              const lead = img.closest(".question-lead");
+              const passageContent = img.closest(".stimulus-content");
+              if (lead) updateQuestionTextFromDom(lead);
+              else if (passageContent) updatePassageTextFromDom(passageContent);
+            }
+
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
+          });
+        });
+
+        document.body.appendChild(resizer);
+        activeResizer = resizer;
+
+        function updateResizerPos() {
+          const rect = img.getBoundingClientRect();
+          const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+          resizer.style.left = `${rect.left + scrollLeft}px`;
+          resizer.style.top = `${rect.top + scrollTop}px`;
+          resizer.style.width = `${rect.width}px`;
+          resizer.style.height = `${rect.height}px`;
+        }
+
+        updateResizerPos();
+
+        window.addEventListener("resize", updateResizerPos);
+        window.addEventListener("scroll", updateResizerPos);
+
+        function dismissResizer(e) {
+          if (e.target !== img && !resizer.contains(e.target)) {
+            resizer.remove();
+            activeResizer = null;
+            document.removeEventListener("mousedown", dismissResizer);
+            window.removeEventListener("resize", updateResizerPos);
+            window.removeEventListener("scroll", updateResizerPos);
+          }
+        }
+        setTimeout(() => {
+          document.addEventListener("mousedown", dismissResizer);
+        }, 50);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      bindDrawerControls();
+      loadExamData();
+      initTeacherEditor();
 
     initAutoFullscreen();
     enforceFullscreen();

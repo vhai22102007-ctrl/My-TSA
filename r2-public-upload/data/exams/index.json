@@ -1,32 +1,602 @@
 [
-    {
-        "exam_code": "TSA001",
-        "title": "Đề TSA số 01 - Tư duy Toán học",
-        "subject": "math",
-        "subject_label": "Tư duy Toán học",
-        "duration_minutes": 45,
-        "question_count": 40,
-        "file": "data/exams/tsa001.json",
-        "status": "published"
-    },
-    {
-        "exam_code": "TSA001",
-        "title": "Đề TSA số 01 - Đọc hiểu",
-        "subject": "reading",
-        "subject_label": "Đọc hiểu",
-        "duration_minutes": 45,
-        "question_count": 20,
-        "file": "data/exams/tsa001.json",
-        "status": "published"
-    },
-    {
-        "exam_code": "TSA001",
-        "title": "Đề TSA số 01 - Khoa học",
-        "subject": "science",
-        "subject_label": "Khoa học",
-        "duration_minutes": 45,
-        "question_count": 40,
-        "file": "data/exams/tsa001.json",
-        "status": "published"
-    }
+  {
+    "exam_code": "TSA001",
+    "title": "Đề TSA số 01 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 40,
+    "file": "data/exams/tsa001.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA001",
+    "title": "Đề TSA số 01 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 20,
+    "file": "data/exams/tsa001.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA001",
+    "title": "Đề TSA số 01 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 40,
+    "file": "data/exams/tsa001.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA002",
+    "title": "Đề TSA số 02 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa002.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA002",
+    "title": "Đề TSA số 02 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 6,
+    "file": "data/exams/tsa002.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA002",
+    "title": "Đề TSA số 02 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa002.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA003",
+    "title": "Đề TSA số 03 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa003.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA003",
+    "title": "Đề TSA số 03 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa003.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA003",
+    "title": "Đề TSA số 03 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 6,
+    "file": "data/exams/tsa003.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA004",
+    "title": "Đề TSA số 04 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa004.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA004",
+    "title": "Đề TSA số 04 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa004.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA004",
+    "title": "Đề TSA số 04 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa004.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA005",
+    "title": "Đề TSA số 05 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa005.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA005",
+    "title": "Đề TSA số 05 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa005.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA005",
+    "title": "Đề TSA số 05 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa005.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA006",
+    "title": "Đề TSA số 06 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa006.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA006",
+    "title": "Đề TSA số 06 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa006.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA006",
+    "title": "Đề TSA số 06 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa006.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA007",
+    "title": "Đề TSA số 07 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa007.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA007",
+    "title": "Đề TSA số 07 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa007.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA007",
+    "title": "Đề TSA số 07 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa007.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA008",
+    "title": "Đề TSA số 08 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa008.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA008",
+    "title": "Đề TSA số 08 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa008.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA008",
+    "title": "Đề TSA số 08 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa008.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA009",
+    "title": "Đề TSA số 09 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa009.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA009",
+    "title": "Đề TSA số 09 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa009.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA009",
+    "title": "Đề TSA số 09 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa009.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA010",
+    "title": "Đề TSA số 10 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa010.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA010",
+    "title": "Đề TSA số 10 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa010.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA010",
+    "title": "Đề TSA số 10 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa010.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA011",
+    "title": "Đề TSA số 11 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa011.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA011",
+    "title": "Đề TSA số 11 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa011.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA011",
+    "title": "Đề TSA số 11 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa011.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA012",
+    "title": "Đề TSA số 12 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa012.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA012",
+    "title": "Đề TSA số 12 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa012.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA012",
+    "title": "Đề TSA số 12 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa012.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA013",
+    "title": "Đề TSA số 13 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa013.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA013",
+    "title": "Đề TSA số 13 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa013.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA013",
+    "title": "Đề TSA số 13 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa013.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA014",
+    "title": "Đề TSA số 14 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa014.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA014",
+    "title": "Đề TSA số 14 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa014.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA014",
+    "title": "Đề TSA số 14 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa014.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA015",
+    "title": "Đề TSA số 15 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa015.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA015",
+    "title": "Đề TSA số 15 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa015.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA015",
+    "title": "Đề TSA số 15 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa015.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA016",
+    "title": "Đề TSA số 16 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa016.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA016",
+    "title": "Đề TSA số 16 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa016.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA016",
+    "title": "Đề TSA số 16 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa016.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA017",
+    "title": "Đề TSA số 17 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa017.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA017",
+    "title": "Đề TSA số 17 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa017.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA017",
+    "title": "Đề TSA số 17 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa017.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA018",
+    "title": "Đề TSA số 18 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa018.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA018",
+    "title": "Đề TSA số 18 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa018.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA018",
+    "title": "Đề TSA số 18 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa018.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA019",
+    "title": "Đề TSA số 19 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa019.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA019",
+    "title": "Đề TSA số 19 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa019.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA019",
+    "title": "Đề TSA số 19 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa019.json/science.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA020",
+    "title": "Đề TSA số 20 - Tư duy Toán học",
+    "subject": "math",
+    "subject_label": "Tư duy Toán học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa020.json/math.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA020",
+    "title": "Đề TSA số 20 - Đọc hiểu",
+    "subject": "reading",
+    "subject_label": "Đọc hiểu",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa020.json/reading.json",
+    "status": "published"
+  },
+  {
+    "exam_code": "TSA020",
+    "title": "Đề TSA số 20 - Khoa học",
+    "subject": "science",
+    "subject_label": "Khoa học",
+    "duration_minutes": 45,
+    "question_count": 0,
+    "file": "data/exams/tsa020.json/science.json",
+    "status": "published"
+  }
 ]

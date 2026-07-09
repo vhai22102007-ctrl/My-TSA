@@ -641,7 +641,8 @@
     var type = getType(question);
     var rawText = question.question || question.prompt || "";
     
-    if (type === "fill_blank" && (rawText.indexOf("[o1]") !== -1 || rawText.indexOf("[blank]") !== -1)) {
+    var hasInlineBlanks = (type === "fill_blank" && /\[(o\d+|blank)\]/.test(rawText));
+    if (hasInlineBlanks) {
       if (bodyEl) {
         clear(bodyEl);
         
@@ -663,35 +664,72 @@
           "Chọn cụm từ phù hợp vào các chỗ trống để hoàn thiện nhận định khoa học."
         ];
         phrasesToBold.forEach(function (phrase) {
-          var regex = new RegExp("(" + phrase + ")", "gi");
-          rawText = rawText.replace(regex, "<strong>$1</strong>");
+          var r = new RegExp("(" + phrase + ")", "gi");
+          rawText = rawText.replace(r, "<strong>$1</strong>");
         });
 
-        var marker = rawText.indexOf("[o1]") !== -1 ? "[o1]" : "[blank]";
-        var parts = rawText.split(marker);
-        
-        var spanBefore = document.createElement("span");
-        spanBefore.innerHTML = sanitizeHTML(parts[0]);
-        lead.appendChild(spanBefore);
-        
-        var input = document.createElement("input");
-        input.type = "text";
-        input.className = "inline-blank-input";
-        input.value = savedAnswer == null ? "" : savedAnswer;
-        input.placeholder = "";
-        input.style.width = "180px";
-        
-        input.addEventListener("input", function () {
-          notify(onAnswerChange, input.value);
-        });
-        lead.appendChild(input);
-        
-        if (parts[1]) {
-          var spanAfter = document.createElement("span");
-          spanAfter.innerHTML = sanitizeHTML(parts[1]);
-          lead.appendChild(spanAfter);
+        var matches = [];
+        var tempMatch;
+        var tempRegex = /\[(o\d+|blank)\]/g;
+        while ((tempMatch = tempRegex.exec(rawText)) !== null) {
+          matches.push({ id: tempMatch[1], index: tempMatch.index });
         }
-        
+        var isMultiBlank = (matches.length > 1);
+
+        var currentAnswers = {};
+        if (isMultiBlank) {
+          currentAnswers = (savedAnswer && typeof savedAnswer === "object" && !Array.isArray(savedAnswer))
+            ? Object.assign({}, savedAnswer)
+            : {};
+        } else {
+          var singleId = matches[0] ? matches[0].id : "blank";
+          currentAnswers[singleId] = (savedAnswer && typeof savedAnswer === "object")
+            ? (savedAnswer[singleId] || "")
+            : (savedAnswer || "");
+        }
+
+        var lastIdx = 0;
+        var regex = /\[(o\d+|blank)\]/g;
+        var match;
+        while ((match = regex.exec(rawText)) !== null) {
+          var textBefore = rawText.substring(lastIdx, match.index);
+          if (textBefore) {
+            var span = document.createElement("span");
+            span.innerHTML = sanitizeHTML(textBefore);
+            lead.appendChild(span);
+          }
+
+          var blankId = match[1];
+          (function (bId) {
+            var input = document.createElement("input");
+            input.type = "text";
+            input.className = "inline-blank-input";
+            input.value = currentAnswers[bId] || "";
+            input.placeholder = "";
+            input.style.width = "180px";
+
+            input.addEventListener("input", function () {
+              if (isMultiBlank) {
+                currentAnswers[bId] = input.value;
+                notify(onAnswerChange, Object.assign({}, currentAnswers));
+              } else {
+                currentAnswers[bId] = input.value;
+                notify(onAnswerChange, input.value);
+              }
+            });
+            lead.appendChild(input);
+          })(blankId);
+
+          lastIdx = regex.lastIndex;
+        }
+
+        var textAfter = rawText.substring(lastIdx);
+        if (textAfter) {
+          var span = document.createElement("span");
+          span.innerHTML = sanitizeHTML(textAfter);
+          lead.appendChild(span);
+        }
+
         bodyEl.appendChild(lead);
         if (question.image_url) {
           bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || ""), question.image_width));
@@ -731,9 +769,31 @@
     var box = document.createElement("article");
     box.className = "stimulus-card";
 
-    var title = document.createElement("h3");
-    title.textContent = (group && group.title) || "Ngữ liệu";
-    box.appendChild(title);
+    // 1. Dòng chữ Dựa vào thông tin...
+    if (group && group.rangeText) {
+      var prefix = document.createElement("div");
+      prefix.className = "stimulus-range-prefix";
+      prefix.textContent = group.rangeText;
+      prefix.style.cssText = "font-weight:700; font-size:16px; color:#1e293b; margin-bottom:12px; line-height:1.5;";
+      box.appendChild(prefix);
+    }
+
+    // 2. Tiêu đề chính (Centered, bold, large)
+    var mainTitleText = (group && group.title) || "";
+    if (mainTitleText && !/^ngữ liệu\s*\d*$/i.test(mainTitleText) && !/^đọc hiểu\s*\d*$/i.test(mainTitleText)) {
+      var mainTitle = document.createElement("h2");
+      mainTitle.className = "stimulus-main-title";
+      mainTitle.textContent = mainTitleText;
+      mainTitle.style.cssText = "text-align:center; font-weight:800; font-size:18px; color:#000; margin:15px 0 20px 0; text-transform:uppercase; line-height:1.5;";
+      box.appendChild(mainTitle);
+    } else {
+      // Nếu không có tiêu đề cụ thể và không có rangeText, giữ h3 mặc định làm khoảng cách hoặc ẩn
+      if (!group || !group.rangeText) {
+        var title = document.createElement("h3");
+        title.textContent = mainTitleText || "Ngữ liệu";
+        box.appendChild(title);
+      }
+    }
 
     var content = document.createElement("div");
     content.className = "stimulus-content";

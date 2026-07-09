@@ -305,50 +305,158 @@
     // Expose selectCategoryTab
     window.selectCategoryTab = selectCategoryTab;
 
-    // KHO TÀI LIỆU (DRIVE LINKS) MANAGEMENT
-    var MATERIALS_LIST = [
-      { title: "Đề TSA số 01", category: "TSA", index: 0 },
-      { title: "Đề TSA số 02", category: "TSA", index: 1 },
-      { title: "Đề TSA số 03", category: "TSA", index: 2 },
-      { title: "Đề TSA số 04", category: "TSA", index: 3 },
-      { title: "Đề TSA số 05", category: "TSA", index: 4 },
-      { title: "Đề TSA số 06", category: "TSA", index: 5 },
-      { title: "Đề HSA số 01", category: "HSA", index: 6 },
-      { title: "Đề HSA số 02", category: "HSA", index: 7 },
-      { title: "Đề HSA số 03", category: "HSA", index: 8 },
-      { title: "Đề HSA số 04", category: "HSA", index: 9 },
-      { title: "Đề THPTQG số 01", category: "THPT", index: 10 },
-      { title: "Đề THPTQG số 02", category: "THPT", index: 11 },
-      { title: "Đề THPTQG số 03", category: "THPT", index: 12 },
-      { title: "Đề THPTQG số 04", category: "THPT", index: 13 }
-    ];
+    // KHO TÀI LIỆU (DRIVE LINKS) MANAGEMENT (FULLY DYNAMIC)
+    var currentMaterialsList = [];
+
+    function initializeMaterialsList() {
+      var savedLinks = null;
+      try {
+        savedLinks = JSON.parse(localStorage.getItem("tmaTsaDriveLinks") || "{}");
+      } catch(e) {}
+      
+      if (savedLinks && typeof savedLinks === "object" && !Array.isArray(savedLinks)) {
+        var defaultMaterials = [
+          { title: "Đề TSA số 01", category: "TSA" },
+          { title: "Đề TSA số 02", category: "TSA" },
+          { title: "Đề TSA số 03", category: "TSA" },
+          { title: "Đề TSA số 04", category: "TSA" },
+          { title: "Đề TSA số 05", category: "TSA" },
+          { title: "Đề TSA số 06", category: "TSA" },
+          { title: "Đề HSA số 01", category: "HSA" },
+          { title: "Đề HSA số 02", category: "HSA" },
+          { title: "Đề HSA số 03", category: "HSA" },
+          { title: "Đề HSA số 04", category: "HSA" },
+          { title: "Đề THPTQG số 01", category: "THPT" },
+          { title: "Đề THPTQG số 02", category: "THPT" },
+          { title: "Đề THPTQG số 03", category: "THPT" },
+          { title: "Đề THPTQG số 04", category: "THPT" }
+        ];
+        currentMaterialsList = defaultMaterials.map(function(m, idx) {
+          return {
+            id: "doc_" + Date.now() + "_" + idx,
+            title: m.title,
+            category: m.category,
+            url: savedLinks[idx] || ""
+          };
+        });
+      } else if (Array.isArray(savedLinks)) {
+        currentMaterialsList = savedLinks;
+      } else {
+        var defaultMaterials = [
+          { title: "Đề TSA số 01", category: "TSA" },
+          { title: "Đề TSA số 02", category: "TSA" },
+          { title: "Đề TSA số 03", category: "TSA" },
+          { title: "Đề TSA số 04", category: "TSA" },
+          { title: "Đề TSA số 05", category: "TSA" },
+          { title: "Đề TSA số 06", category: "TSA" },
+          { title: "Đề HSA số 01", category: "HSA" },
+          { title: "Đề HSA số 02", category: "HSA" },
+          { title: "Đề HSA số 03", category: "HSA" },
+          { title: "Đề HSA số 04", category: "HSA" },
+          { title: "Đề THPTQG số 01", category: "THPT" },
+          { title: "Đề THPTQG số 02", category: "THPT" },
+          { title: "Đề THPTQG số 03", category: "THPT" },
+          { title: "Đề THPTQG số 04", category: "THPT" }
+        ];
+        currentMaterialsList = defaultMaterials.map(function(m, idx) {
+          return {
+            id: "doc_" + Date.now() + "_" + idx,
+            title: m.title,
+            category: m.category,
+            url: ""
+          };
+        });
+      }
+    }
 
     function renderManageDocuments() {
       var container = document.getElementById("teacher-materials-inputs");
       if (!container) return;
       
-      var savedLinks = {};
-      try {
-        savedLinks = JSON.parse(localStorage.getItem("tmaTsaDriveLinks") || "{}");
-      } catch(e) {}
+      if (currentMaterialsList.length === 0) {
+        initializeMaterialsList();
+      }
 
       var html = "";
       var categories = ["TSA", "HSA", "THPT"];
       
       categories.forEach(function(cat) {
-        html += `<h3 style="margin-top: 16px; margin-bottom: 8px; border-bottom: 2px solid var(--border); padding-bottom: 6px; color: var(--brand); font-size: 14px;">Tài liệu ${cat}</h3>`;
-        var filtered = MATERIALS_LIST.filter(function(m) { return m.category === cat; });
-        filtered.forEach(function(material) {
-          var currentUrl = savedLinks[material.index] || "";
-          html += `
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-              <label style="width: 150px; font-weight: 700; font-size: 13px;">${material.title}</label>
-              <input class="input" type="text" data-doc-index="${material.index}" value="${esc(currentUrl)}" placeholder="Nhập link Google Drive..." style="flex: 1; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);">
-            </div>
-          `;
-        });
+        var labelCat = cat === "THPT" ? "THPTQG" : cat;
+        html += `<h3 style="margin-top: 20px; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px; color: var(--brand); font-size: 14px; font-weight: 800;">Tài liệu chuyên mục ${labelCat}</h3>`;
+        var filtered = currentMaterialsList.filter(function(m) { return m.category === cat; });
+        
+        if (filtered.length === 0) {
+          html += `<p style="color: var(--muted); font-size: 13px; font-style: italic; margin-bottom: 12px;">Chưa có tài liệu nào trong chuyên mục này.</p>`;
+        } else {
+          filtered.forEach(function(material) {
+            html += `
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
+                <div style="display: flex; flex: 1; gap: 8px; min-width: 300px;">
+                  <input class="input" type="text" data-field="title" data-doc-id="${material.id}" value="${esc(material.title)}" placeholder="Tên tài liệu..." style="width: 200px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; box-sizing: border-box;">
+                  <input class="input" type="text" data-field="url" data-doc-id="${material.id}" value="${esc(material.url)}" placeholder="Nhập link Google Drive..." style="flex: 1; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box;">
+                </div>
+                <button class="btn" type="button" onclick="removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 8px; padding: 6px 14px; height: 36px; cursor: pointer; font-size: 12px;">Xóa</button>
+              </div>
+            `;
+          });
+        }
       });
       container.innerHTML = html;
+
+      // Add input event listeners to save changes immediately in-memory
+      container.querySelectorAll("input").forEach(function(input) {
+        input.addEventListener("input", function() {
+          var id = input.getAttribute("data-doc-id");
+          var field = input.getAttribute("data-field");
+          var value = input.value.trim();
+          var doc = currentMaterialsList.find(function(m) { return m.id === id; });
+          if (doc) {
+            doc[field] = value;
+          }
+        });
+      });
+    }
+
+    function addNewDocumentToList() {
+      var titleInput = document.getElementById("new-doc-title");
+      var catSelect = document.getElementById("new-doc-category");
+      var urlInput = document.getElementById("new-doc-url");
+
+      if (!titleInput || !catSelect || !urlInput) return;
+
+      var title = titleInput.value.trim();
+      var cat = catSelect.value;
+      var url = urlInput.value.trim();
+
+      if (!title) {
+        window.alert("Vui lòng nhập tiêu đề tài liệu!");
+        titleInput.focus();
+        return;
+      }
+
+      var newDoc = {
+        id: "doc_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        title: title,
+        category: cat,
+        url: url
+      };
+
+      currentMaterialsList.push(newDoc);
+      renderManageDocuments();
+
+      // Clear form inputs
+      titleInput.value = "";
+      urlInput.value = "";
+
+      window.alert("✓ Đã thêm tài liệu mới vào danh sách thành công! Đừng quên nhấn 'Lưu lên Supabase Cloud' để đồng bộ.");
+    }
+
+    function removeDocumentFromList(id) {
+      if (!window.confirm("Bạn có chắc chắn muốn xóa tài liệu này khỏi danh sách không?")) {
+        return;
+      }
+      currentMaterialsList = currentMaterialsList.filter(function(m) { return m.id !== id; });
+      renderManageDocuments();
     }
 
     async function saveDocumentsToSupabase() {
@@ -366,21 +474,9 @@
       }
 
       try {
-        var links = {};
-        var inputs = document.querySelectorAll("#teacher-materials-inputs input");
-        inputs.forEach(function(input) {
-          var index = input.getAttribute("data-doc-index");
-          var url = input.value.trim();
-          if (url) {
-            links[index] = url;
-          }
-        });
+        localStorage.setItem("tmaTsaDriveLinks", JSON.stringify(currentMaterialsList));
 
-        // 1. Lưu cục bộ
-        localStorage.setItem("tmaTsaDriveLinks", JSON.stringify(links));
-
-        // 2. Đồng bộ lên Cloud Supabase Storage 'exams'
-        var jsonStr = JSON.stringify(links, null, 2);
+        var jsonStr = JSON.stringify(currentMaterialsList, null, 2);
         var blob = new Blob([jsonStr], { type: "application/json" });
         var { error } = await client.storage
           .from('exams')
@@ -390,7 +486,7 @@
           });
 
         if (error) throw error;
-        window.alert("✓ Đã lưu danh sách link tài liệu lên Supabase Cloud thành công!");
+        window.alert("✓ Đã lưu danh sách tài liệu lên Supabase Cloud thành công!");
       } catch(err) {
         console.error(err);
         window.alert("Lỗi khi tải tài liệu lên Supabase:\n" + (err.message || err));
@@ -403,17 +499,17 @@
     }
 
     function clearAllDocumentLinks() {
-      if (!confirm("Bạn có chắc chắn muốn xóa toàn bộ link tài liệu không?")) {
+      if (!confirm("Bạn có chắc chắn muốn xóa toàn bộ danh sách tài liệu không?")) {
         return;
       }
-      var inputs = document.querySelectorAll("#teacher-materials-inputs input");
-      inputs.forEach(function(input) {
-        input.value = "";
-      });
+      currentMaterialsList = [];
+      renderManageDocuments();
       localStorage.removeItem("tmaTsaDriveLinks");
-      window.alert("Đã xóa nháp cục bộ. Nhấn 'Lưu lên Supabase Cloud' để đồng bộ xóa trên hệ thống.");
+      window.alert("Đã xóa danh sách tài liệu nháp. Nhấn 'Lưu lên Supabase Cloud' để đồng bộ xóa trên hệ thống.");
     }
-    
+
+    window.addNewDocumentToList = addNewDocumentToList;
+    window.removeDocumentFromList = removeDocumentFromList;
     window.saveDocumentsToSupabase = saveDocumentsToSupabase;
     window.clearAllDocumentLinks = clearAllDocumentLinks;
 
@@ -3406,7 +3502,7 @@
       }
       window.toggleTeacherTfSelection = toggleTeacherTfSelection;
 
-      function startEditingExam(title, code) {
+      function startEditingExam(title, code, startTab) {
         var cleanCode = normalizeCode(code);
         var existing = loadDraft(cleanCode);
         if (existing) {
@@ -3434,7 +3530,7 @@
           if (keyInput) keyInput.value = savedKey;
         } catch (e) {}
 
-        switchEditorTab("setup");
+        switchEditorTab(startTab || "setup");
       }
 
       async function syncExamFromSource() {
@@ -3458,6 +3554,33 @@
             fetchedData = JSON.parse(JSON.stringify(window.TSA001_FALLBACK_DATA));
             fetched = true;
             console.log("Loaded exam from pre-embedded fallback script (file:// protocol).");
+          }
+
+          // 0a-2. Check if running locally and the exam is a split directory (e.g. data/exams/tsa001.json/math.json etc.)
+          if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")) {
+            try {
+              var folderPath = "data/exams/" + cleanCode.toLowerCase() + ".json/";
+              var [mathData, readingData, scienceData] = await Promise.all([
+                fetch(folderPath + "math.json").then(r => r.ok ? r.json() : null),
+                fetch(folderPath + "reading.json").then(r => r.ok ? r.json() : null),
+                fetch(folderPath + "science.json").then(r => r.ok ? r.json() : null)
+              ]);
+              if (mathData && readingData && scienceData) {
+                fetchedData = {
+                  exam_code: code,
+                  title: mathData.title || title || code,
+                  duration_minutes: mathData.duration_minutes || 150,
+                  status: mathData.status || "published",
+                  sections: [
+                    (mathData.sections && mathData.sections[0]) ? mathData.sections[0] : mathData,
+                    (readingData.sections && readingData.sections[0]) ? readingData.sections[0] : readingData,
+                    (scienceData.sections && scienceData.sections[0]) ? scienceData.sections[0] : scienceData
+                  ]
+                };
+                fetched = true;
+                console.log("Loaded split exam sections from directory:", folderPath);
+              }
+            } catch (err) {}
           }
 
           // 0b. If running locally on a server, try local file first to prioritize local updates
@@ -3742,6 +3865,10 @@
                   }
                   if (window.confirm("Bạn có chắc chắn muốn nhập đề thi từ file này không? Toàn bộ câu hỏi hiện tại trong trình soạn thảo sẽ bị ghi đè.")) {
                     exam = imported;
+                    
+                    // Force reset editing cache for all sections
+                    editingQuestion = { math: null, reading: null, science: null };
+                    
                     ensureSchema();
                     syncMetadataToForm();
                     saveDraft();
@@ -3757,6 +3884,95 @@
             fileInput.click();
           });
         }
+
+        function setupSectionImportExport(subject, dlBtnId, importBtnId, label) {
+          var dlBtn = $("#" + dlBtnId);
+          if (dlBtn) {
+            dlBtn.addEventListener("click", function () {
+              if (!exam || !exam.sections) return;
+              var section = exam.sections.find(s => s.section_id === subject);
+              if (!section) {
+                section = {
+                  section_id: subject,
+                  section_label: label,
+                  layout: subject === 'science' ? 'passage' : 'single',
+                  questions: []
+                };
+              }
+              downloadJson(exam.exam_code + "_" + subject + ".json", section);
+            });
+          }
+
+          var importBtn = $("#" + importBtnId);
+          if (importBtn) {
+            importBtn.addEventListener("click", function () {
+              var fileInput = document.createElement("input");
+              fileInput.type = "file";
+              fileInput.accept = ".json";
+              fileInput.addEventListener("change", function (e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function (evt) {
+                  try {
+                    var imported = JSON.parse(evt.target.result);
+                    if (!imported) {
+                      window.alert("File JSON rỗng hoặc không hợp lệ!");
+                      return;
+                    }
+                    if (window.confirm(`Bạn có chắc chắn muốn nhập dữ liệu phần ${label} từ file này không? Toàn bộ câu hỏi phần ${label} hiện tại sẽ bị ghi đè.`)) {
+                      let targetSection = null;
+                      if (imported.sections && Array.isArray(imported.sections)) {
+                        targetSection = imported.sections.find(s => s.section_id === subject);
+                      } else if (imported.section_id === subject) {
+                        targetSection = imported;
+                      } else {
+                        targetSection = imported;
+                      }
+
+                      if (!targetSection) {
+                        window.alert(`Không tìm thấy dữ liệu hợp lệ cho phần ${label} (ID: ${subject}) trong file JSON.`);
+                        return;
+                      }
+
+                      if (!exam.sections) exam.sections = [];
+                      var idx = exam.sections.findIndex(s => s.section_id === subject);
+                      
+                      targetSection.section_id = subject;
+                      targetSection.section_label = label;
+                      if (!targetSection.layout) {
+                        targetSection.layout = subject === 'science' ? 'passage' : 'single';
+                      }
+
+                      if (idx === -1) {
+                        exam.sections.push(targetSection);
+                      } else {
+                        exam.sections[idx] = targetSection;
+                      }
+
+                      // Force reset cache for this specific subject to load newly imported questions
+                      editingQuestion[subject] = null;
+
+                      ensureSchema();
+                      syncMetadataToForm();
+                      saveDraft();
+                      renderAll();
+                      window.alert(`✓ Nhập phần ${label} thành công! Hãy kiểm tra và nhấn 'Lưu lên Supabase Cloud' để đồng bộ.`);
+                    }
+                  } catch (err) {
+                    window.alert("Lỗi khi đọc file JSON: " + err.message);
+                  }
+                };
+                reader.readAsText(file);
+              });
+              fileInput.click();
+            });
+          }
+        }
+
+        setupSectionImportExport('math', 'sidebar-download-math-button', 'sidebar-import-math-button', 'Tư duy Toán học');
+        setupSectionImportExport('reading', 'sidebar-download-reading-button', 'sidebar-import-reading-button', 'Đọc hiểu');
+        setupSectionImportExport('science', 'sidebar-download-science-button', 'sidebar-import-science-button', 'Khoa học');
         var aiRunBtn = $("#ai-run-button");
         if (aiRunBtn) {
           aiRunBtn.addEventListener("click", async function () {
@@ -4375,10 +4591,39 @@ YÊU CẦU QUAN TRỌNG:
       `;
       lessonsContainer.appendChild(actionHeader);
 
+      function getLessonSortKey(title) {
+        var t = String(title || "").toLowerCase().trim();
+        var phanMatch = t.match(/(?:ph[aầ]n|p)\s*(\d+)\.(\d+)/i);
+        if (phanMatch) {
+          return [parseInt(phanMatch[1], 10), parseInt(phanMatch[2], 10), 1];
+        }
+        var numMatch = t.match(/(?:c[aâ]u|b[aà]i)\s*(\d+)/i);
+        if (numMatch) {
+          return [parseInt(numMatch[1], 10), 0, 0];
+        }
+        var generalNumMatch = t.match(/(\d+)/);
+        if (generalNumMatch) {
+          return [parseInt(generalNumMatch[1], 10), 0, 2];
+        }
+        return [9999, 0, 3];
+      }
+
+      function compareLessonSortKeys(a, b) {
+        var keyA = getLessonSortKey(a.title);
+        var keyB = getLessonSortKey(b.title);
+        if (keyA[0] !== keyB[0]) return keyA[0] - keyB[0];
+        if (keyA[1] !== keyB[1]) return keyA[1] - keyB[1];
+        if (keyA[2] !== keyB[2]) return keyA[2] - keyB[2];
+        if ((a.order_index || 0) !== (b.order_index || 0)) {
+          return (a.order_index || 0) - (b.order_index || 0);
+        }
+        return a.title.localeCompare(b.title);
+      }
+
       // Render chapters and lessons tree-view list
       chapterOrder.forEach(function(chName) {
         var chapterLessons = chapters[chName];
-        chapterLessons.sort(function(a, b) { return (a.order_index || 0) - (b.order_index || 0); });
+        chapterLessons.sort(compareLessonSortKeys);
 
         var chBlock = document.createElement("div");
         chBlock.style.cssText = "margin-bottom: 16px;";
@@ -5540,6 +5785,42 @@ YÊU CẦU QUAN TRỌNG:
         renderAll();
         saveDraft();
 
+        // Tự động đồng bộ dữ liệu khi quay lại trang giáo viên từ tab/cửa sổ xem thử
+        window.addEventListener('focus', function() {
+          if (typeof exam !== "undefined" && exam && exam.exam_code) {
+            var latest = loadDraft(exam.exam_code);
+            if (latest) {
+              var currentStr = JSON.stringify(exam);
+              var latestStr = JSON.stringify(latest);
+              if (currentStr !== latestStr) {
+                console.log("Draft updated on another tab, reloading...");
+                exam = latest;
+                
+                ["math", "reading", "science"].forEach(function(secId) {
+                  if (editingQuestion[secId] && editingQuestion[secId].index >= 0) {
+                    var idx = editingQuestion[secId].index;
+                    if (secId === "math") {
+                      var mathSection = getSection("math");
+                      var mathQs = mathSection ? mathSection.questions : [];
+                      if (mathQs && mathQs[idx]) {
+                        editingQuestion[secId].question = clone(mathQs[idx]);
+                      }
+                    } else {
+                      var group = getActiveGroup(secId);
+                      if (group && group.questions && group.questions[idx]) {
+                        editingQuestion[secId].question = clone(group.questions[idx]);
+                      }
+                    }
+                  }
+                });
+                
+                syncMetadataToForm();
+                renderAll();
+              }
+            }
+          }
+        });
+
         // Initial setup for the system dashboard
         renderPracticeRoom();
         renderExamsList();
@@ -5790,6 +6071,182 @@ YÊU CẦU QUAN TRỌNG:
         }
       }
       window.handlePassageImageUpload = handlePassageImageUpload;
+
+      // ==========================================
+      // DYNAMIC LMS ASSET COVER MANAGER
+      // ==========================================
+      var selectedAssetUrl = "";
+
+      function openLmsAssetModal() {
+        document.getElementById("lms-asset-modal").style.display = "flex";
+        selectedAssetUrl = "";
+        loadLmsAssets();
+      }
+
+      function closeLmsAssetModal() {
+        document.getElementById("lms-asset-modal").style.display = "none";
+      }
+
+      async function loadLmsAssets() {
+        var client = window.supabaseClient;
+        var grid = document.getElementById("lms-asset-grid");
+        if (!grid) return;
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #888; font-size: 13px; padding: 20px;">Đang tải danh sách ảnh...</div>';
+
+        if (!client) {
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; font-size: 13px; padding: 20px;">Lỗi: Supabase Client chưa sẵn sàng!</div>';
+          return;
+        }
+
+        try {
+          var { data, error } = await client.storage
+            .from('exams')
+            .list('assets/course_covers', {
+              limit: 100,
+              sortBy: { column: 'name', order: 'desc' }
+            });
+
+          if (error) throw error;
+
+          var files = (data || []).filter(function(item) {
+            return item.name && item.name !== '.empty' && item.name !== 'placeholder.txt';
+          });
+
+          if (files.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #888; font-size: 13px; padding: 40px 20px;">Thư viện trống. Hãy tải lên ảnh nền đầu tiên!</div>';
+            return;
+          }
+
+          var html = "";
+          files.forEach(function(file) {
+            var path = 'assets/course_covers/' + file.name;
+            var { data: urlData } = client.storage.from('exams').getPublicUrl(path);
+            var publicUrl = urlData.publicUrl;
+
+            html += `
+              <div class="asset-item-card" data-url="${publicUrl}" onclick="selectLmsAsset('${publicUrl}', this)">
+                <img class="asset-item-thumb" src="${publicUrl}" alt="${esc(file.name)}" />
+                <div class="asset-item-title" title="${esc(file.name)}">${esc(file.name.substring(file.name.indexOf('_') + 1))}</div>
+                <button class="asset-item-delete-btn" type="button" onclick="deleteLmsAsset('${esc(file.name)}', event)">&times;</button>
+              </div>
+            `;
+          });
+          grid.innerHTML = html;
+        } catch (err) {
+          console.error("Failed to load assets:", err);
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; font-size: 13px; padding: 20px;">Lỗi: ' + (err.message || err) + '</div>';
+        }
+      }
+
+      function selectLmsAsset(url, element) {
+        selectedAssetUrl = url;
+        document.querySelectorAll("#lms-asset-grid .asset-item-card").forEach(function(card) {
+          card.classList.remove("selected");
+        });
+        element.classList.add("selected");
+      }
+
+      function confirmLmsAssetSelection() {
+        if (!selectedAssetUrl) {
+          alert("Vui lòng chọn một ảnh nền hoặc tải lên ảnh mới!");
+          return;
+        }
+        var inputCover = document.getElementById("lms-course-modal-cover");
+        if (inputCover) {
+          inputCover.value = selectedAssetUrl;
+        }
+        closeLmsAssetModal();
+      }
+
+      async function uploadAssetFile(event) {
+        var client = window.supabaseClient;
+        if (!client) {
+          alert("Supabase Client chưa sẵn sàng!");
+          return;
+        }
+
+        var file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          alert("Chỉ chấp nhận tệp hình ảnh!");
+          return;
+        }
+
+        var progress = document.getElementById("lms-asset-upload-progress");
+        if (progress) progress.style.display = "flex";
+
+        try {
+          var cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+          var uploadPath = 'assets/course_covers/' + Date.now() + '_' + cleanName;
+
+          var { error } = await client.storage
+            .from('exams')
+            .upload(uploadPath, file, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (error) throw error;
+
+          await loadLmsAssets();
+
+          var { data: urlData } = client.storage.from('exams').getPublicUrl(uploadPath);
+          var publicUrl = urlData.publicUrl;
+          selectedAssetUrl = publicUrl;
+
+          setTimeout(function() {
+            var cards = document.querySelectorAll("#lms-asset-grid .asset-item-card");
+            cards.forEach(function(card) {
+              if (card.getAttribute("data-url") === publicUrl) {
+                selectLmsAsset(publicUrl, card);
+              }
+            });
+          }, 100);
+
+          alert("✓ Tải ảnh lên thành công!");
+        } catch (err) {
+          console.error("Upload error:", err);
+          alert("Lỗi tải ảnh lên: " + (err.message || err));
+        } finally {
+          if (progress) progress.style.display = "none";
+          event.target.value = "";
+        }
+      }
+
+      async function deleteLmsAsset(filename, event) {
+        if (event) event.stopPropagation();
+
+        if (!confirm("Bạn có chắc chắn muốn xóa ảnh này khỏi thư viện không?")) {
+          return;
+        }
+
+        var client = window.supabaseClient;
+        if (!client) return;
+
+        try {
+          var path = 'assets/course_covers/' + filename;
+          var { error } = await client.storage.from('exams').remove([path]);
+          if (error) throw error;
+
+          if (selectedAssetUrl && selectedAssetUrl.includes(filename)) {
+            selectedAssetUrl = "";
+          }
+
+          loadLmsAssets();
+          alert("✓ Đã xóa ảnh thành công!");
+        } catch (err) {
+          console.error("Delete error:", err);
+          alert("Lỗi khi xóa ảnh: " + (err.message || err));
+        }
+      }
+
+      window.openLmsAssetModal = openLmsAssetModal;
+      window.closeLmsAssetModal = closeLmsAssetModal;
+      window.selectLmsAsset = selectLmsAsset;
+      window.confirmLmsAssetSelection = confirmLmsAssetSelection;
+      window.uploadAssetFile = uploadAssetFile;
+      window.deleteLmsAsset = deleteLmsAsset;
 
       document.addEventListener("DOMContentLoaded", init);
     })();

@@ -27,14 +27,49 @@
   }
 
   function gradeTrueFalse(question, userAnswer) {
+    var correct = question.correct_answer;
+    if (typeof correct === "string") {
+      try { correct = JSON.parse(correct); } catch (e) { correct = {}; }
+    }
+    correct = correct || {};
+
+    if (typeof userAnswer === "string") {
+      try { userAnswer = JSON.parse(userAnswer); } catch (e) { userAnswer = {}; }
+    }
     if (!userAnswer || typeof userAnswer !== "object" || Array.isArray(userAnswer)) return false;
-    var correct = question.correct_answer || {};
+
     var keys = Object.keys(correct);
     if (!keys.length) return false;
-    return keys.every(function (key) { return userAnswer[key] === correct[key]; });
+
+    return keys.every(function (key) {
+      var userVal = userAnswer[key];
+      var correctVal = correct[key];
+      var userBool = (userVal === true || userVal === 'true' || userVal === 1 || userVal === '1');
+      var correctBool = (correctVal === true || correctVal === 'true' || correctVal === 1 || correctVal === '1');
+      return userBool === correctBool;
+    });
   }
 
   function gradeFillBlank(question, userAnswer) {
+    if (userAnswer && typeof userAnswer === "object" && !Array.isArray(userAnswer)) {
+      var correct = {};
+      if (question.correct_answer && typeof question.correct_answer === "object") {
+        correct = question.correct_answer;
+      } else if (typeof question.correct_answer === "string") {
+        question.correct_answer.split("|").forEach(function (pair) {
+          var parts = pair.split("=");
+          if (parts.length === 2) {
+            correct[parts[0].trim()] = parts[1].trim();
+          }
+        });
+      }
+      var keys = Object.keys(correct);
+      if (!keys.length) return false;
+      return keys.every(function (key) {
+        return normalizeText(userAnswer[key]) === normalizeText(correct[key]);
+      });
+    }
+
     var answer = normalizeText(userAnswer);
     if (!answer) return false;
 
@@ -58,11 +93,23 @@
   }
 
   function gradeDragDrop(question, userAnswer) {
+    var correct = question.correct_answer;
+    if (typeof correct === "string") {
+      try { correct = JSON.parse(correct); } catch (e) { correct = {}; }
+    }
+    correct = correct || {};
+
+    if (typeof userAnswer === "string") {
+      try { userAnswer = JSON.parse(userAnswer); } catch (e) { userAnswer = {}; }
+    }
     if (!userAnswer || typeof userAnswer !== "object" || Array.isArray(userAnswer)) return false;
-    var correct = question.correct_answer || {};
+
     var keys = Object.keys(correct);
     if (!keys.length) return false;
-    return keys.every(function (key) { return userAnswer[key] === correct[key]; });
+
+    return keys.every(function (key) {
+      return normalizeText(userAnswer[key]) === normalizeText(correct[key]);
+    });
   }
 
   var QUESTION_GRADERS = {

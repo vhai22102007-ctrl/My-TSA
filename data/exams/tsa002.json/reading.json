@@ -1,0 +1,162 @@
+{
+  "section_id": "reading",
+  "section_label": "Đọc hiểu",
+  "layout": "single",
+  "questions": [
+    {
+      "question_no": 1,
+      "question_type": "single_choice",
+      "question": "Trong văn bản đọc hiểu, chủ đề chính được thảo luận là gì?",
+      "image_url": "https://assets.tmastudy.io.vn/assets/questions/TSA002/cau-01.webp",
+      "options": [
+        {
+          "key": "A",
+          "text": "Biến đổi khí hậu toàn cầu"
+        },
+        {
+          "key": "B",
+          "text": "Cách mạng công nghiệp lần thứ tư"
+        },
+        {
+          "key": "C",
+          "text": "Trí tuệ nhân tạo và tương lai việc làm"
+        },
+        {
+          "key": "D",
+          "text": "Phương pháp học tiếng Anh hiệu quả"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "Toàn bộ văn bản tập trung phân tích sự ảnh hưởng của Trí tuệ nhân tạo tới các công việc tương lai.",
+      "points": 1
+    },
+    {
+      "question_no": 2,
+      "question_type": "multiple_choice",
+      "question": "Những ngành nghề nào được dự báo sẽ chịu tác động lớn nhất từ AI?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Dịch vụ tài chính và ngân hàng"
+        },
+        {
+          "key": "B",
+          "text": "Nghệ thuật thủ công truyền thống"
+        },
+        {
+          "key": "C",
+          "text": "Lập trình và phân tích dữ liệu"
+        },
+        {
+          "key": "D",
+          "text": "Nông nghiệp thô sơ"
+        }
+      ],
+      "correct_answer": [
+        "A",
+        "C"
+      ],
+      "explanation": "Đoạn 3 chỉ rõ dịch vụ tài chính và công nghệ thông tin (lập trình, phân tích dữ liệu) là hai nhóm ngành chịu tác động mạnh nhất.",
+      "points": 1
+    },
+    {
+      "question_no": 3,
+      "question_type": "true_false",
+      "question": "Xác định tính đúng sai của các nhận định dưới đây dựa vào văn bản.",
+      "statements": [
+        {
+          "id": "a",
+          "text": "AI sẽ thay thế hoàn toàn mọi vị trí công việc của con người vào năm 2030."
+        },
+        {
+          "id": "b",
+          "text": "Sự thích ứng và nâng cao kỹ năng là chìa khóa để người lao động tồn tại trong kỷ nguyên số."
+        },
+        {
+          "id": "c",
+          "text": "Các công việc đòi hỏi trí tuệ cảm xúc cao ít bị đe dọa hơn bởi tự động hóa."
+        },
+        {
+          "id": "d",
+          "text": "Chính phủ không cần can thiệp vào thị trường lao động trước làn sóng AI."
+        }
+      ],
+      "correct_answer": {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": false
+      },
+      "explanation": "Nhận định a và d sai do thái quá và đi ngược lại đề xuất của tác giả. Nhận định b và c đúng theo nội dung đoạn cuối.",
+      "points": 1
+    },
+    {
+      "question_no": 4,
+      "question_type": "fill_blank",
+      "question": "Thuật ngữ viết tắt của Trí tuệ nhân tạo bằng tiếng Anh là gì?",
+      "correct_answer": "AI",
+      "accepted_answers": [
+        "AI",
+        "artificial intelligence"
+      ],
+      "explanation": "Trí tuệ nhân tạo tiếng Anh viết tắt là AI.",
+      "points": 1
+    },
+    {
+      "question_no": 5,
+      "question_type": "numeric_answer",
+      "question": "Theo thống kê trong văn bản, tỷ lệ phần trăm công việc hành chính văn phòng có khả năng bị tự động hóa là bao nhiêu phần trăm? (Nhập số thập phân)",
+      "correct_answer": 0.45,
+      "tolerance": 0.05,
+      "explanation": "Văn bản nêu ra tỷ lệ khoảng 45% (tức 0.45). Chấp nhận sai số ±0.05.",
+      "points": 1
+    },
+    {
+      "question_no": 6,
+      "question_type": "drag_drop",
+      "question": "Chọn cụm từ phù hợp vào các chỗ trống để hoàn thiện câu tóm tắt.",
+      "body": [
+        {
+          "type": "text",
+          "content": "Mặc dù tự động hóa mang lại nhiều thách thức cho thị trường việc làm, nhưng nó cũng tạo ra các "
+        },
+        {
+          "type": "blank",
+          "id": "b1"
+        },
+        {
+          "type": "text",
+          "content": " mới và đòi hỏi con người phải phát triển các "
+        },
+        {
+          "type": "blank",
+          "id": "b2"
+        },
+        {
+          "type": "text",
+          "content": " mềm."
+        }
+      ],
+      "items": [
+        {
+          "id": "i1",
+          "text": "cơ hội việc làm"
+        },
+        {
+          "id": "i2",
+          "text": "kỹ năng"
+        },
+        {
+          "id": "i3",
+          "text": "rào cản"
+        }
+      ],
+      "correct_answer": {
+        "b1": "i1",
+        "b2": "i2"
+      },
+      "explanation": "Điền 'cơ hội việc làm' vào b1 và 'kỹ năng' vào b2.",
+      "points": 1
+    }
+  ]
+}

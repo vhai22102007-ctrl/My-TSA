@@ -1,0 +1,162 @@
+{
+  "section_id": "science",
+  "section_label": "Khoa học",
+  "layout": "single",
+  "questions": [
+    {
+      "question_no": 1,
+      "question_type": "single_choice",
+      "question": "Trong phản ứng hạt nhân, định luật bảo toàn nào sau đây không được áp dụng?",
+      "image_url": "https://assets.tmastudy.io.vn/assets/questions/TSA003/cau-01.webp",
+      "options": [
+        {
+          "key": "A",
+          "text": "Bảo toàn số nucleon (số khối \\(A\\))"
+        },
+        {
+          "key": "B",
+          "text": "Bảo toàn điện tích (số hiệu nguyên tử \\(Z\\))"
+        },
+        {
+          "key": "C",
+          "text": "Bảo toàn động lượng"
+        },
+        {
+          "key": "D",
+          "text": "Bảo toàn khối lượng nghỉ"
+        }
+      ],
+      "correct_answer": "D",
+      "explanation": "Trong phản ứng hạt nhân có sự hụt khối nên khối lượng nghỉ không được bảo toàn. Chọn D.",
+      "points": 1
+    },
+    {
+      "question_no": 2,
+      "question_type": "multiple_choice",
+      "question": "Những chất nào dưới đây có tính lưỡng tính theo thuyết Brønsted-Lowry?",
+      "options": [
+        {
+          "key": "A",
+          "text": "\\(NaHCO_3\\)"
+        },
+        {
+          "key": "B",
+          "text": "\\(Al(OH)_3\\)"
+        },
+        {
+          "key": "C",
+          "text": "\\(NaOH\\)"
+        },
+        {
+          "key": "D",
+          "text": "\\(HCl\\)"
+        }
+      ],
+      "correct_answer": [
+        "A",
+        "B"
+      ],
+      "explanation": "\\(HCO_3^-\\)\\(\\rightleftharpoons H^+ + CO_3^{2-}\\) và \\(HCO_3^- + H^+ \\rightleftharpoons H_2CO_3\\) nên là lưỡng tính. \\(Al(OH)_3\\) cũng là chất lưỡng tính. NaOH kiềm mạnh, HCl axit mạnh.",
+      "points": 1
+    },
+    {
+      "question_no": 3,
+      "question_type": "true_false",
+      "question": "Xét tính đúng sai của các phát biểu sau về thuyết tiến hóa của Darwin.",
+      "statements": [
+        {
+          "id": "a",
+          "text": "Chọn lọc tự nhiên tác động trực tiếp lên kiểu hình và gián tiếp làm thay đổi tần số kiểu gen."
+        },
+        {
+          "id": "b",
+          "text": "Đột biến là nhân tố định hướng cho quá trình tiến hóa của quần thể."
+        },
+        {
+          "id": "c",
+          "text": "Mọi biến dị xuất hiện trong đời cá thể đều được di truyền cho thế hệ sau."
+        },
+        {
+          "id": "d",
+          "text": "Chọn lọc tự nhiên là nhân tố chính hình thành các đặc điểm thích nghi của sinh vật."
+        }
+      ],
+      "correct_answer": {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": true
+      },
+      "explanation": "a, d đúng theo thuyết tiến hóa hiện đại phát triển từ Darwin. b sai vì đột biến là vô hướng. c sai vì chỉ có biến dị di truyền mới truyền được cho thế hệ sau.",
+      "points": 1
+    },
+    {
+      "question_no": 4,
+      "question_type": "fill_blank",
+      "question": "Tên viết tắt của phân tử mang thông tin di truyền của sinh vật là gì?",
+      "correct_answer": "DNA",
+      "accepted_answers": [
+        "DNA",
+        "ADN"
+      ],
+      "explanation": "Deoxyribonucleic acid thường viết tắt là DNA (hoặc ADN theo tiếng Pháp).",
+      "points": 1
+    },
+    {
+      "question_no": 5,
+      "question_type": "numeric_answer",
+      "question": "Tính gia tốc rơi tự do tại mặt đất nếu khối lượng Trái Đất tăng lên gấp đôi còn bán kính giữ nguyên. Lấy gia tốc cũ là \\(g = 9.8\\,\\text{m/s}^2\\).",
+      "correct_answer": 19.6,
+      "tolerance": 0.2,
+      "explanation": "Gia tốc trọng trường tỷ lệ thuận với khối lượng nên gia tốc mới gấp đôi là \\(9.8 \\times 2 = 19.6\\,\\text{m/s}^2\\).",
+      "points": 1
+    },
+    {
+      "question_no": 6,
+      "question_type": "drag_drop",
+      "question": "Chọn cụm từ phù hợp vào các chỗ trống để hoàn thiện nhận định khoa học.",
+      "body": [
+        {
+          "type": "text",
+          "content": "Khi nhiệt độ tăng lên, tốc độ của hầu hết các phản ứng hóa học sẽ "
+        },
+        {
+          "type": "blank",
+          "id": "b1"
+        },
+        {
+          "type": "text",
+          "content": ", điều này được giải thích là do sự gia tăng số lượng các "
+        },
+        {
+          "type": "blank",
+          "id": "b2"
+        },
+        {
+          "type": "text",
+          "content": " có hiệu quả giữa các phân tử chất phản ứng."
+        }
+      ],
+      "items": [
+        {
+          "id": "i1",
+          "text": "tăng"
+        },
+        {
+          "id": "i2",
+          "text": "va chạm"
+        },
+        {
+          "id": "i3",
+          "text": "giảm"
+        }
+      ],
+      "correct_answer": {
+        "b1": "i1",
+        "b2": "i2"
+      },
+      "explanation": "Tốc độ phản ứng 'tăng' khi nhiệt độ tăng do gia tăng số 'va chạm' hiệu quả.",
+      "points": 1
+    }
+  ]
+}
