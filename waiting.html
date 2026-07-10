@@ -587,6 +587,104 @@
       width: 100%;
       background: #22c55e;
     }
+
+    @media screen and (max-width: 768px) {
+      body.confirm-page {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+      }
+
+      .confirm-shell {
+        height: auto !important;
+        min-height: 100vh !important;
+        padding: 100px 16px 32px !important;
+      }
+
+      .lobby-card {
+        width: 100% !important;
+        max-width: 600px !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+
+      .lobby-logo {
+        width: min(100%, 350px) !important;
+        height: auto !important;
+        max-width: 100% !important;
+      }
+
+      .info-row {
+        height: auto !important;
+        min-height: 25px !important;
+        padding: 6px 0 !important;
+      }
+
+      .info-value {
+        word-break: break-word !important;
+        white-space: normal !important;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      body.confirm-page {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+      }
+
+      .confirm-shell {
+        padding: 80px 12px 24px !important;
+      }
+
+      .lobby-card {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        border-radius: 10px !important;
+      }
+
+      .lobby-logo {
+        width: min(100%, 280px) !important;
+        height: auto !important;
+        max-width: 100% !important;
+      }
+
+      .lobby-title {
+        font-size: 20px !important;
+      }
+
+      .info-row {
+        height: auto !important;
+        min-height: 25px !important;
+        padding: 4px 0 !important;
+      }
+
+      .info-value {
+        word-break: break-word !important;
+        white-space: normal !important;
+      }
+
+      .section-card {
+        padding: 12px 8px !important;
+      }
+
+      .section-btn {
+        width: 100% !important;
+        height: 42px !important;
+        align-self: stretch !important;
+        font-size: 15px !important;
+      }
+
+      .lobby-footer {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: center !important;
+      }
+      
+      .btn-footer {
+        font-size: 13px !important;
+      }
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
 </head>
