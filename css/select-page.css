@@ -7764,3 +7764,218 @@
         display: none !important; /* Hide decorative icons on mobile */
       }
     }
+
+    @media screen and (max-width: 1024px) {
+      .courses-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+        gap: 16px !important;
+      }
+      .course-card {
+        max-width: 100% !important;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      /* Hide sidebar toggle button */
+      .sidebar-toggle {
+        display: none !important;
+      }
+
+      /* Convert sidebar to top horizontal scroll bar */
+      .tsa-sidebar {
+        position: fixed !important;
+        inset: var(--topbar-height) 0 auto 0 !important;
+        width: 100% !important;
+        height: 52px !important;
+        transform: none !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--border) !important;
+        background: #ffffff !important;
+        z-index: 10 !important;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        white-space: nowrap !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      
+      .tsa-sidebar::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      /* Hide unused elements inside horizontal sidebar */
+      .tsa-logo,
+      .sidebar-links-section,
+      .sidebar-footer,
+      .tsa-sidebar > div[style*="border-top"] {
+        display: none !important;
+      }
+
+      /* Inline layout for menu and submenus */
+      .tsa-menu {
+        display: flex !important;
+        flex-direction: row !important;
+        padding: 8px 16px !important;
+        margin: 0 !important;
+        gap: 10px !important;
+        align-items: center !important;
+        flex-grow: 1 !important;
+      }
+
+      .menu-group {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+      }
+
+      .submenu-wrapper {
+        display: block !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .submenu-inner {
+        display: flex !important;
+        flex-direction: row !important;
+        padding: 0 !important;
+        gap: 8px !important;
+      }
+
+      /* Style menu links as neat chips */
+      .tsa-menu a {
+        min-height: 34px !important;
+        height: 34px !important;
+        padding: 0 14px !important;
+        margin: 0 !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        border-radius: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        color: #475569 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        white-space: nowrap !important;
+      }
+
+      /* Group headers as static section titles */
+      .tsa-menu a.group-header {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        pointer-events: none !important;
+      }
+
+      .group-arrow {
+        display: none !important;
+      }
+
+      /* Active tab styling */
+      .tsa-menu a.active,
+      .submenu-item.active {
+        background: #fef2f2 !important;
+        border-color: #fecaca !important;
+        color: var(--brand-red) !important;
+        font-weight: 600 !important;
+      }
+
+      /* Content container adjustments */
+      .tsa-content {
+        margin-left: 0 !important;
+        padding: calc(var(--topbar-height) + 52px + 12px) 12px 0 !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+      }
+      
+      .content-container {
+        width: 100% !important;
+        height: calc(100vh - var(--topbar-height) - 52px - 20px) !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      
+      .tab-panel.active {
+        overflow-y: auto !important;
+        flex: 1 !important;
+        padding-bottom: 24px !important;
+      }
+
+      /* Topbar padding adjustment */
+      .tsa-topbar {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+
+      /* Metric Cards Grid */
+      .metric-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Search Box */
+      .search-box-wrapper,
+      .search-premium-box {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* Account layout */
+      .account-sidebar-card {
+        width: 100% !important;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .tsa-content {
+        padding: calc(var(--topbar-height) + 52px + 8px) 8px 0 !important;
+      }
+
+      .tsa-menu {
+        padding: 8px !important;
+        gap: 8px !important;
+      }
+
+      .tsa-menu a {
+        padding: 0 10px !important;
+        font-size: 12px !important;
+      }
+
+      .courses-grid,
+      .course-grid-full,
+      .exam-grid,
+      .materials-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      .course-card {
+        max-width: 100% !important;
+      }
+
+      /* Tables overflow scroll */
+      .hust-cutoff-table-wrap {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+
+      /* Account row wrap */
+      .account-info-grid .info-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 4px !important;
+      }
+
+      .account-info-grid .info-label {
+        width: 100% !important;
+      }
+    }
