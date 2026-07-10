@@ -1422,7 +1422,8 @@
             const { data: dbLessons, error: lessonError } = await supabaseClient
               .from('lessons')
               .select('*')
-              .order('order_index', { ascending: true });
+              .order('order_index', { ascending: true })
+              .order('created_at', { ascending: true });
 
             if (lessonError) throw lessonError;
             allLessons = dbLessons || [];
@@ -2705,14 +2706,29 @@
               return m ? m[1] : null;
             }
 
-            // Group by chapter
+            // Group by chapter and sort chronologically by upload order (created_at)
             const chapters = {};
-            const chapterOrder = [];
-            lessonsArray.forEach(lesson => {
+            const chapterMinCreatedAt = {};
+            lessonsArray.forEach((lesson, idx) => {
               const chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
-              if (!chapters[chName]) { chapters[chName] = []; chapterOrder.push(chName); }
+              if (!chapters[chName]) {
+                chapters[chName] = [];
+              }
               chapters[chName].push(lesson);
+              
+              const lessonCreated = lesson.created_at ? new Date(lesson.created_at).getTime() : idx;
+              if (chapterMinCreatedAt[chName] === undefined || lessonCreated < chapterMinCreatedAt[chName]) {
+                chapterMinCreatedAt[chName] = lessonCreated;
+              }
             });
+            
+            const chapterOrder = Object.keys(chapters);
+            chapterOrder.sort((a, b) => {
+              const timeA = chapterMinCreatedAt[a] || 0;
+              const timeB = chapterMinCreatedAt[b] || 0;
+              return timeA - timeB;
+            });
+            
             chapterOrder.forEach(chName => {
               chapters[chName].sort(compareLessonSortKeys);
             });
@@ -3647,6 +3663,34 @@
         sidebarToggle.setAttribute("aria-label", isCollapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên");
       });
 
+      const tsaContent = document.querySelector(".tsa-content");
+      if (tsaContent) {
+        tsaContent.addEventListener("click", () => {
+          if (window.innerWidth <= 768 && shell.classList.contains("sidebar-collapsed")) {
+            shell.classList.remove("sidebar-collapsed");
+            if (sidebarToggle) {
+              sidebarToggle.setAttribute("aria-expanded", "false");
+              sidebarToggle.setAttribute("aria-label", "Mở rộng thanh bên");
+            }
+          }
+        });
+      }
+
+      // Close sidebar drawer on mobile after clicking any menu link
+      const menuLinks = document.querySelectorAll(".tsa-sidebar a, .tsa-sidebar button");
+      menuLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          if (link.classList.contains("group-header") || link.id === "sidebar-profile-button") return;
+          if (window.innerWidth <= 768 && shell && shell.classList.contains("sidebar-collapsed")) {
+            shell.classList.remove("sidebar-collapsed");
+            if (sidebarToggle) {
+              sidebarToggle.setAttribute("aria-expanded", "false");
+              sidebarToggle.setAttribute("aria-label", "Mở rộng thanh bên");
+            }
+          }
+        });
+      });
+
       const logoutDialog = document.getElementById("logout-dialog");
       const logoutButton = document.getElementById("logout-button");
       const confirmLogoutButton = document.getElementById("confirm-logout");
@@ -4503,7 +4547,7 @@
             });
           };
 
-          if (shell.classList.contains("sidebar-collapsed")) {
+          if (shell.classList.contains("sidebar-collapsed") && window.innerWidth > 768) {
             shell.classList.remove("sidebar-collapsed");
             const sidebarToggle = document.getElementById("sidebar-toggle");
             sidebarToggle.setAttribute("aria-expanded", "true");

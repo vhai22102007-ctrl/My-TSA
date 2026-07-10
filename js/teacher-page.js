@@ -181,7 +181,8 @@
                     .from('lessons')
                     .select('*')
                     .eq('course_id', course.id)
-                    .order('order_index', { ascending: true });
+                    .order('order_index', { ascending: true })
+                    .order('created_at', { ascending: true });
                   courseLessons = dbLessons || [];
                 } else {
                   var allMockLessons = JSON.parse(localStorage.getItem("tmaTsaMockLessons") || "[]");
@@ -4525,7 +4526,8 @@ YÊU CẦU QUAN TRỌNG:
             .from("lessons")
             .select("*")
             .eq("course_id", activeCourseId)
-            .order("order_index", { ascending: true });
+            .order("order_index", { ascending: true })
+            .order("created_at", { ascending: true });
 
           if (err) throw err;
           lessonsList = dbLessons || [];
@@ -4566,16 +4568,27 @@ YÊU CẦU QUAN TRỌNG:
         return;
       }
 
-      // Group lessons by chapter in order of appearance
-      var chapterOrder = [];
+      // Group lessons by chapter and sort chronologically by upload order (created_at)
       var chapters = {};
-      lessonsList.forEach(function(lesson) {
+      var chapterMinCreatedAt = {};
+      lessonsList.forEach(function(lesson, idx) {
         var chName = lesson.chapter_name || "Chương 1: Bài học cơ bản";
         if (!chapters[chName]) {
           chapters[chName] = [];
-          chapterOrder.push(chName);
         }
         chapters[chName].push(lesson);
+        
+        var lessonCreated = lesson.created_at ? new Date(lesson.created_at).getTime() : idx;
+        if (chapterMinCreatedAt[chName] === undefined || lessonCreated < chapterMinCreatedAt[chName]) {
+          chapterMinCreatedAt[chName] = lessonCreated;
+        }
+      });
+      
+      var chapterOrder = Object.keys(chapters);
+      chapterOrder.sort(function(a, b) {
+        var timeA = chapterMinCreatedAt[a] || 0;
+        var timeB = chapterMinCreatedAt[b] || 0;
+        return timeA - timeB;
       });
 
       lessonsContainer.innerHTML = "";

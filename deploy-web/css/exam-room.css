@@ -1891,3 +1891,217 @@ input[type=number] {
 .split-question-row .feedback-box {
   margin-top: 16px;
 }
+
+/* ==========================================================================
+   MOBILE EXAM ROOM RESPONSIVE OVERRIDES
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Common Header/Footer Mobile styles */
+  .exam-header {
+    height: 56px !important;
+    padding: 0 12px !important;
+  }
+  .exam-logo {
+    height: 28px !important;
+    width: auto !important;
+  }
+  .exam-title-text {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    max-width: 180px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .header-candidate-id {
+    display: none !important;
+  }
+
+  .exam-footer {
+    height: 56px !important;
+    padding: 0 8px !important;
+  }
+  .nav-button {
+    height: 36px !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+  }
+  .nav-button .button-label {
+    display: none !important; /* Hide "Câu tiếp" / "Câu trước" text, icons are self-explanatory */
+  }
+  .footer-timer {
+    gap: 2px !important;
+  }
+  .footer-timer-label {
+    display: none !important; /* Hide label to save space, digits are enough */
+  }
+  .footer-timer-value {
+    font-size: 13px !important;
+  }
+  .exam-footer .footer-timer strong#countdown {
+    font-size: 16px !important;
+  }
+
+  .question-pane {
+    padding: 8px !important;
+    height: calc(100vh - 112px) !important;
+  }
+  .question-card {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+  .question-number-circle {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
+    margin-right: 8px !important;
+  }
+
+  /* Math page sidebar drawer logic */
+  .exam-page[data-subject="math"] .exam-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 290px !important;
+    background: #ffffff !important;
+    z-index: 1500 !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar.open {
+    transform: translateX(0) !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .mobile-sidebar-header {
+    display: flex !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .sidebar-candidate-info {
+    padding: 16px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    margin-bottom: 0 !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .timer-submit-box {
+    padding: 16px !important;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .question-grid-scroll {
+    padding: 16px !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .sidebar-bottom-progress {
+    padding: 16px !important;
+    border-top: 1px solid #f1f5f9 !important;
+    margin-top: auto !important;
+    position: relative !important;
+    background: #fff !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .question-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .mobile-math-toggle-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #cd1627 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+  }
+
+  .exam-math-drawer-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.4) !important;
+    z-index: 1400 !important;
+    display: none;
+  }
+  .exam-math-drawer-overlay.active {
+    display: block !important;
+  }
+
+  /* Reading and Science Mobile Tab layout styles */
+  .mobile-exam-tabs {
+    display: flex !important;
+    width: 100% !important;
+    background: #f1f5f9 !important;
+    border-bottom: 1.5px solid #cbd5e1 !important;
+    margin-bottom: 12px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+  .mobile-exam-tab {
+    flex: 1 !important;
+    padding: 10px 0 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    background: none !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    cursor: pointer !important;
+    transition: all 0.15s !important;
+    text-align: center !important;
+  }
+  .mobile-exam-tab.active {
+    color: #135c97 !important;
+    border-bottom-color: #135c97 !important;
+    background: #eff6ff !important;
+  }
+  
+  .question-reading-split {
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  .split-divider {
+    display: none !important;
+  }
+  /* Tab pane display controlled by parent classes */
+  .question-reading-split:not(.show-questions) .passage-pane {
+    display: block !important;
+    width: 100% !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding-right: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  .question-reading-split:not(.show-questions) .question-text-content {
+    display: none !important;
+  }
+
+  .question-reading-split.show-questions .passage-pane {
+    display: none !important;
+  }
+  .question-reading-split.show-questions .question-text-content {
+    display: block !important;
+    width: 100% !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 10px 0 !important;
+  }
+
+  /* Science/Reading Slide-in submit drawer width fix */
+  .submit-menu-drawer {
+    width: 290px !important;
+  }
+  .drawer-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 8px !important;
+  }
+  .submit-menu-drawer .drawer-bottom-progress {
+    position: relative !important;
+    margin-top: auto !important;
+    background: #fff !important;
+  }
+}

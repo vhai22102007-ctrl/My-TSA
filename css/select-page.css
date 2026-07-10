@@ -3180,13 +3180,15 @@
     }
     
     /* ── COLLAPSED SIDEBAR ACCORDION ── */
-    .tsa-shell.sidebar-collapsed .submenu-wrapper {
-      max-height: 0px !important;
-      display: none !important;
-    }
-    
-    .tsa-shell.sidebar-collapsed .group-arrow {
-      display: none !important;
+    @media (min-width: 769px) {
+      .tsa-shell.sidebar-collapsed .submenu-wrapper {
+        max-height: 0px !important;
+        display: none !important;
+      }
+      
+      .tsa-shell.sidebar-collapsed .group-arrow {
+        display: none !important;
+      }
     }
     
     /* ── EXAM SUBTABS ── */
@@ -7706,9 +7708,59 @@
     .enter-btn.enter-class-btn:hover {
       background: #0c487e !important;
     }
-    .enter-btn.enter-class-btn.not-registered {
-      background: #64748b !important;
-    }
     .enter-btn.enter-class-btn.not-registered:hover {
       background: #475569 !important;
+    }
+
+    /* ==========================================================================
+       MOBILE RESPONSIVE OVERRIDES
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .courses-grid, .course-grid-full {
+        justify-content: center !important;
+      }
+      .course-card {
+        max-width: 100% !important;
+      }
+
+      /* Classroom learning modal responsive stacked layout */
+      #course-study-modal .course-study-layout {
+        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: calc(100vh - 60px) !important;
+        overflow-y: auto !important;
+      }
+      #course-study-modal .course-study-main {
+        padding: 10px 10px 10px !important;
+        flex: none !important;
+        overflow: visible !important;
+      }
+      #course-study-modal .course-study-sidebar {
+        border-left: none !important;
+        border-top: 1px solid #e5e7eb !important;
+        flex: 1 !important;
+        min-height: 400px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: visible !important;
+      }
+      #course-study-modal .study-tab-content {
+        max-height: 500px !important;
+        overflow-y: auto !important;
+      }
+      #course-study-modal .course-modal-topbar {
+        padding: 10px 14px !important;
+        height: auto !important;
+        min-height: 60px !important;
+      }
+      #course-study-modal .topbar-center {
+        display: none !important; /* Hide teacher center title on mobile to prevent crowding */
+      }
+      #course-study-modal #study-topbar-student-name {
+        display: none !important; /* Hide student text, avatar is enough on mobile */
+      }
+      #course-study-modal .study-topbar-icon {
+        display: none !important; /* Hide decorative icons on mobile */
+      }
     }

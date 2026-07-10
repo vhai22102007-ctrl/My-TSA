@@ -620,6 +620,10 @@
       questionElapsedSeconds = 0;
       renderActiveQuestion();
       closeSubmitDrawer();
+      const mathSidebar = document.querySelector(".exam-sidebar");
+      const mathOverlay = document.getElementById("exam-math-drawer-overlay");
+      if (mathSidebar) mathSidebar.classList.remove("open");
+      if (mathOverlay) mathOverlay.classList.remove("active");
     });
 
     return btn;
@@ -647,16 +651,37 @@
     const divider = $("#split-divider");
     if (!passagePane) return;
 
+    const mobileTabs = $(".mobile-exam-tabs");
+    const splitContainer = $(".question-reading-split");
+
     const hasPassage = Boolean(question.passage || question.passage_image_url || question.group_title);
     if (!hasPassage) {
       passagePane.innerHTML = "";
       passagePane.style.display = "none";
       if (divider) divider.style.display = "none";
+      if (mobileTabs) mobileTabs.style.display = "none";
+      if (splitContainer) {
+        splitContainer.classList.remove('show-questions');
+        splitContainer.classList.remove('show-passage');
+      }
       return;
     }
 
     passagePane.style.display = "block";
     if (divider) divider.style.display = "flex";
+    if (mobileTabs) mobileTabs.style.display = "flex";
+
+    // Always reset mobile view to show the passage tab on question load
+    if (splitContainer) {
+      splitContainer.classList.remove('show-questions');
+      splitContainer.classList.add('show-passage');
+      
+      const tabs = splitContainer.querySelectorAll('.mobile-exam-tab');
+      tabs.forEach(t => {
+        if (t.dataset.target === 'passage') t.classList.add('active');
+        else t.classList.remove('active');
+      });
+    }
 
     // Tìm dải câu hỏi tự động thuộc cùng nhóm group_id
     let rangeText = "";
@@ -2488,6 +2513,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      initMobileExamControls();
       bindDrawerControls();
       loadExamData();
       initTeacherEditor();
@@ -2590,4 +2616,54 @@
       }
     }
   });
+
+  function initMobileExamControls() {
+    // 1. Math page mobile sidebar open/close
+    const openMathBtn = document.getElementById("open-math-sidebar-btn");
+    const closeMathBtn = document.getElementById("close-math-sidebar-btn");
+    const mathSidebar = document.querySelector(".exam-sidebar");
+    const mathOverlay = document.getElementById("exam-math-drawer-overlay");
+
+    if (openMathBtn && mathSidebar && mathOverlay) {
+      openMathBtn.addEventListener("click", () => {
+        mathSidebar.classList.add("open");
+        mathOverlay.classList.add("active");
+      });
+    }
+
+    if (closeMathBtn && mathSidebar && mathOverlay) {
+      closeMathBtn.addEventListener("click", () => {
+        mathSidebar.classList.remove("open");
+        mathOverlay.classList.remove("active");
+      });
+    }
+
+    if (mathOverlay && mathSidebar) {
+      mathOverlay.addEventListener("click", () => {
+        mathSidebar.classList.remove("open");
+        mathOverlay.classList.remove("active");
+      });
+    }
+
+    // 2. Reading/Science mobile tab toggle
+    document.querySelectorAll('.mobile-exam-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const splitContainer = tab.closest('.question-reading-split');
+        if (!splitContainer) return;
+
+        const target = tab.dataset.target;
+        
+        splitContainer.querySelectorAll('.mobile-exam-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        if (target === 'passage') {
+          splitContainer.classList.remove('show-questions');
+          splitContainer.classList.add('show-passage');
+        } else {
+          splitContainer.classList.remove('show-passage');
+          splitContainer.classList.add('show-questions');
+        }
+      });
+    });
+  }
 })();

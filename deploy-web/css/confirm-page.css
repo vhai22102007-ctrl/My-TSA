@@ -349,3 +349,29 @@
   font-weight: 500;
   margin: 0;
 }
+
+@media (max-width: 480px) {
+  .confirm-card {
+    padding: 24px 20px !important;
+    min-height: auto !important;
+  }
+  .confirm-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+  .confirm-row dt {
+    width: 100% !important;
+    flex: none !important;
+    font-size: 13px !important;
+  }
+  .confirm-row dd {
+    width: 100% !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+  }
+  .confirm-card h1 {
+    font-size: 19px !important;
+  }
+}
