@@ -1892,6 +1892,16 @@ input[type=number] {
   margin-top: 16px;
 }
 
+/* Hide mobile controls on desktop and tablet viewports */
+@media screen and (min-width: 769px) {
+  .mobile-exam-tabs {
+    display: none !important;
+  }
+  .mobile-math-toggle-btn {
+    display: none !important;
+  }
+}
+
 /* ==========================================================================
    MOBILE EXAM ROOM RESPONSIVE OVERRIDES
    ========================================================================== */
