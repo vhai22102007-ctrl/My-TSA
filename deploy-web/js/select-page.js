@@ -121,10 +121,10 @@
           overlay.id = "exam-shell-fullscreen-warning";
           overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,.96);display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,-apple-system,sans-serif;";
           overlay.innerHTML = `
-            <div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #c1121f;border-radius:16px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);">
-              <h2 style="margin:0 0 12px;color:#c1121f;font-size:20px;font-weight:800;">YÊU CẦU TOÀN MÀN HÌNH</h2>
+            <div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #135c97;border-radius:16px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);">
+              <h2 style="margin:0 0 12px;color:#135c97;font-size:20px;font-weight:800;">YÊU CẦU TOÀN MÀN HÌNH</h2>
               <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">Bài thi đang diễn ra trong chế độ toàn màn hình. Vui lòng bấm nút bên dưới để tiếp tục làm bài.</p>
-              <button id="exam-shell-fullscreen-btn" type="button" style="width:100%;height:48px;border:0;border-radius:10px;background:#c1121f;color:#fff;font-size:16px;font-weight:800;cursor:pointer;">Tiếp tục toàn màn hình</button>
+              <button id="exam-shell-fullscreen-btn" type="button" style="width:100%;height:48px;border:0;border-radius:10px;background:#135c97;color:#fff;font-size:16px;font-weight:800;cursor:pointer;">Tiếp tục toàn màn hình</button>
             </div>
           `;
           document.body.appendChild(overlay);
@@ -562,7 +562,12 @@
           cell.className = `graph-cell level-${level}`;
           
           const pad = (n) => String(n).padStart(2, '0');
-          cell.title = `${pad(tempDate.getDate())}/${pad(tempDate.getMonth() + 1)}/${2026}: ${count > 0 ? count + ' bài thi' : 'Không có bài thi'}`;
+          const dateStrFormatted = `${pad(tempDate.getDate())}/${pad(tempDate.getMonth() + 1)}/2026`;
+          
+          cell.setAttribute("data-count", count);
+          cell.setAttribute("data-date", dateStrFormatted);
+          cell.title = `${dateStrFormatted}: ${count > 0 ? count + ' bài thi' : 'Không có bài thi'}`;
+          
           currentCol.appendChild(cell);
 
           if (currentCol.children.length === 7) {
@@ -582,6 +587,78 @@
             currentCol.appendChild(emptyCell);
           }
           grid.appendChild(currentCol);
+        }
+
+        // Setup custom tooltip functionality
+        const container = document.querySelector(".activity-graph-container");
+        if (container) {
+          let tooltip = container.querySelector(".graph-tooltip");
+          if (!tooltip) {
+            tooltip = document.createElement("div");
+            tooltip.className = "graph-tooltip";
+            container.appendChild(tooltip);
+          }
+
+          let activeLockedCell = null;
+
+          const showTooltip = (cellEl) => {
+            const count = parseInt(cellEl.getAttribute("data-count") || "0", 10);
+            const dateStr = cellEl.getAttribute("data-date");
+            const rect = cellEl.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const left = rect.left - containerRect.left + (rect.width / 2);
+            const top = rect.top - containerRect.top;
+            
+            tooltip.innerHTML = `<strong>${count > 0 ? count + ' bài thi' : 'Không có bài thi'}</strong> vào ngày ${dateStr}`;
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top - 8}px`;
+            tooltip.style.display = "block";
+            
+            // Allow CSS transition to play after display: block
+            setTimeout(() => {
+              tooltip.style.opacity = "1";
+              tooltip.style.transform = "translate(-50%, -100%) scale(1)";
+            }, 10);
+          };
+
+          const hideTooltip = () => {
+            if (activeLockedCell) return;
+            tooltip.style.opacity = "0";
+            tooltip.style.transform = "translate(-50%, -100%) scale(0.95)";
+            setTimeout(() => {
+              if (tooltip.style.opacity === "0") {
+                tooltip.style.display = "none";
+              }
+            }, 150);
+          };
+
+          // Attach events to all non-empty cells
+          const cells = grid.querySelectorAll(".graph-cell:not(.empty)");
+          cells.forEach(c => {
+            c.addEventListener("mouseenter", () => {
+              if (!activeLockedCell) showTooltip(c);
+            });
+            c.addEventListener("mouseleave", hideTooltip);
+            c.addEventListener("click", (e) => {
+              e.stopPropagation();
+              if (activeLockedCell === c) {
+                activeLockedCell = null;
+                hideTooltip();
+              } else {
+                activeLockedCell = c;
+                showTooltip(c);
+              }
+            });
+          });
+
+          // Click outside to dismiss tooltip
+          document.addEventListener("click", (e) => {
+            if (activeLockedCell && !grid.contains(e.target)) {
+              activeLockedCell = null;
+              hideTooltip();
+            }
+          });
         }
       };
 
@@ -645,6 +722,33 @@
         
         const dispNameEl = document.getElementById("student-display-name");
         if (dispNameEl) dispNameEl.textContent = displayName;
+
+        // Dynamic time-based greeting for History page
+        const historyGreetingEl = document.getElementById("history-welcome-greeting");
+        if (historyGreetingEl) {
+          const now = new Date();
+          const hour = now.getHours();
+          let greetingPrefix = "Xin chào";
+          let timeEmoji = "👋";
+          let suffix = "Chúc bạn một ngày học tập thật hiệu quả!";
+          
+          if (hour >= 5 && hour < 12) {
+            greetingPrefix = "Chào buổi sáng";
+            timeEmoji = "☀️";
+            suffix = "Chúc bạn một ngày học tập tràn đầy năng lượng!";
+          } else if (hour >= 12 && hour < 18) {
+            greetingPrefix = "Chào buổi chiều";
+            timeEmoji = "⛅";
+            suffix = "Hôm nay bạn đã ôn tập được nhiều chưa?";
+          } else {
+            greetingPrefix = "Chào buổi tối";
+            timeEmoji = "🌙";
+            suffix = "Cùng ôn luyện một chút trước khi nghỉ ngơi nhé!";
+          }
+          
+          historyGreetingEl.innerHTML = `${timeEmoji} ${greetingPrefix}, <strong>${displayName}</strong>! <span class="waving-hand">👋</span> ${suffix}`;
+        }
+
         const logDispNameEl = document.getElementById("logout-display-name");
         if (logDispNameEl) logDispNameEl.textContent = displayName;
         
@@ -661,8 +765,7 @@
 
         const sidebarStudentUsername = document.getElementById("sidebar-student-username");
         if (sidebarStudentUsername) {
-          const username = studentInfo.username || (studentInfo.email ? studentInfo.email.split('@')[0] : "yeuthichvatli");
-          sidebarStudentUsername.textContent = username;
+          sidebarStudentUsername.textContent = "TMA Study premium";
         }
 
         const sidebarAvatarChar = document.getElementById("sidebar-avatar-char");
@@ -4783,7 +4886,7 @@
 
         if (!filteredData || filteredData.length === 0) {
           container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px; background: #ffffff; border: 1px solid rgba(193, 18, 31, 0.1); border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);">
+            <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px; background: #ffffff; border: 1px solid rgba(19, 92, 151, 0.1); border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);">
               Không tìm thấy kết quả làm bài nào phù hợp.
             </div>
           `;
@@ -5655,5 +5758,127 @@
           container.appendChild(item);
         });
       };
+
+    
+      // Dynamic Social Links update
+      function updateSocialLinks() {
+        const defaultLinks = {
+          facebook: { url: "https://facebook.com/mapstudy", text: "Facebook TMA Study" },
+          youtube: { url: "https://youtube.com/c/ThayVuNgocAnh", text: "Thầy Vũ Ngọc Anh - Chuyên luyện thi Vật lý" },
+          tiktok: { url: "https://tiktok.com/@mapstudy", text: "Tiktok TMA Study" },
+          messenger: { url: "https://m.me/mapstudy", text: "Messenger TMA Study" }
+        };
+
+        let saved = defaultLinks;
+        try {
+          const localData = localStorage.getItem("tmaTsaSocialLinks");
+          if (localData) {
+            saved = JSON.parse(localData);
+          }
+        } catch(e) {}
+
+        const fbEl = document.getElementById("social-link-facebook");
+        const fbText = document.getElementById("social-link-facebook-text");
+        if (fbEl && saved.facebook) {
+          fbEl.href = saved.facebook.url || defaultLinks.facebook.url;
+          if (fbText) fbText.textContent = saved.facebook.text || defaultLinks.facebook.text;
+        }
+
+        const ytEl = document.getElementById("social-link-youtube");
+        const ytText = document.getElementById("social-link-youtube-text");
+        if (ytEl && saved.youtube) {
+          ytEl.href = saved.youtube.url || defaultLinks.youtube.url;
+          if (ytText) ytText.textContent = saved.youtube.text || defaultLinks.youtube.text;
+        }
+
+        const tkEl = document.getElementById("social-link-tiktok");
+        const tkText = document.getElementById("social-link-tiktok-text");
+        if (tkEl && saved.tiktok) {
+          tkEl.href = saved.tiktok.url || defaultLinks.tiktok.url;
+          if (tkText) tkText.textContent = saved.tiktok.text || defaultLinks.tiktok.text;
+        }
+
+        const msgEl = document.getElementById("social-link-messenger");
+        const msgText = document.getElementById("social-link-messenger-text");
+        if (msgEl && saved.messenger) {
+          msgEl.href = saved.messenger.url || defaultLinks.messenger.url;
+          if (msgText) msgText.textContent = saved.messenger.text || defaultLinks.messenger.text;
+        }
+      }
+
+      // Call immediately
+      updateSocialLinks();
+
+      // Listen for updates from other tabs
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'tmaTsaSocialLinks') {
+          updateSocialLinks();
+        }
+      });
+
+    
+      // Custom Dropdown UI Initialization
+      function initCustomDropdowns() {
+        const containers = document.querySelectorAll('.custom-dropdown-container');
+        
+        containers.forEach(container => {
+          const trigger = container.querySelector('.custom-dropdown-trigger');
+          const menu = container.querySelector('.custom-dropdown-menu');
+          const valueSpan = container.querySelector('.custom-dropdown-value');
+          const select = container.querySelector('select');
+          const options = container.querySelectorAll('.custom-dropdown-option');
+
+          if (!trigger || !menu || !select) return;
+
+          // Toggle dropdown on trigger click
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Close all other dropdowns first
+            document.querySelectorAll('.custom-dropdown-container').forEach(other => {
+              if (other !== container) {
+                other.classList.remove('open');
+              }
+            });
+            
+            container.classList.toggle('open');
+          });
+
+          // Option selection
+          options.forEach(opt => {
+            opt.addEventListener('click', (e) => {
+              e.stopPropagation();
+              
+              const val = opt.getAttribute('data-value');
+              const text = opt.textContent;
+
+              // Update hidden select
+              select.value = val;
+              // Trigger change event just in case
+              select.dispatchEvent(new Event('change'));
+
+              // Update trigger text
+              valueSpan.textContent = text;
+
+              // Toggle selected class
+              options.forEach(o => o.classList.remove('selected'));
+              opt.classList.add('selected');
+
+              // Close dropdown
+              container.classList.remove('open');
+            });
+          });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+          document.querySelectorAll('.custom-dropdown-container').forEach(container => {
+            container.classList.remove('open');
+          });
+        });
+      }
+
+      // Initialize on load
+      initCustomDropdowns();
 
     })();

@@ -1956,14 +1956,14 @@
         font-family: system-ui, -apple-system, sans-serif;
         font-size: 13px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        border-bottom: 2px solid #c1121f;
+        border-bottom: 2px solid #135c97;
       `;
       
       let isTeacherEditMode = true;
 
       bar.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="background:#c1121f; color:#fff; padding:2px 8px; border-radius:4px; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:1px;">Biên tập</span>
+          <span style="background:#135c97; color:#fff; padding:2px 8px; border-radius:4px; font-weight:800; font-size:10px; text-transform:uppercase; letter-spacing:1px;">Biên tập</span>
           <span style="font-weight:600; margin-right:10px;">Chỉnh sửa như Word</span>
           <div id="tma-fmt-controls-wrap" style="display:flex; align-items:center; gap:8px;">
             <div style="display:flex; align-items:center; gap:4px; background:#334155; padding:3px 6px; border-radius:6px; margin-right:10px;">
@@ -1984,7 +1984,7 @@
           <span id="tma-editor-status" style="color:#94a3b8; font-style:italic;">Chưa có thay đổi</span>
           <button id="tma-editor-toggle-preview" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">👁 Xem học sinh</button>
           <button id="tma-editor-save-local" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">Lưu nháp</button>
-          <button id="tma-editor-save-cloud" style="background:#c1121f; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">Đồng bộ Cloud</button>
+          <button id="tma-editor-save-cloud" style="background:#135c97; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; transition: background 0.15s;">Đồng bộ Cloud</button>
         </div>
       `;
       document.body.appendChild(bar);
@@ -2302,7 +2302,7 @@
           if (!img.dataset.hasListeners) {
             img.dataset.hasListeners = "true";
             img.addEventListener("mouseenter", () => {
-              if (isTeacherEditMode) img.style.borderColor = "#c1121f";
+              if (isTeacherEditMode) img.style.borderColor = "#135c97";
             });
             img.addEventListener("mouseleave", () => {
               if (isTeacherEditMode) {
@@ -2377,13 +2377,13 @@
         });
 
         img.classList.add("tma-editing-active");
-        img.style.borderColor = "#c1121f";
+        img.style.borderColor = "#135c97";
 
         const resizer = document.createElement("div");
         resizer.id = "tma-img-resizer";
         resizer.style.cssText = `
           position: absolute;
-          border: 1px dashed #c1121f;
+          border: 1px dashed #135c97;
           z-index: 2147483600;
           pointer-events: none;
           box-sizing: border-box;
@@ -2397,7 +2397,7 @@
             width: 8px;
             height: 8px;
             background: #fff;
-            border: 1.5px solid #c1121f;
+            border: 1.5px solid #135c97;
             border-radius: 50%;
             pointer-events: auto;
             box-sizing: border-box;

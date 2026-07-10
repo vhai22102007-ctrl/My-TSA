@@ -1,7 +1,7 @@
 :root {
-      --brand: #c1121f;
-      --brand-dark: #9f0f1a;
-      --brand-soft: #fff1f2;
+      --brand: #135c97;
+      --brand-dark: #0f4a7a;
+      --brand-soft: #eff6ff;
       --page: #f8fafc;
       --card: #ffffff;
       --text: #111827;
@@ -537,7 +537,7 @@
 
     .input:focus, .select:focus, .textarea:focus {
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(193, 18, 31, .12);
+      box-shadow: 0 0 0 3px rgba(19, 92, 151, .12);
     }
 
     .btn-row {
@@ -868,7 +868,7 @@
       border: 1px solid #dcfce7;
     }
     .badge-red {
-      background: #fff1f2;
+      background: #eff6ff;
       color: #e11d48;
       font-size: 11px;
       font-weight: 600;
@@ -1042,7 +1042,7 @@
       justify-content: center;
       font-weight: 800;
       font-size: 15px;
-      box-shadow: 0 2px 4px rgba(193, 18, 31, 0.16);
+      box-shadow: 0 2px 4px rgba(19, 92, 151, 0.16);
     }
     #math-question-form, #reading-question-form, #science-question-form,
     #reading-group-form, #science-group-form {
@@ -1144,7 +1144,7 @@
     }
     .choice-item .choice-input-field:focus {
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.12);
+      box-shadow: 0 0 0 3px rgba(19, 92, 151, 0.12);
     }
 
     /* True/False table statements matching student side */

@@ -5778,6 +5778,7 @@ YÊU CẦU QUAN TRỌNG:
         stripFormulaQuestions(exam);
         ensureSchema();
         syncMetadataToForm();
+        initSocialLinksForm();
         ["math", "reading", "science"].forEach(function (sectionId) {
           editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };
         });
@@ -6249,4 +6250,84 @@ YÊU CẦU QUAN TRỌNG:
       window.deleteLmsAsset = deleteLmsAsset;
 
       document.addEventListener("DOMContentLoaded", init);
+
+      function initSocialLinksForm() {
+        var form = document.getElementById("social-links-form");
+        if (!form) return;
+
+        var defaultLinks = {
+          facebook: { url: "https://facebook.com/mapstudy", text: "Facebook TMA Study" },
+          youtube: { url: "https://youtube.com/c/ThayVuNgocAnh", text: "Thầy Vũ Ngọc Anh - Chuyên luyện thi Vật lý" },
+          tiktok: { url: "https://tiktok.com/@mapstudy", text: "Tiktok TMA Study" },
+          messenger: { url: "https://m.me/mapstudy", text: "Messenger TMA Study" }
+        };
+
+        var saved = defaultLinks;
+        try {
+          var localData = localStorage.getItem("tmaTsaSocialLinks");
+          if (localData) {
+            saved = JSON.parse(localData);
+          }
+        } catch(e) {}
+
+        // Populate fields
+        var fbText = document.getElementById("link-fb-text");
+        var fbUrl = document.getElementById("link-fb-url");
+        if (fbText && fbUrl && saved.facebook) {
+          fbText.value = saved.facebook.text || defaultLinks.facebook.text;
+          fbUrl.value = saved.facebook.url || defaultLinks.facebook.url;
+        }
+
+        var ytText = document.getElementById("link-yt-text");
+        var ytUrl = document.getElementById("link-yt-url");
+        if (ytText && ytUrl && saved.youtube) {
+          ytText.value = saved.youtube.text || defaultLinks.youtube.text;
+          ytUrl.value = saved.youtube.url || defaultLinks.youtube.url;
+        }
+
+        var tkText = document.getElementById("link-tk-text");
+        var tkUrl = document.getElementById("link-tk-url");
+        if (tkText && tkUrl && saved.tiktok) {
+          tkText.value = saved.tiktok.text || defaultLinks.tiktok.text;
+          tkUrl.value = saved.tiktok.url || defaultLinks.tiktok.url;
+        }
+
+        var msgText = document.getElementById("link-msg-text");
+        var msgUrl = document.getElementById("link-msg-url");
+        if (msgText && msgUrl && saved.messenger) {
+          msgText.value = saved.messenger.text || defaultLinks.messenger.text;
+          msgUrl.value = saved.messenger.url || defaultLinks.messenger.url;
+        }
+
+        form.onsubmit = function(e) {
+          e.preventDefault();
+
+          var updated = {
+            facebook: {
+              text: (document.getElementById("link-fb-text").value || "").trim(),
+              url: (document.getElementById("link-fb-url").value || "").trim()
+            },
+            youtube: {
+              text: (document.getElementById("link-yt-text").value || "").trim(),
+              url: (document.getElementById("link-yt-url").value || "").trim()
+            },
+            tiktok: {
+              text: (document.getElementById("link-tk-text").value || "").trim(),
+              url: (document.getElementById("link-tk-url").value || "").trim()
+            },
+            messenger: {
+              text: (document.getElementById("link-msg-text").value || "").trim(),
+              url: (document.getElementById("link-msg-url").value || "").trim()
+            }
+          };
+
+          try {
+            localStorage.setItem("tmaTsaSocialLinks", JSON.stringify(updated));
+            alert("✓ Cấu hình liên kết đã được lưu thành công!");
+          } catch(err) {
+            alert("Lỗi khi lưu cấu hình: " + err.message);
+          }
+        };
+      }
+
     })();

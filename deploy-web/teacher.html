@@ -28,7 +28,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Quản trị viên và Bộ soạn đề TSA dành cho giáo viên.">
-  <meta name="theme-color" content="#c1121f">
+  <meta name="theme-color" content="#135c97">
   <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
   <link rel="stylesheet" href="css/exam-room.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -254,8 +254,17 @@
           </span>
           <span>Nhật ký & Bảo mật</span>
         </button>
+        <button class="nav-button" type="button" data-tab-target="manage-links">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+          </span>
+          <span>Cấu hình liên kết</span>
+        </button>
         <div style="border-top: 1px solid var(--border); margin: 10px 0; opacity: 0.5;"></div>
-        <button class="nav-button" type="button" onclick="teacherLogout()" style="color: #c1121f;">
+        <button class="nav-button" type="button" onclick="teacherLogout()" style="color: #135c97;">
           <span class="menu-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -760,6 +769,70 @@
             </article>
           </div>
         </div>
+
+        <!-- 9. TAB: CẤU HÌNH LIÊN KẾT -->
+        <div id="tab-manage-links" class="tab-panel">
+          <div class="topbar">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+                  <line x1="13" y1="10" x2="21" y2="10"></line><line x1="13" y1="14" x2="21" y2="14"></line>
+                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
+                </svg>
+              </button>
+              <div>
+                <h1>Cấu hình liên kết mạng xã hội</h1>
+                <p style="margin: 6px 0 0; color: var(--muted);">Các liên kết này sẽ được hiển thị ở chân thanh điều hướng (Sidebar) của học sinh.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-top: 20px;">
+            <form id="social-links-form" style="display: flex; flex-direction: column; gap: 20px; max-width: 600px;">
+              <!-- Facebook Link -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 600; font-size: 13.5px; color: #374151;">Facebook Link</label>
+                <div style="display: flex; gap: 10px;">
+                  <input type="text" id="link-fb-text" placeholder="Tên hiển thị (ví dụ: Facebook TMA Study)" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                  <input type="url" id="link-fb-url" placeholder="Đường dẫn URL" style="flex: 2; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                </div>
+              </div>
+
+              <!-- YouTube Link -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 600; font-size: 13.5px; color: #374151;">YouTube Link</label>
+                <div style="display: flex; gap: 10px;">
+                  <input type="text" id="link-yt-text" placeholder="Tên hiển thị" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                  <input type="url" id="link-yt-url" placeholder="Đường dẫn URL" style="flex: 2; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                </div>
+              </div>
+
+              <!-- Tiktok Link -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 600; font-size: 13.5px; color: #374151;">Tiktok Link</label>
+                <div style="display: flex; gap: 10px;">
+                  <input type="text" id="link-tk-text" placeholder="Tên hiển thị" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                  <input type="url" id="link-tk-url" placeholder="Đường dẫn URL" style="flex: 2; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                </div>
+              </div>
+
+              <!-- Messenger Link -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-weight: 600; font-size: 13.5px; color: #374151;">Messenger Link</label>
+                <div style="display: flex; gap: 10px;">
+                  <input type="text" id="link-msg-text" placeholder="Tên hiển thị" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                  <input type="url" id="link-msg-url" placeholder="Đường dẫn URL" style="flex: 2; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px;" required>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div style="margin-top: 10px;">
+                <button type="submit" style="padding: 10px 20px; font-size: 14px; font-weight: 700; background: #135c97; border: none; border-radius: 6px; color: white; cursor: pointer; transition: background 0.15s;">Lưu cấu hình</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
 
       <div id="editor-container" style="display: none;">
@@ -1113,7 +1186,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
   <!-- Profile Detail Modal -->
   <div class="modal-overlay" id="student-detail-modal" style="display: none;">
     <div class="modal-card">
-      <div class="card-header" style="background: var(--brand-soft); border-bottom: 1px solid rgba(193, 18, 31, 0.15);">
+      <div class="card-header" style="background: var(--brand-soft); border-bottom: 1px solid rgba(19, 92, 151, 0.15);">
         <div>
           <h2 style="color: var(--brand); font-weight: 800;" id="modal-student-name">Thông tin học sinh</h2>
           <p id="modal-student-code" style="color: var(--brand-dark); font-weight: 600;">Mã học sinh: --</p>
@@ -1305,7 +1378,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
     .asset-item-card.selected {
       border-color: var(--brand);
       background: #fef2f2;
-      box-shadow: 0 0 0 2px rgba(193, 18, 31, 0.15);
+      box-shadow: 0 0 0 2px rgba(19, 92, 151, 0.15);
     }
     .asset-item-thumb {
       width: 100%;
