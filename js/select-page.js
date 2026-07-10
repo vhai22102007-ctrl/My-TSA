@@ -1439,7 +1439,8 @@
                 author: c.teacher || "Trần Hoàng Anh",
                 category: c.category || "TSA",
                 lessons: lessonsForCourse,
-                progress: 33
+                progress: 33,
+                cover_image: c.cover_image || ""
               });
             }
           }
@@ -1575,35 +1576,41 @@
         }
 
         filtered.forEach((course, idx) => {
-          const isRegistered = registeredIds.includes(course.id);
           const card = document.createElement("article");
           card.className = "course-card";
           card.style.setProperty("--delay", `${idx * 80}ms`);
           card.style.cursor = "pointer";
+          card.title = course.title;
+          card.setAttribute("aria-label", course.title);
 
-          let heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
-          const titleLower = course.title.toLowerCase();
-          if (titleLower.includes("tsa")) {
-            heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
-          } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
-            heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+          let heroImage = course.cover_image || "";
+          if (!heroImage) {
+            const titleLower = course.title.toLowerCase();
+            if (titleLower.includes("tsa")) {
+              heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
+            } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
+              heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+            } else {
+              heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
+            }
           }
 
+          const isRegistered = registeredIds.includes(course.id);
           const actionBtn = isRegistered
-            ? `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#22c55e;">Vào học</button>`
-            : `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#64748b;">Chi tiết</button>`;
+            ? `<button type="button" class="enter-btn enter-class-btn">Vào học</button>`
+            : `<button type="button" class="enter-btn enter-class-btn not-registered">Xem thêm</button>`;
 
           card.innerHTML = `
             <div class="course-hero" style="background-image: url('${heroImage}')"></div>
             <div class="course-body">
-              <h3 class="course-name">${course.title}</h3>
-              <p class="course-desc">${course.label || course.category}</p>
+              <h4 class="course-name">${course.title}</h4>
+              <p class="course-desc">${course.category} | ${course.author || "TMA TSA"}</p>
               <div class="divider"></div>
               <div class="course-footer">
-                <div class="lesson-count">
-                  <span class="book-icon"></span>
-                  <span>${course.lessons?.length || 33} bài học</span>
-                </div>
+                <span class="lesson-count">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                  <span>${course.lessons?.length || 0} bài học</span>
+                </span>
                 ${actionBtn}
               </div>
             </div>
@@ -1708,35 +1715,41 @@
         }
 
         filtered.forEach((course, idx) => {
-          const isRegistered = registeredIds.includes(course.id);
           const card = document.createElement("article");
           card.className = "course-card";
           card.style.setProperty("--delay", `${idx * 80}ms`);
           card.style.cursor = "pointer";
+          card.title = course.title;
+          card.setAttribute("aria-label", course.title);
 
-          let heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
-          const titleLower = course.title.toLowerCase();
-          if (titleLower.includes("tsa")) {
-            heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
-          } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
-            heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+          let heroImage = course.cover_image || "";
+          if (!heroImage) {
+            const titleLower = course.title.toLowerCase();
+            if (titleLower.includes("tsa")) {
+              heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
+            } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
+              heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+            } else {
+              heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
+            }
           }
 
+          const isRegistered = registeredIds.includes(course.id);
           const actionBtn = isRegistered
-            ? `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#22c55e;">Vào học</button>`
-            : `<button type="button" class="enter-btn enter-class-btn" style="border:none; cursor:pointer; background:#64748b;">Chi tiết</button>`;
+            ? `<button type="button" class="enter-btn enter-class-btn">Vào học</button>`
+            : `<button type="button" class="enter-btn enter-class-btn not-registered">Xem thêm</button>`;
 
           card.innerHTML = `
             <div class="course-hero" style="background-image: url('${heroImage}')"></div>
             <div class="course-body">
-              <h3 class="course-name">${course.title}</h3>
-              <p class="course-desc">${course.label || course.category}</p>
+              <h4 class="course-name">${course.title}</h4>
+              <p class="course-desc">${course.category} | ${course.author || "TMA TSA"}</p>
               <div class="divider"></div>
               <div class="course-footer">
-                <div class="lesson-count">
-                  <span class="book-icon"></span>
-                  <span>${course.lessons?.length || 33} bài học</span>
-                </div>
+                <span class="lesson-count">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                  <span>${course.lessons?.length || 0} bài học</span>
+                </span>
                 ${actionBtn}
               </div>
             </div>
@@ -2610,6 +2623,8 @@
           const iframe = document.getElementById("course-video-iframe");
           iframe.style.display = "none";
           iframe.src = "";
+          const driveOverlay = document.getElementById("video-drive-overlay");
+          if (driveOverlay) driveOverlay.style.display = "none";
           stopWatermark();
 
           // Hide lesson info bar
@@ -2799,8 +2814,17 @@
                                       cleanYtId = ytMatch[1];
                                     }
                                     iframe.src = `https://www.youtube-nocookie.com/embed/${cleanYtId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&color=white&showinfo=0`;
+                                    const driveOverlay = document.getElementById("video-drive-overlay");
+                                    if (driveOverlay) driveOverlay.style.display = "none";
                                   } else {
-                                    iframe.src = `https://drive.google.com/file/d/${videoId || "17l2lP"}/preview`;
+                                    let cleanDriveId = videoId;
+                                    const driveMatch = videoId.match(/\/d\/([a-zA-Z0-9_-]{25,100})/);
+                                    if (driveMatch && driveMatch[1]) {
+                                      cleanDriveId = driveMatch[1];
+                                    }
+                                    iframe.src = `https://drive.google.com/file/d/${cleanDriveId || "17l2lP"}/preview`;
+                                    const driveOverlay = document.getElementById("video-drive-overlay");
+                                    if (driveOverlay) driveOverlay.style.display = "block";
                                   }
                                   
                                   startWatermark(studentInfo.name || studentInfo.username || "Học sinh", studentInfo.phone);
@@ -3122,6 +3146,8 @@
         stopWatermark();
         const iframe = document.getElementById("course-video-iframe");
         if (iframe) iframe.src = "";
+        const driveOverlay = document.getElementById("video-drive-overlay");
+        if (driveOverlay) driveOverlay.style.display = "none";
       }
 
       if (closeCourseModalBtn) closeCourseModalBtn.addEventListener("click", closeCourseStudyModalFunc);

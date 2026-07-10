@@ -5176,6 +5176,10 @@ YÊU CẦU QUAN TRỌNG:
       var docLink = "";
 
       if (type === "video") {
+        if (rawUrl.includes("/folders/")) {
+          alert("Lưu ý: Bạn đang nhập liên kết Thư mục (folders) của Google Drive. Vui lòng mở đúng tệp video, nhấn nút 'Chia sẻ' ở góc phải và chọn 'Sao chép liên kết' để lấy đúng link video.");
+          return;
+        }
         // Auto extract YouTube Video ID from full URL
         var ytMatch = rawUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^\"&?\/ ]{11})/i);
         if (ytMatch && ytMatch[1]) {
