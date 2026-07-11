@@ -6421,6 +6421,7 @@
       width: 100% !important;
       aspect-ratio: 3 / 1 !important;
       height: auto !important;
+      flex-shrink: 0 !important;
       border-radius: 12px !important;
       overflow: hidden !important;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
