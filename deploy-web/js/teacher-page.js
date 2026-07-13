@@ -315,60 +315,98 @@
         savedLinks = JSON.parse(localStorage.getItem("tmaTsaDriveLinks") || "{}");
       } catch(e) {}
       
+      var defaultMaterials = [
+        { title: "Đề TSA số 01", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề TSA số 02", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề TSA số 03", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề TSA số 04", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề TSA số 05", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề TSA số 06", category: "ĐGTD", subject: "TOÁN" },
+        { title: "Đề HSA số 01", category: "ĐGNL", subject: "TOÁN" },
+        { title: "Đề HSA số 02", category: "ĐGNL", subject: "TOÁN" },
+        { title: "Đề HSA số 03", category: "ĐGNL", subject: "TOÁN" },
+        { title: "Đề HSA số 04", category: "ĐGNL", subject: "TOÁN" },
+        { title: "Đề THPTQG số 01", category: "LỚP 12", subject: "TOÁN" },
+        { title: "Đề THPTQG số 02", category: "LỚP 12", subject: "TOÁN" },
+        { title: "Đề THPTQG số 03", category: "LỚP 12", subject: "TOÁN" },
+        { title: "Đề THPTQG số 04", category: "LỚP 12", subject: "TOÁN" }
+      ];
+
       if (savedLinks && typeof savedLinks === "object" && !Array.isArray(savedLinks)) {
-        var defaultMaterials = [
-          { title: "Đề TSA số 01", category: "TSA" },
-          { title: "Đề TSA số 02", category: "TSA" },
-          { title: "Đề TSA số 03", category: "TSA" },
-          { title: "Đề TSA số 04", category: "TSA" },
-          { title: "Đề TSA số 05", category: "TSA" },
-          { title: "Đề TSA số 06", category: "TSA" },
-          { title: "Đề HSA số 01", category: "HSA" },
-          { title: "Đề HSA số 02", category: "HSA" },
-          { title: "Đề HSA số 03", category: "HSA" },
-          { title: "Đề HSA số 04", category: "HSA" },
-          { title: "Đề THPTQG số 01", category: "THPT" },
-          { title: "Đề THPTQG số 02", category: "THPT" },
-          { title: "Đề THPTQG số 03", category: "THPT" },
-          { title: "Đề THPTQG số 04", category: "THPT" }
-        ];
         currentMaterialsList = defaultMaterials.map(function(m, idx) {
           return {
             id: "doc_" + Date.now() + "_" + idx,
             title: m.title,
             category: m.category,
+            subject: m.subject,
             url: savedLinks[idx] || ""
           };
         });
       } else if (Array.isArray(savedLinks)) {
-        currentMaterialsList = savedLinks;
+        currentMaterialsList = savedLinks.map(function(m) {
+          var cat = m.category;
+          if (cat === "TSA") cat = "ĐGTD";
+          else if (cat === "HSA") cat = "ĐGNL";
+          else if (cat === "THPT") cat = "LỚP 12";
+          return {
+            id: m.id || "doc_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+            title: m.title || "",
+            category: cat || "ĐGTD",
+            subject: m.subject || "TOÁN",
+            url: m.url || ""
+          };
+        });
       } else {
-        var defaultMaterials = [
-          { title: "Đề TSA số 01", category: "TSA" },
-          { title: "Đề TSA số 02", category: "TSA" },
-          { title: "Đề TSA số 03", category: "TSA" },
-          { title: "Đề TSA số 04", category: "TSA" },
-          { title: "Đề TSA số 05", category: "TSA" },
-          { title: "Đề TSA số 06", category: "TSA" },
-          { title: "Đề HSA số 01", category: "HSA" },
-          { title: "Đề HSA số 02", category: "HSA" },
-          { title: "Đề HSA số 03", category: "HSA" },
-          { title: "Đề HSA số 04", category: "HSA" },
-          { title: "Đề THPTQG số 01", category: "THPT" },
-          { title: "Đề THPTQG số 02", category: "THPT" },
-          { title: "Đề THPTQG số 03", category: "THPT" },
-          { title: "Đề THPTQG số 04", category: "THPT" }
-        ];
         currentMaterialsList = defaultMaterials.map(function(m, idx) {
           return {
             id: "doc_" + Date.now() + "_" + idx,
             title: m.title,
             category: m.category,
+            subject: m.subject,
             url: ""
           };
         });
       }
     }
+
+    window.activeTeacherCategory = "ALL";
+    window.activeTeacherSubject = "ALL";
+
+    window.filterTeacherCategory = function(cat) {
+      window.activeTeacherCategory = cat;
+      document.querySelectorAll(".library-category-pills .lib-pill-btn").forEach(function(btn) {
+        if (btn.getAttribute("data-category") === cat) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+      const selectEl = document.getElementById("new-doc-category");
+      if (selectEl && cat !== "ALL") {
+        selectEl.value = cat;
+      }
+      renderManageDocuments();
+    };
+
+    window.filterTeacherSubject = function(sub) {
+      window.activeTeacherSubject = sub;
+      document.querySelectorAll(".library-subject-tabs .lib-sub-tab").forEach(function(btn) {
+        if (btn.getAttribute("data-teacher-subject") === sub) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+      const selectEl = document.getElementById("new-doc-subject");
+      if (selectEl && sub !== "ALL") {
+        selectEl.value = sub;
+      }
+      renderManageDocuments();
+    };
+
+    window.onTeacherLibrarySearchInput = function() {
+      renderManageDocuments();
+    };
 
     function renderManageDocuments() {
       var container = document.getElementById("teacher-materials-inputs");
@@ -379,24 +417,67 @@
       }
 
       var html = "";
-      var categories = ["TSA", "HSA", "THPT"];
-      
+      var categories = window.activeTeacherCategory === "ALL" 
+        ? ["ĐGTD", "ĐGNL", "LỚP 12", "LỚP 11", "LỚP 10", "LỚP 9"] 
+        : [window.activeTeacherCategory];
+      var subjectOptions = ["TOÁN", "LÝ", "SINH", "ANH", "HOÁ", "VĂN"];
+
+      // Setup Search filter
+      const searchInput = document.getElementById("teacher-lib-search-input");
+      const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+      function removeAccents(str) {
+        return String(str || "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[đĐ]/g, function(m) { return m === 'đ' ? 'd' : 'D'; })
+          .toLowerCase();
+      }
+
       categories.forEach(function(cat) {
-        var labelCat = cat === "THPT" ? "THPTQG" : cat;
-        html += `<h3 style="margin-top: 20px; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px; color: var(--brand); font-size: 14px; font-weight: 800;">Tài liệu chuyên mục ${labelCat}</h3>`;
-        var filtered = currentMaterialsList.filter(function(m) { return m.category === cat; });
+        // Filter elements of the current category matching subject and search
+        var filtered = currentMaterialsList.filter(function(m) { 
+          if (m.category !== cat) return false;
+          if (window.activeTeacherSubject !== "ALL" && m.subject !== window.activeTeacherSubject) return false;
+          if (keyword) {
+            const cleanTitle = removeAccents(m.title);
+            const cleanKeyword = removeAccents(keyword);
+            if (!cleanTitle.includes(cleanKeyword)) return false;
+          }
+          return true;
+        });
+
+        // Skip category header if category is empty and we are filtering
+        if (filtered.length === 0 && (window.activeTeacherSubject !== "ALL" || keyword)) {
+          return;
+        }
+
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px;">
+            <h3 style="margin: 0; color: var(--brand); font-size: 14px; font-weight: 800;">Tài liệu chuyên mục ${cat}</h3>
+            <button class="btn" type="button" onclick="window.addNewDocumentRow('${cat}')" style="background-color: #16a34a; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer;">+ Thêm tài liệu mới</button>
+          </div>
+        `;
         
         if (filtered.length === 0) {
           html += `<p style="color: var(--muted); font-size: 13px; font-style: italic; margin-bottom: 12px;">Chưa có tài liệu nào trong chuyên mục này.</p>`;
         } else {
           filtered.forEach(function(material) {
+            var subjectSelect = `<select class="select" data-field="subject" data-doc-id="${material.id}" style="width: 100px; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: white; box-sizing: border-box; height: 36px; cursor: pointer; font-size: 13px; font-weight: 600;">`;
+            subjectOptions.forEach(function(sub) {
+              var selected = material.subject === sub ? "selected" : "";
+              subjectSelect += `<option value="${sub}" ${selected}>${sub}</option>`;
+            });
+            subjectSelect += `</select>`;
+
             html += `
               <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
                 <div style="display: flex; flex: 1; gap: 8px; min-width: 300px;">
-                  <input class="input" type="text" data-field="title" data-doc-id="${material.id}" value="${esc(material.title)}" placeholder="Tên tài liệu..." style="width: 200px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; box-sizing: border-box;">
-                  <input class="input" type="text" data-field="url" data-doc-id="${material.id}" value="${esc(material.url)}" placeholder="Nhập link Google Drive..." style="flex: 1; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box;">
+                  <input class="input" type="text" data-field="title" data-doc-id="${material.id}" value="${esc(material.title)}" placeholder="Tên tài liệu..." style="flex: 2; min-width: 150px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; box-sizing: border-box;">
+                  ${subjectSelect}
+                  <input class="input" type="text" data-field="url" data-doc-id="${material.id}" value="${esc(material.url)}" placeholder="Nhập link Google Drive / PDF..." style="flex: 3; min-width: 200px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box;">
                 </div>
-                <button class="btn" type="button" onclick="removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 8px; padding: 6px 14px; height: 36px; cursor: pointer; font-size: 12px;">Xóa</button>
+                <button class="btn" type="button" onclick="window.removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 8px; padding: 6px 14px; height: 36px; cursor: pointer; font-size: 12px;">Xóa</button>
               </div>
             `;
           });
@@ -404,29 +485,45 @@
       });
       container.innerHTML = html;
 
-      // Add input event listeners to save changes immediately in-memory
-      container.querySelectorAll("input").forEach(function(input) {
-        input.addEventListener("input", function() {
-          var id = input.getAttribute("data-doc-id");
-          var field = input.getAttribute("data-field");
-          var value = input.value.trim();
+      // Add input/change event listeners to save changes immediately in-memory
+      container.querySelectorAll("input, select").forEach(function(el) {
+        var updateFn = function() {
+          var id = el.getAttribute("data-doc-id");
+          var field = el.getAttribute("data-field");
+          var value = el.value.trim();
           var doc = currentMaterialsList.find(function(m) { return m.id === id; });
           if (doc) {
             doc[field] = value;
           }
-        });
+        };
+        el.addEventListener("input", updateFn);
+        el.addEventListener("change", updateFn);
       });
     }
+
+    window.addNewDocumentRow = function(cat) {
+      var newDoc = {
+        id: "doc_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        title: "",
+        category: cat,
+        subject: "TOÁN",
+        url: ""
+      };
+      currentMaterialsList.push(newDoc);
+      renderManageDocuments();
+    };
 
     function addNewDocumentToList() {
       var titleInput = document.getElementById("new-doc-title");
       var catSelect = document.getElementById("new-doc-category");
+      var subSelect = document.getElementById("new-doc-subject");
       var urlInput = document.getElementById("new-doc-url");
 
       if (!titleInput || !catSelect || !urlInput) return;
 
       var title = titleInput.value.trim();
       var cat = catSelect.value;
+      var sub = subSelect ? subSelect.value : "TOÁN";
       var url = urlInput.value.trim();
 
       if (!title) {
@@ -439,6 +536,7 @@
         id: "doc_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
         title: title,
         category: cat,
+        subject: sub,
         url: url
       };
 
@@ -4728,12 +4826,20 @@ YÊU CẦU QUAN TRỌNG:
 
         // Lessons of this chapter
         chapterLessons.forEach(function(lesson) {
-          var type = getLessonType(lesson.title);
+          var type = lesson.type === "header" ? "header" : getLessonType(lesson.title);
           var lessonRow = document.createElement("div");
           
           var previewTag = lesson.preview_allowed ? ` <span style="font-size: 9px; background: #e2fbe8; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 6px; display: inline-block; vertical-align: middle;">Free</span>` : "";
 
-          if (type === "phan") {
+          if (type === "header") {
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 8px; margin-bottom: 4px; transition: all 0.15s;";
+            lessonRow.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">📌</span>
+                <span style="font-weight: 800; color: #0f5a9e; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px;">${esc(lesson.title)}</span>
+              </div>
+            `;
+          } else if (type === "phan") {
             // Thụt lề sub-item phẳng
             lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; margin-left: 24px; position: relative; transition: all 0.15s;";
             
@@ -4791,7 +4897,9 @@ YÊU CẦU QUAN TRỌNG:
           var hasVideo = !!lesson.video_drive_id;
           var hasDoc = !!lesson.doc_link;
           
-          if (type !== "document" && type !== "test") {
+          if (type === "header") {
+            // No media toggles
+          } else if (type !== "document" && type !== "test") {
             // Video button
             var btnVideo = document.createElement("button");
             btnVideo.className = "btn-media-toggle";
@@ -4834,7 +4942,7 @@ YÊU CẦU QUAN TRỌNG:
           var actionButtons = document.createElement("div");
           actionButtons.style.cssText = "display: flex; gap: 6px;";
           
-          var addBranchBtnHtml = (type === "bai") ? `<button class="btn btn-outline btn-xs" type="button" onclick="showAddSubLessonForLesson('${escJs(chName)}', '${escJs(lesson.title)}')" style="padding: 2px 8px; font-size: 11px; color: #0f5a9e; border-color: #0f5a9e;" title="Thêm nhánh con (Phần...)">+ Thêm nhánh</button>` : '';
+          var addBranchBtnHtml = (type === "bai" || type === "header" || type === "phan") ? `<button class="btn btn-outline btn-xs" type="button" onclick="showAddSubLessonForLesson('${escJs(chName)}', '${escJs(lesson.title)}')" style="padding: 2px 8px; font-size: 11px; color: #0f5a9e; border-color: #0f5a9e;" title="Thêm nhánh con (Phần...)">+ Thêm nhánh</button>` : '';
           
           actionButtons.innerHTML = `
             ${addBranchBtnHtml}
@@ -4847,10 +4955,18 @@ YÊU CẦU QUAN TRỌNG:
           
           // Hover effect
           lessonRow.onmouseenter = function() {
-            lessonRow.style.background = "rgba(15, 90, 158, 0.04)";
+            if (type === "header") {
+              lessonRow.style.background = "#f1f5f9";
+            } else {
+              lessonRow.style.background = "rgba(15, 90, 158, 0.04)";
+            }
           };
           lessonRow.onmouseleave = function() {
-            lessonRow.style.background = "transparent";
+            if (type === "header") {
+              lessonRow.style.background = "#f8fafc";
+            } else {
+              lessonRow.style.background = "transparent";
+            }
           };
 
           lessonsWrapper.appendChild(lessonRow);
@@ -5129,7 +5245,10 @@ YÊU CẦU QUAN TRỌNG:
       var inputUrl = document.getElementById("lms-lesson-modal-drive-id");
       
       // Determine selection type and display link based on filled field
-      if (lesson.video_drive_id) {
+      if (lesson.type === "header") {
+        selectType.value = "header";
+        inputUrl.value = "";
+      } else if (lesson.video_drive_id) {
         selectType.value = "video";
         inputUrl.value = lesson.video_drive_id;
       } else if (lesson.doc_link) {
@@ -5161,14 +5280,23 @@ YÊU CẦU QUAN TRỌNG:
       var select = document.getElementById("lms-lesson-modal-type");
       var label = document.getElementById("lms-lesson-modal-url-label");
       var input = document.getElementById("lms-lesson-modal-drive-id");
+      var wrap = document.getElementById("lms-lesson-modal-drive-wrap");
       if (!select || !label || !input) return;
       
-      if (select.value === "video") {
-        label.textContent = "Đường dẫn Video bài giảng (YouTube Link / Google Drive Link)";
-        input.placeholder = "Dán link YouTube (ví dụ: https://youtu.be/...) hoặc link Drive vào đây";
+      if (select.value === "header") {
+        if (wrap) wrap.style.display = "none";
+        input.required = false;
+        input.value = "";
       } else {
-        label.textContent = "Đường dẫn Tài liệu PDF / Google Drive link";
-        input.placeholder = "Dán link Drive tài liệu hoặc link file PDF vào đây";
+        if (wrap) wrap.style.display = "block";
+        input.required = true;
+        if (select.value === "video") {
+          label.textContent = "Đường dẫn Video bài giảng (YouTube Link / Google Drive Link)";
+          input.placeholder = "Dán link YouTube (ví dụ: https://youtu.be/...) hoặc link Drive vào đây";
+        } else {
+          label.textContent = "Đường dẫn Tài liệu PDF / Google Drive link";
+          input.placeholder = "Dán link Drive tài liệu hoặc link file PDF vào đây";
+        }
       }
     }
     window.onLmsLessonTypeChange = onLmsLessonTypeChange;
@@ -5207,9 +5335,13 @@ YÊU CẦU QUAN TRỌNG:
           }
         }
         docLink = "";
-      } else {
+      } else if (type === "pdf") {
         driveId = "";
         docLink = rawUrl;
+      } else {
+        // header
+        driveId = "";
+        docLink = "";
       }
 
       try {
@@ -5795,6 +5927,7 @@ YÊU CẦU QUAN TRỌNG:
         stripFormulaQuestions(exam);
         ensureSchema();
         syncMetadataToForm();
+        initSocialLinksForm();
         initSocialLinksForm();
         ["math", "reading", "science"].forEach(function (sectionId) {
           editingQuestion[sectionId] = { index: -1, question: defaultQuestion(sectionId) };

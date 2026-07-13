@@ -432,6 +432,36 @@
         return;
       }
 
+      // Define helpers globally at top for synchronous execution
+      function cleanCatStr(s) {
+        return String(s || "").trim().normalize("NFC").toUpperCase();
+      }
+
+      window.syncLibraryDocs = function() {
+        try {
+          const cached = JSON.parse(localStorage.getItem('tmaTsaDriveLinks'));
+          if (Array.isArray(cached) && cached.length > 0) {
+            window.LIBRARY_DOCS = cached.map(doc => {
+              return {
+                id: doc.id || "doc_" + Math.random(),
+                title: doc.title || "",
+                category: String(doc.category || "ĐGTD").trim().normalize("NFC").toUpperCase(),
+                subject: String(doc.subject || "TOÁN").trim().normalize("NFC").toUpperCase(),
+                views: doc.views || Math.floor(Math.random() * 3000) + 500,
+                date: doc.date || new Date().toLocaleDateString("vi-VN"),
+                url: doc.url || ""
+              };
+            });
+          }
+        } catch (e) {
+          console.warn("Failed to parse cached library docs:", e);
+        }
+      };
+
+      // Run sync immediately on page load
+      window.syncLibraryDocs();
+
+
       const completedExams = new Set();
 
       async function loadCompletedExams() {
@@ -723,30 +753,46 @@
         const dispNameEl = document.getElementById("student-display-name");
         if (dispNameEl) dispNameEl.textContent = displayName;
 
-        // Dynamic time-based greeting for History page
+        // Motivational quote and target reminder card for History page
         const historyGreetingEl = document.getElementById("history-welcome-greeting");
         if (historyGreetingEl) {
-          const now = new Date();
-          const hour = now.getHours();
-          let greetingPrefix = "Xin chào";
-          let timeEmoji = "👋";
-          let suffix = "Chúc bạn một ngày học tập thật hiệu quả!";
+          const quotes = [
+            "Con đường ngắn nhất để vượt qua khó khăn là đi xuyên qua nó. Hãy tiếp tục nỗ lực vì mục tiêu TSA!",
+            "Sự kiên trì của ngày hôm nay sẽ là trái ngọt của ngày mai. Mỗi bài luyện tập là một bước tiến gần hơn đến thủ khoa!",
+            "Đừng so sánh bản thân với người khác. Hãy so sánh bản thân với chính mình ngày hôm qua. Cố lên bạn nhé!",
+            "Thành công không phải là ngẫu nhiên, đó là kết quả của sự chuẩn bị chu đáo và tinh thần tự học bền bỉ."
+          ];
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
           
-          if (hour >= 5 && hour < 12) {
-            greetingPrefix = "Chào buổi sáng";
-            timeEmoji = "☀️";
-            suffix = "Chúc bạn một ngày học tập tràn đầy năng lượng!";
-          } else if (hour >= 12 && hour < 18) {
-            greetingPrefix = "Chào buổi chiều";
-            timeEmoji = "⛅";
-            suffix = "Hôm nay bạn đã ôn luyện được nhiều chưa?";
-          } else {
-            greetingPrefix = "Chào buổi tối";
-            timeEmoji = "🌙";
-            suffix = "Cùng ôn luyện một chút trước khi nghỉ ngơi nhé!";
-          }
-          
-          historyGreetingEl.innerHTML = `${timeEmoji} ${greetingPrefix}, <strong>${displayName}</strong>! <span class="waving-hand">👋</span> ${suffix}`;
+          historyGreetingEl.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 8px; background: #eff3f8; border-radius: 12px; padding: 14px 18px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: fit-content; max-width: 100%;">
+              
+              <!-- Row 1: Quote -->
+              <div style="display: flex; align-items: flex-start; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="#0f5a9e" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"></path>
+                  <line x1="9" y1="18" x2="15" y2="18"></line>
+                  <line x1="10" y1="22" x2="14" y2="22"></line>
+                </svg>
+                <p style="margin: 0; font-size: 13.5px; font-style: italic; color: #334155; line-height: 1.5;">
+                  Chào <strong>${displayName}</strong>, "${randomQuote}"
+                </p>
+              </div>
+
+              <!-- Row 2: Target (Aligned below Row 1) -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="#0f5a9e" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <circle cx="12" cy="12" r="6"></circle>
+                  <circle cx="12" cy="12" r="2"></circle>
+                </svg>
+                <span style="font-size: 12.5px; font-weight: 600; color: #0f5a9e; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
+                  Mục tiêu thi: <span style="background: #0f5a9e; color: #ffffff; padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">TSA & HSA Đạt Điểm Cao</span>
+                </span>
+              </div>
+
+            </div>
+          `;
         }
 
         const logDispNameEl = document.getElementById("logout-display-name");
@@ -2735,7 +2781,7 @@
 
             // SVG icons
             const SVG_PLAY = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="none" stroke="currentColor" stroke-width="1.8"></polygon></svg>`;
-            const SVG_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12.5 11 15.5 16.5 8.5"></polyline></svg>`;
+            const SVG_CHECK = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
             const SVG_LOCK = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
             const SVG_DOC = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><polyline points="14 2 14 7 19 7"></polyline></svg>`;
             const SVG_TEST = `<svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>`;
@@ -2886,8 +2932,11 @@
               let currentBai = null;
 
               chapterLessons.forEach(lesson => {
-                const type = getLessonType(lesson.title);
-                if (type === "phan") {
+                const type = lesson.type === "header" ? "header" : getLessonType(lesson.title);
+                if (type === "header") {
+                  currentBai = null;
+                  baiGroups.push({ type: "header", lesson });
+                } else if (type === "phan") {
                   if (currentBai) {
                     currentBai.phans.push(lesson);
                   } else {
@@ -2984,6 +3033,13 @@
 
                   // Play lesson on bai row click (if no subs, or click label directly)
                   makeLessonClickable(baiRow, lesson);
+
+                } else if (group.type === "header") {
+                  const row = document.createElement("div");
+                  row.className = "tree-header-row";
+                  row.style.cssText = "padding: 10px 14px; background: #f8fafc; border-left: 4px solid #0f5a9e; margin-top: 10px; margin-bottom: 4px; font-weight: 800; color: #0f5a9e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; text-align: left;";
+                  row.textContent = lesson.title;
+                  chapterBody.appendChild(row);
 
                 } else if (group.type === "document") {
                   const row = document.createElement("div");
@@ -3836,9 +3892,14 @@
           const linksData = localStorage.getItem('tmaTsaDriveLinks');
           if (linksData && linksCacheTime && (now - parseInt(linksCacheTime)) < 1800000) {
             shouldFetchLinks = false;
+            if (typeof window.syncLibraryDocs === "function") {
+              window.syncLibraryDocs();
+            }
             const activePanel = document.querySelector(".tab-panel.active");
             if (activePanel && activePanel.id === "tab-documents") {
-              renderMaterials();
+              if (typeof window.renderLibraryDocs === "function") {
+                window.renderLibraryDocs();
+              }
             }
           }
         } catch (e) {}
@@ -3853,9 +3914,14 @@
               if (data && typeof data === "object") {
                 localStorage.setItem('tmaTsaDriveLinks', JSON.stringify(data));
                 localStorage.setItem('tma_tsa_links_cache_time', now.toString());
+                if (typeof window.syncLibraryDocs === "function") {
+                  window.syncLibraryDocs();
+                }
                 const activePanel = document.querySelector(".tab-panel.active");
                 if (activePanel && activePanel.id === "tab-documents") {
-                  renderMaterials();
+                  if (typeof window.renderLibraryDocs === "function") {
+                    window.renderLibraryDocs();
+                  }
                 }
               }
             })
@@ -4268,6 +4334,8 @@
           }[currentExamTypeCategory] || "Thi thử";
         }
 
+          
+
         const categoryPrefix = currentExamTypeCategory.toUpperCase(); // "HSA", "THPT", "VACT", "QDA"
         const filtered = (window.EXAMS_LIST || []).filter(e => {
           return e.exam_code && e.exam_code.toUpperCase().startsWith(categoryPrefix);
@@ -4327,32 +4395,460 @@
         });
       }
 
-      function updateDocumentsUI() {
-        const titleEl = document.getElementById("documents-title");
-        const descEl = document.getElementById("documents-desc");
-        
-        // Reset search & filter on category change
-        const searchInput = document.getElementById("material-search-input");
-        if (searchInput) searchInput.value = "";
-        const filterSelect = document.getElementById("material-filter-select");
-        if (filterSelect) filterSelect.value = "all";
 
-        if (currentMaterialCategory === "tsa") {
-          titleEl.textContent = "Kho tài liệu ôn tập - TSA";
-          descEl.textContent = "Sách ôn thi và các bộ đề thi thử PDF Đánh giá tư duy tải xuống từ Drive.";
-        } else if (currentMaterialCategory === "hsa") {
-          titleEl.textContent = "Kho tài liệu ôn tập - HSA";
-          descEl.textContent = "Sách ôn thi và các bộ đề thi thử PDF Đánh giá năng lực tải xuống từ Drive.";
-        } else if (currentMaterialCategory === "thpt") {
-          titleEl.textContent = "Kho tài liệu ôn tập - THPTQG";
-          descEl.textContent = "Tài liệu lý thuyết trọng tâm và đề ôn thi tốt nghiệp THPT Quốc gia tải xuống từ Drive.";
+
+      // LIBRARY DOCUMENTS INTEGRATION
+            window.LIBRARY_DOCS = [
+        {
+          id: "doc_1783876292129_0",
+          title: "Đề TSA số 01",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 3019,
+          date: "08/06/2026",
+          url: "https://drive.google.com/file/d/1gLhPWAMtPfFkMat893qt57RbaO3F-itd/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_1",
+          title: "Đề TSA số 02",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 2831,
+          date: "04/06/2026",
+          url: "https://drive.google.com/file/d/14-g9kSExZRVrobvTbuKLNXpjzxAcvpWQ/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_2",
+          title: "Đề TSA số 03",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 2078,
+          date: "04/06/2026",
+          url: "https://drive.google.com/file/d/14-g9kSExZRVrobvTbuKLNXpjzxAcvpWQ/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_3",
+          title: "Đề TSA số 04",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 1273,
+          date: "04/06/2026",
+          url: "https://drive.google.com/file/d/14-g9kSExZRVrobvTbuKLNXpjzxAcvpWQ/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_4",
+          title: "Đề TSA số 05",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 2380,
+          date: "02/06/2026",
+          url: "https://drive.google.com/file/d/14-g9kSExZRVrobvTbuKLNXpjzxAcvpWQ/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_5",
+          title: "Đề TSA số 06",
+          category: "ĐGTD",
+          subject: "TOÁN",
+          views: 1574,
+          date: "02/06/2026",
+          url: "https://drive.google.com/file/d/14-g9kSExZRVrobvTbuKLNXpjzxAcvpWQ/view?usp=sharing"
+        },
+        {
+          id: "doc_1783876292129_6",
+          title: "Đề HSA số 01",
+          category: "ĐGNL",
+          subject: "TOÁN",
+          views: 4510,
+          date: "25/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_7",
+          title: "Đề HSA số 02",
+          category: "ĐGNL",
+          subject: "TOÁN",
+          views: 3120,
+          date: "22/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_8",
+          title: "Đề HSA số 03",
+          category: "ĐGNL",
+          subject: "TOÁN",
+          views: 5890,
+          date: "18/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_9",
+          title: "Đề HSA số 04",
+          category: "ĐGNL",
+          subject: "TOÁN",
+          views: 1890,
+          date: "15/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_10",
+          title: "Đề THPTQG số 01",
+          category: "LỚP 12",
+          subject: "TOÁN",
+          views: 2901,
+          date: "10/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_11",
+          title: "Đề THPTQG số 02",
+          category: "LỚP 12",
+          subject: "TOÁN",
+          views: 3201,
+          date: "05/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_12",
+          title: "Đề THPTQG số 03",
+          category: "LỚP 12",
+          subject: "TOÁN",
+          views: 1540,
+          date: "01/05/2026",
+          url: ""
+        },
+        {
+          id: "doc_1783876292129_13",
+          title: "Đề THPTQG số 04",
+          category: "LỚP 12",
+          subject: "TOÁN",
+          views: 2310,
+          date: "28/04/2026",
+          url: ""
         }
+      ];
+
+      
+
+            window.LIBRARY_FOLDERS = [
+        {
+          title: "Đánh giá tư duy - ĐGTD",
+          subtext: "6 tài liệu",
+          classTag: "ĐGTD"
+        },
+        {
+          title: "Đánh giá năng lực - ĐGNL",
+          subtext: "4 tài liệu",
+          classTag: "ĐGNL"
+        },
+        {
+          title: "Thi thử tốt nghiệp THPT - Lớp 12",
+          subtext: "4 tài liệu",
+          classTag: "Lớp 12"
+        }
+      ];
+
+      
+
+      window.activeLibraryCategory = "ALL";
+      window.activeLibrarySubject = "ALL";
+
+      window.renderLibrarySubTabs = function() {
+        const tabsContainer = document.querySelector(".library-subject-tabs");
+        if (!tabsContainer) return;
+        tabsContainer.innerHTML = "";
+
+        const category = cleanCatStr(window.activeLibraryCategory);
         
-        renderMaterials();
+        let tabs = [];
+        if (category === "ĐGTD" || category === "DGTD") {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "TDTAN", label: "Tư duy toán học" },
+            { key: "TDDH", label: "Tư duy đọc hiểu" },
+            { key: "TDKH", label: "Tư duy khoa học" }
+          ];
+        } else if (category === "ĐGNL" || category === "DGNL") {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "DINH_TINH", label: "Định tính" },
+            { key: "DINH_LUONG", label: "Định lượng" },
+            { key: "KHOA_HOC", label: "Khoa học" },
+            { key: "TIENG_ANH", label: "Tiếng Anh" }
+          ];
+        } else {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "TOÁN", label: "Toán" },
+            { key: "LÝ", label: "Lý" },
+            { key: "SINH", label: "Sinh" },
+            { key: "ANH", label: "Anh" },
+            { key: "HOÁ", label: "Hoá" },
+            { key: "VĂN", label: "Văn" }
+          ];
+        }
+
+        const validKeys = tabs.map(t => t.key);
+        if (!validKeys.includes(window.activeLibrarySubject)) {
+          window.activeLibrarySubject = "ALL";
+        }
+
+        tabs.forEach(tab => {
+          const btn = document.createElement("button");
+          btn.className = `lib-sub-tab${window.activeLibrarySubject === tab.key ? " active" : ""}`;
+          btn.setAttribute("data-subject", tab.key);
+          btn.onclick = () => window.filterLibrarySubject(tab.key);
+          btn.textContent = tab.label;
+          tabsContainer.appendChild(btn);
+        });
+      };
+
+      window.filterLibraryCategory = function(cat) {
+        const normCat = cleanCatStr(cat);
+        const activeNorm = cleanCatStr(window.activeLibraryCategory);
+        if (activeNorm === normCat) {
+          window.activeLibraryCategory = "ALL";
+        } else {
+          window.activeLibraryCategory = cat;
+        }
+        document.querySelectorAll(".lib-pill-btn").forEach(btn => {
+          const btnCat = cleanCatStr(btn.getAttribute("data-category"));
+          const currentActiveCat = cleanCatStr(window.activeLibraryCategory);
+          if (btnCat === currentActiveCat) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+        window.renderLibrarySubTabs();
+        window.renderLibraryDocs();
+      };
+
+      window.filterLibrarySubject = function(sub) {
+        window.activeLibrarySubject = sub;
+        document.querySelectorAll(".lib-sub-tab").forEach(tab => {
+          if (tab.getAttribute("data-subject") === sub) {
+            tab.classList.add("active");
+          } else {
+            tab.classList.remove("active");
+          }
+        });
+        window.renderLibraryDocs();
+      };
+
+      window.onLibrarySearchInput = function() {
+        window.renderLibraryDocs();
+      };
+
+      window.renderLibraryDocs = function() {
+        const grid = document.getElementById("library-docs-grid");
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        const searchInput = document.getElementById("lib-search-input");
+        const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+        function removeAccents(str) {
+          return String(str || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[đĐ]/g, m => m === 'đ' ? 'd' : 'D')
+            .toLowerCase();
+        }
+
+        const filtered = window.LIBRARY_DOCS.filter(doc => {
+          // 1. Category check
+          const activeCat = cleanCatStr(window.activeLibraryCategory);
+          const docCat = cleanCatStr(doc.category);
+          if (activeCat !== "ALL" && docCat !== activeCat) {
+            return false;
+          }
+          
+          // 2. Subject check with smart mappings for ĐGTD & ĐGNL sub-tabs
+          if (window.activeLibrarySubject !== "ALL") {
+            const cat = cleanCatStr(window.activeLibraryCategory);
+            const sub = window.activeLibrarySubject;
+            const docSub = cleanCatStr(doc.subject);
+            
+            if (cat === "ĐGTD" || cat === "DGTD") {
+              if (sub === "TDTAN") {
+                if (docSub !== "TOÁN" && !doc.title.toLowerCase().includes("toán")) return false;
+              } else if (sub === "TDDH") {
+                if (docSub !== "VĂN" && !doc.title.toLowerCase().includes("đọc hiểu") && !doc.title.toLowerCase().includes("văn")) return false;
+              } else if (sub === "TDKH") {
+                if (!["LÝ", "HOÁ", "SINH"].includes(docSub) && !doc.title.toLowerCase().includes("khoa học")) return false;
+              } else {
+                if (docSub !== cleanCatStr(sub)) return false;
+              }
+            } else if (cat === "ĐGNL" || cat === "DGNL") {
+              if (sub === "DINH_TINH") {
+                if (docSub !== "VĂN" && !doc.title.toLowerCase().includes("định tính") && !doc.title.toLowerCase().includes("văn")) return false;
+              } else if (sub === "DINH_LUONG") {
+                if (docSub !== "TOÁN" && !doc.title.toLowerCase().includes("định lượng") && !doc.title.toLowerCase().includes("toán")) return false;
+              } else if (sub === "KHOA_HOC") {
+                if (!["LÝ", "HOÁ", "SINH"].includes(docSub) && !doc.title.toLowerCase().includes("khoa học")) return false;
+              } else if (sub === "TIENG_ANH") {                if (docSub !== "ANH" && !doc.title.toLowerCase().includes("tiếng anh") && !doc.title.toLowerCase().includes("anh")) return false;
+              } else {
+                if (docSub !== cleanCatStr(sub)) return false;
+              }
+            } else {
+              // Default class subjects check
+              if (docSub !== cleanCatStr(sub)) return false;
+            }
+          }
+
+          // 3. Search keyword check
+          if (keyword) {
+            const cleanTitle = removeAccents(doc.title);
+            const cleanKeyword = removeAccents(keyword);
+            if (!cleanTitle.includes(cleanKeyword)) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #94a3b8; font-weight: 600; font-size: 15px;">
+              <span style="font-size: 48px; display: block; margin-bottom: 12px; filter: grayscale(1);">🔍</span>
+              Không tìm thấy tài liệu nào khớp với bộ lọc tìm kiếm.
+            </div>
+          `;
+          return;
+        }
+
+        filtered.forEach(doc => {
+                    const card = document.createElement("a");
+          card.className = "lib-doc-card";
+          card.href = "#";
+          card.onclick = function(e) {
+            e.preventDefault();
+            if (!doc.url) {
+              alert("Giáo viên đang tải tài liệu này lên Drive, vui lòng quay lại sau!");
+            } else {
+              window.openLibraryDetailView(doc);
+            }
+          };
+
+          card.innerHTML = `
+            <div class="lib-doc-pdf-icon">
+              <svg viewBox="0 0 16 16" fill="#c0392b" class="pdf-logo-svg">
+                <path d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"/>
+              </svg>
+              <span>PDF</span>
+            </div>
+                        <div class="lib-doc-info">
+              <h3 class="lib-doc-title">${doc.title}</h3>
+              <div class="lib-doc-tags">
+                <span class="lib-doc-tag subject">${doc.subject}</span>
+                <span class="lib-doc-tag class">${doc.category}</span>
+              </div>
+              <div class="lib-doc-meta">
+                <div class="lib-doc-meta-item">
+                  <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  <span>${doc.views}</span>
+                </div>
+                <div class="lib-doc-meta-item">
+                  <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>${doc.date}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      };
+
+      window.renderLibraryFolders = function() {
+        const list = document.getElementById("library-folders-list");
+        if (!list) return;
+        list.innerHTML = "";
+
+        window.LIBRARY_FOLDERS.forEach(folder => {
+          const item = document.createElement("div");
+          item.className = "lib-folder-item";
+
+          item.onclick = function() {
+            const cat = folder.classTag.toUpperCase();
+            window.filterLibraryCategory(cat);
+          };
+
+          item.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; width: 76px;">
+              <!-- Beautiful custom Folder + PDF sheet SVG -->
+              <svg viewBox="0 0 64 48" width="64" height="48" style="flex-shrink: 0;">
+              <!-- Folder Back -->
+              <path d="M4 8a2 2 0 0 1 2-2h12l4 6h36a2 2 0 0 1 2 2v26a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z" fill="#60a5fa"/>
+              <!-- Paper Sheet 1 (Back) -->
+              <path d="M26 8h12l6 6v18H26V8z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+              <!-- Corner fold for Sheet 1 -->
+              <path d="M38 8l6 6h-6V8z" fill="#cbd5e1"/>
+              <!-- Lines on Sheet 1 -->
+              <rect x="29" y="15" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
+              <rect x="29" y="19" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
+              <rect x="29" y="23" width="7" height="1.5" rx="0.75" fill="#cbd5e1"/>
+              <!-- Paper Sheet 2 (Front) -->
+              <path d="M16 12h12l6 6v18H16V12z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+              <!-- Corner fold for Sheet 2 -->
+              <path d="M28 12l6 6h-6v-6z" fill="#cbd5e1"/>
+              <!-- Red Acrobat loop on Sheet 2 -->
+              <g transform="translate(19, 19) scale(0.9)">
+                <path d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" fill="#ef4444"/>
+              </g>
+              <!-- Folder Front -->
+              <path d="M4 14a2 2 0 0 1 2-2h52a2 2 0 0 1 2 2v22a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V14z" fill="#2563eb"/>
+            </svg>
+              <span class="lib-folder-badge">${folder.classTag}</span>
+            </div>
+            <div class="lib-folder-info">
+              <h5 class="lib-folder-title">${folder.title}</h5>
+              <p class="lib-folder-subtext">
+                <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <span style="vertical-align: middle; margin-left: 2px;">${folder.subtext}</span>
+              </p>
+            </div>
+          `;
+
+          list.appendChild(item);
+        });
+      };
+
+      function updateDocumentsUI() {
+        window.activeLibraryCategory = "ALL";
+        window.activeLibrarySubject = "ALL";
+        
+        const searchInput = document.getElementById("lib-search-input");
+        if (searchInput) searchInput.value = "";
+
+        document.querySelectorAll(".lib-pill-btn").forEach(btn => {
+          if (btn.getAttribute("data-category") === "ALL") btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+
+        window.renderLibrarySubTabs();
+
+        window.renderLibraryDocs();
+        window.renderLibraryFolders();
       }
 
       window.switchTab = switchTab;
       function switchTab(tabId) {
+        if (typeof window.closeLibraryDetailView === "function") {
+          window.closeLibraryDetailView();
+        }
+        // Normalize legacy documents tab IDs
+        if (["tsa-documents", "hsa-documents", "thpt-documents"].includes(tabId)) {
+          tabId = "documents";
+        }
+
+        // Toggle full screen sidebar hidden mode for documents, history, and account tabs
+        const shellContainer = document.querySelector(".tsa-shell");
+        if (shellContainer) {
+          if (["documents", "history", "account"].includes(tabId)) {
+            shellContainer.classList.add("hide-sidebar");
+          } else {
+            shellContainer.classList.remove("hide-sidebar");
+          }
+        }
+
         // Normalize generic course tabs based on currentSubtab
         if (["tsa-courses", "hsa-courses", "thpt-courses"].includes(tabId)) {
           const cat = tabId.split("-")[0];
@@ -4380,8 +4876,6 @@
           tabId = currentPracticeCategory + "-practice";
         } else if (tabId === "tsa-exam") {
           tabId = currentExamTypeCategory + "-exams";
-        } else if (tabId === "documents") {
-          tabId = currentMaterialCategory + "-documents";
         }
 
         // Categorize tabId prefixes and set categories
@@ -4391,15 +4885,13 @@
           currentPracticeCategory = tabId.split("-")[0];
         } else if (["tsa-exams", "hsa-exams", "thpt-exams", "vact-exams", "qda-exams"].includes(tabId)) {
           currentExamTypeCategory = tabId.split("-")[0];
-        } else if (["tsa-documents", "hsa-documents", "thpt-documents"].includes(tabId)) {
-          currentMaterialCategory = tabId.split("-")[0];
         }
 
         // Determine active categories and panels
         const isExamRoom = ["tsa-courses", "hsa-courses", "thpt-courses"].includes(tabId);
         const isPracticeRoom = ["tsa-practice", "hsa-practice", "thpt-practice", "vact-practice", "qda-practice"].includes(tabId);
         const isExamList = ["tsa-exams", "hsa-exams", "thpt-exams", "vact-exams", "qda-exams"].includes(tabId);
-        const isDocumentsRoom = ["tsa-documents", "hsa-documents", "thpt-documents"].includes(tabId);
+        const isDocumentsRoom = tabId === "documents";
 
         // Toggle Active Menu Item
         menuItems.forEach(item => {
@@ -4508,8 +5000,14 @@
         item.addEventListener("click", (e) => {
           e.preventDefault();
           const tabId = item.getAttribute("data-tab");
-          switchTab(tabId);
-          window.location.hash = tabId;
+          if (tabId === "documents" || tabId === "tai-lieu") {
+            safePushState({ route: "tai-lieu" }, "", "/tai-lieu");
+            handleRouting();
+          } else {
+            safePushState({ route: "homepage" }, "", "/");
+            window.location.hash = tabId;
+            switchTab(tabId);
+          }
         });
       });
 
@@ -5631,13 +6129,64 @@
         }
       });
 
-      // Hash routing
-      const currentHash = window.location.hash.substring(1);
-      if (currentHash) {
-        switchTab(currentHash);
-      } else {
-        switchTab("overview");
+      // Conditional Routing & Layouts
+      function getActiveRoute() {
+        const path = window.location.pathname;
+        const hash = window.location.hash.substring(1);
+        
+        if (path === "/tai-lieu" || hash === "tai-lieu" || hash === "documents" || ["tsa-documents", "hsa-documents", "thpt-documents"].includes(hash)) {
+          return "tai-lieu";
+        }
+        return "homepage";
       }
+
+      function handleRouting() {
+        const route = getActiveRoute();
+        const shellContainer = document.querySelector(".tsa-shell");
+        
+        if (route === "tai-lieu") {
+          if (shellContainer) shellContainer.classList.add("hide-sidebar");
+          switchTab("documents");
+        } else {
+          const hash = window.location.hash.substring(1);
+          if (shellContainer) {
+            if (["history", "account"].includes(hash)) {
+              shellContainer.classList.add("hide-sidebar");
+            } else {
+              shellContainer.classList.remove("hide-sidebar");
+            }
+          }
+          if (hash && hash !== "tai-lieu" && hash !== "documents" && !["tsa-documents", "hsa-documents", "thpt-documents"].includes(hash)) {
+            switchTab(hash);
+          } else {
+            switchTab("overview");
+          }
+        }
+      }
+
+      function safePushState(state, title, url) {
+        if (window.location.protocol !== "file:") {
+          try {
+            history.pushState(state, title, url);
+            return;
+          } catch (e) {
+            console.error("pushState failed: ", e);
+          }
+        }
+        // Fallback to hash
+        if (url === "/tai-lieu") {
+          window.location.hash = "tai-lieu";
+        } else if (url === "/") {
+          window.location.hash = "overview";
+        }
+      }
+
+      window.addEventListener("popstate", () => {
+        handleRouting();
+      });
+
+      // Initial route handle
+      handleRouting();
 
       // Helper to log video view event with IP details and check for account sharing (Feature 2)
       async function writeVideoViewLog(studentEmail, lesson, courseTitle) {
@@ -5950,5 +6499,176 @@
 
       // Initialize on load
       initCustomDropdowns();
+
+      // Helper function to render a document inside an embedded iframe preview
+      window.openLibraryDetailView = function(doc) {
+        const listView = document.getElementById("library-list-view");
+        const detailView = document.getElementById("library-detail-view");
+        if (!listView || !detailView) return;
+
+        // Convert Google Drive view URL to embed preview URL
+        let embedUrl = doc.url || "";
+        if (embedUrl.includes("drive.google.com")) {
+          const match = embedUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+          if (match && match[1]) {
+            embedUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
+          }
+        }
+
+        // Set titles and metadata
+        const breadcrumbTitle = document.getElementById("detail-breadcrumb-title");
+        if (breadcrumbTitle) breadcrumbTitle.textContent = doc.title;
+        
+        const docTitle = document.getElementById("detail-doc-title");
+        if (docTitle) docTitle.textContent = doc.title;
+        
+        const docViews = document.getElementById("detail-doc-views");
+        if (docViews) docViews.textContent = doc.views;
+        
+        const docDate = document.getElementById("detail-doc-date");
+        if (docDate) docDate.textContent = doc.date;
+        
+        const iframe = document.getElementById("detail-doc-iframe");
+        if (iframe) iframe.src = embedUrl;
+
+        // Set tags
+        const tagsContainer = document.getElementById("detail-doc-tags");
+        if (tagsContainer) {
+          tagsContainer.innerHTML = `
+            <span class="lib-doc-tag subject">${doc.subject}</span>
+            <span class="lib-doc-tag class">${doc.category}</span>
+          `;
+        }
+
+        // Retrieve student info from localStorage
+        let studentNameVal = "Học sinh";
+        try {
+          const cachedInfo = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cachedInfo && cachedInfo.name) {
+            studentNameVal = cachedInfo.name;
+          }
+        } catch (e) {}
+
+        const firstChar = studentNameVal.charAt(0).toUpperCase();
+        
+        // Update avatar char
+        const avatarEl = document.getElementById("comment-avatar");
+        if (avatarEl) {
+          avatarEl.textContent = firstChar;
+        }
+
+        // Update placeholder
+        const textareaEl = document.getElementById("comment-textarea");
+        if (textareaEl) {
+          textareaEl.placeholder = `Viết bình luận dưới tên ${studentNameVal}...`;
+          textareaEl.value = ""; // Reset
+          textareaEl.oninput = window.updateCommentCharCount;
+        }
+
+        const charCountEl = document.getElementById("comment-char-count");
+        if (charCountEl) {
+          charCountEl.textContent = "0/1000";
+        }
+
+        // Toggle visibility
+        listView.style.display = "none";
+        detailView.style.display = "block";
+        
+        // Scroll to top of tab container
+        const tabPane = document.getElementById("tab-documents");
+        if (tabPane) tabPane.scrollTop = 0;
+      };
+
+      // Comments dynamic logic helpers
+      window.updateCommentCharCount = function() {
+        const textarea = document.getElementById("comment-textarea");
+        const countSpan = document.getElementById("comment-char-count");
+        if (textarea && countSpan) {
+          const len = textarea.value.length;
+          countSpan.textContent = len + "/1000";
+        }
+      };
+
+      window.insertCommentFormat = function(format) {
+        const textarea = document.getElementById("comment-textarea");
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        let inserted = "";
+        if (format === 'fx') inserted = "$";
+        else if (format === '#') inserted = "#";
+        else if (format === 'α') inserted = "α";
+        else if (format === 'img') inserted = "[img]";
+        else if (format === 'clean') {
+          textarea.value = "";
+          window.updateCommentCharCount();
+          return;
+        }
+        textarea.value = text.substring(0, start) + inserted + text.substring(end);
+        textarea.focus();
+        textarea.selectionStart = start + inserted.length;
+        textarea.selectionEnd = start + inserted.length;
+        window.updateCommentCharCount();
+      };
+
+      window.submitCommentClick = function() {
+        const textarea = document.getElementById("comment-textarea");
+        if (!textarea || !textarea.value.trim()) return;
+
+        let studentName = "Học sinh";
+        try {
+          const studentInfo = JSON.parse(localStorage.getItem("studentInfo"));
+          if (studentInfo && studentInfo.name) {
+            studentName = studentInfo.name;
+          }
+        } catch (e) {}
+
+        const firstChar = studentName.charAt(0).toUpperCase();
+        const text = textarea.value.trim();
+
+        // Create new comment element
+        const container = document.getElementById("comments-list-container");
+        if (container) {
+          const newComment = document.createElement("div");
+          newComment.style.cssText = "display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;";
+          newComment.innerHTML = `
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fbcfe8; color: #9d174d; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0;">
+              ${firstChar}
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="background: #eff6ff; border-radius: 12px; padding: 12px 16px; border: 1px solid #dbeafe;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="font-size: 13.5px; font-weight: 700; color: #1e3a8a;">${studentName}</span>
+                  <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">Vừa xong</span>
+                </div>
+                <div style="font-size: 13.5px; color: #1e293b; line-height: 1.45;">${text}</div>
+              </div>
+              <div style="margin-top: 4px; padding-left: 8px;">
+                <span style="font-size: 12px; color: #64748b; font-weight: 600; cursor: pointer;">Trả lời</span>
+              </div>
+            </div>
+          `;
+          container.prepend(newComment);
+        }
+
+        // Reset
+        textarea.value = "";
+        window.updateCommentCharCount();
+      };
+
+      window.closeLibraryDetailView = function() {
+        const listView = document.getElementById("library-list-view");
+        const detailView = document.getElementById("library-detail-view");
+        if (!listView || !detailView) return;
+
+        // Clear iframe source to stop loading/video
+        const iframe = document.getElementById("detail-doc-iframe");
+        if (iframe) iframe.src = "";
+
+        // Toggle visibility
+        listView.style.display = "block";
+        detailView.style.display = "none";
+      };
 
     })();

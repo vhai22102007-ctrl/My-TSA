@@ -265,54 +265,18 @@
         </div>
 
         <!-- 4. Kho tài liệu collapsible group -->
-        <div class="menu-group" data-group="documents">
-          <a class="menu-item group-header" id="kho-tai-lieu-toggle" href="javascript:void(0)">
-            <span class="menu-icon">
-              <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-              </svg>
-            </span>
-            <span class="group-title">Kho tài liệu</span>
-            <span class="group-arrow">
-              <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </a>
-          <div class="submenu-wrapper" id="kho-tai-lieu-submenu">
-            <div class="submenu-inner">
-              <a class="menu-item submenu-item" href="#tsa-documents" data-tab="tsa-documents">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá tư duy - TSA</span>
-              </a>
-              <a class="menu-item submenu-item" href="#hsa-documents" data-tab="hsa-documents">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - HSA</span>
-              </a>
-              <a class="menu-item submenu-item" href="#thpt-documents" data-tab="thpt-documents">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                  </svg>
-                </span>
-                <span>THPTQG</span>
-              </a>
-            </div>
-          </div>
-        </div>
+        <!-- 4. Kho tài liệu single link -->
+        <a class="menu-item" href="#documents" data-tab="documents">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </span>
+          <span>Kho tài liệu</span>
+        </a>
 
         <a class="menu-item" href="#history" data-tab="history">
           <span class="menu-icon">
@@ -383,6 +347,13 @@
           <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
         </svg>
       </button>
+
+      <!-- Left Logo (visible only on full-screen Documents room) -->
+      <div class="topbar-left-logo-search" style="display: none; position: absolute; left: 0; top: 0; bottom: 0; width: 240px; align-items: center; padding-left: 20px; border-right: 1px solid #e2e8f0; box-sizing: border-box; background: #ffffff; height: 100%;">
+        <a href="index.html#trang-chu" style="display: flex; align-items: center; text-decoration: none;" onclick="switchTab('overview'); return false;">
+          <img src="assets/tmaaaa.png" alt="TMA Study" onerror="this.src='https://assets.tmastudy.io.vn/assets/logo1.png'" style="width: 195px; height: auto; object-fit: contain; margin-top: 8px;">
+        </a>
+      </div>
 
       <!-- Center navigation icons -->
       <div class="topbar-nav-middle">
@@ -841,34 +812,244 @@
           </div>
         </div>
 
-        <!-- TAB 5: TÀI LIỆU -->
+                <!-- TAB 5: TÀI LIỆU -->
         <div id="tab-documents" class="tab-panel">
-          <div class="tab-header-box" style="margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-            <h2 class="tab-header-title" id="documents-title">Kho tài liệu ôn tập - TSA</h2>
-            <p class="tab-header-desc" id="documents-desc">Các sách ôn thi và đề thi thử PDF tải xuống từ Drive.</p>
-          </div>
-          
-          <!-- Search & Filter Controls -->
-          <div class="material-controls" style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
-            <div style="position: relative; flex: 1; min-width: 250px;">
-              <input type="text" id="material-search-input" placeholder="Tìm kiếm tài liệu theo tên..." style="width: 100%; padding: 10px 14px 10px 38px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; outline: none; transition: border-color 0.2s; box-sizing: border-box; background: var(--bg);">
-              <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; display: flex; align-items: center;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              </span>
-            </div>
-            <select id="material-filter-select" style="padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; outline: none; background: var(--bg); color: var(--text); cursor: pointer; min-width: 180px; box-sizing: border-box; height: 39px;">
-              <option value="all">Tất cả tài liệu</option>
-              <option value="tohop">Tổ hợp - Xác suất</option>
-              <option value="oxyz">Hình học Oxyz</option>
-              <option value="hamso">Hàm số & Đồ thị</option>
-              <option value="mulogarit">Mũ & Lôgarit</option>
-              <option value="tichphan">Tích phân & Ứng dụng</option>
-              <option value="dayso">Dãy số & Giới hạn</option>
-              <option value="thongke">Thống kê & Số liệu</option>
-            </select>
+          <div id="library-list-view">
+            <!-- Breadcrumb & Top Section -->
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+            <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
+            <span>&gt;</span>
+            <span style="color: #0f5a9e; font-weight: 600; cursor: pointer;" onclick="switchTab('overview')">Tài liệu</span>
           </div>
 
-          <div class="materials-grid" id="materials-grid"></div>
+          <!-- Main Content Columns Layout (starting from title/header) -->
+          <div class="library-main-layout" style="display: flex; gap: 32px;">
+            
+            <!-- Left Side: Header, Pills, Filters, and Cards -->
+            <div class="library-left-col" style="flex: 1; min-width: 0;">
+              
+              <div class="tab-header-box" style="margin-bottom: 20px; padding-bottom: 4px;">
+                <h2 class="tab-header-title" style="font-size: 24px; font-weight: 700; color: #0f5a9e; margin: 0; text-transform: none; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">Tài liệu tham khảo TMA School</h2>
+              </div>
+
+              <!-- Category Pills -->
+              <div class="library-category-pills" style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+                <button class="lib-pill-btn" data-category="ĐGTD" onclick="window.filterLibraryCategory('ĐGTD')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" fill="#dbeafe" stroke="none"></path><path class="pill-fill-part" d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" fill="#dbeafe" stroke="none"></path><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path><path d="M12 5v14"></path><path d="M12 9h4a2 2 0 0 1 2 2v1"></path><path d="M12 9H8a2 2 0 0 0-2 2v1"></path><path d="M12 13h5a1 1 0 0 1 1 1v1"></path><path d="M12 13H7a1 1 0 0 0-1 1v1"></path></svg>
+                  <span>ĐGTD</span>
+                </button>
+                <button class="lib-pill-btn" data-category="ĐGNL" onclick="window.filterLibraryCategory('ĐGNL')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" fill="#dbeafe" stroke="none"></path><path class="pill-fill-part" d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" fill="#dbeafe" stroke="none"></path><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path><path d="M12 5v14"></path><path d="M12 9h4a2 2 0 0 1 2 2v1"></path><path d="M12 9H8a2 2 0 0 0-2 2v1"></path><path d="M12 13h5a1 1 0 0 1 1 1v1"></path><path d="M12 13H7a1 1 0 0 0-1 1v1"></path></svg>
+                  <span>ĐGNL</span>
+                </button>
+                <button class="lib-pill-btn" data-category="LỚP 12" onclick="window.filterLibraryCategory('LỚP 12')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 2L2 7l10 5 10-5Z" fill="#dbeafe"></path><path d="M12 2L2 7l10 5 10-5Z"></path><path d="M6 10v4c0 2 2.5 3 6 3s6-1 6-3v-4"></path><path d="M21.5 7v7"></path></svg>
+                  <span>Lớp 12</span>
+                </button>
+                <button class="lib-pill-btn" data-category="LỚP 11" onclick="window.filterLibraryCategory('LỚP 11')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><circle class="pill-fill-part" cx="6" cy="17" r="4" fill="#dbeafe"></circle><circle cx="6" cy="17" r="4"></circle><path d="M17 6L12 17h10Z"></path><ellipse cx="17" cy="17" rx="5" ry="1.5"></ellipse><path d="M4 6h4v4H4Z"></path><path d="M6 4h4v4"></path><path d="M8 6l2-2M8 10l2-2M4 6l2-2"></path></svg>
+                  <span>Lớp 11</span>
+                </button>
+                <button class="lib-pill-btn" data-category="LỚP 10" onclick="window.filterLibraryCategory('LỚP 10')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><circle class="pill-fill-part" cx="17" cy="9" r="4" fill="#dbeafe"></circle><circle cx="17" cy="9" r="4"></circle><rect x="3" y="11" width="7" height="7" rx="1"></rect><path d="M12 18l5-9 5 9Z"></path></svg>
+                  <span>Lớp 10</span>
+                </button>
+                <button class="lib-pill-btn" data-category="LỚP 9" onclick="window.filterLibraryCategory('LỚP 9')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M14 6a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5" fill="#dbeafe"></path><path d="M10 19v-3a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3a2 2 0 0 0 2-2V3"></path><path d="M14 6a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 0-2-2v-3a2 2 0 0 0-2-2h-3"></path></svg>
+                  <span>Lớp 9</span>
+                </button>
+              </div>
+
+              <!-- Filter & Search Sub-bar -->
+              <div class="library-filter-bar" style="display: flex; width: 100%; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+                <!-- Subject Tabs on Left -->
+                <div class="library-subject-tabs" style="display: flex; gap: 28px; overflow-x: auto; padding-bottom: 2px;">
+                  <button class="lib-sub-tab active" data-subject="ALL" onclick="window.filterLibrarySubject('ALL')">Tất cả</button>
+                  <button class="lib-sub-tab" data-subject="TOÁN" onclick="window.filterLibrarySubject('TOÁN')">Toán</button>
+                  <button class="lib-sub-tab" data-subject="LÝ" onclick="window.filterLibrarySubject('LÝ')">Lý</button>
+                  <button class="lib-sub-tab" data-subject="SINH" onclick="window.filterLibrarySubject('SINH')">Sinh</button>
+                  <button class="lib-sub-tab" data-subject="ANH" onclick="window.filterLibrarySubject('ANH')">Anh</button>
+                  <button class="lib-sub-tab" data-subject="HOÁ" onclick="window.filterLibrarySubject('HOÁ')">Hoá</button>
+                  <button class="lib-sub-tab" data-subject="VĂN" onclick="window.filterLibrarySubject('VĂN')">Văn</button>
+                </div>
+                
+                <div class="library-search-box" style="position: relative; width: 260px; max-width: 100%;">
+                  <input type="text" id="lib-search-input" placeholder="Tìm kiếm" oninput="window.onLibrarySearchInput()" style="width: 100%; padding: 10px 38px 10px 16px; border: none; border-radius: 8px; font-size: 13.5px; outline: none; background: #eff3f8; color: var(--text); box-sizing: border-box;">
+                  <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #0f5a9e; display: flex; align-items: center; pointer-events: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Left Side: Documents Grid (75%) -->
+              <div class="library-docs-grid" id="library-docs-grid">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Right Side: Sidebar Folder List (25%) -->
+            <div class="library-right-col" style="width: 380px; flex-shrink: 0;">
+              <div class="library-folder-card" style="background: transparent; border: none; border-radius: 0; padding: 0; box-shadow: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <h4 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif;">Kho tài liệu</h4>
+                  <a href="#" onclick="alert('Đang cập nhật thêm thư mục mới...'); return false;" style="font-size: 13px; color: var(--brand-red, #135c97); font-weight: 600; text-decoration: none;">Xem tất cả &gt;&gt;&gt;</a>
+                </div>
+                <div class="library-folders-list" id="library-folders-list" style="display: flex; flex-direction: column; gap: 12px;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+          </div> <!-- End library-list-view -->
+
+          <!-- New Detail View -->
+          <div id="library-detail-view" style="display: none;">
+            <!-- Breadcrumbs -->
+            <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              <span>&gt;</span>
+              <a href="#" onclick="window.closeLibraryDetailView(); return false;" style="color: #64748b; text-decoration: none; font-weight: 500;">Tài liệu</a>
+              <span>&gt;</span>
+              <span id="detail-breadcrumb-title" style="color: #0f5a9e; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">Chi tiết tài liệu</span>
+            </div>
+
+            <div style="display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap;">
+              <!-- Left Column: PDF Viewer (75%) -->
+              <div style="flex: 1; min-width: 350px;">
+                <!-- Title Block -->
+                <div style="margin-bottom: 16px;">
+                  <h3 id="detail-doc-title" style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 8px; line-height: 1.4; font-family: 'Outfit', sans-serif;">Tiêu đề tài liệu</h3>
+                  
+                  <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;">
+                    <!-- Views and Date -->
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #64748b;">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                      <span id="detail-doc-views">3132</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #64748b;">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                      <span id="detail-doc-date">08/06/2026</span>
+                    </div>
+                  </div>
+
+                  <!-- Tags -->
+                  <div style="display: flex; gap: 8px;" id="detail-doc-tags">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Embedded Iframe Container -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; height: 600px; display: flex; flex-direction: column;">
+                  <iframe id="detail-doc-iframe" src="" width="100%" height="100%" style="border: none; border-radius: 8px; flex: 1;"></iframe>
+                </div>
+              </div>
+
+              <!-- Right Column: Ratings & Comments (380px) -->
+              <div style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Sign In Notification -->
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; display: flex; align-items: flex-start; gap: 12px;">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="#2563eb" fill="none" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <div style="font-size: 13.5px; color: #1e3a8a; line-height: 1.45; font-family: 'Inter', sans-serif;">
+                    Bạn cần đăng nhập để đánh giá và bình luận. <a href="#" onclick="alert('Tính năng liên kết tài khoản đang được đồng bộ!'); return false;" style="color: #2563eb; font-weight: 700; text-decoration: none;">Đăng nhập ngay.</a>
+                  </div>
+                </div>
+
+                <!-- Ratings Card -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                  <h4 style="margin: 0 0 16px; font-size: 15px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif;">Đánh giá (0)</h4>
+                  
+                  <div style="display: flex; gap: 16px; justify-content: flex-start;">
+                    <!-- Custom Reaction Buttons -->
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: 0.85; transition: transform 0.2s;" onclick="alert('Đã bình chọn Yêu thích!');">
+                      <span style="font-size: 26px; line-height: 1;">❤️</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">0</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: 0.85; transition: transform 0.2s;" onclick="alert('Đã bình chọn Haha!');">
+                      <span style="font-size: 26px; line-height: 1;">😆</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">0</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: 0.85; transition: transform 0.2s;" onclick="alert('Đã bình chọn Like!');">
+                      <span style="font-size: 26px; line-height: 1;">👍</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">0</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: 0.85; transition: transform 0.2s;" onclick="alert('Đã bình chọn Dislike!');">
+                      <span style="font-size: 26px; line-height: 1;">👎</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">0</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; opacity: 0.85; transition: transform 0.2s;" onclick="alert('Đã bình chọn Wow!');">
+                      <span style="font-size: 26px; line-height: 1;">😢</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 600;">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                                <!-- Comments Card -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
+                  <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif;">Bình luận</h4>
+                  
+                  <!-- Comment Input Box -->
+                  <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0;" id="comment-avatar">
+                      H
+                    </div>
+                    <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; padding: 10px; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; min-width: 0;">
+                      <textarea id="comment-textarea" placeholder="Viết bình luận..." style="width: 100%; min-height: 48px; border: none; background: transparent; outline: none; font-size: 13.5px; color: #1e293b; font-family: 'Inter', sans-serif; resize: vertical; box-sizing: border-box; padding: 0;"></textarea>
+                      
+                      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 8px; font-family: 'Inter', sans-serif;">
+                        <!-- Formatting Toolbar -->
+                        <div style="display: flex; gap: 10px; color: #64748b; font-size: 13px; user-select: none;">
+                          <span style="cursor: pointer; font-weight: bold; font-family: 'Cambria', serif;" onclick="window.insertCommentFormat('fx')">𝑓𝑥</span>
+                          <span style="cursor: pointer;" onclick="window.insertCommentFormat('#')">#</span>
+                          <span style="cursor: pointer;" onclick="window.insertCommentFormat('α')">α</span>
+                          <span style="cursor: pointer;" onclick="window.insertCommentFormat('img')">🖼️</span>
+                          <span style="cursor: pointer;" onclick="window.insertCommentFormat('clean')">🧼</span>
+                        </div>
+                        
+                        <!-- Count and Send -->
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                          <span id="comment-char-count" style="font-size: 12px; color: #94a3b8;">0/1000</span>
+                          <button onclick="window.submitCommentClick()" style="background: transparent; border: none; cursor: pointer; color: #3b82f6; display: flex; align-items: center; padding: 0;">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Comments List -->
+                  <div id="comments-list-container" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Seed comment matching the screenshot -->
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                      <div style="width: 36px; height: 36px; border-radius: 50%; background: #93c5fd; color: #1e3a8a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0;">
+                        T
+                      </div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="background: #eff6ff; border-radius: 12px; padding: 12px 16px; border: 1px solid #dbeafe;">
+                          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="font-size: 13.5px; font-weight: 700; color: #1e3a8a;">Trương Quang Huy</span>
+                            <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">1 tháng trước</span>
+                          </div>
+                          <div style="font-size: 13.5px; color: #1e293b; line-height: 1.45;">có giải không ạ</div>
+                        </div>
+                        <div style="margin-top: 4px; padding-left: 8px;">
+                          <span style="font-size: 12px; color: #64748b; font-weight: 600; cursor: pointer;" onclick="alert('Đang kết nối bình luận...');">Trả lời</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; font-family: 'Inter', sans-serif;">
+                    <span style="cursor: pointer; color: #94a3b8; font-size: 14px; font-weight: bold; user-select: none;">&lt;</span>
+                    <span style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid #bfdbfe; color: #2563eb; background: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none;">1</span>
+                    <span style="cursor: pointer; color: #94a3b8; font-size: 14px; font-weight: bold; user-select: none;">&gt;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- TAB KHOÁ HỌC: TSA, HSA, THPTQG -->
@@ -934,13 +1115,20 @@
 
         <!-- TAB 7: LỊCH SỬ -->
         <div id="tab-history" class="tab-panel">
+          <!-- Breadcrumb & Top Section -->
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+            <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
+            <span>&gt;</span>
+            <span style="color: #0f5a9e; font-weight: 600; cursor: pointer;" onclick="switchTab('overview')">Lịch sử làm bài</span>
+          </div>
+
           <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; padding-right: 16px; padding-left: 8px;">
-            <div>
-              <h2 class="tab-header-title">Lịch sử làm bài</h2>
-              <p class="tab-header-desc">Xem lại kết quả các bài thi đã thực hiện.</p>
-              <div class="tab-welcome-greeting" id="history-welcome-greeting"></div>
+            <div style="flex: 1; min-width: 0; max-width: 75%;">
+              <div class="tab-welcome-greeting" id="history-welcome-greeting" style="width: fit-content;"></div>
             </div>
-            <div class="search-box-wrapper" style="position: relative; width: 300px;">
+            <div class="search-box-wrapper" style="position: relative; width: 300px; flex-shrink: 0;">
               <input type="text" id="history-search-input" class="history-search-input" placeholder="Tìm kiểm bài thi..." oninput="filterHistoryTable()">
               <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
@@ -952,6 +1140,15 @@
 
         <!-- TAB 10: TÀI KHOẢN -->
         <div id="tab-account" class="tab-panel">
+          <!-- Breadcrumb & Top Section -->
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+            <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
+            <span>&gt;</span>
+            <span style="color: #0f5a9e; font-weight: 600; cursor: pointer;" onclick="switchTab('overview')">Tài khoản</span>
+          </div>
+
           <div class="account-container-layout">
             <!-- Left Column: Navigation Sidebar -->
             <aside class="account-sidebar-card">

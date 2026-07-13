@@ -4,7 +4,7 @@
       --brand-red: #135c97;
       --brand-red-dark: #0f4a7a;
       --brand-red-light: #eff6ff;
-      --page-bg: #f5f7fa;
+      --page-bg: #ffffff;
       --card-bg: #ffffff;
       --text: #111827;
       --muted: #6b7280;
@@ -4675,10 +4675,10 @@
     }
 
     #course-study-modal .study-tab-content {
-      display: none; flex: 1; overflow-y: auto; flex-direction: column;
+      display: none; flex: 1; overflow: hidden !important; flex-direction: column;
     }
     #course-study-modal .study-tab-content.active { display: flex; }
-    #course-study-modal .sidebar-lessons-list { flex: 1; }
+    #course-study-modal .sidebar-lessons-list { flex: 1 !important; overflow-y: auto !important; }
 
     #course-study-modal .accordion-group { margin: 0; }
     #course-study-modal .accordion-header {
@@ -4997,7 +4997,7 @@
     #course-study-modal .tree-chapter-header {
       width: 100% !important;
       display: flex !important;
-      align-items: flex-start !important;
+      align-items: center !important;
       justify-content: space-between !important;
       gap: 10px !important;
       background: #ffffff !important;
@@ -5006,12 +5006,15 @@
       font-size: 11.5px !important;
       font-weight: 700 !important;
       letter-spacing: 0.04em !important;
-      line-height: 1.32 !important;
+      line-height: 1.4 !important;
       text-align: left !important;
       text-transform: uppercase !important;
-      padding: 14px 14px 7px !important;
+      padding: 12px 14px !important;
       border: 0 !important;
       cursor: pointer !important;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: 0 !important;
     }
 
     #course-study-modal .tree-chapter-title {
@@ -5070,7 +5073,7 @@
     #course-study-modal .tree-bai-row.active,
     #course-study-modal .tree-standalone-row.active {
       background: #eff6ff !important;
-      border-color: #bfdbfe !important;
+      border-color: transparent !important;
       color: #0f5a9e !important;
       font-weight: 700 !important;
     }
@@ -5163,7 +5166,7 @@
       align-items: center !important;
       min-height: 30px !important;
       padding: 6px 12px 6px 12px !important; /* Reduced padding-left because row is indented via margin-left */
-      margin: 2px 10px 2px 44px !important; /* Indent the row capsule itself to shift it completely outside the vertical line */
+      margin: 2px 10px 2px 15px !important; /* Indent the row capsule itself to shift it completely outside the vertical line */
       font-size: 12.5px !important;
       line-height: 1.32 !important;
       color: #475569 !important;
@@ -5193,10 +5196,8 @@
     /* Display branching arrow ↳ */
     #course-study-modal .tree-phan-indent {
       display: flex !important;
-      position: absolute !important;
-      left: -17px !important; /* Aligns SVG vertical line at 33px: 44px (margin-left) - 17px (offset) + 6px (SVG path x) = 33px */
-      top: 0 !important;
-      bottom: 0 !important;
+      position: relative !important;
+      left: auto !important;
       align-items: center !important;
       color: #cbd5e1 !important; /* Same color as connector line */
       pointer-events: none !important;
@@ -7765,3 +7766,403 @@
         display: none !important; /* Hide decorative icons on mobile */
       }
     }
+
+    /* ==========================================================================
+       DOCUMENT LIBRARY STYLING (NEW)
+       ========================================================================== */
+    .lib-pill-btn {
+      background: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      border-radius: 8px !important;
+      padding: 8px 16px !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      color: #475569 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    }
+    .lib-pill-btn:hover {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    .lib-pill-btn.active {
+      background: #0f5a9e !important;
+      color: #ffffff !important;
+      border-color: #0f5a9e !important;
+      box-shadow: 0 4px 10px rgba(15, 90, 158, 0.2) !important;
+    }
+    .pill-icon {
+      font-size: 14px !important;
+      line-height: 1 !important;
+    }
+
+    .lib-sub-tab {
+      background: none !important;
+      border: none !important;
+      padding: 6px 12px 10px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      color: #64748b !important;
+      cursor: pointer !important;
+      border-bottom: 3px solid transparent !important;
+      transition: all 0.2s ease !important;
+    }
+    .lib-sub-tab:hover {
+      color: #0f5a9e !important;
+    }
+    .lib-sub-tab.active {
+      color: #0f5a9e !important;
+      border-bottom-color: #0f5a9e !important;
+      font-weight: 700 !important;
+    }
+
+                .library-docs-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+    }
+    @media (max-width: 900px) {
+      .library-docs-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+                        .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 16px 20px !important;
+      display: flex !important;
+      gap: 18px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 80px !important;
+      height: 108px !important;
+      background: linear-gradient(225deg, transparent 22px, #ffffff 22px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 22px !important;
+      height: 22px !important;
+      background: linear-gradient(225deg, transparent 50%, #cbd5e1 50%, #f1f5f9 100%) !important;
+      filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.15)) !important;
+      border-bottom-left-radius: 4px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 64px !important;
+      height: 64px !important;
+      margin-top: 8px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 16.5px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      padding: 6px 0 !important;
+      line-height: 1.0 !important;
+      letter-spacing: 0.8px !important;
+      display: block !important;
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-self: stretch !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 3px 12px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.subject {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      font-size: 11.5px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+        .lib-folder-item {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 16px !important;
+      display: flex !important;
+      gap: 16px !important;
+      align-items: center !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+    }
+    .lib-folder-item:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-folder-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      align-self: stretch !important;
+    }
+    .lib-folder-title {
+      font-size: 13.5px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-folder-subtext {
+      font-size: 12px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+    .lib-folder-badge {
+      display: inline-block !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+      padding: 2.5px 8px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      text-align: center !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Dark Mode Theme Support */
+    .select-page[data-theme="dark"] .lib-pill-btn {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn:hover {
+      background: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn.active {
+      background: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab {
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab.active {
+      color: #3b82f6 !important;
+      border-bottom-color: #3b82f6 !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card:hover {
+      border-color: #475569 !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-tag.class {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card h4 {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item:hover {
+      border-color: #475569 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-badge {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+
+    @media (max-width: 992px) {
+      .library-main-layout {
+        flex-direction: column !important;
+      }
+      .library-right-col {
+        width: 100% !important;
+      }
+    }
+
+    /* Sidebar hide/collapse for full-screen Document Library */
+    .tsa-shell.hide-sidebar .tsa-sidebar {
+      display: none !important;
+    }
+    .tsa-shell.hide-sidebar .tsa-content {
+      margin-left: 0 !important;
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+    .tsa-shell.hide-sidebar .tsa-topbar {
+      padding-left: 24px !important;
+    }
+    .tsa-shell.hide-sidebar .sidebar-toggle {
+      display: none !important;
+    }
+    .tsa-shell.hide-sidebar .topbar-left-logo-search {
+      display: flex !important;
+    }
+
+    /* Style for SVG icons in Category Pills */
+    .lib-pill-btn {
+      background: #f0f4f9 !important;
+      border: none !important;
+      color: #1e293b !important;
+      height: 48px !important;
+      padding: 0 24px !important;
+      border-radius: 10px !important;
+      font-size: 14.5px !important;
+      font-weight: 700 !important;
+      font-family: 'Inter', sans-serif !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: none !important;
+    }
+    .lib-pill-btn:hover {
+      background: #e2eaf4 !important;
+    }
+    .lib-pill-btn.active {
+      background: var(--brand-red, #135c97) !important;
+      border-color: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .pill-svg-icon {
+      color: var(--brand-red, #135c97) !important;
+      width: 24px !important;
+      height: 24px !important;
+      flex-shrink: 0 !important;
+      transition: all 0.2s ease !important;
+    }
+    .lib-pill-btn.active .pill-svg-icon {
+      color: #ffffff !important;
+    }
+    .pill-fill-part {
+      fill: #dbeafe !important;
+      transition: fill 0.2s ease !important;
+    }
+    .lib-pill-btn.active .pill-fill-part {
+      fill: rgba(255, 255, 255, 0.25) !important;
+    }
+
+/* ==========================================
+   SIDEBAR NAVIGATION ACTIVE/HOVER CAPSULES
+   ========================================== */
+.tsa-menu a {
+  margin: 3px 12px !important;
+  border-radius: 8px !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+
+.tsa-menu a:hover {
+  background: #f1f5f9 !important;
+  color: #135c97 !important;
+}
+
+.tsa-menu a.active,
+.tsa-menu .submenu-item.active {
+  background: #eff6ff !important;
+  color: #135c97 !important;
+  font-weight: 700 !important;
+}
+
+.tsa-menu a.active svg,
+.tsa-menu .submenu-item.active svg {
+  stroke: #135c97 !important;
+}

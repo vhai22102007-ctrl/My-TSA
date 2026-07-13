@@ -7422,7 +7422,7 @@
       }
 
       /* Lock the active tab panel and sub-panel container sizes */
-      .tab-panel.active,
+      #tab-overview.tab-panel.active,
       .dashboard-sub-panel.active {
         height: 100% !important;
         display: flex !important;
@@ -7979,4 +7979,2181 @@
       .account-info-grid .info-label {
         width: 100% !important;
       }
+    }
+
+    /* ==========================================================================
+       DOCUMENT LIBRARY STYLING (NEW)
+       ========================================================================== */
+    .lib-pill-btn {
+      background: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      border-radius: 8px !important;
+      padding: 8px 16px !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      color: #475569 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    }
+    .lib-pill-btn:hover {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    .lib-pill-btn.active {
+      background: #0f5a9e !important;
+      color: #ffffff !important;
+      border-color: #0f5a9e !important;
+      box-shadow: 0 4px 10px rgba(15, 90, 158, 0.2) !important;
+    }
+    .pill-icon {
+      font-size: 14px !important;
+      line-height: 1 !important;
+    }
+
+    .lib-sub-tab {
+      background: none !important;
+      border: none !important;
+      padding: 6px 12px 10px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      color: #64748b !important;
+      cursor: pointer !important;
+      border-bottom: 3px solid transparent !important;
+      transition: all 0.2s ease !important;
+    }
+    .lib-sub-tab:hover {
+      color: #0f5a9e !important;
+    }
+    .lib-sub-tab.active {
+      color: #0f5a9e !important;
+      border-bottom-color: #0f5a9e !important;
+      font-weight: 700 !important;
+    }
+
+    .lib-doc-card {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 16px !important;
+      display: flex !important;
+      gap: 16px !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+      border-color: #cbd5e1 !important;
+    }
+    .lib-doc-pdf-icon {
+      width: 56px !important;
+      height: 70px !important;
+      background: #fef2f2 !important;
+      border: 1.5px solid #fee2e2 !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #ef4444 !important;
+      width: 28px !important;
+      height: 28px !important;
+    }
+    .lib-doc-pdf-icon span {
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      color: #ef4444 !important;
+      margin-top: 2px !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      margin: 0 0 8px !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 6px !important;
+      margin-bottom: 8px !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 3px 8px !important;
+      border-radius: 99px !important;
+      text-transform: uppercase !important;
+    }
+    .lib-doc-tag.subject {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+    }
+    .lib-doc-tag.class {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      font-size: 11px !important;
+      color: #94a3b8 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
+    .lib-folder-item {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 10px !important;
+      padding: 12px !important;
+      display: flex !important;
+      gap: 12px !important;
+      align-items: center !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      cursor: pointer !important;
+    }
+    .lib-folder-item:hover {
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    }
+    .lib-folder-icon {
+      width: 44px !important;
+      height: 38px !important;
+      background: #e0f2fe !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #0284c7 !important;
+      flex-shrink: 0 !important;
+    }
+    .lib-folder-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+    .lib-folder-title {
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      color: #334155 !important;
+      margin: 0 0 3px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    .lib-folder-subtext {
+      font-size: 11px !important;
+      color: #64748b !important;
+      margin: 0 0 6px !important;
+    }
+    .lib-folder-badge {
+      display: inline-block !important;
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+      padding: 1px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Dark Mode Theme Support */
+    .select-page[data-theme="dark"] .lib-pill-btn {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn:hover {
+      background: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn.active {
+      background: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab {
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab.active {
+      color: #3b82f6 !important;
+      border-bottom-color: #3b82f6 !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card:hover {
+      border-color: #475569 !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-tag.class {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card h4 {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item:hover {
+      border-color: #475569 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-badge {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+      border-color: #cbd5e1 !important;
+    }
+    .lib-doc-pdf-icon {
+      width: 72px !important;
+      height: 90px !important;
+      background: linear-gradient(135deg, transparent 14px, #ffffff 14px) !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      position: relative !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 14px !important;
+      height: 14px !important;
+      background: #cbd5e1 !important; /* light grey fold */
+      border-bottom-left-radius: 4px !important;
+      border-top-right-radius: 0 !important;
+      box-shadow: -1px 1px 2px rgba(0,0,0,0.05) !important;
+    }
+    .lib-doc-pdf-icon .pdf-tag-label {
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      background: #dc2626 !important; /* rich red */
+      color: #ffffff !important;
+      height: 22px !important;
+      line-height: 22px !important;
+      text-align: center !important;
+      font-weight: 700 !important;
+      font-size: 11px !important;
+      letter-spacing: 0.5px !important;
+      border-bottom-left-radius: 7px !important;
+      border-bottom-right-radius: 7px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #dc2626 !important;
+      width: 32px !important;
+      height: 32px !important;
+      margin-top: -10px !important;
+    }
+    .lib-doc-pdf-icon span {
+      display: none !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      margin: 0 0 8px !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 6px !important;
+      margin-bottom: 8px !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 3px 8px !important;
+      border-radius: 99px !important;
+      text-transform: uppercase !important;
+    }
+    .lib-doc-tag.subject {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+    }
+    .lib-doc-tag.class {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      font-size: 11px !important;
+      color: #94a3b8 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
+    .lib-folder-item {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 10px !important;
+      padding: 12px !important;
+      display: flex !important;
+      gap: 12px !important;
+      align-items: center !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      cursor: pointer !important;
+    }
+    .lib-folder-item:hover {
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    }
+    .lib-folder-icon {
+      width: 44px !important;
+      height: 38px !important;
+      background: #e0f2fe !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #0284c7 !important;
+      flex-shrink: 0 !important;
+    }
+    .lib-folder-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+    .lib-folder-title {
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      color: #334155 !important;
+      margin: 0 0 3px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    .lib-folder-subtext {
+      font-size: 11px !important;
+      color: #64748b !important;
+      margin: 0 0 6px !important;
+    }
+    .lib-folder-badge {
+      display: inline-block !important;
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+      padding: 1px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Dark Mode Theme Support */
+    .select-page[data-theme="dark"] .lib-pill-btn {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn:hover {
+      background: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn.active {
+      background: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab {
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab.active {
+      color: #3b82f6 !important;
+      border-bottom-color: #3b82f6 !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card:hover {
+      border-color: #475569 !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-tag.class {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card h4 {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item:hover {
+      border-color: #475569 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-badge {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+
+    @media (max-width: 992px) {
+      .library-main-layout {
+        flex-direction: column !important;
+      }
+      .library-right-col {
+        width: 100% !important;
+      }
+    }
+
+    /* Sidebar hide/collapse for full-screen Document Library */
+    .tsa-shell.hide-sidebar .tsa-sidebar {
+      display: none !important;
+    }
+    .tsa-shell.hide-sidebar .tsa-content {
+      margin-left: 0 !important;
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #dc2626 !important;
+      width: 32px !important;
+      height: 32px !important;
+      margin-top: -10px !important;
+    }
+    .lib-doc-pdf-icon span {
+      display: none !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      margin: 0 0 8px !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 6px !important;
+      margin-bottom: 8px !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 3px 8px !important;
+      border-radius: 99px !important;
+      text-transform: uppercase !important;
+    }
+    .lib-doc-tag.subject {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+    }
+    .lib-doc-tag.class {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      font-size: 11px !important;
+      color: #94a3b8 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
+    .lib-folder-item {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 10px !important;
+      padding: 12px !important;
+      display: flex !important;
+      gap: 12px !important;
+      align-items: center !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      cursor: pointer !important;
+    }
+    .lib-folder-item:hover {
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    }
+    .lib-folder-icon {
+      width: 44px !important;
+      height: 38px !important;
+      background: #e0f2fe !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #0284c7 !important;
+      flex-shrink: 0 !important;
+    }
+    .lib-folder-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+    .lib-folder-title {
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      color: #334155 !important;
+      margin: 0 0 3px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+    .lib-folder-subtext {
+      font-size: 11px !important;
+      color: #64748b !important;
+      margin: 0 0 6px !important;
+    }
+    .lib-folder-badge {
+      display: inline-block !important;
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+      padding: 1px 6px !important;
+      border-radius: 4px !important;
+    }
+
+    /* Dark Mode Theme Support */
+    .select-page[data-theme="dark"] .lib-pill-btn {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn:hover {
+      background: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-pill-btn.active {
+      background: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      color: #ffffff !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab {
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-sub-tab.active {
+      color: #3b82f6 !important;
+      border-bottom-color: #3b82f6 !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-card:hover {
+      border-color: #475569 !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-doc-tag.class {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card {
+      background: #0f172a !important;
+      border-color: #1e293b !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-card h4 {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-item:hover {
+      border-color: #475569 !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-title {
+      color: #f8fafc !important;
+    }
+    .select-page[data-theme="dark"] .lib-folder-badge {
+      background: #334155 !important;
+      color: #94a3b8 !important;
+    }
+
+    @media (max-width: 992px) {
+      .library-main-layout {
+        flex-direction: column !important;
+      }
+      .library-right-col {
+        width: 100% !important;
+      }
+    }
+
+    /* Sidebar hide/collapse for full-screen Document Library */
+    .tsa-shell.hide-sidebar .tsa-sidebar {
+      display: none !important;
+    }
+    .tsa-shell.hide-sidebar .tsa-content {
+      margin-left: 0 !important;
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+    .tsa-shell.hide-sidebar .tsa-topbar {
+      /* Keep standard padding-left on desktop to accommodate the absolute logo container */
+    }
+    .tsa-shell.hide-sidebar .sidebar-toggle {
+      display: none !important;
+    }
+    .tsa-shell.hide-sidebar .topbar-left-logo-search {
+      display: flex !important;
+    }
+
+    @media (max-width: 992px) {
+      .tsa-shell.hide-sidebar .topbar-left-logo-search {
+        display: none !important;
+      }
+      .tsa-shell.hide-sidebar .tsa-topbar {
+        padding-left: 16px !important;
+      }
+      .tsa-shell.hide-sidebar .sidebar-toggle {
+        display: block !important;
+      }
+    }
+
+    /* Style for SVG icons in Category Pills */
+    .lib-pill-btn {
+      background: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #334155 !important;
+      transition: all 0.2s ease !important;
+      font-weight: 600 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+    .lib-pill-btn:hover {
+      background: #e2e8f0 !important;
+    }
+    .lib-pill-btn.active {
+      background: #0f5a9e !important;
+      border-color: #0f5a9e !important;
+      color: #ffffff !important;
+    }
+    .pill-svg-icon {
+      color: #0f5a9e !important;
+      flex-shrink: 0 !important;
+      transition: all 0.2s ease !important;
+    }
+    .lib-pill-btn.active .pill-svg-icon {
+      color: #ffffff !important;
+    }
+    .pill-fill-part {
+      fill: #dbeafe !important;
+      transition: fill 0.2s ease !important;
+    }
+    .lib-pill-btn.active .pill-fill-part {
+      fill: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    /* Document Library Overrides to match Image 3 exactly */
+    .lib-doc-pdf-icon {
+      width: 56px !important;
+      height: 70px !important;
+      background: #ffffff !important;
+      border: 1.5px solid #e2e8f0 !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      padding-top: 10px !important;
+      flex-shrink: 0 !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #ef4444 !important;
+      width: 30px !important;
+      height: 30px !important;
+    }
+    .lib-doc-pdf-icon span {
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      background: #ef4444 !important;
+      color: #ffffff !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 2.5px 0 !important;
+      margin: 0 !important;
+      text-transform: uppercase !important;
+      display: block !important;
+    }
+    .lib-doc-tag {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 4px 10px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .lib-doc-tag.subject {
+      background: #0f5a9e !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: #0f5a9e !important;
+      color: #ffffff !important;
+    }
+
+    /* Fresh and borderless search inputs background to match the mockup */
+    #lib-search-input,
+    .topbar-left-logo-search input {
+      background: #eff3f8 !important;
+      color: #1e293b !important;
+      border: none !important;
+      font-weight: 500 !important;
+    }
+    #lib-search-input::placeholder,
+    .topbar-left-logo-search input::placeholder {
+      color: #94a3b8 !important;
+      opacity: 0.85 !important;
+    }
+
+    /* Category pills style matching */
+    .lib-pill-btn {
+      background: #eff3f8 !important;
+      border: none !important;
+      color: #1e293b !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      padding: 10px 20px !important;
+      border-radius: 8px !important;
+      transition: all 0.2s ease !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      height: 42px !important;
+      box-sizing: border-box !important;
+    }
+    .lib-pill-btn:hover {
+      background: #e2e8f0 !important;
+      color: #0f5a9e !important;
+    }
+    .lib-pill-btn.active {
+      background: #0f5a9e !important;
+      border: none !important;
+      color: #ffffff !important;
+    }
+    .lib-pill-btn.active .pill-svg-icon {
+      color: #ffffff !important;
+    }
+
+    /* Show tab header title specifically on Document Library, History, and Account tabs */
+    #tab-documents .tab-header-title,
+    #tab-history .tab-header-title,
+    #tab-account .tab-header-title,
+    #tab-history .tab-header-desc,
+    #tab-account .tab-header-desc {
+      display: block !important;
+    }
+
+    /* Style history search box exactly like the library search box */
+    #history-search-input {
+      background: #eff3f8 !important;
+      color: #1e293b !important;
+      border: none !important;
+      font-weight: 500 !important;
+      padding: 10px 16px 10px 38px !important;
+      border-radius: 8px !important;
+      height: 42px !important;
+      box-sizing: border-box !important;
+      font-size: 13.5px !important;
+    }
+    #history-search-input::placeholder {
+      color: #94a3b8 !important;
+    }
+    #history-search-input:focus {
+      box-shadow: none !important;
+      border: none !important;
+    }
+    .search-box-wrapper .search-icon {
+      color: #0f5a9e !important;
+      opacity: 1 !important;
+      left: 14px !important;
+      width: 14px !important;
+      height: 14px !important;
+    }
+
+    /* Library documents grid forced to exactly 2 columns on desktop, 1 on mobile */
+    .library-docs-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+    }
+    @media (max-width: 767px) {
+      .library-docs-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+
+    .lib-folder-badge {
+      background: #0f5a9e !important;
+      color: white !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      padding: 3px 12px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      text-align: center !important;
+      display: inline-block !important;
+    }
+
+/* ==========================================
+   LIBRARY STYLES OVERRIDES FOR WHITE BG & MOBILE RESPONSIVE
+   ========================================== */
+:root {
+  --page-bg: #ffffff !important;
+}
+
+.library-docs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+}
+@media (max-width: 900px) {
+  .library-docs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.lib-doc-card {
+  background: #f1f3f5 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  display: flex !important;
+  gap: 16px !important;
+  align-items: center !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+.lib-doc-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+.lib-doc-pdf-icon {
+  position: relative !important;
+  width: 54px !important;
+  height: 68px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+}
+.lib-doc-pdf-icon::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -1.5px !important;
+  right: -1.5px !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: #d1d5db !important;
+  border-bottom-left-radius: 5px !important;
+  border-top-right-radius: 8px !important;
+}
+.lib-doc-pdf-icon svg {
+  color: #ef4444 !important;
+  width: 22px !important;
+  height: 22px !important;
+  margin-top: 8px !important;
+}
+.lib-doc-pdf-icon span {
+  width: 100% !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  padding: 3px 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+}
+.lib-doc-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+.lib-doc-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+.lib-doc-tags {
+  display: flex !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  flex-wrap: wrap !important;
+}
+.lib-doc-tag {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 3px 12px !important;
+  border-radius: 99px !important;
+  text-transform: uppercase !important;
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.subject {
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.class {
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-meta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+}
+.lib-doc-meta-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.lib-folder-item {
+  background: #f1f3f5 !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+}
+.lib-folder-item:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+.lib-folder-icon {
+  width: 38px !important;
+  height: 38px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #2563eb !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+}
+.lib-folder-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
+}
+.lib-folder-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.4 !important;
+}
+.lib-folder-subtext {
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin: 0 !important;
+}
+.lib-folder-badge {
+  display: inline-block !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+  padding: 2px 8px !important;
+  border-radius: 99px !important;
+  text-transform: uppercase !important;
+}
+
+/* ==========================================
+   CATEGORY PILL BUTTON STYLE OVERRIDES
+   ========================================== */
+.lib-pill-btn {
+  background: #f0f4f9 !important;
+  border: 1px solid #dbeafe !important;
+  color: #1e293b !important;
+  height: 46px !important;
+  padding: 0 22px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+.lib-pill-btn:hover {
+  background: #e2eaf4 !important;
+  border-color: #cbd8ec !important;
+}
+.lib-pill-btn.active {
+  background: var(--brand-red, #135c97) !important;
+  border-color: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.pill-svg-icon {
+  color: var(--brand-red, #135c97) !important;
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+.lib-pill-btn.active .pill-svg-icon {
+  color: #ffffff !important;
+}
+.pill-fill-part {
+  fill: #dbeafe !important;
+  transition: fill 0.2s ease !important;
+}
+.lib-pill-btn.active .pill-fill-part {
+  fill: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ==========================================
+   DOCUMENT PDF CARD STYLE OVERRIDES (IMAGE 2 DESIGN)
+   ========================================== */
+.lib-doc-card {
+  background: #f1f3f5 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  display: flex !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+.lib-doc-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+.lib-doc-pdf-icon {
+  position: relative !important;
+  width: 72px !important;
+  height: 96px !important;
+  background: linear-gradient(225deg, transparent 16px, #ffffff 16px) !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.06)) !important;
+}
+.lib-doc-pdf-icon::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+  border-bottom-left-radius: 3px !important;
+}
+.lib-doc-pdf-icon svg {
+  color: #ef4444 !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin-top: 14px !important;
+}
+.lib-doc-pdf-icon span {
+  width: 100% !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  padding: 5px 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+}
+.lib-doc-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  justify-content: space-between !important;
+}
+.lib-doc-title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin: 0 0 10px 0 !important;
+  line-height: 1.45 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+.lib-doc-tags {
+  display: flex !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  flex-wrap: wrap !important;
+}
+.lib-doc-tag {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 4px 14px !important;
+  border-radius: 99px !important;
+  text-transform: none !important;
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.subject {
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.class {
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+}
+.lib-doc-divider {
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  margin-bottom: 10px !important;
+  width: 100% !important;
+}
+.lib-doc-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 12px !important;
+  color: #64748b !important;
+}
+.lib-doc-meta-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* ==========================================
+   BORDERLESS & COMPACT CATEGORY PILL OVERRIDES
+   ========================================== */
+.lib-pill-btn {
+  background: #f0f4f9 !important;
+  border: none !important;
+  color: #1e293b !important;
+  height: 44px !important;
+  padding: 0 16px !important;
+  border-radius: 10px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+.lib-pill-btn:hover {
+  background: #e2eaf4 !important;
+}
+
+/* ==========================================
+   LARGE & WARM RED PDF ICON STYLING OVERRIDES
+   ========================================== */
+.lib-doc-pdf-icon svg {
+  color: #c0392b !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin-top: 12px !important;
+}
+.lib-doc-pdf-icon span {
+  width: 100% !important;
+  background: #c0392b !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  padding: 6px 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+}
+
+/* ==========================================
+   FOLDER CARD STYLING OVERRIDES (IMAGE DESIGN)
+   ========================================== */
+.lib-folder-item {
+  background: #f1f3f5 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  display: flex !important;
+  gap: 16px !important;
+  align-items: flex-start !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+}
+.lib-folder-item:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+.lib-folder-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  align-self: stretch !important;
+}
+.lib-folder-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+  line-height: 1.45 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+.lib-folder-subtext {
+  font-size: 12px !important;
+  color: #64748b !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+.lib-folder-badge {
+  display: inline-block !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  background: var(--brand-red, #135c97) !important;
+  color: #ffffff !important;
+  padding: 2.5px 8px !important;
+  border-radius: 99px !important;
+  text-transform: none !important;
+  text-align: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ==========================================
+   CHUBBY & SPREAD-OUT CATEGORY PILL OVERRIDES
+   ========================================== */
+.lib-pill-btn {
+  background: #f0f4f9 !important;
+  border: none !important;
+  color: #1e293b !important;
+  height: 48px !important;
+  padding: 0 24px !important;
+  border-radius: 10px !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================
+   SIDEBAR DOUBLE-SCROLL STICKY HEADER FIX
+   ========================================== */
+#course-study-modal .study-tab-content {
+  overflow: hidden !important;
+}
+#course-study-modal .sidebar-lessons-list {
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+/* ==========================================
+   CHAPTER HEADER TEXT CLIPPING FIX
+   ========================================== */
+#course-study-modal .tree-chapter-header {
+  align-items: center !important;
+  line-height: 1.4 !important;
+  padding: 12px 14px !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* ==========================================
+   ACTIVE LESSON ROW BORDERLESS OVERRIDES
+   ========================================== */
+#course-study-modal .tree-bai-row.active,
+#course-study-modal .tree-standalone-row.active {
+  border-color: transparent !important;
+}
+
+/* ==========================================
+   SIDEBAR NAVIGATION ACTIVE/HOVER CAPSULES
+   ========================================== */
+.tsa-menu a {
+  margin: 3px 12px !important;
+  border-radius: 8px !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+
+.tsa-menu a:hover {
+  background: #f1f5f9 !important;
+  color: #135c97 !important;
+}
+
+.tsa-menu a.active,
+.tsa-menu .submenu-item.active {
+  background: #eff6ff !important;
+  color: #135c97 !important;
+  font-weight: 700 !important;
+}
+
+.tsa-menu a.active svg,
+.tsa-menu .submenu-item.active svg {
+  stroke: #135c97 !important;
+}
+
+/* ==========================================
+   SUB-LESSON BRANCH ARROW INSIDE CAPSULE FIX
+   ========================================== */
+#course-study-modal .tree-phan-row {
+  margin: 2px 10px 2px 15px !important;
+}
+#course-study-modal .tree-phan-indent {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+}
+
+/* ==========================================
+   DOCUMENT CARD DIMENSIONS & LANDSCAPE FORMAT FIX
+   ========================================== */
+.lib-doc-card {
+  padding: 12px 16px !important;
+  gap: 16px !important;
+  align-items: center !important;
+}
+.lib-doc-pdf-icon {
+  width: 54px !important;
+  height: 72px !important;
+  background: linear-gradient(225deg, transparent 12px, #ffffff 12px) !important;
+  border-radius: 6px !important;
+}
+.lib-doc-pdf-icon::before {
+  width: 12px !important;
+  height: 12px !important;
+  background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+  border-bottom-left-radius: 2px !important;
+}
+.lib-doc-pdf-icon svg {
+  width: 32px !important;
+  height: 32px !important;
+  margin-top: 8px !important;
+}
+.lib-doc-pdf-icon span {
+  font-size: 9px !important;
+  padding: 4px 0 !important;
+}
+
+/* ==========================================
+   MAPSTUDY ALIGNED DOCUMENT CARD STYLE OVERRIDES
+   ========================================== */
+    .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 16px 20px !important;
+      display: flex !important;
+      gap: 20px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 78px !important;
+      height: 104px !important;
+      background: linear-gradient(225deg, transparent 18px, #ffffff 18px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 18px !important;
+      height: 18px !important;
+      background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+      border-bottom-left-radius: 3px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 42px !important;
+      height: 42px !important;
+      margin-top: 14px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 6px 0 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0.5px !important;
+      display: block !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-self: stretch !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 4px 14px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.subject {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      font-size: 12px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+/* ==========================================
+   EXTREMELY COMPACT LANDSCAPE CARD OVERRIDES
+   ========================================== */
+    .library-docs-grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important; /* Maximizes width by making it 1-column */
+      gap: 14px !important;
+    }
+    .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 10px 16px !important;
+      display: flex !important;
+      gap: 16px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 63px !important;
+      height: 84px !important;
+      background: linear-gradient(225deg, transparent 12px, #ffffff 12px) !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 12px !important;
+      height: 12px !important;
+      background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+      border-bottom-left-radius: 2px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 34px !important;
+      height: 34px !important;
+      margin-top: 10px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 4px 0 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0.5px !important;
+      display: block !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-self: stretch !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.4 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 6px !important;
+      margin: 0 !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 10.5px !important;
+      font-weight: 600 !important;
+      padding: 2px 10px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.subject {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      font-size: 11px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+    }
+
+/* ==========================================
+   REVERTED TO 2-COLUMN BALANCED COMPACT OVERRIDES
+   ========================================== */
+    .library-docs-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+    }
+    @media (max-width: 900px) {
+      .library-docs-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 12px 16px !important;
+      display: flex !important;
+      gap: 16px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 66px !important;
+      height: 88px !important;
+      background: linear-gradient(225deg, transparent 15px, #ffffff 15px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 15px !important;
+      height: 15px !important;
+      background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+      border-bottom-left-radius: 3px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 36px !important;
+      height: 36px !important;
+      margin-top: 10px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 10px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 5px 0 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0.5px !important;
+      display: block !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-self: stretch !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.4 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 3px 12px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.subject {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      font-size: 11.5px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+/* ==========================================
+   MAPSTUDY SPECIFIC DOCUMENT CARD SHAPE OVERRIDES
+   ========================================== */
+    .library-docs-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+    }
+    @media (max-width: 900px) {
+      .library-docs-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 12px 16px !important;
+      display: flex !important;
+      gap: 16px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 72px !important;
+      height: 96px !important;
+      background: linear-gradient(225deg, transparent 16px, #ffffff 16px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 16px !important;
+      height: 16px !important;
+      background: linear-gradient(135deg, #cbd5e1 50%, transparent 50%) !important;
+      border-bottom-left-radius: 3px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 38px !important;
+      height: 38px !important;
+      margin-top: 12px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 10.5px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 5px 0 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0.5px !important;
+      display: block !important;
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .lib-doc-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-self: stretch !important;
+      justify-content: space-between !important;
+    }
+    .lib-doc-title {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      line-height: 1.45 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+    .lib-doc-tags {
+      display: flex !important;
+      gap: 8px !important;
+      margin: 0 !important;
+      flex-wrap: wrap !important;
+    }
+    .lib-doc-tag {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      padding: 3px 12px !important;
+      border-radius: 99px !important;
+      text-transform: none !important;
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.subject {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-tag.class {
+      background: var(--brand-red, #135c97) !important;
+      color: #ffffff !important;
+    }
+    .lib-doc-meta {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      font-size: 11.5px !important;
+      color: #64748b !important;
+      margin: 0 !important;
+    }
+    .lib-doc-meta-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+/* ==========================================
+   LARGER PDF LOGO AND TEXT BOLDNESS OVERRIDES
+   ========================================== */
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 52px !important;
+      height: 52px !important;
+      margin-top: 8px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      text-align: center !important;
+      padding: 5px 0 !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0.5px !important;
+      display: block !important;
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+/* ==========================================
+   LARGER PDF LOOP LOGO, BOLDER TEXT AND 3D FOLD OVERRIDES
+   ========================================== */
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 72px !important;
+      height: 96px !important;
+      background: linear-gradient(225deg, transparent 20px, #ffffff 20px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 20px !important;
+      height: 20px !important;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, transparent 50%) !important;
+      filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.15)) !important;
+      border-bottom-left-radius: 4px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 58px !important;
+      height: 58px !important;
+      margin-top: 6px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 15px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      padding: 5px 0 !important;
+      line-height: 1.0 !important;
+      letter-spacing: 0.8px !important;
+      display: block !important;
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+/* ==========================================
+   LARGER FOLDER ICON & VERTICAL CENTER OVERRIDES
+   ========================================== */
+.lib-folder-item {
+  align-items: center !important;
+}
+
+/* ==========================================
+   REALISTIC PDF FOLD CORNER ALIGNMENT OVERRIDES
+   ========================================== */
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 20px !important;
+      height: 20px !important;
+      background: linear-gradient(225deg, transparent 50%, #cbd5e1 50%, #f1f5f9 100%) !important;
+      filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.15)) !important;
+      border-bottom-left-radius: 4px !important;
+    }
+
+/* ==========================================
+   LARGER DOCUMENT CARD BACKGROUND AND PDF SIZING OVERRIDES
+   ========================================== */
+    .lib-doc-card {
+      background: #f1f3f5 !important;
+      border: 1px solid transparent !important;
+      border-radius: 12px !important;
+      padding: 16px 20px !important;
+      display: flex !important;
+      gap: 18px !important;
+      align-items: stretch !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      color: inherit !important;
+      box-shadow: none !important;
+    }
+    .lib-doc-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+    }
+    .lib-doc-pdf-icon {
+      position: relative !important;
+      width: 80px !important;
+      height: 108px !important;
+      background: linear-gradient(225deg, transparent 22px, #ffffff 22px) !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)) !important;
+    }
+    .lib-doc-pdf-icon::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      width: 22px !important;
+      height: 22px !important;
+      background: linear-gradient(225deg, transparent 50%, #cbd5e1 50%, #f1f5f9 100%) !important;
+      filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.15)) !important;
+      border-bottom-left-radius: 4px !important;
+    }
+    .lib-doc-pdf-icon svg {
+      color: #c0392b !important;
+      width: 64px !important;
+      height: 64px !important;
+      margin-top: 8px !important;
+    }
+    .lib-doc-pdf-icon span {
+      width: 100% !important;
+      background: #c0392b !important;
+      color: #ffffff !important;
+      font-size: 16.5px !important;
+      font-weight: 900 !important;
+      text-align: center !important;
+      padding: 6px 0 !important;
+      line-height: 1.0 !important;
+      letter-spacing: 0.8px !important;
+      display: block !important;
+      border-bottom-left-radius: 8px !important;
+      border-bottom-right-radius: 8px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
     }
