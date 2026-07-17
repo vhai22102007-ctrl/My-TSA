@@ -9,7 +9,7 @@
       --text: #111827;
       --muted: #6b7280;
       --border: #e5e7eb;
-      --sidebar-width: 240px;
+      --sidebar-width: 280px;
       --topbar-height: 58px;
       --radius: 14px;
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -2201,12 +2201,12 @@
 
       .tsa-sidebar {
         transform: translateX(-100%);
-        width: 240px;
+        width: 280px;
       }
 
       .tsa-shell.sidebar-collapsed .tsa-sidebar {
         transform: translateX(0);
-        width: 240px;
+        width: 280px;
       }
 
       .tsa-shell.sidebar-collapsed .tsa-menu a span:not(.menu-icon) {
@@ -3140,8 +3140,8 @@
     }
     
     .sub-icon svg {
-      width: 14px !important;
-      height: 14px !important;
+      width: 17px !important;
+      height: 17px !important;
       stroke: #6b7280;
       transition: stroke 0.15s ease;
     }

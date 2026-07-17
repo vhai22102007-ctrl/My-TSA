@@ -581,6 +581,16 @@
             </div>
 
             <div class="field">
+              <label for="register-gender">Giới tính <span class="required">*</span></label>
+              <div class="input-wrap">
+                <select id="register-gender" class="form-select">
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
               <label for="register-email">Email <span class="required">*</span></label>
               <div class="input-wrap">
                 <input id="register-email" type="text" autocomplete="username" inputmode="email" placeholder="Điền chính xác email để nhận thông tin">
@@ -1042,6 +1052,7 @@
             email: getValue("register-email"),
             password: getValue("register-password"),
             confirm: getValue("register-confirm"),
+            gender: getValue("register-gender") || "Nam"
           };
 
           if (!registerInfo.name || !registerInfo.email || !registerInfo.password || !registerInfo.confirm) {
@@ -1065,7 +1076,7 @@
                   name: registerInfo.name,
                   password_hash: passwordHash,
                   dob: "",
-                  gender: "",
+                  gender: registerInfo.gender,
                   cccd: "",
                   phone: "",
                   school: "",
@@ -1101,7 +1112,7 @@
             email: registerInfo.email,
             name: registerInfo.name,
             dob: "",
-            gender: "",
+            gender: registerInfo.gender,
             cccd: "",
             phone: "",
             school: "",

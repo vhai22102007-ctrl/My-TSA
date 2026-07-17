@@ -25,8 +25,8 @@
 
       <!-- Profile Box (Clickable, replaces "Tổng quan") -->
       <a class="sidebar-profile active" href="#overview" data-tab="overview" id="sidebar-profile-button">
-        <div class="sidebar-avatar-circle">
-          <span id="sidebar-avatar-char">H</span>
+        <div class="sidebar-avatar-circle-wrapper" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #e2e8f0;">
+          <img id="sidebar-avatar-img" src="https://assets.tmastudy.io.vn/assets/nam.png" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/nam.png'">
         </div>
         <div class="sidebar-profile-info">
           <span class="sidebar-profile-name" id="sidebar-student-name">Học sinh</span>
@@ -150,46 +150,44 @@
           </a>
           <div class="submenu-wrapper" id="phong-luyen-submenu">
             <div class="submenu-inner">
-              <a class="menu-item submenu-item" href="#tsa-practice" data-tab="tsa-practice">
+                            <a class="menu-item submenu-item" href="#tsa-practice" data-tab="tsa-practice">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z"></path>
                   </svg>
                 </span>
                 <span>Đánh giá tư duy - TSA</span>
               </a>
-              <a class="menu-item submenu-item" href="#hsa-practice" data-tab="hsa-practice">
+                            <a class="menu-item submenu-item" href="#hsa-practice" data-tab="hsa-practice">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - HSA</span>
               </a>
-              <a class="menu-item submenu-item" href="#vact-practice" data-tab="vact-practice">
+                            <a class="menu-item submenu-item" href="#vact-practice" data-tab="vact-practice">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - VACT</span>
               </a>
-              <a class="menu-item submenu-item" href="#qda-practice" data-tab="qda-practice">
+                            <a class="menu-item submenu-item" href="#qda-practice" data-tab="qda-practice">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 3v18h18"></path>
-                    <path d="m18.5 7.5-5.5 5.5-3-3-6 6"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 20V10M12 20V4M6 20v-6"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - QDA</span>
               </a>
-              <a class="menu-item submenu-item" href="#thpt-practice" data-tab="thpt-practice">
+                            <a class="menu-item submenu-item" href="#thpt-practice" data-tab="thpt-practice">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
                   </svg>
                 </span>
                 <span>THPTQG</span>
@@ -216,46 +214,44 @@
           </a>
           <div class="submenu-wrapper" id="thi-thu-submenu">
             <div class="submenu-inner">
-              <a class="menu-item submenu-item" href="#tsa-exams" data-tab="tsa-exams">
+                            <a class="menu-item submenu-item" href="#tsa-exams" data-tab="tsa-exams">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z"></path>
                   </svg>
                 </span>
                 <span>Đánh giá tư duy - TSA</span>
               </a>
-              <a class="menu-item submenu-item" href="#hsa-exams" data-tab="hsa-exams">
+                            <a class="menu-item submenu-item" href="#hsa-exams" data-tab="hsa-exams">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - HSA</span>
               </a>
-              <a class="menu-item submenu-item" href="#vact-exams" data-tab="vact-exams">
+                            <a class="menu-item submenu-item" href="#vact-exams" data-tab="vact-exams">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - VACT</span>
               </a>
-              <a class="menu-item submenu-item" href="#qda-exams" data-tab="qda-exams">
+                            <a class="menu-item submenu-item" href="#qda-exams" data-tab="qda-exams">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 3v18h18"></path>
-                    <path d="m18.5 7.5-5.5 5.5-3-3-6 6"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 20V10M12 20V4M6 20v-6"></path>
                   </svg>
                 </span>
                 <span>Đánh giá năng lực - QDA</span>
               </a>
-              <a class="menu-item submenu-item" href="#thpt-exams" data-tab="thpt-exams">
+                            <a class="menu-item submenu-item" href="#thpt-exams" data-tab="thpt-exams">
                 <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
                   </svg>
                 </span>
                 <span>THPTQG</span>
@@ -406,11 +402,8 @@
         <!-- User profile -->
         <div class="account-menu-container">
           <button class="account-menu" type="button" aria-label="Menu tài khoản">
-            <div class="topbar-avatar-circle-wrapper">
-              <img id="topbar-avatar-img" src="https://assets.tmastudy.io.vn/assets/avt.png" alt="" onerror="this.style.display='none'; document.getElementById('topbar-avatar-char-container').style.display='flex';">
-              <div id="topbar-avatar-char-container" class="topbar-avatar-circle" style="display: none;">
-                <span id="topbar-avatar-char">H</span>
-              </div>
+            <div class="topbar-avatar-circle-wrapper" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+              <img id="topbar-avatar-img" src="https://assets.tmastudy.io.vn/assets/nam.png" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/nam.png'">
             </div>
             <svg class="chevron-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
@@ -1350,8 +1343,8 @@
   <div class="logout-dialog" id="logout-dialog" role="presentation" hidden>
     <div class="logout-backdrop" data-close-logout></div>
     <section class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title" aria-describedby="logout-desc">
-      <div class="logout-avatar" aria-hidden="true">
-        <img src="https://assets.tmastudy.io.vn/assets/avt.png" alt="" onerror="this.style.display='none'">
+      <div class="logout-avatar" aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; overflow: hidden; margin: 0 auto 16px;">
+        <img id="logout-avatar-img" src="https://assets.tmastudy.io.vn/assets/nam.png" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/nam.png'">
       </div>
       <h2 id="logout-title">Xác nhận đăng xuất</h2>
       <p id="logout-desc">Bạn có chắc muốn đăng xuất khỏi tài khoản <strong id="logout-display-name">Tài khoản test</strong>?</p>

@@ -800,13 +800,33 @@
           sidebarStudentUsername.textContent = "TMA Study premium";
         }
 
-        const sidebarAvatarChar = document.getElementById("sidebar-avatar-char");
-        if (sidebarAvatarChar && displayName) {
-          sidebarAvatarChar.textContent = displayName.charAt(0).toUpperCase();
+        const gender = studentInfo?.gender || "Nam";
+        const avatarFileName = gender === "Nữ" ? "nu.png" : "nam.png";
+        const avatarUrl = `https://assets.tmastudy.io.vn/assets/${avatarFileName}`;
+        const localAvatarUrl = `../assets/${avatarFileName}`;
+
+        const sidebarAvatarImg = document.getElementById("sidebar-avatar-img");
+        if (sidebarAvatarImg) {
+          sidebarAvatarImg.src = avatarUrl;
+          sidebarAvatarImg.onerror = () => {
+            sidebarAvatarImg.src = localAvatarUrl;
+          };
         }
-        const topbarAvatarChar = document.getElementById("topbar-avatar-char");
-        if (topbarAvatarChar && displayName) {
-          topbarAvatarChar.textContent = displayName.charAt(0).toUpperCase();
+
+        const topbarAvatarImg = document.getElementById("topbar-avatar-img");
+        if (topbarAvatarImg) {
+          topbarAvatarImg.src = avatarUrl;
+          topbarAvatarImg.onerror = () => {
+            topbarAvatarImg.src = localAvatarUrl;
+          };
+        }
+
+        const logoutAvatarImg = document.getElementById("logout-avatar-img");
+        if (logoutAvatarImg) {
+          logoutAvatarImg.src = avatarUrl;
+          logoutAvatarImg.onerror = () => {
+            logoutAvatarImg.src = localAvatarUrl;
+          };
         }
 
         // Dashboard date update
