@@ -6403,7 +6403,7 @@
       function updateSocialLinks() {
         const defaultLinks = {
           facebook: { url: "https://facebook.com/mapstudy", text: "Facebook TMA Study" },
-          youtube: { url: "https://youtube.com/c/ThayVuNgocAnh", text: "Thầy Vũ Ngọc Anh - Chuyên luyện thi Vật lý" },
+          youtube: { url: "https://youtube.com/c/ThayVuNgocAnh", text: "Youtube TMA Study" },
           tiktok: { url: "https://tiktok.com/@mapstudy", text: "Tiktok TMA Study" },
           messenger: { url: "https://m.me/mapstudy", text: "Messenger TMA Study" }
         };
