@@ -1791,3 +1791,29 @@
   color: #0f5a9e !important;
   border-bottom-color: #0f5a9e !important;
 }
+
+
+
+
+/* COLORFUL SIDEBAR ICONS */
+.nav-button[data-tab-target="practice"] .menu-icon svg {
+  stroke: #ff7a00 !important;
+}
+.nav-button[data-tab-target="exams"] .menu-icon svg {
+  stroke: #ec4899 !important;
+}
+.nav-button[data-tab-target="student-management"] .menu-icon svg {
+  stroke: #10b981 !important;
+}
+.nav-button[data-tab-target="system-settings"] .menu-icon svg {
+  stroke: #8b5cf6 !important;
+}
+.nav-button[onclick*="teacherLogout"] .menu-icon svg {
+  stroke: #ef4444 !important;
+}
+
+
+/* PERMANENTLY HIDE REDUNDANT TOPBAR ELEMENTS */
+#page-title, #summary-grid, #autosave-status, #editor-subtitle {
+  display: none !important;
+}

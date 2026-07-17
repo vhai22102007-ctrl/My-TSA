@@ -73,21 +73,45 @@
       approvedGrid.innerHTML = "";
       approvedStudents.forEach(function(s) {
         var firstChar = s.name ? s.name.trim().charAt(0).toUpperCase() : "H";
+        
+        var cuteThemes = [
+          { bg: '#eff6ff', fg: '#135c97', border: '#bfdbfe' },
+          { bg: '#fdf2f8', fg: '#db2777', border: '#fbcfe8' },
+          { bg: '#f5f3ff', fg: '#7c3aed', border: '#ddd6fe' },
+          { bg: '#ecfdf5', fg: '#059669', border: '#a7f3d0' },
+          { bg: '#fff7ed', fg: '#d97706', border: '#fed7aa' },
+          { bg: '#ecfeff', fg: '#0891b2', border: '#a5f3fc' }
+        ];
+        var nameHash = 0;
+        var nameStr = s.name || "";
+        for (var i = 0; i < nameStr.length; i++) {
+          nameHash += nameStr.charCodeAt(i);
+        }
+        var theme = cuteThemes[nameHash % cuteThemes.length];
 
         var card = document.createElement("div");
         card.className = "student-card";
-        card.style.cssText = "background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.015);";
-        card.setAttribute("onmouseover", "this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.05)'; this.style.borderColor='var(--brand)';");
-        card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.015)'; this.style.borderColor='#e5e7eb';");
+        card.style.cssText = "background: #ffffff; border: 1.5px solid " + theme.border + "; border-radius: 16px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.01);";
+        card.setAttribute("onmouseover", "this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.04)'; this.style.borderColor='var(--brand)';");
+        card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.01)'; this.style.borderColor='" + theme.border + "';");
         card.onclick = function() {
           viewStudentDetails(s.email);
         };
         
+        var displayEmail = s.email || "";
+        var displayPhone = s.phone || "Chưa cập nhật";
+        var displaySchool = s.school || "Chưa cập nhật";
+
         card.innerHTML = '\n' +
-'          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; border: 1px solid rgba(19, 92, 151, 0.15); text-transform: uppercase;">\n' +
+'          <div style="width: 48px; height: 48px; border-radius: 50%; background: ' + theme.bg + '; color: ' + theme.fg + '; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; border: 1.5px solid ' + theme.border + '; text-transform: uppercase;">\n' +
 '            ' + esc(firstChar) + '\n' +
 '          </div>\n' +
-'          <div style="font-weight: 700; color: #1e293b; font-size: 14px; word-break: break-word;">' + esc(s.name) + '</div>\n' +
+'          <div style="font-weight: 700; color: #1e293b; font-size: 14px; word-break: break-word; margin-bottom: 2px;">' + esc(s.name) + '</div>\n' +
+'          <div style="display: flex; flex-direction: column; gap: 5px; width: 100%; font-size: 11px; color: #64748b; text-align: left; padding: 8px 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #f1f5f9; box-sizing: border-box; overflow: hidden;">\n' +
+'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #3b82f6; font-size: 12.5px;">📧</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayEmail) + '">' + esc(displayEmail) + '</span></div>\n' +
+'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #10b981; font-size: 12.5px;">📞</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayPhone) + '">' + esc(displayPhone) + '</span></div>\n' +
+'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #eab308; font-size: 12.5px;">🏫</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displaySchool) + '">' + esc(displaySchool) + '</span></div>\n' +
+'          </div>\n' +
 '        ';
         approvedGrid.appendChild(card);
       });
@@ -116,9 +140,27 @@
       var student = approvedStudents.find(function(s) { return String(s.email).toLowerCase() === String(email).toLowerCase(); });
       if (student) {
         var firstChar = student.name ? student.name.trim().charAt(0).toUpperCase() : "H";
-        
-        var avatarCircle = document.getElementById("detail-avatar-circle");
-        if (avatarCircle) avatarCircle.textContent = firstChar;
+      var avatarCircle = document.getElementById("detail-avatar-circle");
+      if (avatarCircle) {
+        avatarCircle.textContent = firstChar;
+        var cuteThemes = [
+          { bg: '#eff6ff', fg: '#135c97', border: '#bfdbfe' },
+          { bg: '#fdf2f8', fg: '#db2777', border: '#fbcfe8' },
+          { bg: '#f5f3ff', fg: '#7c3aed', border: '#ddd6fe' },
+          { bg: '#ecfdf5', fg: '#059669', border: '#a7f3d0' },
+          { bg: '#fff7ed', fg: '#d97706', border: '#fed7aa' },
+          { bg: '#ecfeff', fg: '#0891b2', border: '#a5f3fc' }
+        ];
+        var nameHash = 0;
+        var nameStr = student.name || "";
+        for (var i = 0; i < nameStr.length; i++) {
+          nameHash += nameStr.charCodeAt(i);
+        }
+        var theme = cuteThemes[nameHash % cuteThemes.length];
+        avatarCircle.style.background = theme.bg;
+        avatarCircle.style.color = theme.fg;
+        avatarCircle.style.border = '1.5px solid ' + theme.border;
+      }
         
         document.getElementById("detail-student-name").textContent = student.name;
         document.getElementById("detail-student-code").textContent = "Mã học sinh: " + (student.email || "").split("@")[0].toUpperCase();
@@ -343,6 +385,51 @@
 
     // Expose selectCategoryTab
     window.selectCategoryTab = selectCategoryTab;
+
+    window.selectExamCategoryLobby = function(category) {
+      if (category === 'tsa') {
+        if (typeof startEditingExam === 'function') {
+          startEditingExam('Đề thi thử TSA', 'TSA_EXAM_01');
+          return;
+        }
+      }
+
+      currentExamCategory = category;
+      
+      // Update heading title based on category
+      var titleEl = document.getElementById("exam-tab-title");
+      if (titleEl) {
+        var titles = {
+          'tsa': 'Bài thi Đánh giá tư duy - TSA',
+          'hsa': 'Bài thi Đánh giá năng lực - HSA',
+          'vact': 'Bài thi Đánh giá năng lực - VACT',
+          'qda': 'Bài thi Đánh giá năng lực - QDA',
+          'thpt': 'Bài thi tốt nghiệp THPTQG'
+        };
+        titleEl.textContent = titles[category] || 'Quản lý đề Thi thử';
+      }
+
+      // Hide lobby, show list view
+      var lobbyView = document.getElementById("exams-lobby-view");
+      var managementView = document.getElementById("exams-management-view");
+      if (lobbyView) lobbyView.style.display = "none";
+      if (managementView) managementView.style.display = "block";
+
+      // Render the exam list
+      if (typeof renderExamsList === "function") renderExamsList();
+    };
+
+    window.backToExamsLobby = function() {
+      var lobbyView = document.getElementById("exams-lobby-view");
+      var managementView = document.getElementById("exams-management-view");
+      if (lobbyView) lobbyView.style.display = "block";
+      if (managementView) managementView.style.display = "none";
+      
+      // Clear sidebar active subtabs (since we went back to lobby)
+      document.querySelectorAll(".submenu-item").forEach(function(item) {
+        item.classList.remove("active");
+      });
+    };
 
     // KHO TÀI LIỆU (DRIVE LINKS) MANAGEMENT (FULLY DYNAMIC)
     var currentMaterialsList = [];
@@ -589,13 +676,19 @@
           html += `
             <tr>
               <td style="padding: 16px 20px;">
-                <div style="font-weight: 700; color: #1e293b; font-size: 13.5px;">${esc(material.title)}</div>
-                <span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 6px;">
+                <div style="font-weight: 700; color: #1e293b; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 14px;">${
+                    material.title.includes('Đề') || material.title.includes('de') || material.title.includes('Thi') ? '📝' :
+                    material.title.includes('Sách') || material.title.includes('Tài liệu') || material.title.includes('Lý thuyết') ? '📚' : '📄'
+                  }</span>
+                  <span>${esc(material.title)}</span>
+                </div>
+                <span style="padding: 2.5px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 6px; material.subject === 'TOÁN' ? 'background: #ffe2e2; color: #ef4444; border: 1px solid #fca5a5;' :material.subject === 'LÝ' ? 'background: #e0f7fa; color: #0891b2; border: 1px solid #67e8f9;' :material.subject === 'HOÁ' ? 'background: #f3e5f5; color: #ab47bc; border: 1px solid #e9d5ff;' :material.subject === 'SINH' ? 'background: #e8f5e9; color: #16a34a; border: 1px solid #86efac;' :material.subject === 'ANH' ? 'background: #fff8e1; color: #d97706; border: 1px solid #fde047;' :'background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;'">
                   ${material.subject}
                 </span>
               </td>
               <td style="padding: 16px 20px;">
-                <span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                <span style="padding: 4px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; material.category === 'ĐGTD' ? 'background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe;' :material.category === 'ĐGNL' ? 'background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;' :material.category === 'LỚP 12' ? 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;' :material.category === 'LỚP 11' ? 'background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa;' :'background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0;'">
                   ${material.category}
                 </span>
               </td>
@@ -1108,14 +1201,92 @@
       });
     }
 
+    window.switchSystemSubtab = function(subtabId) {
+      // Toggle sub-panels visibility
+      document.querySelectorAll(".system-subtab-panel").forEach(function(panel) {
+        panel.style.display = panel.id === "subtab-" + subtabId ? "block" : "none";
+      });
+
+      // Toggle active styling of horizontal tabs
+      document.querySelectorAll(".system-admin-tab-btn").forEach(function(btn) {
+        var isTarget = btn.getAttribute("data-subtab") === subtabId;
+        btn.classList.toggle("active", isTarget);
+        if (isTarget) {
+          btn.style.background = "#ffffff";
+          btn.style.color = "#135c97";
+          btn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+        } else {
+          btn.style.background = "transparent";
+          btn.style.color = "#64748b";
+          btn.style.boxShadow = "none";
+        }
+      });
+
+      // Trigger data fetch/render on switch
+      if (subtabId === "manage-courses") {
+        if (typeof renderManageCourses === "function") renderManageCourses();
+      } else if (subtabId === "activation-codes") {
+        if (typeof renderActivationCodes === "function") renderActivationCodes();
+      } else if (subtabId === "security-logs") {
+        if (typeof renderSecurityLogs === "function") renderSecurityLogs();
+      }
+    };
+
+    window.switchStudentSubtab = function(subtabId) {
+      // Toggle sub-panels visibility
+      document.querySelectorAll(".student-subtab-panel").forEach(function(panel) {
+        panel.style.display = panel.id === "subtab-" + subtabId ? "block" : "none";
+      });
+
+      // Toggle active styling of horizontal tabs
+      document.querySelectorAll(".student-admin-tab-btn").forEach(function(btn) {
+        var isTarget = btn.getAttribute("data-subtab") === subtabId;
+        btn.classList.toggle("active", isTarget);
+        if (isTarget) {
+          btn.style.background = "#ffffff";
+          btn.style.color = "#135c97";
+          btn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+        } else {
+          btn.style.background = "transparent";
+          btn.style.color = "#64748b";
+          btn.style.boxShadow = "none";
+        }
+      });
+
+      // Trigger data fetch/render on switch
+      if (subtabId === "manage-students") {
+        // Handled in loadInitialData or standard fetch
+      } else if (subtabId === "approve-courses") {
+        if (typeof renderManageCourses === "function") renderManageCourses();
+      } else if (subtabId === "manage-documents") {
+        if (typeof renderManageDocuments === "function") renderManageDocuments();
+      }
+    };
+
     function switchSystemTab(tabId) {
+      // Map old subtab targets to the unified settings panel
+      var systemSubtabs = ["manage-courses", "activation-codes", "security-logs", "manage-links"];
+      var activeSubtab = null;
+      if (systemSubtabs.indexOf(tabId) !== -1) {
+        activeSubtab = tabId;
+        tabId = "system-settings";
+      }
+
+      // Map old student subtab targets to the unified student panel
+      var studentSubtabs = ["manage-students", "approve-courses", "manage-documents"];
+      var activeStudentSubtab = null;
+      if (studentSubtabs.indexOf(tabId) !== -1) {
+        activeStudentSubtab = tabId;
+        tabId = "student-management";
+      }
+
       // Show correct dashboard panel
       document.querySelectorAll("#dashboard-container .tab-panel").forEach(function(panel) {
         panel.classList.toggle("active", panel.id === "tab-" + tabId);
       });
 
       // Update sidebar nav active states
-      if (tabId === "approve-students" || tabId === "manage-students" || tabId === "manage-documents" || tabId === "manage-courses" || tabId === "activation-codes" || tabId === "security-logs" || tabId === "approve-courses") {
+      if (tabId === "approve-students" || tabId === "student-management" || tabId === "system-settings" || tabId === "exams") {
         document.querySelectorAll("#sidebar-normal-nav .nav-button").forEach(function(btn) {
           var target = btn.getAttribute("data-tab-target");
           btn.classList.toggle("active", target === tabId);
@@ -1131,17 +1302,19 @@
       if (tabId === "practice") {
         renderPracticeRoom();
       } else if (tabId === "exams") {
-        renderExamsList();
-      } else if (tabId === "manage-documents") {
-        renderManageDocuments();
-      } else if (tabId === "manage-courses") {
-        renderManageCourses();
-      } else if (tabId === "activation-codes") {
-        renderActivationCodes();
-      } else if (tabId === "security-logs") {
-        renderSecurityLogs();
-      } else if (tabId === "approve-courses") {
-        renderManageCourses();
+        if (typeof backToExamsLobby === "function") backToExamsLobby();
+      } else if (tabId === "student-management") {
+        if (activeStudentSubtab) {
+          switchStudentSubtab(activeStudentSubtab);
+        } else {
+          switchStudentSubtab("manage-students");
+        }
+      } else if (tabId === "system-settings") {
+        if (activeSubtab) {
+          switchSystemSubtab(activeSubtab);
+        } else {
+          switchSystemSubtab("manage-courses");
+        }
       }
     }
 
@@ -1757,8 +1930,9 @@
         });
 
         var titles = {
-          setup: "Tạo đề",
-          math: "Soạn phần Toán",
+          setup: "Thiết lập đề thi",
+          'ai-import': "AI Nhập đề tự động",
+          math: "Soạn phần Tư duy Toán học",
           reading: "Soạn phần Đọc hiểu",
           science: "Soạn phần Khoa học",
           export: "Lưu và xuất đề"
@@ -3308,6 +3482,9 @@
         } else {
           renderExamsList();
         }
+        if (typeof refreshSetupTabStatus === "function") {
+          refreshSetupTabStatus();
+        }
       }
       window.toggleExamOpen = toggleExamOpen;
 
@@ -3519,7 +3696,9 @@
           // Re-render UI
           renderExamsList();
           renderPracticeRoom();
-
+          if (typeof refreshSetupTabStatus === "function") {
+            refreshSetupTabStatus();
+          }
         } catch (err) {
           console.error(err);
           window.alert("Lỗi khi tải dữ liệu lên Supabase:\n" + (err.message || err));
@@ -3804,6 +3983,9 @@
         } catch (e) {}
 
         switchEditorTab(startTab || "setup");
+        if (typeof refreshSetupTabStatus === "function") {
+          refreshSetupTabStatus();
+        }
       }
 
       async function syncExamFromSource() {
@@ -3974,6 +4156,89 @@
       }
 
       // Expose to window object so clicking edit buttons work
+      function refreshSetupTabStatus() {
+        if (!exam || !exam.code) return;
+        var cleanCode = normalizeCode(exam.code);
+        
+        var indexList = [];
+        try {
+          var raw = localStorage.getItem("tma_tsa_exam_index");
+          if (raw) indexList = JSON.parse(raw);
+        } catch {}
+        if (!Array.isArray(indexList)) indexList = [];
+
+        let openStatus = {};
+        try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
+        var inList = indexList.find(e => normalizeCode(e.exam_code) === normalizeCode(cleanCode));
+        var hasExam = !!inList;
+        var isOpen = inList && (inList.is_open === true || openStatus[cleanCode] === true);
+
+        var statusBadge = document.getElementById("setup-exam-status-badge");
+        if (statusBadge) {
+          statusBadge.className = hasExam ? "badge-green" : "badge-red";
+          statusBadge.textContent = hasExam ? "ĐÃ CÓ ĐỀ" : "CHƯA CÓ ĐỀ";
+        }
+
+        var roomBadge = document.getElementById("setup-exam-room-badge");
+        if (roomBadge) {
+          roomBadge.className = isOpen ? "badge-green" : "badge-red";
+          roomBadge.textContent = isOpen ? "Đang mở đề" : "Đang đóng đề";
+          roomBadge.style.background = isOpen ? "" : "#94a3b8";
+          roomBadge.style.color = isOpen ? "" : "#ffffff";
+        }
+
+        var toggleBtn = document.getElementById("setup-toggle-open-btn");
+        if (toggleBtn) {
+          toggleBtn.style.background = isOpen ? "#ef4444" : "#16a34a";
+          toggleBtn.innerHTML = isOpen ? "🔒 Đóng đề thi" : "🔓 Mở đề thi";
+          toggleBtn.disabled = !hasExam;
+          toggleBtn.style.opacity = hasExam ? "1" : "0.6";
+          toggleBtn.style.cursor = hasExam ? "pointer" : "not-allowed";
+        }
+
+        var practiceBtn = document.getElementById("setup-practice-btn");
+        if (practiceBtn) {
+          practiceBtn.disabled = !hasExam;
+          practiceBtn.style.opacity = hasExam ? "1" : "0.6";
+          practiceBtn.style.cursor = hasExam ? "pointer" : "not-allowed";
+        }
+      }
+
+      function setupTabToggleOpen() {
+        if (!exam || !exam.code) return;
+        var cleanCode = normalizeCode(exam.code);
+        
+        var indexList = [];
+        try {
+          var raw = localStorage.getItem("tma_tsa_exam_index");
+          if (raw) indexList = JSON.parse(raw);
+        } catch {}
+        if (!Array.isArray(indexList)) indexList = [];
+
+        let openStatus = {};
+        try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
+        var inList = indexList.find(e => normalizeCode(e.exam_code) === normalizeCode(cleanCode));
+        var isOpen = inList && (inList.is_open === true || openStatus[cleanCode] === true);
+        
+        toggleExamOpen(exam.code, !isOpen);
+      }
+
+      function setupTabArchiveToPractice() {
+        archiveMockToPractice();
+      }
+
+      function setupTabDeleteExam() {
+        if (!exam || !exam.code) return;
+        deleteExamPermanently(exam.code, exam.title);
+      }
+
+      window.refreshSetupTabStatus = refreshSetupTabStatus;
+      window.setupTabToggleOpen = setupTabToggleOpen;
+      window.setupTabArchiveToPractice = setupTabArchiveToPractice;
+      window.setupTabDeleteExam = setupTabDeleteExam;
+
       window.startEditingExam = startEditingExam;
       window.exitEditingMode = exitEditingMode;
 
@@ -4043,6 +4308,11 @@
           
           renderPracticeRoom();
           renderExamsList();
+          if (cleanCode === normalizeCode(exam.code)) {
+            exitEditingMode();
+          } else if (typeof refreshSetupTabStatus === "function") {
+            refreshSetupTabStatus();
+          }
         } catch (error) {
           console.error(error);
           window.alert("Lỗi khi thực hiện xóa đề:\n" + (error.message || error));

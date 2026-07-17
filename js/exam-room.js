@@ -1248,7 +1248,9 @@
         // Fallback
       }
     }
-    window.location.href = "select.html";
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromPortal = urlParams.get("from_portal") === "true";
+    window.location.href = fromPortal ? "exam.html" : "select.html";
   }
 
   function leaveExamRoom() {
@@ -1269,7 +1271,9 @@
         // Nếu vì lý do nào đó không gửi được message thì rơi xuống điều hướng.
       }
     }
-    window.location.href = "select.html";
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromPortal = urlParams.get("from_portal") === "true";
+    window.location.href = fromPortal ? "exam.html" : "select.html";
   }
 
   async function autoSubmitExam() {
@@ -1409,7 +1413,9 @@
       sessionStorage.setItem("tsaSubmittedSubject", "1");
 
       if (subject === "math" || subject === "reading") {
-        window.location.href = `waiting.html?exam=${examCode}`;
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPortal = urlParams.get("from_portal") === "true";
+        window.location.href = `waiting.html?exam=${examCode}${fromPortal ? '&from_portal=true' : ''}`;
         return;
       } else if (subject === "science") {
         // Hiển thị hiệu ứng loading trên trang cha ngay lập tức khi hoàn thành kíp thi (nộp Science) để ẩn độ trễ kết nối Supabase

@@ -1042,7 +1042,9 @@
           }
 
           localStorage.setItem("studentInfo", JSON.stringify(user));
-          window.location.href = "select.html";
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get("redirect") || "select.html";
+          window.location.href = redirect;
         });
 
         registerForm.addEventListener("submit", async (event) => {

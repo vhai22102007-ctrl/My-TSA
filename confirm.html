@@ -260,10 +260,11 @@
         const params = new URLSearchParams(window.location.search);
         const examCode = params.get("exam") || "";
         const isSingle = params.get("single") === "true";
+        const fromPortal = params.get("from_portal") === "true";
         if (examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingle) {
-          window.location.href = `waiting.html?exam=${examCode}`;
+          window.location.href = `waiting.html?exam=${examCode}${fromPortal ? '&from_portal=true' : ''}`;
         } else {
-          window.location.href = "select.html";
+          window.location.href = fromPortal ? "exam.html" : "select.html";
         }
       });
 

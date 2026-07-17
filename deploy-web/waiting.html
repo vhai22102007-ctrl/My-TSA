@@ -1026,7 +1026,8 @@
           examTitle: examTitle
         }, "*");
       } else {
-        window.location.href = "select.html";
+        const fromPortal = params.get("from_portal") === "true";
+        window.location.href = fromPortal ? "exam.html" : "select.html";
       }
     }
 

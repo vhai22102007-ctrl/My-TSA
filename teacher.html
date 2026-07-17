@@ -138,132 +138,36 @@
         </div>
 
         <!-- ACCORDION 2: Thi thử -->
-        <div class="menu-group" data-group="exams">
-          <a class="group-header" href="javascript:void(0)">
-            <span class="menu-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                <path d="m9 12 2 2 4-4"></path>
-              </svg>
-            </span>
-            <span class="group-title">Thi thử</span>
-            <span class="group-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </a>
-          <div class="submenu-wrapper">
-            <div class="submenu-inner">
-              <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'tsa', this)">
-                <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá tư duy - TSA</span>
-              </a>
-              <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'hsa', this)">
-                <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - HSA</span>
-              </a>
-              <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'vact', this)">
-                <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - VACT</span>
-              </a>
-              <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'qda', this)">
-                <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M3 3v18h18" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="m18.5 7.5-5.5 5.5-3-3-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - QDA</span>
-              </a>
-              <a class="submenu-item" href="javascript:void(0)" onclick="selectCategoryTab('exams', 'thpt', this)">
-                <span class="sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </span>
-                <span>THPTQG</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="nav-label">Học sinh</div>
-        <button class="nav-button" type="button" data-tab-target="manage-students">
+        <button class="nav-button" type="button" data-tab-target="exams">
           <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="12" cy="12" r="10"></circle>
-              <circle cx="12" cy="10" r="3"></circle>
-              <path d="M7 20c0-2.5 2-4.5 5-4.5s5 2 5 4.5"></path>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span>Thi thử</span>
+        </button>
+        
+        <div class="nav-label">Học sinh</div>
+        <button class="nav-button" type="button" data-tab-target="student-management">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
           </span>
           <span>Quản lý học sinh</span>
         </button>
-        <button class="nav-button" type="button" data-tab-target="approve-courses">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-          </span>
-          <span>Cấp quyền khóa học</span>
-        </button>
-        <button class="nav-button" type="button" data-tab-target="manage-documents">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M8 12h8"></path>
-              <path d="M8 8h8"></path>
-              <path d="M8 16h4"></path>
-            </svg>
-          </span>
-          <span>Quản lý Tài liệu</span>
-        </button>
         
-        <div class="nav-label">LMS Khóa học</div>
-        <button class="nav-button" type="button" data-tab-target="manage-courses">
+        <div class="nav-label">Quyền Admin</div>
+        <button class="nav-button" type="button" data-tab-target="system-settings">
           <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           </span>
-          <span>Quản lý Khóa học</span>
-        </button>
-        <button class="nav-button" type="button" data-tab-target="activation-codes">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          </span>
-          <span>Mã kích hoạt</span>
-        </button>
-        <button class="nav-button" type="button" data-tab-target="security-logs">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          </span>
-          <span>Nhật ký & Bảo mật</span>
-        </button>
-        <button class="nav-button" type="button" data-tab-target="manage-links">
-          <span class="menu-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-          </span>
-          <span>Cấu hình liên kết</span>
-        </button>
-        <div style="border-top: 1px solid var(--border); margin: 10px 0; opacity: 0.5;"></div>
+          <span>Quyền Admin</span>
+        </button><div style="border-top: 1px solid var(--border); margin: 10px 0; opacity: 0.5;"></div>
         <button class="nav-button" type="button" onclick="teacherLogout()" style="color: #135c97;">
           <span class="menu-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -291,7 +195,19 @@
  
             <div class="step-connector"></div>
  
-          <!-- 02 Toán -->
+          <!-- AI Nhập đề -->
+        <button class="editor-step" type="button" data-editor-tab-target="ai-import">
+          <span class="step-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </span>
+          <span class="step-label">Nhập đề AI</span>
+        </button>
+
+        <div class="step-connector"></div>
+
+        <!-- 02 Toán -->
           <button class="editor-step" type="button" data-editor-tab-target="math">
             <span class="step-icon-wrap">
               <svg viewBox="0 0 24 24"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><line x1="9" y1="9" x2="9" y2="15"/><line x1="15" y1="9" x2="15" y2="15"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
@@ -380,30 +296,102 @@
 
         <!-- 2. TAB: THI THỬ -->
         <div id="tab-exams" class="tab-panel">
-          <div class="topbar">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                  <line x1="13" y1="10" x2="21" y2="10"></line>
-                  <line x1="13" y1="14" x2="21" y2="14"></line>
-                  <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
-                </svg>
-              </button>
-              <h1 id="exam-tab-title">Bài thi Đánh giá tư duy - TSA</h1>
+          <style>
+            .exam-lobby-card {
+              transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .exam-lobby-card:hover {
+              border-color: var(--brand) !important;
+              transform: translateY(-3px);
+              box-shadow: 0 10px 20px rgba(0,0,0,0.06) !important;
+            }
+          </style>
+
+          <!-- View 1: Category Selection Lobby -->
+          <div id="exams-lobby-view" style="display: block; padding: 24px;">
+            <div style="margin-bottom: 30px;">
+              <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0;">Quản lý đề Thi thử</h2>
+              <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Chọn kỳ thi để quản lý danh sách đề thi thử, xem thống kê và kết quả làm bài của học sinh.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+              <!-- TSA Card -->
+              <div class="exam-lobby-card" onclick="selectExamCategoryLobby('tsa')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #eff6ff; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #2563eb;">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px 0;">Đánh giá tư duy - TSA</h3>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Quản trị đề thi thử Đánh giá tư duy Đại học Bách Khoa Hà Nội.</p>
+              </div>
+
+              <!-- HSA Card -->
+              <div class="exam-lobby-card" onclick="selectExamCategoryLobby('hsa')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #f0fdf4; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #16a34a;">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px 0;">Đánh giá năng lực - HSA</h3>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Quản trị đề thi thử Đánh giá năng lực ĐHQG Hà Nội.</p>
+              </div>
+
+              <!-- VACT Card -->
+              <div class="exam-lobby-card" onclick="selectExamCategoryLobby('vact')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #faf5ff; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #9333ea;">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"></path><path d="m12 8.5 1 2 2.2.3-1.6 1.6.4 2.2-2-1-2 1 .4-2.2-1.6-1.6 2.2-.3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px 0;">Đánh giá năng lực - VACT</h3>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Quản trị đề thi thử Đánh giá năng lực VACT.</p>
+              </div>
+
+              <!-- QDA Card -->
+              <div class="exam-lobby-card" onclick="selectExamCategoryLobby('qda')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #fff7ed; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #ea580c;">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18" stroke-linecap="round" stroke-linejoin="round"></path><path d="m18.5 7.5-5.5 5.5-3-3-6 6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px 0;">Đánh giá năng lực - QDA</h3>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Quản trị đề thi thử Đánh giá năng lực QDA.</p>
+              </div>
+
+              <!-- THPTQG Card -->
+              <div class="exam-lobby-card" onclick="selectExamCategoryLobby('thpt')" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: #fff1f2; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #e11d48;">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke-linecap="round" stroke-linejoin="round"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0 0 8px 0;">Thi tốt nghiệp THPTQG</h3>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Quản trị đề thi thử tốt nghiệp THPT Quốc gia các môn.</p>
+              </div>
             </div>
           </div>
 
-          <div class="exam-grid" id="exams-list-grid">
-            <!-- Rendered dynamically -->
+          <!-- View 2: Specific Exam Management (Default hidden) -->
+          <div id="exams-management-view" style="display: none;">
+            <div class="topbar">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="btn btn-outline btn-sm" onclick="backToExamsLobby()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 8px 14px; border-radius: 8px; font-size: 13px; border: 1px solid var(--line);">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  <span>Chọn kỳ thi khác</span>
+                </button>
+                <h1 id="exam-tab-title" style="margin-left: 8px;">Bài thi Đánh giá tư duy - TSA</h1>
+              </div>
+            </div>
+
+            <div class="exam-grid" id="exams-list-grid">
+              <!-- Rendered dynamically -->
+            </div>
           </div>
         </div>
-
-
-
         <!-- 4. TAB: QUẢN LÝ HỌC SINH -->
-        <div id="tab-manage-students" class="tab-panel">
+        <!-- 4. TAB: QUẢN LÝ HỌC SINH -->
+        <div id="tab-student-management" class="tab-panel">
+          <div style="background: #ffffff; border-bottom: 1px solid var(--line); padding: 16px 24px; display: flex; justify-content: center; width: calc(100% + 48px); margin: -24px -24px 24px -24px; position: sticky; top: 0; z-index: 100;">
+            <div class="student-admin-tabs-nav" style="display: flex; gap: 8px; background: #e2e8f0; padding: 6px; border-radius: 99px; width: fit-content; border: 1px solid rgba(203, 213, 225, 0.8);">
+              <button type="button" class="student-admin-tab-btn active" data-subtab="manage-students" onclick="switchStudentSubtab('manage-students')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: #ffffff; color: #135c97; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">Danh sách học sinh</button>
+              <button type="button" class="student-admin-tab-btn" data-subtab="approve-courses" onclick="switchStudentSubtab('approve-courses')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #64748b;">Cấp quyền khóa học</button>
+              <button type="button" class="student-admin-tab-btn" data-subtab="manage-documents" onclick="switchStudentSubtab('manage-documents')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #64748b;">Quản lý tài liệu</button>
+            </div>
+          </div>
+
+          <div id="subtab-manage-students" class="student-subtab-panel" style="display: block;">
+            
           <div class="topbar">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -413,7 +401,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <h1>Quản lý danh sách học sinh</h1>
+              
             </div>
           </div>
 
@@ -491,10 +479,11 @@
               </div>
             </div>
           </div>
-        </div>
+        
+          </div>
 
-        <!-- TAB: CẤP QUYỀN KHÓA HỌC -->
-        <div id="tab-approve-courses" class="tab-panel">
+          <div id="subtab-approve-courses" class="student-subtab-panel" style="display: none;">
+            
           <div class="topbar">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -504,7 +493,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <h1>Cấp quyền mở khóa khóa học</h1>
+              
             </div>
           </div>
 
@@ -528,10 +517,11 @@
               </form>
             </div>
           </article>
-        </div>
+        
+          </div>
 
-        <!-- 5. TAB: QUẢN LÝ TÀI LIỆU -->
-        <div id="tab-manage-documents" class="tab-panel">
+          <div id="subtab-manage-documents" class="student-subtab-panel" style="display: none;">
+            
           <div class="topbar" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -546,7 +536,7 @@
                   <h1 style="margin: 0;">Quản lý Kho tài liệu ôn tập</h1>
                   <span id="save-documents-indicator" style="display: none; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: #f0fdf4; color: var(--green);">⌛ Đang tự động lưu...</span>
                 </div>
-                <p style="margin: 6px 0 0; color: var(--muted);">Nhập link Google Drive của các đề thi và sách để hiển thị cho học sinh.</p>
+                
               </div>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -673,10 +663,22 @@
               </div>
             </div>
           </article>
+        
+          </div>
         </div>
-
-        <!-- 6. TAB: QUẢN LÝ KHÓA HỌC (LMS) -->
-        <div id="tab-manage-courses" class="tab-panel">
+        
+        <!-- 6. TAB: QUẢN TRỊ HỆ THỐNG -->
+        <div id="tab-system-settings" class="tab-panel">
+          <div style="background: #ffffff; border-bottom: 1px solid var(--line); padding: 16px 24px; display: flex; justify-content: center; width: calc(100% + 48px); margin: -24px -24px 24px -24px; position: sticky; top: 0; z-index: 100;">
+            <div class="system-admin-tabs-nav" style="display: flex; gap: 8px; background: #e2e8f0; padding: 6px; border-radius: 99px; width: fit-content; border: 1px solid rgba(203, 213, 225, 0.8);">
+              <button type="button" class="system-admin-tab-btn active" data-subtab="manage-courses" onclick="switchSystemSubtab('manage-courses')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: #ffffff; color: #135c97; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">Quản lý Khóa học</button>
+              <button type="button" class="system-admin-tab-btn" data-subtab="activation-codes" onclick="switchSystemSubtab('activation-codes')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #64748b;">Mã kích hoạt</button>
+              <button type="button" class="system-admin-tab-btn" data-subtab="security-logs" onclick="switchSystemSubtab('security-logs')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #64748b;">Nhật ký & Bảo mật</button>
+              <button type="button" class="system-admin-tab-btn" data-subtab="manage-links" onclick="switchSystemSubtab('manage-links')" style="padding: 8px 18px; border: none; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: transparent; color: #64748b;">Cấu hình liên kết</button>
+            </div>
+          </div>
+          <div id="subtab-manage-courses" class="system-subtab-panel" style="display: block;">
+            
           
           <!-- View 1: Grid of Courses (Default) -->
           <div id="lms-courses-list-view" style="display: block;">
@@ -689,10 +691,7 @@
                     <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                   </svg>
                 </button>
-                <div>
-                  <h1>Quản lý Khóa học & Bài học LMS</h1>
-                  <p style="margin: 6px 0 0; color: var(--muted);">Thêm, sửa, xóa các khóa học, tải lên video, tài liệu PDF và bản viết tay bài học.</p>
-                </div>
+                
               </div>
               <div>
                 <button class="btn btn-primary" type="button" onclick="showAddCourseModal()">
@@ -742,10 +741,11 @@
               </div>
             </article>
           </div>
-        </div>
+        
+          </div>
 
-        <!-- 7. TAB: QUẢN LÝ MÃ KÍCH HOẠT (LMS) -->
-        <div id="tab-activation-codes" class="tab-panel">
+          <div id="subtab-activation-codes" class="system-subtab-panel" style="display: none; padding-top: 10px;">
+            
           <div class="topbar">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -755,10 +755,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <div>
-                <h1>Quản lý Mã kích hoạt Khóa học</h1>
-                <p style="margin: 6px 0 0; color: var(--muted);">Tạo mã kích hoạt khóa học và xem lượt sử dụng thực tế của học sinh.</p>
-              </div>
+              
             </div>
           </div>
 
@@ -820,10 +817,11 @@
               </div>
             </article>
           </div>
-        </div>
+        
+          </div>
 
-        <!-- 8. TAB: NHẬT KÝ & BẢO MẬT -->
-        <div id="tab-security-logs" class="tab-panel">
+          <div id="subtab-security-logs" class="system-subtab-panel" style="display: none; padding-top: 10px;">
+            
           <div class="topbar">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -833,10 +831,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <div>
-                <h1>Nhật ký học tập & Bảo mật chống leak</h1>
-                <p style="margin: 6px 0 0; color: var(--muted);">Giám sát các lượt xem video bài học, phát hiện các IP/thiết bị bất thường và chặn chia sẻ tài khoản.</p>
-              </div>
+              
             </div>
             <div>
               <button class="btn btn-outline" type="button" onclick="clearOldSecurityLogs()" style="border-color: var(--brand); color: var(--brand);">
@@ -902,10 +897,11 @@
               </div>
             </article>
           </div>
-        </div>
+        
+          </div>
 
-        <!-- 9. TAB: CẤU HÌNH LIÊN KẾT -->
-        <div id="tab-manage-links" class="tab-panel">
+          <div id="subtab-manage-links" class="system-subtab-panel" style="display: none; padding-top: 10px;">
+            
           <div class="topbar">
             <div style="display: flex; align-items: center; gap: 12px;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
@@ -915,10 +911,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <div>
-                <h1>Cấu hình liên kết mạng xã hội</h1>
-                <p style="margin: 6px 0 0; color: var(--muted);">Các liên kết này sẽ được hiển thị ở chân thanh điều hướng (Sidebar) của học sinh.</p>
-              </div>
+              
             </div>
           </div>
 
@@ -966,9 +959,10 @@
               </div>
             </form>
           </div>
+        
+          </div>
         </div>
       </div>
-
       <div id="editor-container" style="display: none;">
         <header class="topbar" style="display: flex; flex-direction: column; align-items: stretch; gap: 8px;">
           <!-- Top Row: Toggle + Controls on left, Autosave status on right -->
@@ -985,7 +979,7 @@
               </button>
               <div id="topbar-title-wrapper">
                 <h1 id="page-title">Bộ soạn đề TSA</h1>
-                <p style="margin:6px 0 0;color:var(--muted);" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
+                <p style="margin:6px 0 0;color:var(--muted);display:none!important;" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
               </div>
               <div id="topbar-editor-controls" style="display: none; align-items: center; gap: 16px; margin-left: 12px;">
                 <div class="question-number-circle" id="topbar-qno-circle">1</div>
@@ -1000,7 +994,7 @@
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div class="autosave" id="autosave-status">Chưa lưu nháp</div>
+              <div class="autosave" id="autosave-status" style="display:none!important;">Chưa lưu nháp</div>
             </div>
           </div>
           
@@ -1009,54 +1003,98 @@
         </header>
 
 
-        <section class="summary-grid" id="summary-grid"></section>
+        <section class="summary-grid" id="summary-grid" style="display:none!important;"></section>
 
         <!-- Dynamic subtab editor panels -->
         <section class="tab-panel active" id="tab-setup">
-          <article class="card">
+          <article class="card" style="margin-bottom: 24px;">
             <div class="card-header">
               <div>
-                <h2>Tạo hoặc mở đề</h2>
-                <p>Nhập mã đề, tên đề, thời gian và trạng thái. Nếu đã có nháp cùng mã đề, hệ thống sẽ mở lại nháp đó.</p>
+                <h2>Thiết lập đề thi</h2>
+                
               </div>
             </div>
             <div class="card-body">
-              <form id="metadata-form" onsubmit="return false;">
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="exam-code">Mã đề</label>
-                    <input class="input" id="exam-code" value="TSA001" placeholder="TSA001" required>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px;">
+                
+                <!-- Left Section: Configuration -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-weight: 800; color: var(--brand); font-size: 12.5px; border-left: 3px solid var(--brand); padding-left: 8px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ⚙️ Cấu hình thông tin
                   </div>
-                  <div class="field">
-                    <label for="exam-title-input">Tên đề</label>
-                    <input class="input" id="exam-title-input" value="Đề TSA số 01" placeholder="Đề TSA số 01" required>
+                  
+                  <div style="display: flex; gap: 12px;">
+                    <div style="flex: 1;">
+                      <label style="display: block; font-weight: 700; font-size: 11.5px; margin-bottom: 5px; color: #64748b;">Mã đề</label>
+                      <input class="input" id="exam-code" value="TSA001" readonly style="background: #f1f5f9; font-weight: 700; cursor: not-allowed; height: 36px; font-size: 12.5px; border: 1.5px solid var(--line);">
+                    </div>
+                    <div style="flex: 1;">
+                      <label style="display: block; font-weight: 700; font-size: 11.5px; margin-bottom: 5px; color: #64748b;">Thời gian (phút)</label>
+                      <input class="input" id="exam-duration" type="number" min="1" value="150" required style="height: 36px; font-size: 12.5px; border: 1.5px solid var(--line);">
+                    </div>
                   </div>
-                  <div class="field">
-                    <label for="exam-duration">Thời gian làm bài (phút)</label>
-                    <input class="input" id="exam-duration" type="number" min="1" value="45" required>
+                  
+                  <div>
+                    <label style="display: block; font-weight: 700; font-size: 11.5px; margin-bottom: 5px; color: #64748b;">Tên đề thi thử</label>
+                    <input class="input" id="exam-title-input" value="Đề thi thử TSA" placeholder="Ví dụ: Đề thi thử TSA số 01" required style="height: 36px; font-size: 12.5px; border: 1.5px solid var(--line); font-weight: 700;">
                   </div>
-                  <div class="field">
-                    <label for="exam-status">Trạng thái</label>
-                    <select class="select" id="exam-status">
-                      <option value="draft">draft</option>
-                      <option value="published" selected>published</option>
-                    </select>
+                  
+                  <div style="display: flex; gap: 10px; margin-top: 6px;">
+                    <button class="btn btn-primary" id="save-metadata-button" type="button" style="flex: 1; font-weight: 800; height: 36px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                      💾 Lưu thông tin
+                    </button>
+                    <button class="btn btn-outline" type="button" onclick="switchEditorTab('math')" style="flex: 1; font-weight: 800; height: 36px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--line);">
+                      📐 Soạn câu hỏi
+                    </button>
                   </div>
                 </div>
-                <div class="btn-row">
-                  <button class="btn btn-primary" id="create-exam-button" type="button">Tạo hoặc mở đề</button>
-                  <button class="btn btn-outline" id="save-metadata-button" type="button">Cập nhật thông tin</button>
-                  <button class="btn btn-soft" type="button" onclick="switchEditorTab('math')">Sang tab Toán</button>
+
+                <!-- Right Section: Operations -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-weight: 800; color: #10b981; font-size: 12.5px; border-left: 3px solid #10b981; padding-left: 8px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ⚡ Điều hành phòng thi
+                  </div>
+                  
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-weight: 700; color: #64748b; font-size: 11px;">Trạng thái lưu trữ:</span>
+                      <span id="setup-exam-status-badge" class="badge-green" style="padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; width: fit-content; text-align: center;">ĐÃ CÓ ĐỀ</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-weight: 700; color: #64748b; font-size: 11px;">Trạng thái phòng thi:</span>
+                      <span id="setup-exam-room-badge" class="badge-green" style="padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; width: fit-content; text-align: center;">Đang mở đề</span>
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
+                    <div style="display: flex; gap: 8px;">
+                      <button class="btn" id="setup-toggle-open-btn" type="button" onclick="setupTabToggleOpen()" style="flex: 1; font-weight: 800; height: 36px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #ffffff; background: #16a34a; border: none; cursor: pointer;">
+                        🔓 Mở đề thi
+                      </button>
+                      <button class="btn btn-outline" id="setup-practice-btn" type="button" onclick="setupTabArchiveToPractice()" style="flex: 1; font-weight: 800; height: 36px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--line);">
+                        📥 Vào Phòng luyện
+                      </button>
+                    </div>
+                    <button class="btn btn-danger" type="button" onclick="setupTabDeleteExam()" style="width: 100%; font-weight: 800; height: 36px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; background: #ef4444; border: none; color: white;">
+                      🗑️ Xóa đề thi vĩnh viễn
+                    </button>
+                  </div>
                 </div>
-              </form>
+
+              </div>
             </div>
           </article>
 
-          <article class="card" style="margin-top: 24px; border-top: 3px solid #f59e0b;">
+          </section>
+
+        <!-- NEW TAB: AI IMPORT -->
+        <section class="tab-panel" id="tab-ai-import">
+          <article class="card">
+            
             <div class="card-header">
               <div>
-                <h2>AI Nhập đề tự động (Tự động hóa 100%)</h2>
-                <p>Dán toàn bộ văn bản đề thi từ Word/PDF vào đây và điền Gemini API Key. AI sẽ tự động phân tích, định dạng LaTeX toán học, thiết lập các dạng đúng sai, kéo thả, điền số và nạp trực tiếp vào hệ thống trong 5 giây.</p>
+                <h2>AI Nhập đề tự động</h2>
+                
               </div>
             </div>
             <div class="card-body">
@@ -1096,6 +1134,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
                 <button class="btn btn-primary" id="ai-run-button" style="background-color: #f59e0b; border-color: #d97706; font-weight: 700;" type="button">Phân tích đề bằng AI</button>
               </div>
             </div>
+          
           </article>
         </section>
 
@@ -1291,7 +1330,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
             <div class="card-header">
               <div>
                 <h2>Lưu và xuất đề</h2>
-                <p>Tải JSON xuống máy hoặc ghi vào thư mục project nếu trình duyệt hỗ trợ File System Access API.</p>
+                
               </div>
             </div>
             <div class="card-body">
