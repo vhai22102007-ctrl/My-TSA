@@ -432,6 +432,11 @@
         return;
       }
 
+      // Define helpers globally at top for synchronous execution
+      function cleanCatStr(s) {
+        return String(s || "").trim().normalize("NFC").toUpperCase();
+      }
+
       window.syncLibraryDocs = function() {
         try {
           const cached = JSON.parse(localStorage.getItem('tmaTsaDriveLinks'));
@@ -455,6 +460,7 @@
 
       // Run sync immediately on page load
       window.syncLibraryDocs();
+
 
       const completedExams = new Set();
 
@@ -747,30 +753,32 @@
         const dispNameEl = document.getElementById("student-display-name");
         if (dispNameEl) dispNameEl.textContent = displayName;
 
-        // Dynamic time-based greeting for History page
+        // Motivational quote and target reminder card for History page
         const historyGreetingEl = document.getElementById("history-welcome-greeting");
         if (historyGreetingEl) {
-          const now = new Date();
-          const hour = now.getHours();
-          let greetingPrefix = "Xin chào";
-          let timeEmoji = "👋";
-          let suffix = "Chúc bạn một ngày học tập thật hiệu quả!";
+          const quotes = [
+            "Con đường ngắn nhất để vượt qua khó khăn là đi xuyên qua nó. Hãy tiếp tục nỗ lực vì mục tiêu TSA!",
+            "Sự kiên trì của ngày hôm nay sẽ là trái ngọt của ngày mai. Mỗi bài luyện tập là một bước tiến gần hơn đến thủ khoa!",
+            "Đừng so sánh bản thân với người khác. Hãy so sánh bản thân với chính mình ngày hôm qua. Cố lên bạn nhé!",
+            "Thành công không phải là ngẫu nhiên, đó là kết quả của sự chuẩn bị chu đáo và tinh thần tự học bền bỉ."
+          ];
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
           
-          if (hour >= 5 && hour < 12) {
-            greetingPrefix = "Chào buổi sáng";
-            timeEmoji = "☀️";
-            suffix = "Chúc bạn một ngày học tập tràn đầy năng lượng!";
-          } else if (hour >= 12 && hour < 18) {
-            greetingPrefix = "Chào buổi chiều";
-            timeEmoji = "⛅";
-            suffix = "Hôm nay bạn đã ôn tập được nhiều chưa?";
-          } else {
-            greetingPrefix = "Chào buổi tối";
-            timeEmoji = "🌙";
-            suffix = "Cùng ôn luyện một chút trước khi nghỉ ngơi nhé!";
-          }
-          
-          historyGreetingEl.innerHTML = `${timeEmoji} ${greetingPrefix}, <strong>${displayName}</strong>! <span class="waving-hand">👋</span> ${suffix}`;
+          historyGreetingEl.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 8px; background: #eff3f8; border-radius: 12px; padding: 14px 18px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: fit-content; max-width: 100%;">
+              <!-- Row 1: Quote -->
+              <div style="display: flex; align-items: flex-start; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="#0f5a9e" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"></path>
+                  <line x1="9" y1="18" x2="15" y2="18"></line>
+                  <line x1="10" y1="22" x2="14" y2="22"></line>
+                </svg>
+                <p style="margin: 0; font-size: 13.5px; font-style: italic; color: #334155; line-height: 1.5;">
+                  Chào <strong>${displayName}</strong>, "${randomQuote}"
+                </p>
+              </div>
+            </div>
+          `;
         }
 
         const logDispNameEl = document.getElementById("logout-display-name");
@@ -1428,13 +1436,13 @@
         try {
           const { data: dbCourses, error: courseError } = await supabaseClient
             .from('courses')
-            .select('id, title, description, teacher, category'); // Chỉ chọn những cột cần thiết
+            .select('id, title, description, teacher, category, cover_image'); // Chỉ chọn những cột cần thiết
 
           if (courseError) throw courseError;
 
           if (!dbCourses || dbCourses.length === 0) {
             await seedSupabaseDatabase();
-            const { data: reFetchedCourses } = await supabaseClient.from('courses').select('id, title, description, teacher, category');
+            const { data: reFetchedCourses } = await supabaseClient.from('courses').select('id, title, description, teacher, category, cover_image');
             COURSES_DATA = reFetchedCourses || [];
           } else {
             COURSES_DATA = [];
@@ -1585,15 +1593,17 @@
           const emptyCard = document.createElement("div");
           emptyCard.className = "no-courses-message";
           if (currentSubtab === "my") {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 20px 0; border: none; background: transparent; width: 100%;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: none; background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
-              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa tham gia khóa học nào" style="max-width: 720px; width: 100%; height: auto; display: block; margin: 0 auto;" />
+              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa tham gia khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+              <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 40px; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
-              <p style="font-size: 14px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</p>
-              <p style="font-size: 12px; margin-top: 4px;">Các khóa học đang được cập nhật.</p>
+              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+              <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
+              <p style="font-size: 12px; margin: 4px 0 0; color: var(--muted);">Các khóa học đang được cập nhật.</p>
             `;
           }
           grid.appendChild(emptyCard);
@@ -1724,15 +1734,17 @@
           const emptyCard = document.createElement("div");
           emptyCard.className = "no-courses-message";
           if (currentSubtab === "my") {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 20px 0; border: none; background: transparent; width: 100%;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: none; background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
-              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa tham gia khóa học nào" style="max-width: 720px; width: 100%; height: auto; display: block; margin: 0 auto;" />
+              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa tham gia khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+              <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; padding: 40px; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
-              <p style="font-size: 14px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</p>
-              <p style="font-size: 12px; margin-top: 4px;">Các khóa học đang được cập nhật.</p>
+              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+              <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
+              <p style="font-size: 12px; margin: 4px 0 0; color: var(--muted);">Các khóa học đang được cập nhật.</p>
             `;
           }
           grid.appendChild(emptyCard);
@@ -2717,8 +2729,10 @@
 
             // Helper: detect lesson type from title
             function getLessonType(title) {
-              const t = title.toLowerCase();
-              if (t.startsWith("phần") || t.startsWith("phan") || t.match(/^p\d/)) return "phan";
+              const raw = (title || "").trim();
+              if (raw.startsWith("↳") || raw.startsWith("&rarr;") || raw.startsWith("->")) return "phan";
+              const t = raw.toLowerCase();
+              if (t.startsWith("phần") || t.startsWith("phan") || t.startsWith("phân") || t.startsWith("phản") || t.match(/^p\d/)) return "phan";
               if (t.startsWith("tài liệu") || t.startsWith("tai lieu") || t.startsWith("file")) return "document";
               if (t.startsWith("thi online") || t.startsWith("bài tập kiểm tra") || t.startsWith("bài kiểm tra")) return "test";
               return "bai"; // default = main lesson (Bài X)
@@ -3015,8 +3029,8 @@
                 } else if (group.type === "header") {
                   const row = document.createElement("div");
                   row.className = "tree-header-row";
-                  row.style.cssText = "padding: 10px 14px; background: #f8fafc; border-left: 4px solid #0f5a9e; margin-top: 10px; margin-bottom: 4px; font-weight: 800; color: #0f5a9e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-top-right-radius: 6px; border-bottom-right-radius: 6px; text-align: left;";
-                  row.textContent = lesson.title;
+                  row.style.cssText = "padding: 10px 14px; background: transparent; border-bottom: 1px solid #f1f5f9; margin: 8px 10px 4px; font-weight: 700; color: #0f5a9e; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.3px; text-align: left; display: flex; align-items: center; gap: 6px;";
+                  row.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="#0f5a9e" stroke="none" style="display: inline-block; vertical-align: middle; flex-shrink: 0; margin-right: 4px;"><path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z"/></svg> <span>${lesson.title}</span>`;
                   chapterBody.appendChild(row);
 
                 } else if (group.type === "document") {
@@ -3883,27 +3897,9 @@
         } catch (e) {}
 
         if (shouldFetchLinks) {
-          // Tải danh sách link Drive tài liệu từ Supabase Storage
-          fetch(`${supabaseStorageUrl}drive_links.json?t=${Date.now()}`)
-            .then(res => {
-              if (res.ok) return res.json();
-            })
-            .then(data => {
-              if (data && typeof data === "object") {
-                localStorage.setItem('tmaTsaDriveLinks', JSON.stringify(data));
-                localStorage.setItem('tma_tsa_links_cache_time', now.toString());
-                if (typeof window.syncLibraryDocs === "function") {
-                  window.syncLibraryDocs();
-                }
-                const activePanel = document.querySelector(".tab-panel.active");
-                if (activePanel && activePanel.id === "tab-documents") {
-                  if (typeof window.renderLibraryDocs === "function") {
-                    window.renderLibraryDocs();
-                  }
-                }
-              }
-            })
-            .catch(err => console.warn("Không đồng bộ được link tài liệu từ Cloud:", err));
+          if (typeof window.fetchLibraryDocsFromCloud === "function") {
+            window.fetchLibraryDocsFromCloud(false);
+          }
         }
       })();
 
@@ -4142,9 +4138,9 @@
 
         if (uploadedExams.length === 0) {
           const emptyState = document.createElement("div");
-          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; width: 100%;";
+          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55vh; text-align: center; width: 100%; box-sizing: border-box;";
           emptyState.innerHTML = `
-            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 250px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.85;" />
+            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
             <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
           `;
           grid.appendChild(emptyState);
@@ -4312,12 +4308,70 @@
           }[currentExamTypeCategory] || "Thi thử";
         }
 
+          
+
         const categoryPrefix = currentExamTypeCategory.toUpperCase(); // "HSA", "THPT", "VACT", "QDA"
         const filtered = (window.EXAMS_LIST || []).filter(e => {
           return e.exam_code && e.exam_code.toUpperCase().startsWith(categoryPrefix);
         });
 
-        // LIBRARY DOCUMENTS INTEGRATION
+        if (filtered.length === 0) {
+          const emptyState = document.createElement("div");
+          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55vh; text-align: center; width: 100%; box-sizing: border-box;";
+          emptyState.innerHTML = `
+            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+            <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
+          `;
+          grid.appendChild(emptyState);
+          return;
+        }
+
+        filtered.forEach(exam => {
+          const card = document.createElement("div");
+          card.className = "exam-card";
+          
+          let isOpen = exam.is_open === true;
+          let redirectUrl = "waiting.html?exam=" + exam.exam_code;
+          let actionBtnHtml = "";
+          
+          const hasCompleted = completedExams.has(exam.exam_code);
+          const xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span></span>`;
+
+          if (isOpen) {
+            actionBtnHtml = `
+              <footer class="exam-card-footer">
+                ${xemKetQuaHtml}
+                <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
+              </footer>
+            `;
+          } else {
+            actionBtnHtml = `
+              <footer class="exam-card-footer">
+                ${xemKetQuaHtml}
+                <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
+              </footer>
+            `;
+          }
+
+          card.innerHTML = `
+            <header class="exam-card-header"><h3 style="text-transform: none;">${exam.title}</h3></header>
+            <div class="exam-card-body">
+              <div class="exam-info-row"><span class="info-label">Hình thức thi:</span><span class="badge-green">Thi trực tuyến</span></div>
+              <div class="exam-info-row"><span class="info-label">Thời gian thi:</span><span class="info-value">${exam.duration_minutes ? exam.duration_minutes + " phút" : "150 phút"}</span></div>
+              <div class="exam-info-row"><span class="info-label">Lệ phí:</span><span class="info-value font-bold">Miễn phí</span></div>
+              <div class="exam-info-row"><span class="info-label">Trạng thái:</span><span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">${isOpen ? "Đang mở" : "Chưa mở"}</span></div>
+            </div>
+            ${actionBtnHtml}
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+
+
+      // LIBRARY DOCUMENTS INTEGRATION
             window.LIBRARY_DOCS = [
         {
           id: "doc_1783876292129_0",
@@ -4447,6 +4501,8 @@
         }
       ];
 
+      
+
             window.LIBRARY_FOLDERS = [
         {
           title: "Đánh giá tư duy - ĐGTD",
@@ -4465,18 +4521,79 @@
         }
       ];
 
+      
+
       window.activeLibraryCategory = "ALL";
       window.activeLibrarySubject = "ALL";
 
+      window.renderLibrarySubTabs = function() {
+        const tabsContainer = document.querySelector(".library-subject-tabs");
+        if (!tabsContainer) return;
+        tabsContainer.innerHTML = "";
+
+        const category = cleanCatStr(window.activeLibraryCategory);
+        
+        let tabs = [];
+        if (category === "ĐGTD" || category === "DGTD") {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "TDTAN", label: "Tư duy toán học" },
+            { key: "TDDH", label: "Tư duy đọc hiểu" },
+            { key: "TDKH", label: "Tư duy khoa học" }
+          ];
+        } else if (category === "ĐGNL" || category === "DGNL") {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "DINH_TINH", label: "Định tính" },
+            { key: "DINH_LUONG", label: "Định lượng" },
+            { key: "KHOA_HOC", label: "Khoa học" },
+            { key: "TIENG_ANH", label: "Tiếng Anh" }
+          ];
+        } else {
+          tabs = [
+            { key: "ALL", label: "Tất cả" },
+            { key: "TOÁN", label: "Toán" },
+            { key: "LÝ", label: "Lý" },
+            { key: "SINH", label: "Sinh" },
+            { key: "ANH", label: "Anh" },
+            { key: "HOÁ", label: "Hoá" },
+            { key: "VĂN", label: "Văn" }
+          ];
+        }
+
+        const validKeys = tabs.map(t => t.key);
+        if (!validKeys.includes(window.activeLibrarySubject)) {
+          window.activeLibrarySubject = "ALL";
+        }
+
+        tabs.forEach(tab => {
+          const btn = document.createElement("button");
+          btn.className = `lib-sub-tab${window.activeLibrarySubject === tab.key ? " active" : ""}`;
+          btn.setAttribute("data-subject", tab.key);
+          btn.onclick = () => window.filterLibrarySubject(tab.key);
+          btn.textContent = tab.label;
+          tabsContainer.appendChild(btn);
+        });
+      };
+
       window.filterLibraryCategory = function(cat) {
-        window.activeLibraryCategory = cat;
+        const normCat = cleanCatStr(cat);
+        const activeNorm = cleanCatStr(window.activeLibraryCategory);
+        if (activeNorm === normCat) {
+          window.activeLibraryCategory = "ALL";
+        } else {
+          window.activeLibraryCategory = cat;
+        }
         document.querySelectorAll(".lib-pill-btn").forEach(btn => {
-          if (btn.getAttribute("data-category") === cat) {
+          const btnCat = cleanCatStr(btn.getAttribute("data-category"));
+          const currentActiveCat = cleanCatStr(window.activeLibraryCategory);
+          if (btnCat === currentActiveCat) {
             btn.classList.add("active");
           } else {
             btn.classList.remove("active");
           }
         });
+        window.renderLibrarySubTabs();
         window.renderLibraryDocs();
       };
 
@@ -4513,12 +4630,47 @@
         }
 
         const filtered = window.LIBRARY_DOCS.filter(doc => {
-          if (window.activeLibraryCategory !== "ALL" && doc.category !== window.activeLibraryCategory) {
+          // 1. Category check
+          const activeCat = cleanCatStr(window.activeLibraryCategory);
+          const docCat = cleanCatStr(doc.category);
+          if (activeCat !== "ALL" && docCat !== activeCat) {
             return false;
           }
-          if (window.activeLibrarySubject !== "ALL" && doc.subject !== window.activeLibrarySubject) {
-            return false;
+          
+          // 2. Subject check with smart mappings for ĐGTD & ĐGNL sub-tabs
+          if (window.activeLibrarySubject !== "ALL") {
+            const cat = cleanCatStr(window.activeLibraryCategory);
+            const sub = window.activeLibrarySubject;
+            const docSub = cleanCatStr(doc.subject);
+            
+            if (cat === "ĐGTD" || cat === "DGTD") {
+              if (sub === "TDTAN") {
+                if (docSub !== "TOÁN" && !doc.title.toLowerCase().includes("toán")) return false;
+              } else if (sub === "TDDH") {
+                if (docSub !== "VĂN" && !doc.title.toLowerCase().includes("đọc hiểu") && !doc.title.toLowerCase().includes("văn")) return false;
+              } else if (sub === "TDKH") {
+                if (!["LÝ", "HOÁ", "SINH"].includes(docSub) && !doc.title.toLowerCase().includes("khoa học")) return false;
+              } else {
+                if (docSub !== cleanCatStr(sub)) return false;
+              }
+            } else if (cat === "ĐGNL" || cat === "DGNL") {
+              if (sub === "DINH_TINH") {
+                if (docSub !== "VĂN" && !doc.title.toLowerCase().includes("định tính") && !doc.title.toLowerCase().includes("văn")) return false;
+              } else if (sub === "DINH_LUONG") {
+                if (docSub !== "TOÁN" && !doc.title.toLowerCase().includes("định lượng") && !doc.title.toLowerCase().includes("toán")) return false;
+              } else if (sub === "KHOA_HOC") {
+                if (!["LÝ", "HOÁ", "SINH"].includes(docSub) && !doc.title.toLowerCase().includes("khoa học")) return false;
+              } else if (sub === "TIENG_ANH") {                if (docSub !== "ANH" && !doc.title.toLowerCase().includes("tiếng anh") && !doc.title.toLowerCase().includes("anh")) return false;
+              } else {
+                if (docSub !== cleanCatStr(sub)) return false;
+              }
+            } else {
+              // Default class subjects check
+              if (docSub !== cleanCatStr(sub)) return false;
+            }
           }
+
+          // 3. Search keyword check
           if (keyword) {
             const cleanTitle = removeAccents(doc.title);
             const cleanKeyword = removeAccents(keyword);
@@ -4529,9 +4681,9 @@
 
         if (filtered.length === 0) {
           grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #94a3b8; font-weight: 600; font-size: 15px;">
-              <span style="font-size: 48px; display: block; margin-bottom: 12px; filter: grayscale(1);">🔍</span>
-              Không tìm thấy tài liệu nào khớp với bộ lọc tìm kiếm.
+            <div style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55vh; text-align: center; width: 100%; box-sizing: border-box;">
+              <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa có tài liệu" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
+              <div style="font-size: 15px; font-weight: 600; color: #64748b;">Không tìm thấy tài liệu nào khớp với bộ lọc</div>
             </div>
           `;
           return;
@@ -4600,17 +4752,17 @@
               <!-- Folder Back -->
               <path d="M4 8a2 2 0 0 1 2-2h12l4 6h36a2 2 0 0 1 2 2v26a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z" fill="#60a5fa"/>
               <!-- Paper Sheet 1 (Back) -->
-              <path d="M26 8h12l6 6v18H26V8z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+              <path d="M26 8 h11.5 Q 38.5 8 39.2 8.7 L 43.3 12.8 Q 44 13.5 44 14.5 v17.5 H26 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
               <!-- Corner fold for Sheet 1 -->
-              <path d="M38 8l6 6h-6V8z" fill="#cbd5e1"/>
+              <path d="M38 8 L 38 12.5 Q 38 14 39.5 14 L 44 14 Z" fill="#cbd5e1"/>
               <!-- Lines on Sheet 1 -->
               <rect x="29" y="15" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
               <rect x="29" y="19" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
               <rect x="29" y="23" width="7" height="1.5" rx="0.75" fill="#cbd5e1"/>
               <!-- Paper Sheet 2 (Front) -->
-              <path d="M16 12h12l6 6v18H16V12z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+              <path d="M16 12 h11.5 Q 28.5 12 29.2 12.7 L 33.3 16.8 Q 34 17.5 34 18.5 v17.5 H16 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
               <!-- Corner fold for Sheet 2 -->
-              <path d="M28 12l6 6h-6v-6z" fill="#cbd5e1"/>
+              <path d="M28 12 L 28 16.5 Q 28 18 29.5 18 L 34 18 Z" fill="#cbd5e1"/>
               <!-- Red Acrobat loop on Sheet 2 -->
               <g transform="translate(19, 19) scale(0.9)">
                 <path d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" fill="#ef4444"/>
@@ -4628,67 +4780,17 @@
               </p>
             </div>
           `;
+
           list.appendChild(item);
         });
       };
 
-        if (filtered.length === 0) {
-          const emptyState = document.createElement("div");
-          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; width: 100%;";
-          emptyState.innerHTML = `
-            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 250px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.85;" />
-            <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
-          `;
-          grid.appendChild(emptyState);
-          return;
-        }
-
-        filtered.forEach(exam => {
-          const card = document.createElement("div");
-          card.className = "exam-card";
-          
-          let isOpen = exam.is_open === true;
-          let redirectUrl = "waiting.html?exam=" + exam.exam_code;
-          let actionBtnHtml = "";
-          
-          const hasCompleted = completedExams.has(exam.exam_code);
-          const xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
-            : `<span></span>`;
-
-          if (isOpen) {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                ${xemKetQuaHtml}
-                <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
-              </footer>
-            `;
-          } else {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                ${xemKetQuaHtml}
-                <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
-              </footer>
-            `;
-          }
-
-          card.innerHTML = `
-            <header class="exam-card-header"><h3 style="text-transform: none;">${exam.title}</h3></header>
-            <div class="exam-card-body">
-              <div class="exam-info-row"><span class="info-label">Hình thức thi:</span><span class="badge-green">Thi trực tuyến</span></div>
-              <div class="exam-info-row"><span class="info-label">Thời gian thi:</span><span class="info-value">${exam.duration_minutes ? exam.duration_minutes + " phút" : "150 phút"}</span></div>
-              <div class="exam-info-row"><span class="info-label">Lệ phí:</span><span class="info-value font-bold">Miễn phí</span></div>
-              <div class="exam-info-row"><span class="info-label">Trạng thái:</span><span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">${isOpen ? "Đang mở" : "Chưa mở"}</span></div>
-            </div>
-            ${actionBtnHtml}
-          `;
-          grid.appendChild(card);
-        });
-      }
-
       function updateDocumentsUI() {
         window.activeLibraryCategory = "ALL";
         window.activeLibrarySubject = "ALL";
+        if (typeof window.fetchLibraryDocsFromCloud === "function") {
+          window.fetchLibraryDocsFromCloud(true);
+        }
         
         const searchInput = document.getElementById("lib-search-input");
         if (searchInput) searchInput.value = "";
@@ -4697,10 +4799,8 @@
           if (btn.getAttribute("data-category") === "ALL") btn.classList.add("active");
           else btn.classList.remove("active");
         });
-        document.querySelectorAll(".lib-sub-tab").forEach(tab => {
-          if (tab.getAttribute("data-subject") === "ALL") tab.classList.add("active");
-          else tab.classList.remove("active");
-        });
+
+        window.renderLibrarySubTabs();
 
         window.renderLibraryDocs();
         window.renderLibraryFolders();
@@ -4716,10 +4816,10 @@
           tabId = "documents";
         }
 
-        // Toggle full screen sidebar hidden mode for documents tab
+        // Toggle full screen sidebar hidden mode for documents, history, and account tabs
         const shellContainer = document.querySelector(".tsa-shell");
         if (shellContainer) {
-          if (tabId === "documents") {
+          if (["documents", "history", "account"].includes(tabId)) {
             shellContainer.classList.add("hide-sidebar");
           } else {
             shellContainer.classList.remove("hide-sidebar");
@@ -5489,6 +5589,29 @@
         renderHistoryGroups(filtered);
       };
 
+      function getGroupDateKey(dateStr) {
+        if (!dateStr) return "Không rõ ngày";
+        try {
+          const d = new Date(dateStr);
+          if (isNaN(d.getTime())) return "Không rõ ngày";
+          const day = String(d.getDate()).padStart(2, '0');
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const year = d.getFullYear();
+          return `${day}/${month}/${year}`;
+        } catch (e) {
+          return "Không rõ ngày";
+        }
+      }
+
+      function getExamCategoryLabel(examCode) {
+        if (!examCode) return "Luyện tập";
+        const code = String(examCode).toLowerCase();
+        if (code.includes("tsa")) return "Bài thi TSA";
+        if (code.includes("hsa")) return "Bài thi HSA";
+        if (code.includes("thpt")) return "Bài thi THPTQG";
+        return "Luyện tập";
+      }
+
       async function renderExamHistory() {
         const container = document.getElementById("history-grouped-container");
         if (!container) return;
@@ -6025,8 +6148,14 @@
           if (shellContainer) shellContainer.classList.add("hide-sidebar");
           switchTab("documents");
         } else {
-          if (shellContainer) shellContainer.classList.remove("hide-sidebar");
           const hash = window.location.hash.substring(1);
+          if (shellContainer) {
+            if (["history", "account"].includes(hash)) {
+              shellContainer.classList.add("hide-sidebar");
+            } else {
+              shellContainer.classList.remove("hide-sidebar");
+            }
+          }
           if (hash && hash !== "tai-lieu" && hash !== "documents" && !["tsa-documents", "hsa-documents", "thpt-documents"].includes(hash)) {
             switchTab(hash);
           } else {
@@ -6398,6 +6527,37 @@
         
         const docDate = document.getElementById("detail-doc-date");
         if (docDate) docDate.textContent = doc.date;
+
+        const docSubject = document.getElementById("detail-doc-subject");
+        if (docSubject) docSubject.textContent = (doc.subject || "TOÁN").toUpperCase();
+
+        const infoCategory = document.getElementById("detail-info-category");
+        if (infoCategory) infoCategory.textContent = doc.subject || "TSA";
+
+        const infoDesc = document.getElementById("detail-info-desc");
+        if (infoDesc) infoDesc.textContent = doc.title || "Tài liệu ôn thi thử TSA";
+
+        const downloadBtnTop = document.getElementById("detail-download-btn-top");
+        if (downloadBtnTop) {
+          downloadBtnTop.onclick = function() {
+            window.open(doc.url || "#", "_blank");
+          };
+        }
+
+        // Set cover image from Drive thumbnail
+        const imgEl = document.getElementById("detail-doc-img");
+        const imgLinkEl = document.getElementById("detail-doc-img-link");
+        if (imgEl && imgLinkEl) {
+          const match = doc.url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+          if (match) {
+            const fileId = match[1];
+            imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+            imgLinkEl.href = doc.url;
+          } else {
+            imgEl.src = "assets/pdf-fallback.png";
+            imgLinkEl.href = doc.url;
+          }
+        }
         
         const iframe = document.getElementById("detail-doc-iframe");
         if (iframe) iframe.src = embedUrl;
@@ -6445,6 +6605,11 @@
         listView.style.display = "none";
         detailView.style.display = "block";
         
+        // Load comments for the document
+        if (typeof window.renderDocumentComments === "function") {
+          window.renderDocumentComments(doc.title);
+        }
+        
         // Scroll to top of tab container
         const tabPane = document.getElementById("tab-documents");
         if (tabPane) tabPane.scrollTop = 0;
@@ -6483,9 +6648,175 @@
         window.updateCommentCharCount();
       };
 
+      window.renderDocumentComments = function(docTitle) {
+        const container = document.getElementById("comments-list-container");
+        if (!container) return;
+
+        const key = `tma_doc_comments_${encodeURIComponent(docTitle)}`;
+        let comments = [];
+        try {
+          const saved = localStorage.getItem(key);
+          if (saved) {
+            comments = JSON.parse(saved);
+          } else {
+            // Default seed comments
+            comments = [
+              {
+                id: "seed-comment-1",
+                author: "Trương Quang Huy",
+                avatarColor: "#93c5fd",
+                avatarTextColor: "#1e3a8a",
+                timeText: "1 tháng trước",
+                timestamp: Date.now() - 30 * 24 * 60 * 60 * 1000,
+                text: "có giải không ạ",
+                replies: []
+              }
+            ];
+            localStorage.setItem(key, JSON.stringify(comments));
+          }
+        } catch (e) {
+          console.error("Error loading comments:", e);
+        }
+
+        container.innerHTML = "";
+
+        comments.forEach(comment => {
+          const commentEl = document.createElement("div");
+          commentEl.style.cssText = "display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; flex-direction: column; width: 100%;";
+          
+          let repliesHtml = "";
+          if (comment.replies && comment.replies.length > 0) {
+            repliesHtml = comment.replies.map(reply => {
+              const replyFirstChar = reply.author.charAt(0).toUpperCase();
+              return `
+                <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; margin-left: 32px; position: relative; width: calc(100% - 32px);">
+                  <div style="position: absolute; left: -16px; top: -10px; bottom: 50%; width: 12px; border-left: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; border-bottom-left-radius: 4px;"></div>
+                  <div style="width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; flex-shrink: 0; text-transform: uppercase; user-select: none;">
+                    ${replyFirstChar}
+                  </div>
+                  <div style="flex: 1; min-width: 0; background: #f8fafc; border-radius: 10px; padding: 8px 12px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                      <span style="font-size: 11.5px; font-weight: 700; color: #334155;">${reply.author}</span>
+                      <span style="font-size: 9px; color: #94a3b8;">${reply.timeText || "Vừa xong"}</span>
+                    </div>
+                    <div style="font-size: 11.5px; color: #1e293b; line-height: 1.4;">${reply.text}</div>
+                  </div>
+                </div>
+              `;
+            }).join("");
+          }
+
+          const commentFirstChar = comment.author.charAt(0).toUpperCase();
+          const docTitleEncoded = encodeURIComponent(docTitle);
+
+          commentEl.innerHTML = `
+            <div style="display: flex; gap: 10px; align-items: flex-start; width: 100%;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: ${comment.avatarColor || '#93c5fd'}; color: ${comment.avatarTextColor || '#1e3a8a'}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; text-transform: uppercase; user-select: none;">
+                ${commentFirstChar}
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="background: #eff6ff; border-radius: 12px; padding: 10px 14px; border: 1px solid #dbeafe;">
+                  <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                    <span style="font-size: 12.5px; font-weight: 700; color: #1e3a8a;">${comment.author}</span>
+                    <span style="font-size: 10px; color: #94a3b8;">${comment.timeText}</span>
+                  </div>
+                  <div style="font-size: 12.5px; color: #1e293b; line-height: 1.4;">${comment.text}</div>
+                </div>
+                <div style="margin-top: 2px; padding-left: 6px; display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 11px; color: #0f5a9e; font-weight: 700; cursor: pointer;" onclick="window.showDocReplyInput('${comment.id}', '${docTitleEncoded}')">Trả lời</span>
+                </div>
+                
+                <div id="doc-replies-list-${comment.id}" style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px; width: 100%;">
+                  ${repliesHtml}
+                </div>
+                
+                <div id="doc-reply-input-wrap-${comment.id}" style="width: 100%;"></div>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(commentEl);
+        });
+      };
+
+      window.showDocReplyInput = function(commentId, docTitleEncoded) {
+        document.querySelectorAll(".doc-reply-input-box-wrapper").forEach(el => el.remove());
+
+        const wrap = document.getElementById(`doc-reply-input-wrap-${commentId}`);
+        if (!wrap) return;
+
+        let studentName = "Học sinh";
+        try {
+          const cachedInfo = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cachedInfo && cachedInfo.name) {
+            studentName = cachedInfo.name;
+          }
+        } catch (e) {}
+        const initials = studentName.charAt(0).toUpperCase();
+
+        const inputHtml = `
+          <div class="doc-reply-input-box-wrapper" style="display: flex; gap: 8px; align-items: center; margin-top: 8px; margin-left: 32px; animation: fadeInReply 0.2s ease; width: calc(100% - 32px);">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: #0f5a9e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; flex-shrink: 0; text-transform: uppercase;">
+              ${initials}
+            </div>
+            <div style="flex: 1; display: flex; align-items: center; background: #f1f3f5; border-radius: 20px; padding: 4px 10px; gap: 6px; box-sizing: border-box; border: 1px solid #cbd5e1;">
+              <input type="text" id="doc-reply-textarea-${commentId}" placeholder="Phản hồi..." style="flex: 1; border: none; background: transparent; outline: none; font-size: 12px; color: #1e293b; font-family: 'Inter', sans-serif; padding: 2px 0; margin: 0; box-sizing: border-box; width: 100%;" onkeyup="if(event.key === 'Enter') window.submitDocReply('${commentId}', '${docTitleEncoded}')">
+            </div>
+            <button onclick="window.submitDocReply('${commentId}', '${docTitleEncoded}')" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="#0f5a9e"><path d="M2 21l21-9L2 3v7l15 2-15 2z"></path></svg>
+            </button>
+          </div>
+        `;
+        wrap.innerHTML = inputHtml;
+        
+        const inputEl = document.getElementById(`doc-reply-textarea-${commentId}`);
+        if (inputEl) inputEl.focus();
+      };
+
+      window.submitDocReply = function(commentId, docTitleEncoded) {
+        const docTitle = decodeURIComponent(docTitleEncoded);
+        const inputEl = document.getElementById(`doc-reply-textarea-${commentId}`);
+        if (!inputEl || !inputEl.value.trim()) return;
+
+        const replyText = inputEl.value.trim();
+        const key = `tma_doc_comments_${encodeURIComponent(docTitle)}`;
+        
+        let comments = [];
+        try {
+          const saved = localStorage.getItem(key);
+          if (saved) comments = JSON.parse(saved);
+        } catch (e) {}
+
+        const comment = comments.find(c => c.id === commentId);
+        if (comment) {
+          let studentName = "Học sinh";
+          try {
+            const cachedInfo = JSON.parse(localStorage.getItem("studentInfo"));
+            if (cachedInfo && cachedInfo.name) {
+              studentName = cachedInfo.name;
+            }
+          } catch (e) {}
+
+          if (!comment.replies) comment.replies = [];
+          
+          comment.replies.push({
+            author: studentName,
+            text: replyText,
+            timeText: "Vừa xong",
+            timestamp: Date.now()
+          });
+
+          localStorage.setItem(key, JSON.stringify(comments));
+          window.renderDocumentComments(docTitle);
+        }
+      };
+
       window.submitCommentClick = function() {
         const textarea = document.getElementById("comment-textarea");
         if (!textarea || !textarea.value.trim()) return;
+
+        const docTitle = document.getElementById("detail-doc-title") ? document.getElementById("detail-doc-title").textContent : "Tài liệu";
+        const text = textarea.value.trim();
 
         let studentName = "Học sinh";
         try {
@@ -6495,35 +6826,28 @@
           }
         } catch (e) {}
 
-        const firstChar = studentName.charAt(0).toUpperCase();
-        const text = textarea.value.trim();
+        const key = `tma_doc_comments_${encodeURIComponent(docTitle)}`;
+        let comments = [];
+        try {
+          const saved = localStorage.getItem(key);
+          if (saved) comments = JSON.parse(saved);
+        } catch (e) {}
 
-        // Create new comment element
-        const container = document.getElementById("comments-list-container");
-        if (container) {
-          const newComment = document.createElement("div");
-          newComment.style.cssText = "display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;";
-          newComment.innerHTML = `
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #fbcfe8; color: #9d174d; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0;">
-              ${firstChar}
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="background: #eff6ff; border-radius: 12px; padding: 12px 16px; border: 1px solid #dbeafe;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                  <span style="font-size: 13.5px; font-weight: 700; color: #1e3a8a;">${studentName}</span>
-                  <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">Vừa xong</span>
-                </div>
-                <div style="font-size: 13.5px; color: #1e293b; line-height: 1.45;">${text}</div>
-              </div>
-              <div style="margin-top: 4px; padding-left: 8px;">
-                <span style="font-size: 12px; color: #64748b; font-weight: 600; cursor: pointer;">Trả lời</span>
-              </div>
-            </div>
-          `;
-          container.prepend(newComment);
-        }
+        const randomId = "doc-comment-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        comments.push({
+          id: randomId,
+          author: studentName,
+          avatarColor: "#ec4899",
+          avatarTextColor: "#ffffff",
+          timeText: "Vừa xong",
+          timestamp: Date.now(),
+          text: text,
+          replies: []
+        });
 
-        // Reset
+        localStorage.setItem(key, JSON.stringify(comments));
+        window.renderDocumentComments(docTitle);
+
         textarea.value = "";
         window.updateCommentCharCount();
       };
@@ -6540,6 +6864,29 @@
         // Toggle visibility
         listView.style.display = "block";
         detailView.style.display = "none";
+      };
+
+      window.navigateToLibrary = function() {
+        if (window.closeLibraryDetailView) {
+          window.closeLibraryDetailView();
+        }
+        window.location.hash = "tai-lieu";
+        if (window.switchTab) {
+          window.switchTab("documents");
+        }
+      };
+
+      window.navigateToHome = function() {
+        if (window.closeLibraryDetailView) {
+          window.closeLibraryDetailView();
+        }
+        window.location.hash = "overview";
+        if (window.switchTab) {
+          window.switchTab("overview");
+        }
+        if (window.switchDashboardTab) {
+          window.switchDashboardTab("home");
+        }
       };
 
     })();

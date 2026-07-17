@@ -4,7 +4,7 @@
       --brand-red: #135c97;
       --brand-red-dark: #0f4a7a;
       --brand-red-light: #eff6ff;
-      --page-bg: #f5f7fa;
+      --page-bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #111827;
       --muted: #6b7280;
@@ -511,7 +511,7 @@
       min-height: 100vh;
       height: 100vh;
       margin-left: var(--sidebar-width);
-      padding: calc(var(--topbar-height) + 24px) 28px 0;
+      padding: var(--topbar-height) 28px 0;
       transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       will-change: margin-left;
       z-index: 1;
@@ -1136,13 +1136,19 @@
     }
 
     .exam-card {
-      border: 1px solid #f3f4f6;
-      background: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
-      display: flex;
-      flex-direction: column;
+      border: 1px solid rgba(0, 0, 0, 0.04) !important;
+      background: #ffffff !important;
+      border-radius: 12px !important;
+      overflow: hidden !important;
+      box-shadow: var(--shadow) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    
+    .exam-card:hover {
+      transform: translateY(-3px) !important;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1) !important;
     }
 
     .exam-card-header {
@@ -2051,6 +2057,7 @@
       display: block;
       overflow-y: auto;
       flex: 1;
+      padding-top: 24px !important;
       padding-bottom: 32px;
       transform-origin: top center;
       animation: magicTabIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) both;
@@ -2915,7 +2922,7 @@
         max-width: 280px !important;
         background: #ffffff;
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 0px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -3963,7 +3970,7 @@
     .course-card {
       background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 0px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -4726,6 +4733,7 @@
       position: sticky;
       top: 0;
       z-index: 2;
+      border-radius: 0 4px 4px 0 !important;
     }
     #course-study-modal .tree-bai-row {
       display: flex;
@@ -4997,21 +5005,27 @@
     #course-study-modal .tree-chapter-header {
       width: 100% !important;
       display: flex !important;
-      align-items: flex-start !important;
+      align-items: center !important;
       justify-content: space-between !important;
       gap: 10px !important;
-      background: #ffffff !important;
-      color: #94a3b8 !important;
+      background: #f1f5f9 !important;
+      color: #1e293b !important;
       font-family: inherit !important;
-      font-size: 11.5px !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.04em !important;
-      line-height: 1.32 !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em !important;
+      line-height: 1.4 !important;
       text-align: left !important;
       text-transform: uppercase !important;
-      padding: 14px 14px 7px !important;
+      padding: 12px 16px !important;
       border: 0 !important;
+      border-left: 4px solid #0f5a9e !important;
       cursor: pointer !important;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin-top: 10px !important;
+      border-radius: 4px !important;
     }
 
     #course-study-modal .tree-chapter-title {
@@ -7907,6 +7921,7 @@
       .tab-panel.active {
         overflow-y: auto !important;
         flex: 1 !important;
+        padding-top: 0 !important;
         padding-bottom: 24px !important;
       }
 
@@ -10157,3 +10172,195 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
       margin: 0 !important;
       box-sizing: border-box !important;
     }
+
+/* ==========================================
+   LMS SYLLABUS CHAPTER HEADER LAYOUT OVERRIDES (STRAIGHT LEFT BORDER)
+   ========================================== */
+#course-study-modal .tree-chapter-header {
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  padding: 12px 16px !important;
+  border-left: 4px solid #0f5a9e !important;
+  border-radius: 0 4px 4px 0 !important; /* Sharp left corners to keep border-left straight */
+  margin-top: 10px !important;
+  margin-bottom: 4px !important;
+  align-items: center !important;
+  line-height: 1.4 !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+/* ==========================================
+   CLEAN PAPER FOLD CORNER OVERRIDES FOR LIBRARY CARDS
+   ========================================== */
+#course-study-modal .lib-doc-pdf-icon,
+.lib-doc-pdf-icon {
+  border: none !important;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCAxMDgiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMDgiPgogIDxkZWZzPgogICAgPCEtLSBHcmFkaWVudCBmb3IgYSBjbGVhbiwgcHJlbWl1bSAzRCBwYXBlciBmb2xkIGZsYXAgLS0+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZvbGRHcmFkIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZjFmNWY5IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjYmQ1ZTEiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPCEtLSBTaGFkb3cgdW5kZXIgdGhlIGZvbGQgZmxhcCAtLT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2hhZG93R3JhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSJyZ2JhKDE1LDIzLDQyLDAuMjIpIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9InJnYmEoMTUsMjMsNDIsMCkiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIE1haW4gd2hpdGUgcGFnZSB3aXRoIGEgbGFyZ2UgY3VydmVkIGRpYWdvbmFsIHRvcC1yaWdodCBjdXQgLS0+CiAgPHBhdGggZD0iTSA4IDAgTCA0NCAwIFEgNDggMCA1MC44IDIuOCBMIDc3LjIgMjkuMiBRIDgwIDMyIDgwIDM2IEwgODAgMTAwIEEgOCA4IDAgMCAxIDcyIDEwOCBMIDggMTA4IEEgOCA4IDAgMCAxIDAgMTAwIEwgMCA4IEEgOCA4IDAgMCAxIDggMCBaIiBmaWxsPSIjZmZmZmZmIiAvPgogIAogIDwhLS0gU29mdCBzaGFkb3cgdW5kZXIgdGhlIGxhcmdlIGZvbGRlZCBmbGFwIC0tPgogIDxwYXRoIGQ9Ik0gNDggMCBMIDQ4IDI2IFEgNDggMzIgNTQgMzIgTCA4MCAzMiBaIiBmaWxsPSJ1cmwoI3NoYWRvd0dyYWQpIiBvcGFjaXR5PSIwLjQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xLjUsIDEuNSkiIC8+CiAgCiAgPCEtLSBMYXJnZSBGb2xkZWQgRmxhcCAocm91bmRlZCB0aXAgYXQgdGhlIGJvdHRvbS1sZWZ0KSAtLT4KICA8cGF0aCBkPSJNIDQ4IDAgTCA0OCAyNiBRIDQ4IDMyIDU0IDMyIEwgODAgMzIgWiIgZmlsbD0idXJsKCNmb2xkR3JhZCkiIC8+Cjwvc3ZnPg==") no-repeat center/contain !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.08)) !important;
+  overflow: visible !important;
+}
+
+#course-study-modal .lib-doc-pdf-icon::before,
+.lib-doc-pdf-icon::before {
+  display: none !important;
+}
+
+/* ==========================================
+   LIBRARY DOCUMENTS GRID 2-COLUMN MAPSTUDY LAYOUT
+   ========================================== */
+.library-docs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+}
+
+/* Document cards match Mapstudy grayish background exactly */
+#course-study-modal .lib-doc-card,
+.lib-doc-card {
+  width: 100% !important;
+  max-width: none !important;
+  background: #f1f3f5 !important; /* Flat grayish background to match Mapstudy */
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  display: flex !important;
+  gap: 18px !important;
+  align-items: center !important;
+  box-shadow: none !important; /* Remove shadow for flat Mapstudy styling */
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+#course-study-modal .lib-doc-card:hover,
+.lib-doc-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* PDF sheet icon matches Mapstudy sizing exactly */
+#course-study-modal .lib-doc-pdf-icon,
+.lib-doc-pdf-icon {
+  width: 76px !important;
+  height: 102px !important; /* Perfect vertical proportion */
+  border: none !important;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NiAxMDIiIHdpZHRoPSI3NiIgaGVpZ2h0PSIxMDIiPgogIDxkZWZzPgogICAgPCEtLSBHcmFkaWVudCBmb3IgYSBjbGVhbiwgcHJlbWl1bSAzRCBwYXBlciBmb2xkIGZsYXAgLS0+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZvbGRHcmFkIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZjFmNWY5IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjYmQ1ZTEiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPCEtLSBTaGFkb3cgdW5kZXIgdGhlIGZvbGQgZmxhcCAtLT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2hhZG93R3JhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSJyZ2JhKDE1LDIzLDQyLDAuMikiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0icmdiYSgxNSwyMyw0MiwwKSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDwhLS0gTWFpbiB3aGl0ZSBwYWdlIHdpdGggY3VydmVkIHRvcC1yaWdodCBjdXQgKGZvbGQgc2l6ZSAyMnB4KSAtLT4KICA8cGF0aCBkPSJNIDYgMCBMIDU0IDAgUSA1NiAwIDU3LjUgMS41IEwgNzQuNSAxOC41IFEgNzYgMjAgNzYgMjIgTCA3NiA5NiBBIDYgNiAwIDAgMSA3MCAxMDIgTCA2IDEwMiBBIDYgNiAwIDAgMSAwIDk2IEwgMCA2IEEgNiA2IDAgMCAxIDYgMCBaIiBmaWxsPSIjZmZmZmZmIiAvPgogIAogIDwhLS0gU29mdCBzaGFkb3cgY2FzdCBieSB0aGUgZm9sZGVkIGZsYXAgb250byB0aGUgd2hpdGUgc2hlZXQgLS0+CiAgPHBhdGggZD0iTSA1NCAwIEwgNTQgMTggUSA1NCAyMiA1OCAyMiBMIDc2IDIyIFoiIGZpbGw9InVybCgjc2hhZG93R3JhZCkiIG9wYWNpdHk9IjAuMzgiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xLjIsIDEuMikiIC8+CiAgCiAgPCEtLSBMYXJnZSBGb2xkZWQgRmxhcCAocm91bmRlZCB0aXAgYXQgdGhlIGJvdHRvbS1sZWZ0KSAtLT4KICA8cGF0aCBkPSJNIDU0IDAgTCA1NCAxOCBRIDU0IDIyIDU4IDIyIEwgNzYgMjIgWiIgZmlsbD0idXJsKCNmb2xkR3JhZCkiIC8+Cjwvc3ZnPg==") no-repeat center/contain !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08)) !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+}
+
+#course-study-modal .lib-doc-pdf-icon svg,
+.lib-doc-pdf-icon svg {
+  width: 52px !important;
+  height: 52px !important; /* Made larger Acrobat loop loop */
+  margin-top: 10px !important;
+}
+
+#course-study-modal .lib-doc-pdf-icon span,
+.lib-doc-pdf-icon span {
+  width: 100% !important;
+  background: #c0392b !important;
+  color: #ffffff !important;
+  font-size: 15px !important; /* Large bold PDF text */
+  padding: 7px 0 !important;
+  font-weight: 900 !important;
+  line-height: 1.0 !important;
+  letter-spacing: 0.8px !important;
+  text-align: center !important;
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  display: block !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#course-study-modal .lib-doc-pdf-icon::before,
+.lib-doc-pdf-icon::before {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .library-docs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@keyframes fadeInReply {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Document Card Layout Overrides (Matching specific design requirements) */
+.lib-doc-tag {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  padding: 4px 12px !important;
+  border-radius: 99px !important;
+  text-transform: none !important;
+  background: #0f5a9e !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.subject {
+  background: #0f5a9e !important;
+  color: #ffffff !important;
+}
+.lib-doc-tag.class {
+  background: #0f5a9e !important;
+  color: #ffffff !important;
+}
+.lib-doc-meta {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-top: 1px solid #e2e8f0 !important;
+  padding-top: 10px !important;
+  margin-top: 8px !important;
+  font-size: 11.5px !important;
+  color: #64748b !important;
+  width: 100% !important;
+}
+.select-page[data-theme="dark"] .lib-doc-meta {
+  border-top-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+
+/* Dashboard Cards Border Removal (Matching specific visual preferences) */
+.welcome-greeting-bar,
+.recent-activity-section,
+.study-detail-card,
+.consultation-form-card,
+.dashboard-news-card {
+  border: none !important;
+}
+.select-page[data-theme="dark"] .welcome-greeting-bar,
+.select-page[data-theme="dark"] .recent-activity-section,
+.select-page[data-theme="dark"] .consultation-form-card,
+.select-page[data-theme="dark"] .dashboard-news-card,
+#course-study-modal[data-study-theme="dark"] .study-detail-card {
+  border: none !important;
+}
+.metric-card,
+.metric-card.blue-card,
+.metric-card.orange-card,
+.metric-card.purple-card {
+  border: none !important;
+}
+.select-page[data-theme="dark"] .metric-card.blue-card,
+.select-page[data-theme="dark"] .metric-card.orange-card,
+.select-page[data-theme="dark"] .metric-card.purple-card {
+  border: none !important;
+}

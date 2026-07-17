@@ -375,3 +375,86 @@
     font-size: 19px !important;
   }
 }
+
+@media screen and (max-width: 768px) {
+  body.confirm-page {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .confirm-shell {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    padding: 32px 16px !important;
+  }
+  
+  .confirm-card {
+    max-width: 450px !important;
+    min-height: auto !important;
+    padding: 28px 24px !important;
+  }
+
+  .confirm-logo-slot img,
+  .loading-card-spinner .lobby-logo {
+    max-width: min(100%, 280px) !important;
+    height: auto !important;
+    max-height: 36px !important;
+    object-fit: contain !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  body.confirm-page {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .confirm-shell {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    padding: 16px 12px !important;
+  }
+  
+  .confirm-card {
+    max-width: 100% !important;
+    padding: 20px 16px !important;
+    border-radius: 12px !important;
+  }
+  
+  .confirm-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  
+  .confirm-row dt {
+    width: 100% !important;
+    flex: none !important;
+    font-size: 13px !important;
+  }
+  
+  .confirm-row dd {
+    width: 100% !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding-right: 0 !important;
+  }
+  
+  .confirm-card h1 {
+    font-size: 18px !important;
+    margin: 8px 0 16px !important;
+  }
+
+  .confirm-logo-slot img,
+  .loading-card-spinner .lobby-logo {
+    max-width: min(100%, 240px) !important;
+    height: auto !important;
+    max-height: 32px !important;
+    object-fit: contain !important;
+  }
+}

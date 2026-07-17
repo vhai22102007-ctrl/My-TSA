@@ -46,15 +46,15 @@
     async function renderStudents() {
       await loadStudents();
 
-      var approvedTbody = document.getElementById("approved-students-list");
-      if (!approvedTbody) return;
+      var approvedGrid = document.getElementById("approved-students-grid");
+      if (!approvedGrid) return;
 
       if (approvedStudents.length === 0) {
-        approvedTbody.innerHTML = '<tr><td colspan="6" class="empty">Chưa có học sinh nào đăng ký tài khoản.</td></tr>';
+        approvedGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--muted);">Chưa có học sinh nào đăng ký tài khoản.</div>';
         return;
       }
 
-      approvedTbody.innerHTML = '<tr><td colspan="6" class="empty">Đang tải danh sách học sinh và khóa học...</td></tr>';
+      approvedGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--muted);">Đang tải danh sách học sinh...</div>';
 
       // Fetch all enrollments from Supabase to match
       var enrollsList = [];
@@ -70,48 +70,26 @@
         console.warn("Failed to fetch enrollments from Supabase for student grid:", err);
       }
 
-      approvedTbody.innerHTML = "";
+      approvedGrid.innerHTML = "";
       approvedStudents.forEach(function(s) {
-        // Find enrolled courses for this student
-        var studentEnrolls = enrollsList.filter(function(e) {
-          return String(e.user_email).toLowerCase() === String(s.email).toLowerCase();
-        });
+        var firstChar = s.name ? s.name.trim().charAt(0).toUpperCase() : "H";
 
-        // Map course IDs to titles
-        var courseTags = "Chưa tham gia";
-        if (studentEnrolls.length > 0) {
-          var titles = studentEnrolls.map(function(e) {
-            var courseObj = lmsCourses.find(function(c) { return c.id === e.course_id; });
-            return courseObj ? courseObj.title : e.course_id;
-          });
-          courseTags = titles.map(function(t) {
-            return `<span class="status type" style="background:#fee2e2; color:#991b1b; font-weight:700; margin-right:4px; font-size:11px;">${esc(t)}</span>`;
-          }).join("");
-        }
-
-        // Generate SBD
-        var cleanEmail = String(s.email || "student").split("@")[0].toUpperCase();
-        var sbd = "TMA-" + cleanEmail;
-        var regDate = s.created_at ? s.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
-
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>
-            <div class="table-main">${esc(s.name)}</div>
-            <div class="table-sub">${esc(s.email)} • ${esc(s.phone)}</div>
-          </td>
-          <td style="font-family: monospace; font-weight: bold; color: var(--brand);">${esc(sbd)}</td>
-          <td>${courseTags}</td>
-          <td>${esc(regDate)}</td>
-          <td><span class="status published">Đang học</span></td>
-          <td>
-            <div class="actions">
-              <button class="btn btn-sm btn-outline" onclick="viewStudentDetails('${s.email}')">Chi tiết</button>
-              <button class="btn btn-sm btn-danger" onclick="kickStudent('${s.email}')">Kích</button>
-            </div>
-          </td>
-        `;
-        approvedTbody.appendChild(tr);
+        var card = document.createElement("div");
+        card.className = "student-card";
+        card.style.cssText = "background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.015);";
+        card.setAttribute("onmouseover", "this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.05)'; this.style.borderColor='var(--brand)';");
+        card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.015)'; this.style.borderColor='#e5e7eb';");
+        card.onclick = function() {
+          viewStudentDetails(s.email);
+        };
+        
+        card.innerHTML = '\n' +
+'          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; border: 1px solid rgba(19, 92, 151, 0.15); text-transform: uppercase;">\n' +
+'            ' + esc(firstChar) + '\n' +
+'          </div>\n' +
+'          <div style="font-weight: 700; color: #1e293b; font-size: 14px; word-break: break-word;">' + esc(s.name) + '</div>\n' +
+'        ';
+        approvedGrid.appendChild(card);
       });
     }
 
@@ -127,6 +105,8 @@
           // Remove from local array
           approvedStudents.splice(idx, 1);
           localStorage.setItem("tmaTsaUsers", JSON.stringify(approvedStudents));
+          
+          window.closeStudentDetailView();
           renderStudents();
         }
       }
@@ -135,14 +115,70 @@
     async function viewStudentDetails(email) {
       var student = approvedStudents.find(function(s) { return String(s.email).toLowerCase() === String(email).toLowerCase(); });
       if (student) {
-        document.getElementById("modal-student-name").textContent = student.name;
-        document.getElementById("modal-student-code").textContent = "Mã học sinh: " + student.email.split("@")[0].toUpperCase();
-        document.getElementById("modal-student-email").textContent = student.email;
-        document.getElementById("modal-student-phone").textContent = student.phone;
-        document.getElementById("modal-student-course").textContent = student.school || "";
-        document.getElementById("modal-student-date").textContent = student.className || "";
+        var firstChar = student.name ? student.name.trim().charAt(0).toUpperCase() : "H";
         
-        var progressContainer = document.getElementById("modal-student-lms-progress");
+        var avatarCircle = document.getElementById("detail-avatar-circle");
+        if (avatarCircle) avatarCircle.textContent = firstChar;
+        
+        document.getElementById("detail-student-name").textContent = student.name;
+        document.getElementById("detail-student-code").textContent = "Mã học sinh: " + (student.email || "").split("@")[0].toUpperCase();
+        document.getElementById("detail-student-email").textContent = student.email || "Chưa cập nhật";
+        document.getElementById("detail-student-phone").textContent = student.phone || "Chưa cập nhật";
+        document.getElementById("detail-student-school").textContent = student.school || "Chưa cập nhật";
+        document.getElementById("detail-student-class").textContent = student.className || "Chưa cập nhật";
+        
+        var regDate = student.created_at ? student.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
+        document.getElementById("detail-student-reg-date").textContent = regDate;
+        
+        var kickBtn = document.getElementById("detail-kick-btn");
+        if (kickBtn) {
+          kickBtn.onclick = function() {
+            kickStudent(student.email);
+          };
+        }
+        
+        // Fetch exam results and calculate stats
+        var testsCompletedEl = document.getElementById("detail-tests-completed");
+        var avgAccuracyEl = document.getElementById("detail-avg-accuracy");
+        if (testsCompletedEl && avgAccuracyEl) {
+          testsCompletedEl.textContent = "Đang tính toán...";
+          avgAccuracyEl.textContent = "Đang tính toán...";
+          
+          try {
+            if (window.supabaseClient) {
+              var { data: examResults, error: resultsError } = await window.supabaseClient
+                .from('exam_results')
+                .select('correct_count, total_questions')
+                .eq('user_email', student.email);
+              
+              if (!resultsError && examResults) {
+                var totalTests = examResults.length;
+                testsCompletedEl.textContent = totalTests + " đề";
+                
+                if (totalTests > 0) {
+                  var totalCorrect = examResults.reduce((acc, curr) => acc + (curr.correct_count || 0), 0);
+                  var totalQs = examResults.reduce((acc, curr) => acc + (curr.total_questions || 0), 0);
+                  var avgAcc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
+                  avgAccuracyEl.textContent = avgAcc + "%";
+                } else {
+                  avgAccuracyEl.textContent = "0%";
+                }
+              } else {
+                testsCompletedEl.textContent = "0 đề";
+                avgAccuracyEl.textContent = "0%";
+              }
+            } else {
+              testsCompletedEl.textContent = "0 đề";
+              avgAccuracyEl.textContent = "0%";
+            }
+          } catch (statErr) {
+            console.warn("Failed to calculate student exam stats:", statErr);
+            testsCompletedEl.textContent = "0 đề";
+            avgAccuracyEl.textContent = "0%";
+          }
+        }
+        
+        var progressContainer = document.getElementById("detail-student-lms-progress");
         if (progressContainer) {
           progressContainer.innerHTML = "<p style='color: var(--muted); font-size: 12px; margin: 0;'>Đang tải thông tin tiến độ...</p>";
           
@@ -214,7 +250,8 @@
           }
         }
         
-        document.getElementById("student-detail-modal").style.display = "flex";
+        document.getElementById("students-list-view").style.display = "none";
+        document.getElementById("students-detail-view").style.display = "block";
       }
     }
 
@@ -251,14 +288,15 @@
       }
     }
 
-    function closeStudentModal() {
-      document.getElementById("student-detail-modal").style.display = "none";
+    function closeStudentDetailView() {
+      document.getElementById("students-list-view").style.display = "block";
+      document.getElementById("students-detail-view").style.display = "none";
     }
 
     window.kickStudent = kickStudent;
     window.viewStudentDetails = viewStudentDetails;
     window.revokeCourseAccess = revokeCourseAccess;
-    window.closeStudentModal = closeStudentModal;
+    window.closeStudentDetailView = closeStudentDetailView;
 
     
 
@@ -408,6 +446,54 @@
       renderManageDocuments();
     };
 
+    window.editingMaterialId = null;
+    window.editingMaterialBackup = null;
+
+    window.startEditingRow = function(id) {
+      const material = currentMaterialsList.find(m => m.id === id);
+      if (material) {
+        window.editingMaterialBackup = {
+          title: material.title,
+          category: material.category,
+          subject: material.subject,
+          url: material.url,
+          note: material.note || ""
+        };
+        window.editingMaterialId = id;
+        renderManageDocuments();
+      }
+    };
+
+    window.cancelEditingRow = function() {
+      if (window.editingMaterialId && window.editingMaterialBackup) {
+        const material = currentMaterialsList.find(m => m.id === window.editingMaterialId);
+        if (material) {
+          Object.assign(material, window.editingMaterialBackup);
+        }
+      }
+      window.editingMaterialId = null;
+      window.editingMaterialBackup = null;
+      renderManageDocuments();
+    };
+
+    window.saveEditingRow = function(id) {
+      const material = currentMaterialsList.find(m => m.id === id);
+      if (material) {
+        if (!material.title.trim()) {
+          window.alert("Tiêu đề tài liệu không được để trống!");
+          return;
+        }
+        if (!material.url.trim()) {
+          window.alert("Đường dẫn không được để trống!");
+          return;
+        }
+      }
+      window.editingMaterialId = null;
+      window.editingMaterialBackup = null;
+      renderManageDocuments();
+      autoSaveDocuments();
+    };
+
     function renderManageDocuments() {
       var container = document.getElementById("teacher-materials-inputs");
       if (!container) return;
@@ -416,71 +502,120 @@
         initializeMaterialsList();
       }
 
-      var html = "";
-      var categories = window.activeTeacherCategory === "ALL" 
-        ? ["ĐGTD", "ĐGNL", "LỚP 12", "LỚP 11", "LỚP 10", "LỚP 9"] 
-        : [window.activeTeacherCategory];
       var subjectOptions = ["TOÁN", "LÝ", "SINH", "ANH", "HOÁ", "VĂN"];
 
       // Setup Search filter
       const searchInput = document.getElementById("teacher-lib-search-input");
       const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
+      // Setup category & subject dropdown filters
+      const filterCatEl = document.getElementById("teacher-lib-filter-category");
+      const filterSubEl = document.getElementById("teacher-lib-filter-subject");
+      const activeCat = filterCatEl ? filterCatEl.value : "ALL";
+      const activeSub = filterSubEl ? filterSubEl.value : "ALL";
+
       function removeAccents(str) {
         return String(str || "")
           .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[̀-ͯ]/g, "")
           .replace(/[đĐ]/g, function(m) { return m === 'đ' ? 'd' : 'D'; })
           .toLowerCase();
       }
 
-      categories.forEach(function(cat) {
-        // Filter elements of the current category matching subject and search
-        var filtered = currentMaterialsList.filter(function(m) { 
-          if (m.category !== cat) return false;
-          if (window.activeTeacherSubject !== "ALL" && m.subject !== window.activeTeacherSubject) return false;
-          if (keyword) {
-            const cleanTitle = removeAccents(m.title);
-            const cleanKeyword = removeAccents(keyword);
-            if (!cleanTitle.includes(cleanKeyword)) return false;
-          }
-          return true;
-        });
-
-        // Skip category header if category is empty and we are filtering
-        if (filtered.length === 0 && (window.activeTeacherSubject !== "ALL" || keyword)) {
-          return;
+      // Filter all documents
+      var filtered = currentMaterialsList.filter(function(m) { 
+        if (activeCat !== "ALL" && m.category !== activeCat) return false;
+        if (activeSub !== "ALL" && m.subject !== activeSub) return false;
+        if (keyword) {
+          const cleanTitle = removeAccents(m.title);
+          const cleanKeyword = removeAccents(keyword);
+          if (!cleanTitle.includes(cleanKeyword)) return false;
         }
+        return true;
+      });
 
-        html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px;">
-            <h3 style="margin: 0; color: var(--brand); font-size: 14px; font-weight: 800;">Tài liệu chuyên mục ${cat}</h3>
-            <button class="btn" type="button" onclick="window.addNewDocumentRow('${cat}')" style="background-color: #16a34a; color: white; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer;">+ Thêm tài liệu mới</button>
-          </div>
-        `;
-        
-        if (filtered.length === 0) {
-          html += `<p style="color: var(--muted); font-size: 13px; font-style: italic; margin-bottom: 12px;">Chưa có tài liệu nào trong chuyên mục này.</p>`;
-        } else {
-          filtered.forEach(function(material) {
-            var subjectSelect = `<select class="select" data-field="subject" data-doc-id="${material.id}" style="width: 100px; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: white; box-sizing: border-box; height: 36px; cursor: pointer; font-size: 13px; font-weight: 600;">`;
-            subjectOptions.forEach(function(sub) {
-              var selected = material.subject === sub ? "selected" : "";
-              subjectSelect += `<option value="${sub}" ${selected}>${sub}</option>`;
-            });
-            subjectSelect += `</select>`;
+      var html = "";
 
-            html += `
-              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
-                <div style="display: flex; flex: 1; gap: 8px; min-width: 300px;">
-                  <input class="input" type="text" data-field="title" data-doc-id="${material.id}" value="${esc(material.title)}" placeholder="Tên tài liệu..." style="flex: 2; min-width: 150px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; box-sizing: border-box;">
-                  ${subjectSelect}
-                  <input class="input" type="text" data-field="url" data-doc-id="${material.id}" value="${esc(material.url)}" placeholder="Nhập link Google Drive / PDF..." style="flex: 3; min-width: 200px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box;">
-                </div>
-                <button class="btn" type="button" onclick="window.removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 8px; padding: 6px 14px; height: 36px; cursor: pointer; font-size: 12px;">Xóa</button>
-              </div>
-            `;
+      if (filtered.length === 0) {
+        container.innerHTML = '<tr><td colspan="5" class="empty" style="padding: 24px; text-align: center; color: var(--muted); font-size: 13px; font-style: italic;">Không tìm thấy tài liệu phù hợp.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(function(material) {
+        if (window.editingMaterialId === material.id) {
+          // Editable Row mode
+          var categorySelect = `<select class="select" data-field="category" data-doc-id="${material.id}" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: white; box-sizing: border-box; height: 34px; cursor: pointer; font-size: 12.5px; outline: none;">`;
+          ["ĐGTD", "ĐGNL", "LỚP 12", "LỚP 11", "LỚP 10", "LỚP 9"].forEach(function(catOpt) {
+            var selected = material.category === catOpt ? "selected" : "";
+            categorySelect += `<option value="${catOpt}" ${selected}>${catOpt}</option>`;
           });
+          categorySelect += `</select>`;
+
+          var subjectSelect = `<select class="select" data-field="subject" data-doc-id="${material.id}" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: white; box-sizing: border-box; height: 34px; cursor: pointer; font-size: 12.5px; text-transform: uppercase; outline: none;">`;
+          subjectOptions.forEach(function(sub) {
+            var selected = material.subject === sub ? "selected" : "";
+            subjectSelect += `<option value="${sub}" ${selected}>${sub}</option>`;
+          });
+          subjectSelect += `</select>`;
+
+          html += `
+            <tr style="background: #fffbeb;">
+              <td style="padding: 12px 16px;">
+                <input class="input" type="text" data-field="title" data-doc-id="${material.id}" value="${esc(material.title)}" placeholder="Tên tài liệu..." style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); font-weight: 700; box-sizing: border-box; width: 100%; height: 34px; font-size: 13px; outline: none; background: white;">
+                <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 10.5px; font-weight: 700; color: #78350f;">Môn:</span>
+                  <div style="width: 100px;">${subjectSelect}</div>
+                </div>
+              </td>
+              <td style="padding: 12px 16px;">
+                ${categorySelect}
+              </td>
+              <td style="padding: 12px 16px;">
+                <input class="input" type="text" data-field="url" data-doc-id="${material.id}" value="${esc(material.url)}" placeholder="Đường dẫn URL..." style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box; width: 100%; height: 34px; font-size: 12.5px; outline: none; background: white;">
+              </td>
+              <td style="padding: 12px 16px;">
+                <input class="input" type="text" data-field="note" data-doc-id="${material.id}" value="${esc(material.note || '')}" placeholder="Ghi chú..." style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box; width: 100%; height: 34px; font-size: 12.5px; outline: none; background: white;">
+              </td>
+              <td style="padding: 12px 16px;">
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn" type="button" onclick="window.saveEditingRow('${material.id}')" style="background: #16a34a; color: white; border: none; font-weight: 700; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 11.5px;">Lưu</button>
+                  <button class="btn" type="button" onclick="window.cancelEditingRow()" style="background: #cbd5e1; color: #475569; border: none; font-weight: 700; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 11.5px;">Hủy</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          // Read-only Row mode
+          html += `
+            <tr>
+              <td style="padding: 16px 20px;">
+                <div style="font-weight: 700; color: #1e293b; font-size: 13.5px;">${esc(material.title)}</div>
+                <span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 6px;">
+                  ${material.subject}
+                </span>
+              </td>
+              <td style="padding: 16px 20px;">
+                <span style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                  ${material.category}
+                </span>
+              </td>
+              <td style="padding: 16px 20px;">
+                <a href="${esc(material.url)}" target="_blank" style="color: #0f5a9e; font-size: 13px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; display: inline-flex; align-items: center; gap: 6px;" title="${esc(material.url)}">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2 2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  Link tài liệu
+                </a>
+              </td>
+              <td style="padding: 16px 20px; font-size: 12.5px; color: #64748b;">
+                ${esc(material.note || "Không có")}
+              </td>
+              <td style="padding: 16px 20px;">
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn" type="button" onclick="window.startEditingRow('${material.id}')" style="color: #0f5a9e; border: 1px solid #bfdbfe; background: #eff6ff; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 11.5px;">Sửa</button>
+                  <button class="btn" type="button" onclick="window.removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 11.5px;">Xóa</button>
+                </div>
+              </td>
+            </tr>
+          `;
         }
       });
       container.innerHTML = html;
@@ -501,23 +636,56 @@
       });
     }
 
-    window.addNewDocumentRow = function(cat) {
-      var newDoc = {
-        id: "doc_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        title: "",
-        category: cat,
-        subject: "TOÁN",
-        url: ""
-      };
-      currentMaterialsList.push(newDoc);
-      renderManageDocuments();
-    };
+    async function autoSaveDocuments() {
+      var client = window.supabaseClient;
+      if (!client) return;
+
+      var saveIndicator = document.getElementById("save-documents-indicator");
+      if (saveIndicator) {
+        saveIndicator.style.display = "inline-flex";
+        saveIndicator.style.background = "#eff6ff";
+        saveIndicator.style.color = "var(--brand)";
+        saveIndicator.textContent = "⌛ Đang tự động lưu...";
+      }
+
+      try {
+        localStorage.setItem("tmaTsaDriveLinks", JSON.stringify(currentMaterialsList));
+
+        var jsonStr = JSON.stringify(currentMaterialsList, null, 2);
+        var blob = new Blob([jsonStr], { type: "application/json" });
+        await client.storage
+          .from('exams')
+          .upload('drive_links.json', blob, {
+            cacheControl: '3600',
+            upsert: true
+          });
+
+        if (saveIndicator) {
+          saveIndicator.textContent = "✓ Đã tự động lưu lên Cloud";
+          saveIndicator.style.background = "#f0fdf4";
+          saveIndicator.style.color = "var(--green)";
+          setTimeout(function() {
+            if (saveIndicator.textContent === "✓ Đã tự động lưu lên Cloud") {
+              saveIndicator.style.display = "none";
+            }
+          }, 3000);
+        }
+      } catch (err) {
+        console.error("Auto-save failed:", err);
+        if (saveIndicator) {
+          saveIndicator.textContent = "⚠ Lỗi lưu tự động!";
+          saveIndicator.style.background = "#fef2f2";
+          saveIndicator.style.color = "var(--danger)";
+        }
+      }
+    }
 
     function addNewDocumentToList() {
       var titleInput = document.getElementById("new-doc-title");
       var catSelect = document.getElementById("new-doc-category");
       var subSelect = document.getElementById("new-doc-subject");
       var urlInput = document.getElementById("new-doc-url");
+      var noteInput = document.getElementById("new-doc-note");
 
       if (!titleInput || !catSelect || !urlInput) return;
 
@@ -525,6 +693,7 @@
       var cat = catSelect.value;
       var sub = subSelect ? subSelect.value : "TOÁN";
       var url = urlInput.value.trim();
+      var note = noteInput ? noteInput.value.trim() : "";
 
       if (!title) {
         window.alert("Vui lòng nhập tiêu đề tài liệu!");
@@ -537,17 +706,18 @@
         title: title,
         category: cat,
         subject: sub,
-        url: url
+        url: url,
+        note: note
       };
 
       currentMaterialsList.push(newDoc);
       renderManageDocuments();
 
-      // Clear form inputs
       titleInput.value = "";
       urlInput.value = "";
+      if (noteInput) noteInput.value = "";
 
-      window.alert("✓ Đã thêm tài liệu mới vào danh sách thành công! Đừng quên nhấn 'Lưu lên Supabase Cloud' để đồng bộ.");
+      autoSaveDocuments();
     }
 
     function removeDocumentFromList(id) {
@@ -556,12 +726,13 @@
       }
       currentMaterialsList = currentMaterialsList.filter(function(m) { return m.id !== id; });
       renderManageDocuments();
+      autoSaveDocuments();
     }
 
     async function saveDocumentsToSupabase() {
       var client = window.supabaseClient;
       if (!client) {
-        window.alert("Supabase Client chưa được khởi tạo hoặc đồng bộ. Vui lòng đợi trong giây lát.");
+        window.alert("Supabase Client chưa được khởi tạo. Vui lòng đợi.");
         return;
       }
 
@@ -604,13 +775,16 @@
       currentMaterialsList = [];
       renderManageDocuments();
       localStorage.removeItem("tmaTsaDriveLinks");
-      window.alert("Đã xóa danh sách tài liệu nháp. Nhấn 'Lưu lên Supabase Cloud' để đồng bộ xóa trên hệ thống.");
+      autoSaveDocuments();
     }
 
     window.addNewDocumentToList = addNewDocumentToList;
     window.removeDocumentFromList = removeDocumentFromList;
     window.saveDocumentsToSupabase = saveDocumentsToSupabase;
     window.clearAllDocumentLinks = clearAllDocumentLinks;
+    window.onTeacherLibFilterChange = function() {
+      renderManageDocuments();
+    };
 
     function renderPracticeRoom() {
       function normalizeCode(value) {
@@ -4646,8 +4820,10 @@ YÊU CẦU QUAN TRỌNG:
       var SVG_TEST = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="#b45309" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="13" y2="16"></line></svg>`;
 
       function getLessonType(title) {
-        var t = title.toLowerCase();
-        if (t.startsWith("phần") || t.startsWith("phan") || t.match(/^p\d/)) return "phan";
+        var raw = (title || "").trim();
+        if (raw.startsWith("↳") || raw.startsWith("&rarr;") || raw.startsWith("->")) return "phan";
+        var t = raw.toLowerCase();
+        if (t.startsWith("phần") || t.startsWith("phan") || t.startsWith("phân") || t.startsWith("phản") || t.match(/^p\d/)) return "phan";
         if (t.startsWith("tài liệu") || t.startsWith("tai lieu") || t.startsWith("file")) return "document";
         if (t.startsWith("thi online") || t.startsWith("bài tập kiểm tra") || t.startsWith("bài kiểm tra")) return "test";
         return "bai"; // default

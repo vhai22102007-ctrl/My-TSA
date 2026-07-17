@@ -1605,7 +1605,7 @@
       position: relative;
       flex-shrink: 0;
     }
-    .tree-leaf-item::before {
+        .tree-leaf-item::before {
       content: '';
       position: absolute;
       left: -30px;
@@ -1626,7 +1626,7 @@
     .lms-courses-grid-container .course-card {
       background: #ffffff;
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 0px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.02);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -1645,8 +1645,8 @@
       background-position: center;
       position: relative;
     }
-    
-    .lms-courses-grid-container .course-body {
+
+.lms-courses-grid-container .course-body {
       padding: 18px;
       display: flex;
       flex-direction: column;

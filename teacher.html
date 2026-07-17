@@ -426,27 +426,80 @@
             </div>
           </div>
 
-          <article class="card">
-            <div class="card-body" style="padding: 0;">
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Học sinh</th>
-                      <th>Mã học sinh</th>
-                      <th>Khóa học</th>
-                      <th>Ngày tham gia</th>
-                      <th>Trạng thái</th>
-                      <th>Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody id="approved-students-list">
-                    <!-- Rendered dynamically -->
-                  </tbody>
-                </table>
+          <!-- Student List View -->
+          <div id="students-list-view">
+            <div class="students-grid" id="approved-students-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; padding: 20px 0;">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Student Detail View -->
+          <div id="students-detail-view" style="display: none; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); margin-top: 16px;">
+            <!-- Header with Back Button -->
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 20px;">
+              <button class="btn btn-outline btn-sm" onclick="window.closeStudentDetailView()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Quay lại danh sách
+              </button>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-danger btn-sm" id="detail-kick-btn" style="font-weight: 700;">Kích học sinh</button>
               </div>
             </div>
-          </article>
+
+            <!-- Profile Content Layout -->
+            <div style="display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start;">
+              <!-- Left Card: Avatar & Name & Basic Info -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;">
+                <div id="detail-avatar-circle" style="width: 80px; height: 80px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 32px; border: 2px solid rgba(19, 92, 151, 0.15); text-transform: uppercase;">Y</div>
+                <div>
+                  <h3 id="detail-student-name" style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 4px;">Học Sinh</h3>
+                  <p id="detail-student-code" style="font-size: 13px; font-family: monospace; font-weight: 700; color: var(--brand); margin: 0;">TMA-MOCK</p>
+                </div>
+                <div style="width: 100%; border-top: 1px solid #e2e8f0; padding-top: 16px; display: flex; flex-direction: column; gap: 10px; text-align: left; font-size: 13px;">
+                  <div><strong style="color: #64748b;">Trường:</strong> <span id="detail-student-school" style="font-weight: 600; color: #1e293b;">--</span></div>
+                  <div><strong style="color: #64748b;">Lớp học:</strong> <span id="detail-student-class" style="font-weight: 600; color: #1e293b;">--</span></div>
+                  <div><strong style="color: #64748b;">Ngày ĐK:</strong> <span id="detail-student-reg-date" style="font-weight: 600; color: #1e293b;">--</span></div>
+                  <div><strong style="color: #64748b;">Trạng thái:</strong> <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700;">Đang học</span></div>
+                </div>
+              </div>
+
+              <!-- Right Box: Details & Progress -->
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Grid Stats -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div style="background: #eff6ff; border-radius: 12px; padding: 16px; border: 1px solid rgba(19, 92, 151, 0.1);">
+                    <div style="font-size: 13px; color: var(--brand); font-weight: 600; margin-bottom: 6px;">Số đề thi thử hoàn thành</div>
+                    <div id="detail-tests-completed" style="font-size: 24px; font-weight: 800; color: var(--brand);">0 đề</div>
+                  </div>
+                  <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; border: 1px solid rgba(22, 163, 74, 0.1);">
+                    <div style="font-size: 13px; color: #166534; font-weight: 600; margin-bottom: 6px;">Độ chính xác trung bình</div>
+                    <div id="detail-avg-accuracy" style="font-size: 24px; font-weight: 800; color: #166534;">0%</div>
+                  </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                  <h4 style="margin: 0 0 4px; font-weight: 700; color: #1e293b; font-size: 14px;">Thông tin liên hệ</h4>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+                    <span style="color: #64748b;">Email:</span>
+                    <span id="detail-student-email" style="font-weight: 600; color: #1e293b;">--</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+                    <span style="color: #64748b;">Số điện thoại:</span>
+                    <span id="detail-student-phone" style="font-weight: 600; color: #1e293b;">--</span>
+                  </div>
+                </div>
+
+                <!-- LMS Course Progress -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                  <h4 style="margin: 0 0 12px; font-weight: 700; color: #1e293b; font-size: 14px;">Khóa học đang tham gia & Tiến độ LMS</h4>
+                  <div id="detail-student-lms-progress" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;">
+                    <p style="color: #64748b; font-size: 12.5px; margin: 0;">Đang tải...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- TAB: CẤP QUYỀN KHÓA HỌC -->
@@ -498,7 +551,10 @@
                 </svg>
               </button>
               <div>
-                <h1>Quản lý Kho tài liệu ôn tập</h1>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <h1 style="margin: 0;">Quản lý Kho tài liệu ôn tập</h1>
+                  <span id="save-documents-indicator" style="display: none; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: #f0fdf4; color: var(--green);">⌛ Đang tự động lưu...</span>
+                </div>
                 <p style="margin: 6px 0 0; color: var(--muted);">Nhập link Google Drive của các đề thi và sách để hiển thị cho học sinh.</p>
               </div>
             </div>
@@ -506,117 +562,126 @@
               <button class="btn btn-primary" type="button" id="save-documents-btn" onclick="saveDocumentsToSupabase()">
                 Lưu lên Supabase Cloud
               </button>
-              <button class="btn btn-outline" type="button" onclick="clearAllDocumentLinks()">
-                Xóa toàn bộ link
+            </div>
+          </div>
+
+          <!-- Unified Filter Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; background: white; padding: 14px 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <div style="position: relative;">
+                <input type="text" id="teacher-lib-search-input" placeholder="Tìm kiếm tài liệu..." oninput="window.onTeacherLibrarySearchInput()" style="padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; width: 280px; box-sizing: border-box; outline: none; background: #f8fafc;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="#64748b" fill="none" stroke-width="2.5" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
+                  <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              
+              <select id="teacher-lib-filter-category" onchange="window.onTeacherLibFilterChange()" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; height: 33px; cursor: pointer; outline: none;">
+                <option value="ALL">-- Tất cả chuyên mục --</option>
+                <option value="ĐGTD">ĐGTD (Đánh giá tư duy)</option>
+                <option value="ĐGNL">ĐGNL (Đánh giá năng lực)</option>
+                <option value="LỚP 12">Lớp 12</option>
+                <option value="LỚP 11">Lớp 11</option>
+                <option value="LỚP 10">Lớp 10</option>
+                <option value="LỚP 9">Lớp 9</option>
+              </select>
+
+              <select id="teacher-lib-filter-subject" onchange="window.onTeacherLibFilterChange()" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; height: 33px; cursor: pointer; outline: none;">
+                <option value="ALL">-- Tất cả môn học --</option>
+                <option value="TOÁN">Toán</option>
+                <option value="LÝ">Lý</option>
+                <option value="HOÁ">Hóa</option>
+                <option value="SINH">Sinh</option>
+                <option value="ANH">Tiếng Anh</option>
+                <option value="VĂN">Văn</option>
+              </select>
+            </div>
+            
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline" type="button" onclick="clearAllDocumentLinks()" style="padding: 0 16px; height: 33px; font-size: 12.5px; font-weight: 700; border-radius: 6px; color: #b91c1c; border-color: #fca5a5; background: #fef2f2;">
+                Xóa toàn bộ
               </button>
             </div>
           </div>
 
-          <!-- Category Pills -->
-          <div class="library-category-pills" style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
-            <button class="lib-pill-btn active" data-category="ALL" onclick="window.filterTeacherCategory('ALL')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" fill="#dbeafe"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              <span>Tất cả</span>
-            </button>
-            <button class="lib-pill-btn" data-category="ĐGTD" onclick="window.filterTeacherCategory('ĐGTD')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" fill="#dbeafe" stroke="none"></path><path class="pill-fill-part" d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" fill="#dbeafe" stroke="none"></path><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path><path d="M12 5v14"></path><path d="M12 9h4a2 2 0 0 1 2 2v1"></path><path d="M12 9H8a2 2 0 0 0-2 2v1"></path><path d="M12 13h5a1 1 0 0 1 1 1v1"></path><path d="M12 13H7a1 1 0 0 0-1 1v1"></path></svg>
-              <span>ĐGTD</span>
-            </button>
-            <button class="lib-pill-btn" data-category="ĐGNL" onclick="window.filterTeacherCategory('ĐGNL')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" fill="#dbeafe" stroke="none"></path><path class="pill-fill-part" d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" fill="#dbeafe" stroke="none"></path><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path><path d="M12 5v14"></path><path d="M12 9h4a2 2 0 0 1 2 2v1"></path><path d="M12 9H8a2 2 0 0 0-2 2v1"></path><path d="M12 13h5a1 1 0 0 1 1 1v1"></path><path d="M12 13H7a1 1 0 0 0-1 1v1"></path></svg>
-              <span>ĐGNL</span>
-            </button>
-            <button class="lib-pill-btn" data-category="LỚP 12" onclick="window.filterTeacherCategory('LỚP 12')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M12 2L2 7l10 5 10-5Z" fill="#dbeafe"></path><path d="M12 2L2 7l10 5 10-5Z"></path><path d="M6 10v4c0 2 2.5 3 6 3s6-1 6-3v-4"></path><path d="M21.5 7v7"></path></svg>
-              <span>Lớp 12</span>
-            </button>
-            <button class="lib-pill-btn" data-category="LỚP 11" onclick="window.filterTeacherCategory('LỚP 11')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><circle class="pill-fill-part" cx="6" cy="17" r="4" fill="#dbeafe"></circle><circle cx="6" cy="17" r="4"></circle><path d="M17 6L12 17h10Z"></path><ellipse cx="17" cy="17" rx="5" ry="1.5"></ellipse><path d="M4 6h4v4H4Z"></path><path d="M6 4h4v4"></path><path d="M8 6l2-2M8 10l2-2M4 6l2-2"></path></svg>
-              <span>Lớp 11</span>
-            </button>
-            <button class="lib-pill-btn" data-category="LỚP 10" onclick="window.filterTeacherCategory('LỚP 10')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><circle class="pill-fill-part" cx="17" cy="9" r="4" fill="#dbeafe"></circle><circle cx="17" cy="9" r="4"></circle><rect x="3" y="11" width="7" height="7" rx="1"></rect><path d="M12 18l5-9 5 9Z"></path></svg>
-              <span>Lớp 10</span>
-            </button>
-            <button class="lib-pill-btn" data-category="LỚP 9" onclick="window.filterTeacherCategory('LỚP 9')">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pill-svg-icon"><path class="pill-fill-part" d="M14 6a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5" fill="#dbeafe"></path><path d="M10 19v-3a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3a2 2 0 0 0 2-2V3"></path><path d="M14 6a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 0-2-2v-3a2 2 0 0 0-2-2h-3"></path></svg>
-              <span>Lớp 9</span>
-            </button>
-          </div>
-
-          <!-- Filter & Search Sub-bar -->
-          <div class="library-filter-bar" style="display: flex; justify-content: flex-start; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 20px; flex-wrap: wrap; gap: 32px;">
-            <!-- Subject Tabs on Left -->
-            <div class="library-subject-tabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px;">
-              <button class="lib-sub-tab active" data-teacher-subject="ALL" onclick="window.filterTeacherSubject('ALL')">Tất cả</button>
-              <button class="lib-sub-tab" data-teacher-subject="TOÁN" onclick="window.filterTeacherSubject('TOÁN')">Toán</button>
-              <button class="lib-sub-tab" data-teacher-subject="LÝ" onclick="window.filterTeacherSubject('LÝ')">Lý</button>
-              <button class="lib-sub-tab" data-teacher-subject="SINH" onclick="window.filterTeacherSubject('SINH')">Sinh</button>
-              <button class="lib-sub-tab" data-teacher-subject="ANH" onclick="window.filterTeacherSubject('ANH')">Anh</button>
-              <button class="lib-sub-tab" data-teacher-subject="HOÁ" onclick="window.filterTeacherSubject('HOÁ')">Hoá</button>
-              <button class="lib-sub-tab" data-teacher-subject="VĂN" onclick="window.filterTeacherSubject('VĂN')">Văn</button>
-            </div>
-            
-            <div class="library-search-box" style="position: relative; width: 260px; max-width: 100%;">
-              <input type="text" id="teacher-lib-search-input" placeholder="Tìm kiếm" oninput="window.onTeacherLibrarySearchInput()" style="width: 100%; padding: 10px 38px 10px 16px; border: none; border-radius: 8px; font-size: 13.5px; outline: none; background: #f1f5f9; color: var(--text); box-sizing: border-box;">
-              <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #0f5a9e; display: flex; align-items: center; pointer-events: none;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              </span>
-            </div>
-          </div>
-
-          <article class="card" style="margin-top: 20px;">
-            <div class="card-header">
-              <h2>Thêm tài liệu mới</h2>
+          <article class="card" style="margin-top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <div class="card-header" style="background: var(--brand-soft); border-bottom: 1px solid rgba(19, 92, 151, 0.15); padding: 16px 20px;">
+              <h3 style="color: var(--brand); font-weight: 800; font-size: 15px; margin: 0;">Thêm tài liệu mới vào thư viện</h3>
             </div>
             <div class="card-body" style="padding: 20px;">
-              <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px;">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <label style="font-weight: 700; font-size: 13px;">Tiêu đề tài liệu</label>
-                  <input class="input" type="text" id="new-doc-title" placeholder="Ví dụ: Đề TSA số 07, Tuyển tập Xác suất..." style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; width: 100%;">
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Row 1 -->
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                  <div style="flex: 2; min-width: 250px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 700; font-size: 12.5px; color: var(--text);">Tiêu đề tài liệu</label>
+                    <input class="input" type="text" id="new-doc-title" placeholder="Ví dụ: Đề TSA số 07, Tuyển tập Xác suất..." style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box; width: 100%; height: 36px; font-size: 13px;">
+                  </div>
+                  <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 700; font-size: 12.5px; color: var(--text);">Phân loại chuyên mục</label>
+                    <select id="new-doc-category" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; box-sizing: border-box; width: 100%; height: 36px; font-size: 13px;">
+                      <option value="ĐGTD">ĐGTD (Đánh giá tư duy)</option>
+                      <option value="ĐGNL">ĐGNL (Đánh giá năng lực)</option>
+                      <option value="LỚP 12">Lớp 12</option>
+                      <option value="LỚP 11">Lớp 11</option>
+                      <option value="LỚP 10">Lớp 10</option>
+                      <option value="LỚP 9">Lớp 9</option>
+                    </select>
+                  </div>
+                  <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 700; font-size: 12.5px; color: var(--text);">Môn học</label>
+                    <select id="new-doc-subject" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; box-sizing: border-box; width: 100%; height: 36px; font-size: 13px;">
+                      <option value="TOÁN">Toán</option>
+                      <option value="LÝ">Lý</option>
+                      <option value="HOÁ">Hóa</option>
+                      <option value="SINH">Sinh</option>
+                      <option value="ANH">Tiếng Anh</option>
+                      <option value="VĂN">Văn</option>
+                    </select>
+                  </div>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <label style="font-weight: 700; font-size: 13px;">Phân loại chuyên mục</label>
-                  <select id="new-doc-category" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; box-sizing: border-box; width: 100%;">
-                    <option value="ĐGTD">Đánh giá tư duy - ĐGTD</option>
-                    <option value="ĐGNL">Đánh giá năng lực - ĐGNL</option>
-                    <option value="LỚP 12">Lớp 12</option>
-                    <option value="LỚP 11">Lớp 11</option>
-                    <option value="LỚP 10">Lớp 10</option>
-                    <option value="LỚP 9">Lớp 9</option>
-                  </select>
+                
+                <!-- Row 2 -->
+                <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+                  <div style="flex: 3; min-width: 250px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 700; font-size: 12.5px; color: var(--text);">Đường dẫn (Link Google Drive / PDF)</label>
+                    <input class="input" type="text" id="new-doc-url" placeholder="https://drive.google.com/file/d/..." style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box; width: 100%; height: 36px; font-size: 13px;">
+                  </div>
+                  <div style="flex: 2; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 700; font-size: 12.5px; color: var(--text);">Ghi chú thêm (Không bắt buộc)</label>
+                    <input class="input" type="text" id="new-doc-note" placeholder="Ví dụ: Đề số 1, có đáp án chi tiết..." style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box; width: 100%; height: 36px; font-size: 13px;">
+                  </div>
+                  <button class="btn btn-primary" type="button" onclick="addNewDocumentToList()" style="height: 36px; padding: 0 20px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Thêm tài liệu
+                  </button>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <label style="font-weight: 700; font-size: 13px;">Môn học</label>
-                  <select id="new-doc-subject" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; box-sizing: border-box; width: 100%;">
-                    <option value="TOÁN">Toán</option>
-                    <option value="LÝ">Lý</option>
-                    <option value="HOÁ">Hóa</option>
-                    <option value="SINH">Sinh</option>
-                    <option value="ANH">Tiếng Anh</option>
-                    <option value="VĂN">Văn</option>
-                  </select>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <label style="font-weight: 700; font-size: 13px;">Đường dẫn (Link Google Drive)</label>
-                  <input class="input" type="text" id="new-doc-url" placeholder="https://drive.google.com/file/d/..." style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; width: 100%;">
-                </div>
-                <button class="btn btn-primary" type="button" onclick="addNewDocumentToList()" style="align-self: flex-start; margin-top: 8px; background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff;">
-                  Thêm vào danh sách
-                </button>
               </div>
             </div>
           </article>
 
-          <article class="card" style="margin-top: 20px;">
-            <div class="card-body" style="padding: 20px;">
-              <div id="teacher-materials-inputs" style="display: flex; flex-direction: column; gap: 16px;">
-                <!-- Rendered dynamically -->
+          <!-- Document List Card -->
+          <article class="card" style="margin-top: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9;">
+              <h3 style="font-weight: 800; font-size: 15px; margin: 0; color: #1e293b;">Danh sách tài liệu trong thư viện</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div style="overflow-x: auto; border: none; border-radius: 12px;">
+                <table class="premium-table">
+                  <thead>
+                    <tr>
+                      <th style="padding: 14px 20px; width: 30%;">Tài liệu</th>
+                      <th style="padding: 14px 20px; width: 15%;">Chuyên mục</th>
+                      <th style="padding: 14px 20px; width: 30%;">Đường dẫn</th>
+                      <th style="padding: 14px 20px; width: 15%;">Ghi chú</th>
+                      <th style="padding: 14px 20px; width: 10%;">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="teacher-materials-inputs">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
               </div>
             </div>
           </article>
-
-
         </div>
 
         <!-- 6. TAB: QUẢN LÝ KHÓA HỌC (LMS) -->
