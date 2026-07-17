@@ -4008,10 +4008,10 @@
             const numStr2 = String(i).padStart(2, "0");
             const numStr = numStr2;
             let examCodeToCheck = "TSA" + numStr3;
-            if (category === "TSA") {
-              // Các phần đơn môn (Toán, Đọc hiểu, Khoa học) đều đọc chung từ đề tổng hợp FULL để tránh tạo nhiều file thừa
-              examCodeToCheck = "TSA_PRACTICE_FULL_" + numStr2;
-            }
+             if (category === "TSA") {
+               const hasTma = (window.EXAMS_LIST || []).some(e => e.exam_code === "TMA" + numStr3);
+               examCodeToCheck = hasTma ? ("TMA" + numStr3) : ("TSA_PRACTICE_FULL_" + numStr2);
+             }
             let openStatus = {};
             try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
 

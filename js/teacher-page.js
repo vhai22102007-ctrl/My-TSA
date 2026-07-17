@@ -949,25 +949,79 @@
         let openStatus = {};
         try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
 
-        for (let i = 1; i <= maxPracticeIndex; i++) {
-          var numStr = String(i).padStart(2, "0");
-          var examTitle = "";
-          var examCode = `TSA_PRACTICE_${currentTsaPracticeSubtab.toUpperCase()}_${numStr}`;
-
-          if (currentTsaPracticeSubtab === "tong-hop") {
-            examTitle = `Đề tổng hợp số ${numStr}`;
-            examCode = `TSA_PRACTICE_FULL_${numStr}`;
-          } else if (currentTsaPracticeSubtab === "math") {
-            examTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
-          } else if (currentTsaPracticeSubtab === "reading") {
-            examTitle = `Đề TSA số ${numStr} - Đọc hiểu`;
-          } else if (currentTsaPracticeSubtab === "science") {
-            examTitle = `Đề TSA số ${numStr} - Khoa học`;
+        var examsToRender = [];
+        
+        // 1. Add existing exams matching this category
+        practiceIndexList.forEach(function(e) {
+          var ec = String(e.exam_code || "").toUpperCase();
+          var isFullExam = ec.startsWith("TMA") || ec.startsWith("TSA_PRACTICE_FULL_");
+          
+          var matchesCategory = false;
+          if (isFullExam) {
+            matchesCategory = true; // Show in all tabs
+          } else {
+            var category = "tong-hop";
+            if (ec.includes("_MATH_")) category = "math";
+            else if (ec.includes("_READING_")) category = "reading";
+            else if (ec.includes("_SCIENCE_")) category = "science";
+            
+            matchesCategory = (category === currentTsaPracticeSubtab);
           }
 
-          var inList = practiceIndexList.find(e => normalizeCode(e.exam_code) === normalizeCode(examCode));
-          var hasExam = !!inList;
-          const isOpen = inList && (inList.is_open === true || openStatus[examCode] === true);
+          if (matchesCategory) {
+            examsToRender.push({
+              exam_code: e.exam_code,
+              title: e.title,
+              is_open: e.is_open,
+              hasExam: true
+            });
+          }
+        });
+
+        // 2. Add default slots if they are not already present
+        var defaultCount = 9;
+        for (let i = 1; i <= defaultCount; i++) {
+          var numStr = String(i).padStart(2, "0");
+          var numStr3 = String(i).padStart(3, "0");
+          
+          // Rename default codes to TMA001, TMA002... across all tabs
+          var defaultCode = "TMA" + numStr3; 
+          var defaultTitle = "";
+          
+          if (currentTsaPracticeSubtab === "tong-hop") {
+            defaultTitle = `Đề tổng hợp số ${numStr}`;
+          } else if (currentTsaPracticeSubtab === "math") {
+            defaultTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
+          } else if (currentTsaPracticeSubtab === "reading") {
+            defaultTitle = `Đề TSA số ${numStr} - Đọc hiểu`;
+          } else if (currentTsaPracticeSubtab === "science") {
+            defaultTitle = `Đề TSA số ${numStr} - Khoa học`;
+          }
+
+          var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
+          if (!alreadyIn) {
+            examsToRender.push({
+              exam_code: defaultCode,
+              title: defaultTitle,
+              is_open: false,
+              hasExam: false
+            });
+          }
+        }
+
+        // Sort: existing exams first, then empty default slots
+        examsToRender.sort(function(a, b) {
+          if (a.hasExam !== b.hasExam) {
+            return b.hasExam ? -1 : 1;
+          }
+          return a.exam_code.localeCompare(b.exam_code);
+        });
+
+        examsToRender.forEach(function(item) {
+          var examTitle = item.title;
+          var examCode = item.exam_code;
+          var hasExam = item.hasExam;
+          const isOpen = hasExam && (item.is_open === true || openStatus[examCode] === true);
 
           var card = document.createElement("div");
           card.className = "exam-card";
@@ -1018,7 +1072,7 @@
             </footer>
           `;
           grid.appendChild(card);
-        }
+        });
         return;
       }
 
@@ -3435,7 +3489,7 @@
             if (exam.exam_code.includes("_MATH_")) return "math";
             if (exam.exam_code.includes("_READING_")) return "reading";
             if (exam.exam_code.includes("_SCIENCE_")) return "science";
-            if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_")) return "tong-hop";
+            if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_") || exam.exam_code.startsWith("TMA")) return "tong-hop";
             return "math";
           })(),
           file: "data/exams/" + exam.exam_code + ".json"
@@ -3956,6 +4010,14 @@
 
       function startEditingExam(title, code, startTab) {
         var cleanCode = normalizeCode(code);
+        
+        // Track the current editing subject based on active subtab in lobby
+        window.currentEditingSubject = typeof currentTsaPracticeSubtab !== 'undefined' ? currentTsaPracticeSubtab : "tong-hop";
+        
+        // Dynamically adjust sidebar buttons and AI dropdown
+        adjustSidebarButtons(window.currentEditingSubject);
+        adjustAiImportDropdown(window.currentEditingSubject);
+
         var existing = loadDraft(cleanCode);
         if (existing) {
           exam = existing;
@@ -3982,7 +4044,12 @@
           if (keyInput) keyInput.value = savedKey;
         } catch (e) {}
 
-        switchEditorTab(startTab || "setup");
+        var defaultStartTab = "setup";
+        if (window.currentEditingSubject === "math") defaultStartTab = "math";
+        else if (window.currentEditingSubject === "reading") defaultStartTab = "reading";
+        else if (window.currentEditingSubject === "science") defaultStartTab = "science";
+
+        switchEditorTab(startTab || defaultStartTab);
         if (typeof refreshSetupTabStatus === "function") {
           refreshSetupTabStatus();
         }
@@ -4368,10 +4435,25 @@
 
         var saveMetaBtn = $("#save-metadata-button");
         if (saveMetaBtn) {
-          saveMetaBtn.addEventListener("click", function () {
-            syncMetadataFromForm(true);
-            saveDraft();
-            renderAll();
+          saveMetaBtn.addEventListener("click", async function () {
+            var originalText = saveMetaBtn.textContent;
+            saveMetaBtn.disabled = true;
+            saveMetaBtn.textContent = "⌛ Đang lưu...";
+            
+            try {
+              syncMetadataFromForm(true);
+              saveDraft();
+              renderAll();
+              
+              await syncMetadataToCloud();
+              window.alert("✓ Đã lưu thông tin cấu hình đề thi lên Cloud thành công!");
+            } catch(e) {
+              console.error(e);
+              window.alert("Lỗi khi lưu thông tin: " + (e.message || e));
+            } finally {
+              saveMetaBtn.disabled = false;
+              saveMetaBtn.textContent = originalText;
+            }
           });
         }
 
@@ -5062,6 +5144,7 @@ YÊU CẦU QUAN TRỌNG:
       lessonsContainer.innerHTML = "<p style='color:var(--muted);'>Đang tải danh sách bài học...</p>";
 
       var lessonsList = [];
+      window.currentActiveCourseLessons = [];
       try {
         if (supabaseClient) {
           var { data: dbLessons, error: err } = await supabaseClient
@@ -5073,10 +5156,22 @@ YÊU CẦU QUAN TRỌNG:
 
           if (err) throw err;
           lessonsList = dbLessons || [];
+          lessonsList.forEach(function(l) {
+            if (!l.parent_id) {
+              l.parent_id = getLocalParentId(l.id);
+            }
+          });
+          window.currentActiveCourseLessons = lessonsList;
         } else {
           // Offline mock lessons
           var allMockLessons = JSON.parse(localStorage.getItem("tmaTsaMockLessons") || "[]");
           lessonsList = allMockLessons.filter(function(l) { return l.course_id === activeCourseId; });
+          lessonsList.forEach(function(l) {
+            if (!l.parent_id) {
+              l.parent_id = getLocalParentId(l.id);
+            }
+          });
+          window.currentActiveCourseLessons = lessonsList;
         }
       } catch (e) {
         console.warn("Failed to fetch lessons from Supabase, using local fallback:", e);
@@ -5271,151 +5366,195 @@ YÊU CẦU QUAN TRỌNG:
         };
 
         // Lessons of this chapter
-        chapterLessons.forEach(function(lesson) {
+        // Separate parents and children into 3 levels
+        var rootLessons = [];
+        var level2Map = {};
+        var level3Map = {};
+
+        chapterLessons.forEach(function(l) {
+          if (!l.parent_id) {
+            rootLessons.push(l);
+          } else {
+            var parent = chapterLessons.find(function(p) { return p.id === l.parent_id; });
+            if (parent && parent.parent_id) {
+              if (!level3Map[l.parent_id]) {
+                level3Map[l.parent_id] = [];
+              }
+              level3Map[l.parent_id].push(l);
+            } else {
+              if (!level2Map[l.parent_id]) {
+                level2Map[l.parent_id] = [];
+              }
+              level2Map[l.parent_id].push(l);
+            }
+          }
+        });
+
+        // Sort levels
+        rootLessons.sort(compareLessonSortKeys);
+        Object.keys(level2Map).forEach(function(k) { level2Map[k].sort(compareLessonSortKeys); });
+        Object.keys(level3Map).forEach(function(k) { level3Map[k].sort(compareLessonSortKeys); });
+
+        // Helper function to build a single row
+        function buildSingleLessonRow(lesson, isChild) {
           var type = lesson.type === "header" ? "header" : getLessonType(lesson.title);
           var lessonRow = document.createElement("div");
-          
           var previewTag = lesson.preview_allowed ? ` <span style="font-size: 9px; background: #e2fbe8; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-left: 6px; display: inline-block; vertical-align: middle;">Free</span>` : "";
 
           if (type === "header") {
             lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 8px; margin-bottom: 4px; transition: all 0.15s;";
             lessonRow.innerHTML = `
               <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">📌</span>
-                <span style="font-weight: 800; color: #0f5a9e; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px;">${esc(lesson.title)}</span>
+                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">📁</span>
+                <span style="font-weight: 800; color: #0f5a9e; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px;">\${esc(lesson.title)}</span>
               </div>
             `;
           } else if (type === "phan") {
-            // Thụt lề sub-item phẳng
-            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; margin-left: 24px; position: relative; transition: all 0.15s;";
-            
-            // Draw connector line
-            var connLine = document.createElement("div");
-            connLine.style.cssText = "position: absolute; left: -14px; top: 0; bottom: 0; width: 1px; background: #cbd5e1;";
-            lessonRow.appendChild(connLine);
-
-            lessonRow.innerHTML += `
+            lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; position: relative; transition: all 0.15s;";
+            lessonRow.innerHTML = `
               <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 <span style="color: #94a3b8; font-weight: 700; font-size: 13px;">↳</span>
-                <span style="color: #64748b; font-size: 13px; display: inline-flex; align-items: center; justify-content: center;">${SVG_PLAY}</span>
-                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
-                ${previewTag}
+                <span style="color: #64748b; font-size: 13px; display: inline-flex; align-items: center; justify-content: center;">\${SVG_PLAY}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">\${esc(lesson.title)}</span>
+                \${previewTag}
               </div>
             `;
           } else if (type === "document") {
             lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
             lessonRow.innerHTML = `
               <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span style="color: #16a34a; display: inline-flex; align-items: center; justify-content: center;">${SVG_DOC}</span>
-                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
-                ${previewTag}
+                <span style="color: #cbd5e1; font-weight: 700; font-size: 12px; margin-right: 4px;">↳</span>
+                <span style="color: #16a34a; display: inline-flex; align-items: center; justify-content: center;">\${SVG_DOC}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">\${esc(lesson.title)}</span>
+                \${previewTag}
               </div>
             `;
           } else if (type === "test") {
             lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
             lessonRow.innerHTML = `
               <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span style="color: #b45309; display: inline-flex; align-items: center; justify-content: center;">${SVG_TEST}</span>
-                <span style="font-weight: 600; color: #334155; font-size: 13px;">${esc(lesson.title)}</span>
-                ${previewTag}
+                <span style="color: #cbd5e1; font-weight: 700; font-size: 12px; margin-right: 4px;">↳</span>
+                <span style="color: #b45309; display: inline-flex; align-items: center; justify-content: center;">\${SVG_TEST}</span>
+                <span style="font-weight: 600; color: #334155; font-size: 13px;">\${esc(lesson.title)}</span>
+                \${previewTag}
               </div>
             `;
           } else {
-            // Main lesson row (Bài) phẳng
             lessonRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-bottom: 1px solid #f1f5f9; transition: all 0.15s;";
             lessonRow.innerHTML = `
               <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">${SVG_PLAY}</span>
-                <span style="font-weight: 700; color: #1e293b; font-size: 13.5px;">${esc(lesson.title)}</span>
-                ${previewTag}
+                <span style="color: #cbd5e1; font-weight: 700; font-size: 12px; margin-right: 4px;">↳</span>
+                <span style="color: #64748b; font-size: 15px; display: inline-flex; align-items: center; justify-content: center;">\${SVG_PLAY}</span>
+                <span style="font-weight: 700; color: #1e293b; font-size: 13.5px;">\${esc(lesson.title)}</span>
+                \${previewTag}
               </div>
             `;
           }
 
-          // Right controls container
           var rightControls = document.createElement("div");
           rightControls.style.cssText = "display: flex; align-items: center; gap: 16px; flex-shrink: 0; margin-left: 12px;";
 
-          // Media badges
           var mediaBadges = document.createElement("div");
           mediaBadges.style.cssText = "font-size: 11px; color: #64748b; display: flex; gap: 8px; align-items: center;";
           
           var hasVideo = !!lesson.video_drive_id;
           var hasDoc = !!lesson.doc_link;
           
-          if (type === "header") {
-            // No media toggles
-          } else if (type !== "document" && type !== "test") {
-            // Video button
-            var btnVideo = document.createElement("button");
-            btnVideo.className = "btn-media-toggle";
-            btnVideo.type = "button";
-            btnVideo.style.cssText = "cursor: pointer; border: 1px solid " + (hasVideo ? "#bfdbfe" : "#e2e8f0") + "; background: " + (hasVideo ? "#eff6ff" : "#ffffff") + "; color: " + (hasVideo ? "#1d4ed8" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
-            btnVideo.innerHTML = `Video <span style="font-size: 9px; color: ${hasVideo ? '#22c55e' : '#ef4444'};">${hasVideo ? '● Có' : '○ Trống'}</span>`;
-            btnVideo.onclick = function(lessonId) {
-              return function() { openLessonMediaEditor(lessonId, 'video'); };
-            }(lesson.id);
-            
-            // PDF button
-            var btnPdf = document.createElement("button");
-            btnPdf.className = "btn-media-toggle";
-            btnPdf.type = "button";
-            btnPdf.style.cssText = "cursor: pointer; border: 1px solid " + (hasDoc ? "#bbf7d0" : "#e2e8f0") + "; background: " + (hasDoc ? "#f0fdf4" : "#ffffff") + "; color: " + (hasDoc ? "#15803d" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
-            btnPdf.innerHTML = `PDF <span style="font-size: 9px; color: ${hasDoc ? '#22c55e' : '#ef4444'};">${hasDoc ? '● Có' : '○ Trống'}</span>`;
-            btnPdf.onclick = function(lessonId) {
-              return function() { openLessonMediaEditor(lessonId, 'doc'); };
-            }(lesson.id);
-
-            mediaBadges.appendChild(btnVideo);
-            mediaBadges.appendChild(btnPdf);
-          } else if (type === "document") {
-            var btnPdf = document.createElement("button");
-            btnPdf.className = "btn-media-toggle";
-            btnPdf.type = "button";
-            btnPdf.style.cssText = "cursor: pointer; border: 1px solid " + (hasDoc ? "#bbf7d0" : "#e2e8f0") + "; background: " + (hasDoc ? "#f0fdf4" : "#ffffff") + "; color: " + (hasDoc ? "#15803d" : "#94a3b8") + "; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; gap: 4px; transition: all 0.15s; outline: none;";
-            btnPdf.innerHTML = `Link Drive <span style="font-size: 9px; color: ${hasDoc ? '#22c55e' : '#ef4444'};">${hasDoc ? '● Có' : '○ Trống'}</span>`;
-            btnPdf.onclick = function(lessonId) {
-              return function() { openLessonMediaEditor(lessonId, 'doc'); };
-            }(lesson.id);
-            
-            mediaBadges.appendChild(btnPdf);
+          // Determine if this lesson can have sub-children (Level 1 or Level 2 can, Level 3 cannot)
+          var canHaveChildren = false;
+          if (!lesson.parent_id) {
+            canHaveChildren = true;
           } else {
-            mediaBadges.innerHTML = `<span style="background: #fff8e1; color: #b45309; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; display: inline-block;">Bài kiểm tra</span>`;
+            var grandParent = (window.currentActiveCourseLessons || []).find(function(p) { return p.id === lesson.parent_id; });
+            if (grandParent && !grandParent.parent_id) {
+              canHaveChildren = true;
+            }
           }
+
+          if (canHaveChildren) {
+            var btnAddSub = document.createElement("button");
+            btnAddSub.type = "button";
+            btnAddSub.className = "btn btn-outline btn-xs";
+            btnAddSub.style.cssText = "font-size: 10px; font-weight: 700; color: #16a34a; border-color: #86efac; background: #f0fdf4; padding: 2px 6px; cursor: pointer;";
+            btnAddSub.textContent = "+ Thêm con";
+            btnAddSub.onclick = function() {
+              showAddSubLessonForLesson(lesson.chapter_name, lesson.title);
+            };
+            rightControls.appendChild(btnAddSub);
+          }
+          
+          if (type !== "header" && type !== "document" && type !== "test") {
+            var btnVideo = document.createElement("button");
+            btnVideo.type = "button";
+            btnVideo.className = hasVideo ? "badge-green" : "badge-red";
+            btnVideo.style.cssText = "border:none; cursor:pointer; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:10.5px;";
+            btnVideo.textContent = hasVideo ? "Video bài giảng" : "+ Link Video";
+            btnVideo.onclick = function() { openLessonMediaEditor(lesson.id, 'video'); };
+            mediaBadges.appendChild(btnVideo);
+          }
+          
+          if (type !== "header" && type !== "test" && type !== "phan") {
+            var btnDoc = document.createElement("button");
+            btnDoc.type = "button";
+            btnDoc.className = hasDoc ? "badge-green" : "badge-red";
+            btnDoc.style.cssText = "border:none; cursor:pointer; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:10.5px;";
+            btnDoc.textContent = hasDoc ? "Tài liệu PDF" : "+ Link PDF";
+            btnDoc.onclick = function() { openLessonMediaEditor(lesson.id, 'doc'); };
+            mediaBadges.appendChild(btnDoc);
+          }
+
           rightControls.appendChild(mediaBadges);
 
-          // Action buttons
-          var actionButtons = document.createElement("div");
-          actionButtons.style.cssText = "display: flex; gap: 6px;";
-          
-          var addBranchBtnHtml = (type === "bai" || type === "header" || type === "phan") ? `<button class="btn btn-outline btn-xs" type="button" onclick="showAddSubLessonForLesson('${escJs(chName)}', '${escJs(lesson.title)}')" style="padding: 2px 8px; font-size: 11px; color: #0f5a9e; border-color: #0f5a9e;" title="Thêm nhánh con (Phần...)">+ Thêm nhánh</button>` : '';
-          
-          actionButtons.innerHTML = `
-            ${addBranchBtnHtml}
-            <button class="btn btn-outline btn-xs" type="button" onclick="showEditLessonModal('${lesson.id}')" style="padding: 2px 8px; font-size: 11px; border-color: #cbd5e1;">Sửa</button>
-            <button class="btn btn-danger btn-xs" type="button" onclick="deleteLmsLesson('${lesson.id}')" style="padding: 2px 8px; font-size: 11px;">Xóa</button>
-          `;
-          rightControls.appendChild(actionButtons);
-          
-          lessonRow.appendChild(rightControls);
-          
-          // Hover effect
-          lessonRow.onmouseenter = function() {
-            if (type === "header") {
-              lessonRow.style.background = "#f1f5f9";
-            } else {
-              lessonRow.style.background = "rgba(15, 90, 158, 0.04)";
-            }
-          };
-          lessonRow.onmouseleave = function() {
-            if (type === "header") {
-              lessonRow.style.background = "#f8fafc";
-            } else {
-              lessonRow.style.background = "transparent";
-            }
-          };
+          var btnEdit = document.createElement("button");
+          btnEdit.type = "button";
+          btnEdit.className = "btn btn-outline btn-xs";
+          btnEdit.style.cssText = "font-size: 11px; font-weight: 600; color: #0f5a9e; border-color: #cbd5e1; padding: 2px 8px; cursor: pointer;";
+          btnEdit.textContent = "Sửa";
+          btnEdit.onclick = function() { showEditLessonModal(lesson.id); };
+          rightControls.appendChild(btnEdit);
 
-          lessonsWrapper.appendChild(lessonRow);
+          var btnDel = document.createElement("button");
+          btnDel.type = "button";
+          btnDel.className = "btn btn-outline btn-xs";
+          btnDel.style.cssText = "font-size: 11px; font-weight: 600; color: #ff3b30; border-color: #cbd5e1; padding: 2px 8px; cursor: pointer;";
+          btnDel.textContent = "Xóa";
+          btnDel.onclick = function() { deleteLmsLesson(lesson.id); };
+          rightControls.appendChild(btnDel);
+
+          lessonRow.appendChild(rightControls);
+          return lessonRow;
+        }
+
+        // Render 3 levels
+        rootLessons.forEach(function(parentLesson) {
+          var parentRow = buildSingleLessonRow(parentLesson, false);
+          lessonsWrapper.appendChild(parentRow);
+
+          var l2Children = level2Map[parentLesson.id];
+          if (l2Children && l2Children.length > 0) {
+            var l2Container = document.createElement("div");
+            l2Container.style.cssText = "position: relative; margin-left: 28px; padding-left: 12px; border-left: 2px solid #cbd5e1; display: flex; flex-direction: column; gap: 4px; margin-top: 4px; margin-bottom: 8px;";
+            
+            l2Children.forEach(function(l2Lesson) {
+              var l2Row = buildSingleLessonRow(l2Lesson, true);
+              l2Container.appendChild(l2Row);
+
+              var l3Children = level3Map[l2Lesson.id];
+              if (l3Children && l3Children.length > 0) {
+                var l3Container = document.createElement("div");
+                l3Container.style.cssText = "position: relative; margin-left: 28px; padding-left: 12px; border-left: 2px solid #cbd5e1; display: flex; flex-direction: column; gap: 4px; margin-top: 4px; margin-bottom: 8px;";
+                
+                l3Children.forEach(function(l3Lesson) {
+                  var l3Row = buildSingleLessonRow(l3Lesson, true);
+                  l3Container.appendChild(l3Row);
+                });
+
+                l2Container.appendChild(l3Container);
+              }
+            });
+
+            lessonsWrapper.appendChild(l2Container);
+          }
         });
 
         chBlock.appendChild(lessonsWrapper);
@@ -5464,6 +5603,213 @@ YÊU CẦU QUAN TRỌNG:
       }
     }
 
+    
+    function saveLocalParentId(lessonId, parentId) {
+      if (!lessonId) return;
+      var mapping = {};
+      try {
+        mapping = JSON.parse(localStorage.getItem("tma_lesson_parent_mapping") || "{}");
+      } catch(e) {}
+      if (parentId) {
+        mapping[lessonId] = parentId;
+      } else {
+        delete mapping[lessonId];
+      }
+      localStorage.setItem("tma_lesson_parent_mapping", JSON.stringify(mapping));
+    }
+
+    function getLocalParentId(lessonId) {
+      if (!lessonId) return null;
+      var mapping = {};
+      try {
+        mapping = JSON.parse(localStorage.getItem("tma_lesson_parent_mapping") || "{}");
+      } catch(e) {}
+      return mapping[lessonId] || null;
+    }
+
+        async function syncMetadataToCloud() {
+      if (typeof supabaseClient === 'undefined' || !supabaseClient) return;
+
+      try {
+        var indexList = [];
+        try {
+          var raw = localStorage.getItem("tma_tsa_exam_index");
+          if (raw) indexList = JSON.parse(raw);
+        } catch {}
+        if (!Array.isArray(indexList)) indexList = [];
+
+        var idx = indexList.findIndex(function (e) { return e.exam_code === exam.exam_code; });
+        var existingMeta = idx !== -1 ? indexList[idx] : null;
+        var isOpen = existingMeta ? (existingMeta.is_open === true) : false;
+
+        var meta = {
+          exam_code: exam.exam_code,
+          title: exam.title,
+          status: exam.status,
+          duration_minutes: exam.duration_minutes || exam.duration_minutes || 45,
+          is_open: isOpen,
+          subject: (function() {
+            if (exam.exam_code.includes("_MATH_")) return "math";
+            if (exam.exam_code.includes("_READING_")) return "reading";
+            if (exam.exam_code.includes("_SCIENCE_")) return "science";
+            if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_")) return "tong-hop";
+            return "math";
+          })(),
+          file: "data/exams/" + exam.exam_code + ".json"
+        };
+
+        if (idx === -1) {
+          indexList.push(meta);
+        } else {
+          indexList[idx] = meta;
+        }
+
+        // Upload index.json
+        var indexJsonStr = JSON.stringify(indexList, null, 2);
+        var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
+        await supabaseClient.storage.from('exams').upload('index.json', indexBlob, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+        localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
+
+        // Upload exam file
+        var examJsonStr = JSON.stringify(exam, null, 2);
+        var examBlob = new Blob([examJsonStr], { type: "application/json" });
+        await supabaseClient.storage.from('exams').upload(exam.exam_code + ".json", examBlob, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+        console.log("✓ Successfully synchronized exam metadata to Supabase Cloud.");
+      } catch (error) {
+        console.error("Failed to sync exam metadata to Cloud:", error);
+      }
+    }
+    window.syncMetadataToCloud = syncMetadataToCloud;
+
+
+        function adjustSidebarButtons(subject) {
+      var list = document.querySelector(".editor-step-list");
+      if (!list) return;
+
+      var children = Array.from(list.children);
+      
+      var allowedTabs = ["setup", "ai-import", "export"];
+      if (subject === "math") {
+        allowedTabs.push("math");
+      } else if (subject === "reading") {
+        allowedTabs.push("reading");
+      } else if (subject === "science") {
+        allowedTabs.push("science");
+      } else {
+        allowedTabs.push("math", "reading", "science");
+      }
+
+      var visibleButtons = [];
+      children.forEach(function(el) {
+        if (el.tagName === "BUTTON" && el.hasAttribute("data-editor-tab-target")) {
+          var target = el.getAttribute("data-editor-tab-target");
+          if (allowedTabs.includes(target)) {
+            el.style.display = "";
+            visibleButtons.push(el);
+          } else {
+            el.style.display = "none";
+          }
+        } else if (el.classList.contains("step-connector")) {
+          el.style.display = "none";
+        }
+      });
+
+      for (var i = 0; i < visibleButtons.length - 1; i++) {
+        var btn = visibleButtons[i];
+        var nextEl = btn.nextElementSibling;
+        while (nextEl && nextEl.classList.contains("step-connector")) {
+          nextEl.style.display = "";
+          nextEl = nextEl.nextElementSibling;
+        }
+      }
+    }
+    window.adjustSidebarButtons = adjustSidebarButtons;
+
+    function adjustAiImportDropdown(subject) {
+      var select = document.getElementById("ai-import-section");
+      if (!select) return;
+
+      if (!select.dataset.originalOptions) {
+        var opts = Array.from(select.options).map(function(opt) {
+          return { value: opt.value, text: opt.textContent };
+        });
+        select.dataset.originalOptions = JSON.stringify(opts);
+      }
+
+      var originalOpts = JSON.parse(select.dataset.originalOptions);
+      select.innerHTML = "";
+
+      var allowedValues = [];
+      if (subject === "math") {
+        allowedValues = ["math"];
+      } else if (subject === "reading") {
+        allowedValues = ["reading"];
+      } else if (subject === "science") {
+        allowedValues = ["science"];
+      } else {
+        allowedValues = ["math", "reading", "science", "auto"];
+      }
+
+      originalOpts.forEach(function(opt) {
+        if (allowedValues.includes(opt.value)) {
+          var el = document.createElement("option");
+          el.value = opt.value;
+          el.textContent = opt.text;
+          select.appendChild(el);
+        }
+      });
+
+      if (allowedValues.length === 1) {
+        select.value = allowedValues[0];
+      } else {
+        select.value = "auto";
+      }
+    }
+    window.adjustAiImportDropdown = adjustAiImportDropdown;
+
+
+    function populateParentLessonsDropdown(chapterName, currentLessonId) {
+      var select = document.getElementById("lms-lesson-modal-parent-id");
+      if (!select) return;
+
+      select.innerHTML = '<option value="">-- Không có (Đây là bài học chính) --</option>';
+      
+      // Filter out current lesson, items of other chapters, or Level 3 items to avoid self/deep loop
+      var potentialParents = (window.currentActiveCourseLessons || []).filter(function(l) {
+        if (l.id === currentLessonId) return false;
+        if (l.chapter_name !== chapterName) return false;
+        
+        // Exclude Level 3 items
+        if (l.parent_id) {
+          var parentOfParent = (window.currentActiveCourseLessons || []).find(function(p) { return p.id === l.parent_id; });
+          if (parentOfParent && parentOfParent.parent_id) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      potentialParents.forEach(function(p) {
+        var opt = document.createElement("option");
+        opt.value = p.id;
+        if (p.parent_id) {
+          opt.textContent = "   ↳ " + p.title;
+        } else {
+          opt.textContent = p.title;
+        }
+        select.appendChild(opt);
+      });
+    }
+    window.populateParentLessonsDropdown = populateParentLessonsDropdown;
+
     function showAddChapterPrompt() {
       var chName = prompt("Nhập tên chương / chuyên đề mới:");
       if (chName && chName.trim()) {
@@ -5478,14 +5824,15 @@ YÊU CẦU QUAN TRỌNG:
       if (chInput) {
         chInput.value = chName;
       }
+      populateParentLessonsDropdown(chName, "");
     }
     window.showAddLessonForChapter = showAddLessonForChapter;
 
     function showAddSubLessonForLesson(chName, parentTitle) {
       showAddLessonModal();
       document.getElementById("lms-lesson-modal-chapter").value = chName;
+      populateParentLessonsDropdown(chName, "");
       
-      // Auto extract number from parent title e.g. "Bài 1: ..." -> "Phần 1.1: "
       var matchNum = parentTitle.match(/Bài\s*(\d+)/i);
       var nextPartPrefix = "Phần 1.1: ";
       if (parentTitle.toLowerCase().indexOf("đề thi thử hsa số") !== -1) {
@@ -5498,6 +5845,13 @@ YÊU CẦU QUAN TRỌNG:
       }
       document.getElementById("lms-lesson-modal-name").value = nextPartPrefix;
       document.getElementById("lms-lesson-modal-name").focus();
+      
+      var parentLesson = (window.currentActiveCourseLessons || []).find(function(l) {
+        return l.title === parentTitle && l.chapter_name === chName;
+      });
+      if (parentLesson) {
+        document.getElementById("lms-lesson-modal-parent-id").value = parentLesson.id;
+      }
     }
     window.showAddSubLessonForLesson = showAddSubLessonForLesson;
 
@@ -5655,6 +6009,10 @@ YÊU CẦU QUAN TRỌNG:
       document.getElementById("lms-lesson-modal-chapter").value = "Chương 1";
       document.getElementById("lms-lesson-modal-order").value = "0";
       
+      var chapterVal = document.getElementById("lms-lesson-modal-chapter").value || "Chương 1";
+      populateParentLessonsDropdown(chapterVal, "");
+      document.getElementById("lms-lesson-modal-parent-id").value = "";
+      
       openModal("lms-lesson-modal");
       onLmsLessonTypeChange();
     }
@@ -5710,6 +6068,8 @@ YÊU CẦU QUAN TRỌNG:
         inputUrl.value = "";
       }
 
+      populateParentLessonsDropdown(lesson.chapter_name || "Chương 1", lesson.id);
+      document.getElementById("lms-lesson-modal-parent-id").value = lesson.parent_id || "";
       document.getElementById("lms-lesson-modal-doc-link").value = lesson.doc_link || "";
       document.getElementById("lms-lesson-modal-order").value = lesson.order_index || 0;
       document.getElementById("lms-lesson-modal-preview").checked = lesson.preview_allowed || false;
@@ -5755,6 +6115,7 @@ YÊU CẦU QUAN TRỌNG:
       var name = document.getElementById("lms-lesson-modal-name").value.trim();
       var type = document.getElementById("lms-lesson-modal-type").value;
       var rawUrl = document.getElementById("lms-lesson-modal-drive-id").value.trim();
+      var parentId = document.getElementById("lms-lesson-modal-parent-id").value || null;
       
       var order = parseInt(document.getElementById("lms-lesson-modal-order").value) || 0;
       var preview = document.getElementById("lms-lesson-modal-preview").checked;
@@ -5792,36 +6153,71 @@ YÊU CẦU QUAN TRỌNG:
 
       try {
         if (supabaseClient) {
+          var payload = {
+            chapter_name: chapter,
+            title: name,
+            type: type,
+            video_drive_id: driveId,
+            doc_link: docLink,
+            order_index: order,
+            preview_allowed: preview,
+            parent_id: parentId
+          };
+
           if (id) {
             // Update
             var { error } = await supabaseClient
               .from("lessons")
-              .update({
-                chapter_name: chapter,
-                title: name,
-                type: type,
-                video_drive_id: driveId,
-                doc_link: docLink,
-                order_index: order,
-                preview_allowed: preview
-              })
+              .update(payload)
               .eq("id", id);
-            if (error) throw error;
+            
+            if (error) {
+              if (error.message && (error.message.includes("parent_id") || error.code === "PGRST204" || error.message.includes("schema cache"))) {
+                console.warn("Supabase table 'lessons' is missing parent_id column. Falling back to local storage mapping.");
+                delete payload.parent_id;
+                var { error: retryError } = await supabaseClient
+                  .from("lessons")
+                  .update(payload)
+                  .eq("id", id);
+                if (retryError) throw retryError;
+                saveLocalParentId(id, parentId);
+              } else {
+                throw error;
+              }
+            } else {
+              saveLocalParentId(id, parentId);
+            }
           } else {
             // Insert
-            var { error } = await supabaseClient
+            payload.course_id = activeCourseId;
+            var { data: insertedData, error } = await supabaseClient
               .from("lessons")
-              .insert({
-                course_id: activeCourseId,
-                chapter_name: chapter,
-                title: name,
-                type: type,
-                video_drive_id: driveId,
-                doc_link: docLink,
-                order_index: order,
-                preview_allowed: preview
-              });
-            if (error) throw error;
+              .insert(payload)
+              .select();
+            
+            if (error) {
+              if (error.message && (error.message.includes("parent_id") || error.code === "PGRST204" || error.message.includes("schema cache"))) {
+                console.warn("Supabase table 'lessons' is missing parent_id column. Falling back to local storage mapping.");
+                delete payload.parent_id;
+                var { data: retryData, error: retryError } = await supabaseClient
+                  .from("lessons")
+                  .insert(payload)
+                  .select();
+                if (retryError) throw retryError;
+                
+                var newId = (retryData && retryData[0]) ? retryData[0].id : null;
+                if (newId) {
+                  saveLocalParentId(newId, parentId);
+                }
+              } else {
+                throw error;
+              }
+            } else {
+              var newId = (insertedData && insertedData[0]) ? insertedData[0].id : null;
+              if (newId) {
+                saveLocalParentId(newId, parentId);
+              }
+            }
           }
         } else {
           // Offline mock save
@@ -5836,7 +6232,8 @@ YÊU CẦU QUAN TRỌNG:
             video_drive_id: driveId,
             doc_link: docLink,
             order_index: order,
-            preview_allowed: preview
+            preview_allowed: preview,
+            parent_id: parentId
           };
 
           if (id) {
