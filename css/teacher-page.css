@@ -521,7 +521,7 @@
     .input, .select, .textarea {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 8px;
       background: #fff;
       outline: none;
       transition: border .15s ease, box-shadow .15s ease;
@@ -551,7 +551,7 @@
     .btn {
       min-height: 40px;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 8px;
       background: #fff;
       padding: 0 14px;
       font-weight: 800;
@@ -618,7 +618,7 @@
 
     .summary-item {
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 8px;
       background: #fff;
       padding: 14px;
     }
@@ -654,7 +654,7 @@
 
     .preview-card {
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 8px;
       background: #fafafa;
       padding: 16px;
       min-height: 160px;
@@ -673,7 +673,7 @@
 
     .mini-item {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 8px;
       background: #fff;
       padding: 12px;
     }
@@ -697,7 +697,7 @@
     .table-wrap {
       overflow-x: auto;
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 8px;
     }
 
     table {
@@ -755,7 +755,7 @@
       align-items: flex-start;
       gap: 10px;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 8px;
       background: #fff;
       padding: 10px;
       line-height: 1.55;
@@ -776,10 +776,10 @@
     .drag-drop-inline { line-height: 2.2; margin-top: 10px; }
     .blank-select { margin: 0 5px; }
     .question-image-wrap { margin: 12px 0; }
-    .question-image-wrap img { border: 1px solid var(--line); border-radius: 12px; }
+    .question-image-wrap img { border: 1px solid var(--line); border-radius: 8px; }
     .image-error, .render-error {
       border: 1px dashed #fca5a5;
-      border-radius: 12px;
+      border-radius: 8px;
       background: #fef2f2;
       color: #b91c1c;
       padding: 12px;
@@ -898,7 +898,7 @@
     }
     .modal-card {
       background: #ffffff;
-      border-radius: 16px;
+      border-radius: 8px;
       width: 100%;
       max-width: 520px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -1458,7 +1458,7 @@
       gap: 60px;
       padding: 40px 20px;
       background: #f8fafc;
-      border-radius: 16px;
+      border-radius: 8px;
       border: 1px solid var(--line);
       overflow-x: auto;
       position: relative;
@@ -1519,7 +1519,7 @@
     .tree-node {
       background: #ffffff;
       border: 1.5px solid var(--line);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 12px 18px;
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);

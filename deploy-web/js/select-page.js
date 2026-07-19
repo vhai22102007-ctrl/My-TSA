@@ -121,7 +121,7 @@
           overlay.id = "exam-shell-fullscreen-warning";
           overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,.96);display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,-apple-system,sans-serif;";
           overlay.innerHTML = `
-            <div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #135c97;border-radius:16px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);">
+            <div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #135c97;border-radius: 8px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);">
               <h2 style="margin:0 0 12px;color:#135c97;font-size:20px;font-weight:800;">YÊU CẦU TOÀN MÀN HÌNH</h2>
               <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">Bài thi đang diễn ra trong chế độ toàn màn hình. Vui lòng bấm nút bên dưới để tiếp tục làm bài.</p>
               <button id="exam-shell-fullscreen-btn" type="button" style="width:100%;height:48px;border:0;border-radius:10px;background:#135c97;color:#fff;font-size:16px;font-weight:800;cursor:pointer;">Tiếp tục toàn màn hình</button>
@@ -765,7 +765,7 @@
           const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
           
           historyGreetingEl.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 8px; background: #eff3f8; border-radius: 12px; padding: 14px 18px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: fit-content; max-width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 8px; background: #eff3f8; border-radius: 8px; padding: 14px 18px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: fit-content; max-width: 100%;">
               <!-- Row 1: Quote -->
               <div style="display: flex; align-items: flex-start; gap: 10px;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="#0f5a9e" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
@@ -1619,7 +1619,7 @@
               <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 8px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
               <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
               <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
@@ -1760,7 +1760,7 @@
               <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 12px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 8px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
               <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
               <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
@@ -3923,6 +3923,18 @@
         }
       })();
 
+            if (typeof window.activePracticePackage === 'undefined') {
+        window.activePracticePackage = null;
+      }
+      window.selectPracticePackage = function(pkg) {
+        window.activePracticePackage = pkg;
+        renderPracticeRoom();
+      };
+      window.goBackToPackages = function() {
+        window.activePracticePackage = null;
+        renderPracticeRoom();
+      };
+
       function renderPracticeRoom() {
         const grid = document.getElementById("practice-grid-dynamic");
         if (!grid) return;
@@ -3930,6 +3942,174 @@
 
         const category = currentPracticeCategory.toUpperCase(); // 'TSA', 'HSA', 'THPT', 'VACT', 'QDA'
         const subtabsContainer = document.getElementById("practice-subtabs-container");
+
+        if (!window.activePracticePackage) {
+          if (subtabsContainer) subtabsContainer.style.display = "none";
+          
+          grid.style.display = "grid";
+          grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(280px, 1fr))";
+          grid.style.gap = "20px";
+
+          var freeProgress = "0/1 đề";
+          var freePercent = 0;
+          var freeExamCode = category === "TSA" ? "TMA001" : (category + "01");
+          if (completedExams && completedExams.has(freeExamCode)) {
+            freeProgress = "1/1 đề";
+            freePercent = 100;
+          }
+
+          var premiumCount = 9;
+
+          var freeCard = document.createElement("div");
+          freeCard.className = "pkg-card";
+          freeCard.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 10px 30px rgba(0,0,0,0.03); height: 320px; text-align: left; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;";
+          freeCard.innerHTML = `
+            <div>
+              <div style="display: flex; align-items: flex-start; gap: 16px;">
+                <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.2);">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; text-transform: none; line-height: 1.2;">Phòng Luyện Miễn Phí</h3>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-size: 11px; background: #fdf2f8; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${category}</span>
+                    <span style="font-size: 11px; background: #eff6ff; color: #3b82f6; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">Miễn phí</span>
+                  </div>
+                </div>
+              </div>
+              <p style="color: #64748b; font-size: 14px; font-weight: 500; margin: 12px 0 0 0;">Miễn Phí</p>
+              <div style="margin-top: 16px;">
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #475569; font-weight: 500;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 Đề
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; font-weight: 500; margin-top: 12px;">
+                  <span>Tiến độ hoàn thành</span>
+                  <span style="color: #c2272d; font-weight: 700;">${freeProgress}</span>
+                </div>
+                <div style="background: #f1f5f9; height: 8px; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="background: #c2272d; width: ${freePercent}%; height: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 16px;">
+              <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s;" onclick="window.selectPracticePackage('free')">
+                Bắt đầu Luyện Đề →
+              </button>
+            </div>
+          `;
+
+          var premiumCard = document.createElement("div");
+          premiumCard.className = "pkg-card";
+          premiumCard.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 10px 30px rgba(0,0,0,0.03); height: 320px; text-align: left; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;";
+          premiumCard.innerHTML = `
+            <div>
+              <div style="display: flex; align-items: flex-start; gap: 16px;">
+                <div style="background: #94a3b8; width: 56px; height: 56px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; text-transform: none; line-height: 1.2;">Phòng Luyện LAB 2k9</h3>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-size: 11px; background: #f1f5f9; color: #64748b; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${category}</span>
+                  </div>
+                </div>
+              </div>
+              <p style="color: #64748b; font-size: 14px; font-weight: 500; margin: 12px 0 0 0;">Phòng luyện giai đoạn 1</p>
+              <div style="margin-top: 16px;">
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #475569; font-weight: 500;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> ${premiumCount} Đề
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #94a3b8; font-weight: 600; margin-top: 12px;">
+                  🔒 Chưa sở hữu gói đề này
+                </div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 16px;">
+              <button class="btn" style="background: #94a3b8; border-color: #94a3b8; color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; border: 1px solid #94a3b8; transition: all 0.2s;" onclick="window.selectPracticePackage('premium')">
+                Xem các đề trong gói
+              </button>
+            </div>
+          `;
+
+          grid.appendChild(freeCard);
+          grid.appendChild(premiumCard);
+          return;
+        }
+
+        if (window.activePracticePackage === "free") {
+          if (subtabsContainer) subtabsContainer.style.display = "none";
+
+          var header = document.createElement("div");
+          header.style.cssText = "grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; width: 100%;";
+          header.innerHTML = `
+            <button onclick="window.goBackToPackages()" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #475569; font-weight: bold; display: flex; align-items: center; padding: 4px 8px; border-radius: 4px; margin-right: 4px;">
+              ← 
+            </button>
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Gói đề: Phòng Luyện Miễn Phí</h2>
+          `;
+          grid.appendChild(header);
+
+          var i = 1;
+          var numStr2 = String(i).padStart(2, "0");
+          var examCodeToCheck = category === "TSA" ? "TMA001" : (category + "01");
+          var hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
+          
+          var examTitle = category === "TSA" ? "Đề Số 01" : `Đề ${category} số ${numStr2}`;
+          var redirectUrl = category === "TSA" ? ("waiting.html?exam=" + examCodeToCheck) : (`confirm.html?exam=${examCodeToCheck}&single=true`);
+
+          var card = document.createElement("div");
+          card.className = "exam-card";
+          card.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; width: 320px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px; text-align: left;";
+          
+          var hasCompleted = completedExams && completedExams.has(examCodeToCheck);
+          var xemKetQuaHtml = hasCompleted 
+            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`Đề số 01\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem lịch sử</a>`
+            : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600;">Xem lịch sử</span>`;
+
+          card.innerHTML = `
+            <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Đề Số 01</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Trạng thái:</span>
+                <span style="background: #ffe4e6; color: #be123c; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">Đang mở</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Số phần thi:</span>
+                <span style="color: #0f172a; font-weight: 700;">${category === "TSA" ? "3 Phần" : "1 Phần"}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Hình thức:</span>
+                <span style="color: #0f172a; font-weight: 700;">Miễn phí</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Ngày tạo:</span>
+                <span style="color: #0f172a; font-weight: 700;">23/6/2026</span>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px;">
+              ${xemKetQuaHtml}
+              <button class="btn btn-sm" style="background: #be123c; border-color: #be123c; color: white; font-weight: 800; padding: 8px 20px; border-radius: 8px; cursor: pointer; border: 1px solid #be123c;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Vào làm ➔</button>
+            </div>
+          `;
+          grid.appendChild(card);
+          return;
+        }
+
+        if (window.activePracticePackage === "premium") {
+          var header = document.createElement("div");
+          header.style.cssText = "grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; width: 100%;";
+          header.innerHTML = `
+            <button onclick="window.goBackToPackages()" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #475569; font-weight: bold; display: flex; align-items: center; padding: 4px 8px; border-radius: 4px; margin-right: 4px;">
+              ← 
+            </button>
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Gói đề: Phòng Luyện LAB 2k9</h2>
+          `;
+          grid.appendChild(header);
+        }
+
+        grid.style.display = "";
+        grid.style.gridTemplateColumns = "";
+        grid.style.gap = "";
 
         if (category === "TSA") {
           // Show TSA Subtabs Segment Controller (4 tabs: Đề tổng hợp, Tư duy Toán học, Tư duy Đọc hiểu, Tư duy Khoa học)
@@ -4215,6 +4395,7 @@
       }
 
             function updatePracticeRoomUI() {
+        window.activePracticePackage = null; // Reset state when tab changes
         const titleEl = document.getElementById("practice-title");
         const descEl = document.getElementById("practice-desc");
         
@@ -5433,10 +5614,10 @@
 
       function getExamCategoryLabel(examCode) {
         const code = String(examCode || "").toUpperCase();
-        if (code.includes("TSA")) return "Bài thi TSA";
-        if (code.includes("HSA")) return "Bài thi HSA";
-        if (code.includes("THPT")) return "Bài thi THPTQG";
-        return "Bài thi Luyện tập";
+        if (code.includes("TSA") || code.includes("TMA")) return "TSA";
+        if (code.includes("HSA")) return "HSA";
+        if (code.includes("THPT")) return "THPTQG";
+        return "Luyện tập";
       }
 
       function getGroupDateKey(isoString) {
@@ -5451,7 +5632,7 @@
 
         if (!filteredData || filteredData.length === 0) {
           container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px; background: #ffffff; border: 1px solid rgba(19, 92, 151, 0.1); border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);">
+            <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px; background: #ffffff; border: 1px solid rgba(19, 92, 151, 0.1); border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);">
               Không tìm thấy kết quả làm bài nào phù hợp.
             </div>
           `;
@@ -5626,9 +5807,9 @@
       function getExamCategoryLabel(examCode) {
         if (!examCode) return "Luyện tập";
         const code = String(examCode).toLowerCase();
-        if (code.includes("tsa")) return "Bài thi TSA";
-        if (code.includes("hsa")) return "Bài thi HSA";
-        if (code.includes("thpt")) return "Bài thi THPTQG";
+        if (code.includes("tsa") || code.includes("tma")) return "TSA";
+        if (code.includes("hsa")) return "HSA";
+        if (code.includes("thpt")) return "THPTQG";
         return "Luyện tập";
       }
 
@@ -5701,7 +5882,177 @@
       }
 
       // EXAM RESULT MODAL HANDLERS
+            window.showHustHistoryModal = async function(examCode, examTitle) {
+        const modal = document.getElementById("hust-history-modal");
+        if (!modal) return;
+
+        let studentCode = studentInfo?.email || "test";
+        try {
+          const cached = JSON.parse(localStorage.getItem("studentInfo"));
+          if (cached) {
+            studentCode = cached.email || cached.username || studentCode;
+          }
+        } catch (e) {}
+
+        const categoryLabel = getExamCategoryLabel(examCode);
+
+        // Fetch attempts
+        let attempts = [];
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('exam_results')
+              .select('id, exam_code, user_email, correct_count, total_questions, score, created_at')
+              .eq('user_email', studentCode)
+              .eq('exam_code', examCode)
+              .order('created_at', { ascending: false });
+            if (!error && data) {
+              attempts = data;
+            }
+          } catch (err) {
+            console.error("Lỗi khi tải lịch sử từ Supabase:", err);
+          }
+        }
+
+        // Merge with local result if exists
+        try {
+          const localRes = JSON.parse(localStorage.getItem("tma_tsa_last_local_result_" + examCode));
+          if (localRes) {
+            if (!attempts.some(a => a.id === localRes.id)) {
+              attempts.unshift(localRes);
+            }
+          }
+        } catch (e) {}
+
+        const listContainer = document.getElementById("hust-history-list");
+        if (!listContainer) return;
+        listContainer.innerHTML = "";
+
+        if (attempts.length === 0) {
+          listContainer.innerHTML = `<div style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; text-align: center; color: #64748b; font-weight: 500; font-family: inherit;">Chưa có lịch sử làm bài cho đề thi này.</div>`;
+        } else {
+          attempts.forEach(function(result) {
+            const grandTotal = result.total_questions || 100;
+            const grandCorrect = result.correct_count || 0;
+            const scaledScore = grandTotal > 0 ? Math.round((grandCorrect / grandTotal) * 100) : 0;
+
+            const d = new Date(result.created_at || Date.now());
+            const pad = (n) => String(n).padStart(2, '0');
+            const dateStr = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+
+            let label1 = "Đề Toán Số 01", label2 = "Đề Đọc Hiểu Số 01", label3 = "Đề Khoa Học Số 01";
+            let c1 = 0, t1 = 40, c2 = 0, t2 = 20, c3 = 0, t3 = 40;
+            
+            if (categoryLabel === "HSA") {
+              label1 = "Đề Toán HSA"; label2 = "Đề Văn HSA"; label3 = "Đề Khoa học HSA";
+              t1 = t2 = t3 = Math.round(grandTotal / 3);
+              c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
+            } else {
+              t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
+              c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+            }
+
+            var p1 = t1 > 0 ? (c1 / t1) * 100 : 0;
+            var p2 = t2 > 0 ? (c2 / t2) * 100 : 0;
+            var p3 = t3 > 0 ? (c3 / t3) * 100 : 0;
+
+            var subjectBreakdownsHtml = `
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
+                  <span>${label1}</span>
+                  <span style="color: #0f172a; font-weight: 700;">${c1}/${t1}</span>
+                </div>
+                <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
+                  <div style="background: #c2272d; width: dots%; height: 100%; border-radius: 4px; width: ${p1}%;"></div>
+                </div>
+              </div>
+            `;
+
+            if (grandTotal > 40) {
+              subjectBreakdownsHtml += `
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
+                    <span>${label2}</span>
+                    <span style="color: #0f172a; font-weight: 700;">${c2}/${t2}</span>
+                  </div>
+                  <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
+                    <div style="background: #c2272d; width: ${p2}%; height: 100%; border-radius: 4px;"></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
+                    <span>${label3}</span>
+                    <span style="color: #0f172a; font-weight: 700;">${c3}/${t3}</span>
+                  </div>
+                  <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
+                    <div style="background: #c2272d; width: ${p3}%; height: 100%; border-radius: 4px;"></div>
+                  </div>
+                </div>
+              `;
+            }
+
+            const attemptId = result.id || result.created_at;
+            const card = document.createElement("div");
+            card.innerHTML = `
+              <div class="history-attempt-card" style="background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; height: 236px; max-width: 380px; width: 100%; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; box-shadow: 0 6px 16px rgba(0,0,0,0.015);">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                      <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; text-transform: none; font-family: inherit; letter-spacing: -0.3px;">Ngày thi ${dateStr}</h4>
+                      <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <span style="font-size: 11px; background: #ffe4e6; color: #e11d48; padding: 3px 12px; border-radius: 6px; font-weight: 700; font-family: inherit;">${categoryLabel} - Đánh giá tư duy</span>
+                        <span style="font-size: 11px; background: #fef3c7; color: #d97706; padding: 3px 12px; border-radius: 6px; font-weight: 700; font-family: inherit;">Đang làm</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 20px; align-items: center; margin-top: 16px;">
+                    <div style="width: 76px; height: 76px; border-radius: 50%; border: 5px solid #f1f5f9; display: flex; align-items: center; justify-content: center; color: #c2272d; font-size: 26px; font-weight: 700; flex-shrink: 0;">
+                      ${scaledScore}
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                      ${subjectBreakdownsHtml}
+                    </div>
+                  </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; font-size: 13px; color: #64748b; font-weight: 500; font-family: inherit;">
+                  <div style="display: flex; gap: 14px; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> &nbsp;${dateStr}</span>
+                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> &nbsp;1 phút</span>
+                  </div>
+                  <a href="#" onclick="window.viewAttemptDetail('${examCode}', '${attemptId}'); return false;" style="color: #94a3b8; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 2px; font-family: inherit;">
+                    Chi tiết →
+                  </a>
+                </div>
+              </div>
+            `;
+            listContainer.appendChild(card.firstElementChild);
+          });
+        }
+
+        modal.hidden = false;
+      };
+
+      window.closeHustHistoryModal = function() {
+        const modal = document.getElementById("hust-history-modal");
+        if (modal) modal.hidden = true;
+      };
+
+      window.viewAttemptDetail = async function(examCode, attemptId) {
+        window.closeHustHistoryModal();
+        showParentSubmitLoadingOverlay();
+        setTimeout(async () => {
+          await window.showExamResultModal(examCode, "", attemptId);
+          hideParentSubmitLoadingOverlay();
+        }, 500);
+      };
+
+
       window.showHustResultModal = async function(examCode, examTitle, targetAttemptId) {
+        if (!targetAttemptId) {
+          await window.showHustHistoryModal(examCode, examTitle);
+          return;
+        }
+        // Original showHustResultModal body continues...
         const modal = document.getElementById("hust-result-modal");
         if (!modal) return;
 
@@ -6735,7 +7086,7 @@
                 ${commentFirstChar}
               </div>
               <div style="flex: 1; min-width: 0;">
-                <div style="background: #eff6ff; border-radius: 12px; padding: 10px 14px; border: 1px solid #dbeafe;">
+                <div style="background: #eff6ff; border-radius: 8px; padding: 10px 14px; border: 1px solid #dbeafe;">
                   <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
                     <span style="font-size: 12.5px; font-weight: 700; color: #1e3a8a;">${comment.author}</span>
                     <span style="font-size: 10px; color: #94a3b8;">${comment.timeText}</span>
@@ -6779,7 +7130,7 @@
             <div style="width: 24px; height: 24px; border-radius: 50%; background: #0f5a9e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; flex-shrink: 0; text-transform: uppercase;">
               ${initials}
             </div>
-            <div style="flex: 1; display: flex; align-items: center; background: #f1f3f5; border-radius: 20px; padding: 4px 10px; gap: 6px; box-sizing: border-box; border: 1px solid #cbd5e1;">
+            <div style="flex: 1; display: flex; align-items: center; background: #f1f3f5; border-radius: 8px; padding: 4px 10px; gap: 6px; box-sizing: border-box; border: 1px solid #cbd5e1;">
               <input type="text" id="doc-reply-textarea-${commentId}" placeholder="Phản hồi..." style="flex: 1; border: none; background: transparent; outline: none; font-size: 12px; color: #1e293b; font-family: 'Inter', sans-serif; padding: 2px 0; margin: 0; box-sizing: border-box; width: 100%;" onkeyup="if(event.key === 'Enter') window.submitDocReply('${commentId}', '${docTitleEncoded}')">
             </div>
             <button onclick="window.submitDocReply('${commentId}', '${docTitleEncoded}')" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">

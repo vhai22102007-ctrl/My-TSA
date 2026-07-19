@@ -91,7 +91,7 @@
 
         var card = document.createElement("div");
         card.className = "student-card";
-        card.style.cssText = "background: #ffffff; border: 1.5px solid " + theme.border + "; border-radius: 16px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.01);";
+        card.style.cssText = "background: #ffffff; border: 1.5px solid " + theme.border + "; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.01);";
         card.setAttribute("onmouseover", "this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.04)'; this.style.borderColor='var(--brand)';");
         card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.01)'; this.style.borderColor='" + theme.border + "';");
         card.onclick = function() {
@@ -107,7 +107,7 @@
 '            ' + esc(firstChar) + '\n' +
 '          </div>\n' +
 '          <div style="font-weight: 700; color: #1e293b; font-size: 14px; word-break: break-word; margin-bottom: 2px;">' + esc(s.name) + '</div>\n' +
-'          <div style="display: flex; flex-direction: column; gap: 5px; width: 100%; font-size: 11px; color: #64748b; text-align: left; padding: 8px 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #f1f5f9; box-sizing: border-box; overflow: hidden;">\n' +
+'          <div style="display: flex; flex-direction: column; gap: 5px; width: 100%; font-size: 11px; color: #64748b; text-align: left; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; box-sizing: border-box; overflow: hidden;">\n' +
 '            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #3b82f6; font-size: 12.5px;">📧</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayEmail) + '">' + esc(displayEmail) + '</span></div>\n' +
 '            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #10b981; font-size: 12.5px;">📞</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayPhone) + '">' + esc(displayPhone) + '</span></div>\n' +
 '            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #eab308; font-size: 12.5px;">🏫</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displaySchool) + '">' + esc(displaySchool) + '</span></div>\n' +
@@ -910,7 +910,7 @@
         if (subtabsContainer) {
           subtabsContainer.style.display = "flex";
           subtabsContainer.innerHTML = `
-            <div style="display: flex; background: #e2e8f0; padding: 4px; border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); gap: 4px; overflow-x: auto; max-width: 100%;">
+            <div style="display: flex; background: #e2e8f0; padding: 4px; border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); gap: 4px; overflow-x: auto; max-width: 100%;">
               <button type="button" class="tsa-practice-subtab-btn ${currentTsaPracticeSubtab === 'tong-hop' ? 'active' : ''}" data-subtab="tong-hop" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${currentTsaPracticeSubtab === 'tong-hop' ? '#ffffff' : 'transparent'}; color: ${currentTsaPracticeSubtab === 'tong-hop' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Đề tổng hợp</button>
               <button type="button" class="tsa-practice-subtab-btn ${currentTsaPracticeSubtab === 'math' ? 'active' : ''}" data-subtab="math" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${currentTsaPracticeSubtab === 'math' ? '#ffffff' : 'transparent'}; color: ${currentTsaPracticeSubtab === 'math' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Tư duy Toán học</button>
               <button type="button" class="tsa-practice-subtab-btn ${currentTsaPracticeSubtab === 'reading' ? 'active' : ''}" data-subtab="reading" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${currentTsaPracticeSubtab === 'reading' ? '#ffffff' : 'transparent'}; color: ${currentTsaPracticeSubtab === 'reading' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Tư duy Đọc hiểu</button>
@@ -2165,7 +2165,7 @@
                       '</div>' +
                     '</div>' +
                   '</div>')
-                : ('<div style="display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr); gap: 0; width: 100%; min-height: 480px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff;">' +
+                : ('<div style="display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr); gap: 0; width: 100%; min-height: 480px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff;">' +
                     '<div id="' + sectionId + '-preview-stimulus" style="overflow-y: auto; padding: 20px 24px; border-right: 1.5px solid var(--line); background: #f8fafc; line-height: 1.85;"></div>' +
                     '<div style="overflow-y: auto; padding: 20px 24px;">' +
                       '<div class="question-layout-row" style="width: 100%; align-items: flex-start;">' +
@@ -2975,7 +2975,7 @@
           var rangeLabel = gId === "g1" ? "Câu 1 - 10" : "Câu 11 - 20";
           
           form.innerHTML = 
-            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #fff;">' +
+            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; background: #fff;">' +
               '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
               '</h3>' +
@@ -3030,7 +3030,7 @@
           var groupImgWidth = group.stimulus?.image_width || 100;
           
           form.innerHTML = 
-            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #fff;">' +
+            '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; background: #fff;">' +
               '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
                 '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + gIdx + ' (' + rangeLabel + ')' +
               '</h3>' +
@@ -5199,7 +5199,7 @@ YÊU CẦU QUAN TRỌNG:
           <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
             <button class="btn btn-primary btn-sm" onclick="showAddChapterPrompt()" style="font-weight: 700; background: #0f5a9e; border-color: #0f5a9e;">+ Thêm chương mới</button>
           </div>
-          <div style="padding: 40px 20px; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; color: var(--muted); font-size: 13.5px;">
+          <div style="padding: 40px 20px; text-align: center; background: #ffffff; border-radius: 8px; border: 1px dashed #cbd5e1; color: var(--muted); font-size: 13.5px;">
             <svg viewBox="0 0 24 24" width="36" height="36" stroke="currentColor" fill="none" stroke-width="1.5" style="margin: 0 auto 12px; display: block; opacity: 0.4;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
             Chưa có bài học hoặc chuyên đề nào trong khóa học này. Hãy bấm nút phía trên để bắt đầu!
           </div>
@@ -6344,8 +6344,8 @@ YÊU CẦU QUAN TRỌNG:
 
         var courseTitle = codeObj.courses ? (codeObj.courses.title || "Khóa học") : "Khóa học (Mock)";
         var statusBadge = codeObj.active 
-          ? `<span style="color:#15803d; background:#e2fbe8; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:700;">Đang chạy</span>`
-          : `<span style="color:#b9152a; background:#fee2e2; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:700;">Tạm khóa</span>`;
+          ? `<span style="color:#15803d; background:#e2fbe8; padding:3px 8px; border-radius: 8px; font-size:11px; font-weight:700;">Đang chạy</span>`
+          : `<span style="color:#b9152a; background:#fee2e2; padding:3px 8px; border-radius: 8px; font-size:11px; font-weight:700;">Tạm khóa</span>`;
 
         tr.innerHTML = `
           <td style="padding:12px 16px; font-weight:700; color:var(--brand); font-size:13px;">${codeObj.code}</td>
