@@ -3934,8 +3934,176 @@
         window.activePracticePackage = null;
         renderPracticeRoom();
       };
+      window.generateRandomTSAExam = function(examCode) {
+        var code = examCode || "TMA_RANDOM_001";
+        
+        var mathPool = [];
+        var readingPool = [];
+        var sciencePool = [];
+
+        function collectFromExam(examObj) {
+          if (!examObj) return;
+          if (Array.isArray(examObj.questions)) {
+            examObj.questions.forEach(function(q) {
+              if (q && String(q.question || q.content || "").trim().length > 0) {
+                mathPool.push(q);
+              }
+            });
+          }
+          if (Array.isArray(examObj.sections)) {
+            examObj.sections.forEach(function(sec) {
+              if (sec.section_id === "math" && Array.isArray(sec.questions)) {
+                sec.questions.forEach(function(q) {
+                  if (q && String(q.question || q.content || "").trim().length > 0) {
+                    mathPool.push(q);
+                  }
+                });
+              }
+              if (sec.section_id === "reading" && Array.isArray(sec.groups)) {
+                sec.groups.forEach(function(g) {
+                  if (g && Array.isArray(g.questions) && g.questions.length > 0) {
+                    readingPool.push(g);
+                  }
+                });
+              }
+              if (sec.section_id === "science" && Array.isArray(sec.groups)) {
+                sec.groups.forEach(function(g) {
+                  if (g && Array.isArray(g.questions) && g.questions.length > 0) {
+                    sciencePool.push(g);
+                  }
+                });
+              }
+            });
+          }
+        }
+
+        try {
+          for (var k = 0; k < localStorage.length; k++) {
+            var key = localStorage.key(k);
+            if (key && (key.startsWith("tma_tsa_exam_") || key.startsWith("tma_tsa_teacher_draft_"))) {
+              if (key === "tma_tsa_exam_" + code || key === "tma_tsa_teacher_draft_" + code) continue;
+              try {
+                var obj = JSON.parse(localStorage.getItem(key));
+                collectFromExam(obj);
+              } catch(e) {}
+            }
+          }
+        } catch(e) {}
+
+        if (Array.isArray(window.EXAMS_LIST)) {
+          window.EXAMS_LIST.forEach(function(e) { collectFromExam(e); });
+        }
+
+        function shuffle(arr) {
+          var copy = arr.slice();
+          for (var i = copy.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = copy[i];
+            copy[i] = copy[j];
+            copy[j] = temp;
+          }
+          return copy;
+        }
+
+        var easyList = [];
+        var mediumList = [];
+        var hardList = [];
+
+        mathPool.forEach(function(q) {
+          var diff = Number(q.difficulty) || 0;
+          if (diff === 1) easyList.push(q);
+          else if (diff === 3) hardList.push(q);
+          else if (diff === 2) mediumList.push(q);
+          else {
+            var len = String(q.question || "").length;
+            if (len < 100) easyList.push(q);
+            else if (len > 300) hardList.push(q);
+            else mediumList.push(q);
+          }
+        });
+
+        easyList = shuffle(easyList);
+        mediumList = shuffle(mediumList);
+        hardList = shuffle(hardList);
+
+        var selectedMath = [];
+        var hardPicked = hardList.slice(0, 10);
+        selectedMath.push.apply(selectedMath, hardPicked);
+
+        var mediumTarget = 15 + (10 - hardPicked.length);
+        var mediumPicked = mediumList.slice(0, mediumTarget);
+        selectedMath.push.apply(selectedMath, mediumPicked);
+
+        var easyTarget = 15 + (mediumTarget - mediumPicked.length);
+        var easyPicked = easyList.slice(0, easyTarget);
+        selectedMath.push.apply(selectedMath, easyPicked);
+
+        if (selectedMath.length < 40 && mathPool.length > selectedMath.length) {
+          var remainingPool = shuffle(mathPool.filter(function(q) { return !selectedMath.includes(q); }));
+          var need = 40 - selectedMath.length;
+          selectedMath.push.apply(selectedMath, remainingPool.slice(0, need));
+        }
+
+        selectedMath = shuffle(selectedMath).map(function(q, idx) {
+          var clone = JSON.parse(JSON.stringify(q));
+          clone.question_no = idx + 1;
+          return clone;
+        });
+
+        var selectedReadingGroups = shuffle(readingPool).slice(0, 2).map(function(g, gIdx) {
+          var clone = JSON.parse(JSON.stringify(g));
+          clone.group_id = "g" + (gIdx + 1);
+          return clone;
+        });
+
+        var selectedScienceGroups = shuffle(sciencePool).slice(0, 8).map(function(g, gIdx) {
+          var clone = JSON.parse(JSON.stringify(g));
+          clone.group_id = "s" + (gIdx + 1);
+          return clone;
+        });
+
+        var randomExamObj = {
+          exam_code: code,
+          title: "Đề ngẫu nhiên số 01",
+          duration_minutes: 150,
+          status: "published",
+          sections: [
+            {
+              section_id: "math",
+              section_label: "Tư duy Toán học",
+              layout: "single",
+              questions: selectedMath
+            },
+            {
+              section_id: "reading",
+              section_label: "Tư duy Đọc hiểu",
+              layout: "passage",
+              groups: selectedReadingGroups
+            },
+            {
+              section_id: "science",
+              section_label: "Tư duy Khoa học",
+              layout: "passage",
+              groups: selectedScienceGroups
+            }
+          ]
+        };
+
+        try {
+          localStorage.setItem("tma_tsa_exam_" + code, JSON.stringify(randomExamObj));
+          localStorage.setItem("tma_tsa_teacher_draft_" + code, JSON.stringify(randomExamObj));
+        } catch(e) {}
+
+        return randomExamObj;
+      };
+
       window.startDirectExamRandom = function(examCode) {
         var targetCode = examCode || "TMA_RANDOM_001";
+        
+        if (typeof window.generateRandomTSAExam === "function") {
+          window.generateRandomTSAExam(targetCode);
+        }
+
         var redirectUrl = targetCode.startsWith("TMA_") 
           ? ("waiting.html?exam=" + targetCode) 
           : ("confirm.html?exam=" + targetCode + "&single=true");

@@ -367,16 +367,28 @@
 
     window.filterTeacherPracticeInput = function() {
       const query = (document.getElementById("teacher-practice-search-input")?.value || "").toLowerCase().trim();
-      const cards = document.querySelectorAll("#practice-grid-dynamic .exam-card");
-      cards.forEach(card => {
-        const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
-        const code = (card.querySelector(".exam-info-row .info-value")?.textContent || "").toLowerCase();
-        if (title.includes(query) || code.includes(query)) {
-          card.style.display = "";
-        } else {
-          card.style.display = "none";
-        }
-      });
+      if (window.activeTeacherPracticePackage === "random") {
+        const rows = document.querySelectorAll("#practice-grid-dynamic table tbody tr");
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (!query || text.includes(query)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      } else {
+        const cards = document.querySelectorAll("#practice-grid-dynamic .exam-card");
+        cards.forEach(card => {
+          const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+          const code = (card.querySelector(".exam-info-row .info-value")?.textContent || "").toLowerCase();
+          if (!query || title.includes(query) || code.includes(query)) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
     };
 
     window.teacherAddPracticeExam = function() {
@@ -1142,6 +1154,38 @@
           </div>
         `;
 
+        var rRaw = localStorage.getItem("tma_tsa_exam_TMA_RANDOM_001") || localStorage.getItem("tma_tsa_teacher_draft_TMA_RANDOM_001");
+        var rQList = [];
+        if (rRaw) {
+          try {
+            var rObj = JSON.parse(rRaw);
+            if (Array.isArray(rObj.questions)) rQList = rQList.concat(rObj.questions);
+            if (Array.isArray(rObj.sections)) {
+              rObj.sections.forEach(function(sec) {
+                if (Array.isArray(sec.questions)) rQList = rQList.concat(sec.questions);
+                if (Array.isArray(sec.groups)) {
+                  sec.groups.forEach(function(g) {
+                    if (Array.isArray(g.questions)) rQList = rQList.concat(g.questions);
+                  });
+                }
+              });
+            }
+            if (Array.isArray(rObj.groups)) {
+              rObj.groups.forEach(function(g) {
+                if (Array.isArray(g.questions)) rQList = rQList.concat(g.questions);
+              });
+            }
+          } catch(e) {}
+        }
+        var rEasy = 0, rMed = 0, rHard = 0;
+        rQList.forEach(function(q) {
+          if (!q) return;
+          var d = Number(q.difficulty) || 1;
+          if (d === 1) rEasy++;
+          else if (d === 3) rHard++;
+          else rMed++;
+        });
+
         var randomCard = document.createElement("div");
         randomCard.className = "pkg-card";
         randomCard.style.cssText = "background: white; border: none; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 260px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
@@ -1159,9 +1203,12 @@
                 </div>
               </div>
             </div>
-            <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 16px 0 0 0; font-family: inherit;">Ngân hàng đề trộn ngẫu nhiên theo môn học và ma trận đề.</p>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Các đề ngẫu nhiên
+            <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 14px 0 0 0; font-family: inherit;">Ngân hàng đề trộn ngẫu nhiên theo môn học và ma trận đề.</p>
+            <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; font-size: 11.5px; font-weight: 700;">
+              <span style="background: #f1f5f9; color: #1e293b; padding: 3px 8px; border-radius: 6px; border: 1px solid #e2e8f0;">Tổng: ${rQList.length} câu</span>
+              <span style="background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 6px; border: 1px solid #bbf7d0;">Dễ: ${rEasy}</span>
+              <span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 6px; border: 1px solid #fde68a;">TB: ${rMed}</span>
+              <span style="background: #ffe4e6; color: #c2272d; padding: 3px 8px; border-radius: 6px; border: 1px solid #fecdd3;">Khó: ${rHard}</span>
             </div>
           </div>
           <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; width: 100%;">
@@ -1181,34 +1228,58 @@
       document.querySelector(".teacher-shell")?.classList.add("hide-sidebar");
       const packageName = window.activeTeacherPracticePackage === "free" ? "Phòng Luyện Miễn Phí" : (window.activeTeacherPracticePackage === "random" ? "Phòng Luyện Đề Ngẫu Nhiên" : "Phòng Luyện thực chiến " + category + " 2027");
       if (roomTitle) {
-        roomTitle.innerHTML = `<span style="color: #64748b; cursor: pointer;" onclick="window.goBackToTeacherPackages()">${info[0]}</span> <span style="color: #cbd5e1; margin: 0 8px;">&gt;</span> <span style="color: #1e293b; font-weight: 700;">Gói đề: ${packageName}</span>`;
+        if (window.activeTeacherPracticePackage === "random") {
+          roomTitle.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-family: 'Inter', sans-serif;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 13.5px;">
+                <span style="color: #64748b; font-weight: 500; cursor: pointer; transition: color 0.15s;" onclick="window.goBackToTeacherPackages()" onmouseover="this.style.color='#c2272d'" onmouseout="this.style.color='#64748b'">${info[0]}</span>
+                <span style="color: #cbd5e1; font-weight: 400;">/</span>
+                <span style="color: #94a3b8; font-weight: 500;">Gói đề:</span>
+                <span style="background: linear-gradient(135deg, #fff5f6 0%, #ffe4e6 100%); color: #c2272d; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid #fecdd3; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(194,39,45,0.06);">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: #c2272d; display: inline-block;"></span>
+                  ${packageName}
+                </span>
+              </div>
+              <div class="search-box-wrapper" style="position: relative; width: 300px; flex-shrink: 0; margin-left: auto;">
+                <input type="text" id="teacher-practice-search-input" class="history-search-input" placeholder="Tìm kiếm theo ID, nội dung..." style="background: #eff3f8; color: #1e293b; border: 1px solid transparent; font-weight: 500; padding: 10px 16px 10px 38px; border-radius: 8px; height: 42px; box-sizing: border-box; font-size: 13.5px; width: 100%; transition: all 0.2s ease; outline: none; font-family: inherit;" oninput="window.filterTeacherPracticeInput()" onfocus="this.style.border='1px solid #c2272d'; this.style.background='#ffffff'; this.style.boxShadow='0 0 0 3px rgba(194, 39, 45, 0.1)';" onblur="this.style.border='1px solid transparent'; this.style.background='#eff3f8'; this.style.boxShadow='none';">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="#c2272d" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #c2272d; opacity: 1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </div>
+            </div>
+          `;
+        } else {
+          roomTitle.innerHTML = `<span style="color: #64748b; cursor: pointer;" onclick="window.goBackToTeacherPackages()">${info[0]}</span> <span style="color: #cbd5e1; margin: 0 8px;">&gt;</span> <span style="color: #1e293b; font-weight: 700;">Gói đề: ${packageName}</span>`;
+        }
       }
       if (roomDesc) roomDesc.style.display = "none";
 
       var headerBox = document.getElementById("teacher-practice-header-box");
       if (headerBox) {
-        headerBox.style.display = "block";
-        headerBox.style.padding = "0";
-        headerBox.innerHTML = `
-          <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; background: #fff5f6; padding: 16px 20px; border-radius: 12px; border: 1.5px solid #ffe4e6; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="background: #c2272d; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        if (window.activeTeacherPracticePackage === "random") {
+          headerBox.style.display = "none";
+        } else {
+          headerBox.style.display = "block";
+          headerBox.style.padding = "0";
+          headerBox.innerHTML = `
+            <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; background: #fff5f6; padding: 16px 20px; border-radius: 12px; border: 1.5px solid #ffe4e6; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: #c2272d; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                </div>
+                <span style="color: #c2272d; font-size: 14.5px; font-weight: 700; font-family: inherit;">Chào giáo viên, chúc thầy/cô một ngày làm việc hiệu quả và nhiều niềm vui!</span>
               </div>
-              <span style="color: #c2272d; font-size: 14.5px; font-weight: 700; font-family: inherit;">Chào giáo viên, chúc thầy/cô một ngày làm việc hiệu quả và nhiều niềm vui!</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="search-box-wrapper" style="position: relative; width: 260px;">
-                <input type="text" id="teacher-practice-search-input" class="history-search-input" placeholder="Tìm kiếm đề thi..." style="width:100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px 8px 36px; font-size:13.5px; outline:none; font-family:inherit;" oninput="window.filterTeacherPracticeInput()">
-                <svg viewBox="0 0 24 24" width="14" height="14" stroke="#94a3b8" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="search-box-wrapper" style="position: relative; width: 260px;">
+                  <input type="text" id="teacher-practice-search-input" class="history-search-input" placeholder="Tìm kiếm đề thi..." style="width:100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px 8px 36px; font-size:13.5px; outline:none; font-family:inherit;" oninput="window.filterTeacherPracticeInput()">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#94a3b8" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                <button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13.5px; display: flex; align-items: center; gap: 6px; font-family: inherit;" onclick="window.teacherAddPracticeExam()">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Thêm đề
+                </button>
               </div>
-              <button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13.5px; display: flex; align-items: center; gap: 6px; font-family: inherit;" onclick="window.teacherAddPracticeExam()">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Thêm đề
-              </button>
             </div>
-          </div>
-        `;
+          `;
+        }
       }
 
       if (category === "TSA") {
@@ -1348,137 +1419,136 @@
 
         if (window.activeTeacherPracticePackage === "random") {
           if (subtabsContainer) subtabsContainer.style.display = "none";
-          
-          let openStatus = {};
-          try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
-          
-          var practiceIndexList = [];
-          try {
-            var rawIdx = localStorage.getItem("tma_tsa_exam_index");
-            if (rawIdx) practiceIndexList = JSON.parse(rawIdx) || [];
-          } catch(e) {}
+          grid.innerHTML = "";
+          grid.style.display = "flex";
+          grid.style.flexDirection = "column";
+          grid.style.gap = "20px";
 
-          var randomExams = [];
-          if (Array.isArray(practiceIndexList)) {
-            practiceIndexList.forEach(function(e) {
-              var ec = String(e.exam_code || "").toUpperCase();
-              if (ec.startsWith("TMA_RANDOM_")) {
-                var hasExam = (window.EXAMS_LIST || []).some(item => item.exam_code === e.exam_code) || localStorage.getItem("tma_tsa_exam_" + e.exam_code) || localStorage.getItem("tma_tsa_teacher_draft_" + e.exam_code);
-                randomExams.push({
-                  exam_code: e.exam_code,
-                  title: e.title,
-                  is_open: e.is_open === true || openStatus[e.exam_code] === true,
-                  hasExam: !!hasExam
-                });
-              }
-            });
-          }
+          var qList = [];
+          var easyCount = 0;
+          var medCount = 0;
+          var hardCount = 0;
 
-          if (randomExams.length === 0) {
-            randomExams.push({
-              exam_code: "TMA_RANDOM_001",
-              title: "Đề ngẫu nhiên số 01",
-              is_open: openStatus["TMA_RANDOM_001"] === true,
-              hasExam: localStorage.getItem("tma_tsa_exam_TMA_RANDOM_001") || localStorage.getItem("tma_tsa_teacher_draft_TMA_RANDOM_001")
-            });
-          }
-
-          randomExams.forEach(function(item) {
-            var examTitle = item.title;
-            var examCode = item.exam_code;
-            var latexInfo = (function(code) {
-              var cleanCode = normalizeCode(code);
-              var raw = localStorage.getItem("tma_tsa_teacher_draft_" + cleanCode) ||
-                        localStorage.getItem("tma_tsa_exam_" + cleanCode) ||
-                        localStorage.getItem("tma_tsa_teacher_draft_" + code) ||
-                        localStorage.getItem("tma_tsa_exam_" + code);
-              var examObj = null;
-              if (raw) { try { examObj = JSON.parse(raw); } catch(e) {} }
-              var filledCount = 0;
-              if (examObj) {
-                var checkQ = function(q) {
-                  if (!q) return false;
-                  var txt = String(q.question || q.content || "").trim();
-                  return txt.length > 0;
-                };
-                if (Array.isArray(examObj.questions)) {
-                  examObj.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
-                } else if (Array.isArray(examObj.sections)) {
-                  examObj.sections.forEach(function(s) {
-                    if (Array.isArray(s.questions)) {
-                      s.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
-                    }
-                    if (Array.isArray(s.groups)) {
-                      s.groups.forEach(function(g) {
-                        if (Array.isArray(g.questions)) {
-                          g.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
-                        }
-                      });
-                    }
+          function getQuestionsFromObj(examObj) {
+            if (!examObj) return;
+            if (Array.isArray(examObj.questions)) {
+              examObj.questions.forEach(function(q) {
+                if (q && String(q.question || q.content || "").trim().length > 0) qList.push(q);
+              });
+            }
+            if (Array.isArray(examObj.sections)) {
+              examObj.sections.forEach(function(s) {
+                if (Array.isArray(s.questions)) {
+                  s.questions.forEach(function(q) {
+                    if (q && String(q.question || q.content || "").trim().length > 0) qList.push(q);
                   });
                 }
-              }
-              return { hasLatex: filledCount > 0, count: filledCount };
-            })(examCode);
+              });
+            }
+          }
 
-            var hasExam = item.hasExam || latexInfo.hasLatex;
-            const isOpen = hasExam && item.is_open;
+          var targetCode = "TMA_RANDOM_001";
+          var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (raw) {
+            try { getQuestionsFromObj(JSON.parse(raw)); } catch(e) {}
+          }
+          // Ngân hàng đề ngẫu nhiên chỉ quản lý các câu hỏi thuộc gói TMA_RANDOM_001
 
-            var card = document.createElement("div");
-            card.className = "tsa-exam-item-card";
-            card.innerHTML = `
-              <!-- Header Section -->
-              <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
-                  <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
-                  <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
-                </div>
+          var tableCard = document.createElement("div");
+          tableCard.style.cssText = "background: white; border-radius: 12px; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;";
+          
+          var tableHeaderHtml = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">Ngân hàng câu hỏi Luyện đề ngẫu nhiên</h3>
               </div>
+              <button class="btn" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; font-size: 13.5px; font-weight: 700; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit; transition: all 0.2s;" onclick="window.openQuestionBankModal()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nạp Ngân hàng câu hỏi (AI)
+              </button>
+            </div>
+          `;
 
-              <!-- Body Section -->
-              <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Mã đề:</span>
-                  <span style="color: #1f2937; font-size: 13px; font-weight: 700;">${examCode}</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Trạng thái:</span>
-                  <span style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; ${latexInfo.hasLatex ? 'background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;' : 'background:#fff1f2;color:#e11d48;border:1px solid #ffe4e6;'}">
-                    ${latexInfo.hasLatex ? `✓ ĐÃ NHẬP LATEX (${latexInfo.count} CÂU)` : 'CHƯA NHẬP LATEX'}
-                  </span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức:</span>
-                  <span style="color: #1f2937; font-size: 13px; font-weight: 600;">Thi trực tuyến</span>
-                </div>
-              </div>
-
-              <!-- Footer Section -->
-              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 8px;">
-                <span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12.5px;font-weight:600;' : 'font-size:12.5px;'}">
-                  ${isOpen ? 'Đang mở đề' : 'Đang đóng đề'}
-                </span>
-                <div style="display: flex; gap: 6px;">
-                  <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #c2272d; border: 1px solid #c2272d; color: #fff; border-radius: 6px;" onclick="window.startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
-                  ${latexInfo.hasLatex ? `
-                    ${isOpen ? `
-                      <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border: 1px solid #ef4444; color: #fff; border-radius: 6px;" onclick="window.toggleExamOpen('${examCode}', false)">Đóng</button>
-                    ` : `
-                      <button class="btn btn-sm" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #16a34a; border: 1px solid #16a34a; color: #fff; border-radius: 6px;" onclick="window.toggleExamOpen('${examCode}', true)">Mở</button>
-                    `}
-                  ` : ''}
-                  <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #94a3b8; border: 1px solid #94a3b8; color: #fff; border-radius: 6px;" onclick="window.deleteExamPermanently('${examCode}', '${examTitle}')">Xóa</button>
-                </div>
+          if (qList.length === 0) {
+            tableCard.innerHTML = tableHeaderHtml + `
+              <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <div style="font-weight: 600; color: #334155; font-size: 15px;">Ngân hàng chưa có câu hỏi nào!</div>
+                <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp câu hỏi vào ngân hàng.</div>
               </div>
             `;
-            grid.appendChild(card);
-          });
+          } else {
+            var rowsHtml = "";
+            qList.forEach(function(q, idx) {
+              var diff = Number(q.difficulty) || 1;
+              var diffBadge = (diff === 3) 
+                ? '<span style="background: #ffe4e6; color: #c2272d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 3 (Khó)</span>'
+                : ((diff === 2)
+                  ? '<span style="background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 2 (TB)</span>'
+                  : '<span style="background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 1 (Dễ)</span>');
+              
+              var topicText = q.topic || "Toán đại cương";
+              var topicBadge = `<span style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 12px; white-space: nowrap;">${topicText}</span>`;
+
+              var rawTxt = String(q.question || q.content || "").replace(/<[^>]*>?/gm, '');
+              var previewText = rawTxt.length > 70 ? (rawTxt.substring(0, 70) + "...") : rawTxt;
+
+              // Format answer to avoid [object Object]
+              var ansText = "A";
+              if (q.correct_answer !== undefined && q.correct_answer !== null) {
+                if (typeof q.correct_answer === "object") {
+                  if (Array.isArray(q.correct_answer)) {
+                    ansText = q.correct_answer.join(", ");
+                  } else {
+                    ansText = Object.keys(q.correct_answer).map(function(k) {
+                      var val = q.correct_answer[k];
+                      if (val === true) return k + ":Đ";
+                      if (val === false) return k + ":S";
+                      return k + ":" + val;
+                    }).join(", ");
+                  }
+                } else {
+                  ansText = String(q.correct_answer);
+                }
+              }
+
+              rowsHtml += `
+                <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
+                  <td style="padding: 12px 10px;"><span style="background: #fff5f6; color: #c2272d; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid #ffe4e6; white-space: nowrap;">TMA${String(idx + 1).padStart(3, '0')}</span></td>
+                  <td style="padding: 12px 10px;">${diffBadge}</td>
+                  <td style="padding: 12px 10px;">${topicBadge}</td>
+                  <td style="padding: 12px 10px; color: #1e293b; font-weight: 500;">${previewText}</td>
+                  <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${ansText}</span></td>
+                  <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
+                    <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbQuestion(${idx})">✏️ Chỉnh sửa</button>
+                    <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbQuestion(${idx})">Xóa</button>
+                  </td>
+                </tr>
+              `;
+            });
+
+            tableCard.innerHTML = tableHeaderHtml + `
+              <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b; font-weight: 600; font-size: 12.5px;">
+                      <th style="padding: 10px;">ID CÂU HỎI</th>
+                      <th style="padding: 10px;">ĐỘ KHÓ</th>
+                      <th style="padding: 10px;">CHỦ ĐỀ</th>
+                      <th style="padding: 10px;">NỘI DUNG CÂU HỎI</th>
+                      <th style="padding: 10px; text-align: center;">ĐÁP ÁN</th>
+                      <th style="padding: 10px; text-align: right;">THAO TÁC</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rowsHtml}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          }
+
+          grid.appendChild(tableCard);
           return;
         }
 
@@ -2159,7 +2229,10 @@
 
       function $(selector) { return document.querySelector(selector); }
       function $all(selector) { return Array.prototype.slice.call(document.querySelectorAll(selector)); }
-      function clone(value) { return JSON.parse(JSON.stringify(value)); }
+      function clone(value) {
+        if (value === undefined || value === null) return value;
+        return JSON.parse(JSON.stringify(value));
+      }
       function esc(value) {
         return String(value == null ? "" : value)
           .replace(/&/g, "&amp;")
@@ -2747,10 +2820,12 @@
       function getQuestionDraft(sectionId) {
         if (sectionId === "math") {
           ensureSchema();
+          if (!activeMathQuestionNo || activeMathQuestionNo < 1) activeMathQuestionNo = 1;
           if (!editingQuestion["math"] || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
             var mathQs = getSection("math").questions;
-            var q = clone(mathQs[activeMathQuestionNo - 1]);
-            q.question_no = activeMathQuestionNo; // always align displayed number with slot
+            var mathTarget = mathQs[activeMathQuestionNo - 1];
+            var q = clone(mathTarget || defaultQuestion("math"));
+            if (q) q.question_no = activeMathQuestionNo; // always align displayed number with slot
             editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: q };
           }
         } else if (sectionId === "reading" || sectionId === "science") {
@@ -2817,6 +2892,17 @@
               '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
                 typeTabsHtml(sectionId, q.question_type) +
               '</div>' +
+              (sectionId === "math" ? 
+                '<div id="math-default-diff-row" style="display: flex; gap: 12px; align-items: center; background: #fff5f6; border: 1px solid #ffe4e6; padding: 10px 14px; border-radius: 8px; margin-bottom: 4px; font-family: inherit;">' +
+                  '<span style="font-weight: 700; font-size: 13px; color: #c2272d;">🎯 Độ khó (AI Classifier):</span>' +
+                  '<select id="math-q-difficulty-select" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-weight: 600; font-size: 13px; outline: none; background: white;" onchange="window.updateCurrentMathDifficulty(this.value)">' +
+                    '<option value="1" ' + (Number(q.difficulty || 1) === 1 ? 'selected' : '') + '>Mức 1 (Dễ - 37.5%)</option>' +
+                    '<option value="2" ' + (Number(q.difficulty || 1) === 2 ? 'selected' : '') + '>Mức 2 (Trung bình - 37.5%)</option>' +
+                    '<option value="3" ' + (Number(q.difficulty || 1) === 3 ? 'selected' : '') + '>Mức 3 (Khó - 25%)</option>' +
+                  '</select>' +
+                  '<button type="button" class="btn" style="background: #c2272d; color: white; font-weight: 700; font-size: 12.5px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="window.autoClassifyMathQuestionForm()">🤖 AI Phân loại độ khó</button>' +
+                  '<span id="math-ai-reason-span" style="font-size: 12px; color: #166534; font-weight: 600; display: none;"></span>' +
+                '</div>' : '') +
               // Inputs
               '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Nhập nội dung câu hỏi">' + esc(q.question || "") + '</textarea></div>' +
               '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
@@ -2826,7 +2912,7 @@
                 '</div>' +
               '</div>' +
               '<div class="field full" id="' + sectionId + '-type-fields" style="width: 100%;"></div>' +
-              '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || "") + '</textarea></div>' +
+              '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || q.solution_details || q.solution_detail || q.solution || "") + '</textarea></div>' +
             '</div>' +
 
             // Preview View Wrapper
@@ -2880,6 +2966,10 @@
           } else {
             saveBtn.textContent = (editingQuestion[sectionId]?.index === -1) ? "Thêm vào ngữ liệu" : "Lưu câu hỏi";
           }
+        }
+
+        if (window.isEditingSingleQbQuestion && typeof window.injectSingleQuestionControls === "function") {
+          window.injectSingleQuestionControls(sectionId);
         }
       }
 
@@ -3091,15 +3181,31 @@
       }
 
       function collectBaseQuestion(sectionId, doValidation) {
+        var expVal = ($("#" + sectionId + "-q-explanation")?.value || "").trim();
         var base = {
           question_no: Number($("#" + sectionId + "-q-no")?.value) || nextQuestionNo(sectionId),
           question_type: $("#" + sectionId + "-q-type")?.value || "single_choice",
           question: $("#" + sectionId + "-q-text")?.value || "",
           image_url: $("#" + sectionId + "-q-image")?.value || "",
           image_width: Number($("#" + sectionId + "-q-image-width")?.value) || 100,
-          explanation: $("#" + sectionId + "-q-explanation")?.value || "",
+          explanation: expVal,
+          solution_details: expVal,
+          solution: expVal,
           points: 1
         };
+        
+        if (sectionId === "math") {
+          var diffSel = document.getElementById("math-q-difficulty-select");
+          if (diffSel) {
+            base.difficulty = Number(diffSel.value) || 1;
+          }
+          var topicSel = document.getElementById("math-single-qb-topic-select");
+          if (topicSel) {
+            base.topic = topicSel.value;
+          } else if (editingQuestion["math"] && editingQuestion["math"].question) {
+            base.topic = editingQuestion["math"].question.topic || "Khảo sát hàm số";
+          }
+        }
         var type = base.question_type;
         if (type === "single_choice" || type === "single_choice_2" || type === "multiple_choice") {
           var opts = [];
@@ -3268,8 +3374,14 @@
             nextBtn.textContent = "Lưu & Câu tiếp →";
           }
         }
+        
+        if (typeof window.toggleSingleQuestionEditMode === "function") {
+          window.toggleSingleQuestionEditMode(window.isEditingSingleQbQuestion);
+        }
       }
       window.renderMathWizardNav = renderMathWizardNav;
+      window.selectMathWizardQuestion = selectMathWizardQuestion;
+      window.editQuestion = editQuestion;
 
       function selectMathWizardQuestion(qNo) {
         if (qNo < 1 || qNo > 40) return;
@@ -3320,6 +3432,19 @@
         saveDraft();
         renderMathWizardNav();
         
+        if (window.isEditingSingleQbQuestion) {
+          // Dual save: sync both keys to prevent state mismatch and loss
+          localStorage.setItem("tma_tsa_exam_" + exam.exam_code, JSON.stringify(exam));
+          localStorage.setItem("tma_tsa_teacher_draft_" + exam.exam_code, JSON.stringify(exam));
+          
+          editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: clone(base) };
+          
+          // Trigger storage event to synchronize other tabs (like student view) immediately
+          window.dispatchEvent(new Event("storage"));
+          window.alert("Lưu thay đổi câu hỏi thành công!");
+          return;
+        }
+
         if (goToNext && activeMathQuestionNo < 40) {
           selectMathWizardQuestion(activeMathQuestionNo + 1);
         } else {
@@ -3503,9 +3628,11 @@
           if (activeEditorTab === sectionId) {
             if (sectionId === "math") {
               ensureSchema();
+              if (!activeMathQuestionNo || activeMathQuestionNo < 1) activeMathQuestionNo = 1;
               if (!editingQuestion["math"] || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
                 var mathQs = getSection("math").questions;
-                editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: clone(mathQs[activeMathQuestionNo - 1]) };
+                var mathTarget = mathQs[activeMathQuestionNo - 1];
+                editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: clone(mathTarget || defaultQuestion("math")) };
               }
               renderQuestionForm("math");
               renderMathWizardNav();
@@ -4689,6 +4816,17 @@
       function startEditingExam(title, code, startTab) {
         var cleanCode = normalizeCode(code);
         
+        // Reset editing states to prevent collisions from previous sessions
+        editingQuestion = { math: null, reading: null, science: null };
+        activeMathQuestionNo = 1;
+        
+        if (!window.isEditingSingleQbQuestion) {
+          window.isEditingSingleQbQuestion = false;
+          if (typeof window.toggleSingleQuestionEditMode === "function") {
+            window.toggleSingleQuestionEditMode(false);
+          }
+        }
+        
         // Track the current editing subject based on active subtab in lobby
         window.currentEditingSubject = typeof currentTsaPracticeSubtab !== 'undefined' ? currentTsaPracticeSubtab : "tong-hop";
         
@@ -4697,7 +4835,16 @@
         adjustAiImportDropdown(window.currentEditingSubject);
 
         var existing = loadDraft(cleanCode);
-        if (existing) {
+        if (!existing) {
+          try {
+            var rawExam = localStorage.getItem("tma_tsa_exam_" + cleanCode);
+            if (rawExam) {
+              existing = JSON.parse(rawExam);
+            }
+          } catch(e) {}
+        }
+        
+        if (existing && typeof existing === "object") {
           exam = existing;
           ensureSchema();
         } else {
@@ -4890,6 +5037,10 @@
       window.syncExamFromSource = syncExamFromSource;
 
       function exitEditingMode() {
+        window.isEditingSingleQbQuestion = false;
+        if (typeof window.toggleSingleQuestionEditMode === "function") {
+          window.toggleSingleQuestionEditMode(false);
+        }
         document.getElementById("editor-container").style.display = "none";
         document.getElementById("sidebar-editor-nav").style.display = "none";
 
@@ -5512,7 +5663,7 @@ YÊU CẦU QUAN TRỌNG:
 
               var resData = await response.json();
               var jsonText = resData.candidates[0].content.parts[0].text;
-              var imported = JSON.parse(jsonText.trim());
+              var imported = safeParseGeminiJson(jsonText);
 
               if (!imported || !imported.sections) {
                 throw new Error("Không thể trích xuất cấu trúc đề thi hợp lệ từ AI!");
@@ -7424,7 +7575,7 @@ YÊU CẦU QUAN TRỌNG:
         }
         var lastCode = localStorage.getItem("tma_tsa_teacher_last_exam_code") || "TSA001";
         var draft = loadDraft(lastCode);
-        if (draft) exam = draft;
+        if (draft && typeof draft === "object") exam = draft;
         stripFormulaQuestions(exam);
         ensureSchema();
         syncMetadataToForm();
@@ -8199,11 +8350,1236 @@ YÊU CẦU QUAN TRỌNG:
         }, 50);
       };
 
-      window.addEventListener("resize", function() {
-        var container = document.getElementById("overview-chart-container");
-        if (container && container.offsetParent !== null) {
-          drawOverviewChart();
+      window.openQuestionBankModal = function() {
+        var modal = document.getElementById("modal-question-bank-manager");
+        if (modal) modal.style.display = "flex";
+      };
+
+      window.closeQuestionBankModal = function() {
+        var modal = document.getElementById("modal-question-bank-manager");
+        if (modal) modal.style.display = "none";
+      };
+
+      window.onQbSubjectChange = function() {
+        var sub = document.getElementById("qb-subject")?.value;
+        var diffWrapper = document.getElementById("qb-difficulty-wrapper");
+        if (diffWrapper) {
+          diffWrapper.style.display = (sub === "math") ? "block" : "none";
         }
-      });
+      };
+
+      window.autoClassifyQbDifficulty = function() {
+        var txt = document.getElementById("qb-question-text")?.value || "";
+        var diffSelect = document.getElementById("qb-difficulty");
+        var reasonBox = document.getElementById("qb-reason-box");
+        var reasonText = document.getElementById("qb-reason-text");
+
+        if (!txt.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi trước khi bấm AI Phân loại độ khó.");
+          return;
+        }
+
+        var level = 1;
+        var reason = "";
+
+        if (txt.includes("\\int") || txt.includes("\\lim") || txt.includes("phương trình mặt phẳng") || txt.includes("biện luận") || txt.length > 250) {
+          level = 3;
+          reason = "Câu hỏi chứa biến đổi toán học nâng cao / bài toán vận dụng cao (cần từ 4 bước giải trở lên).";
+        } else if (txt.includes("\\frac") || txt.includes("\\sqrt") || txt.includes("hàm số") || txt.length > 120) {
+          level = 2;
+          reason = "Câu hỏi biến đổi trung bình (yêu cầu vận dụng thấp 2-4 bước tính toán).";
+        } else {
+          level = 1;
+          reason = "Câu hỏi nhận biết/thông hiểu cơ bản (áp dụng công thức trực tiếp).";
+        }
+
+        if (diffSelect) diffSelect.value = String(level);
+        if (reasonBox && reasonText) {
+          reasonText.textContent = reason;
+          reasonBox.style.display = "block";
+        }
+      };
+
+      window.saveQuestionToBank = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        
+        var subject = document.getElementById("qb-subject")?.value || "math";
+        var difficulty = Number(document.getElementById("qb-difficulty")?.value || 1);
+        var qText = document.getElementById("qb-question-text")?.value || "";
+        var optA = document.getElementById("qb-opt-A")?.value || "";
+        var optB = document.getElementById("qb-opt-B")?.value || "";
+        var optC = document.getElementById("qb-opt-C")?.value || "";
+        var optD = document.getElementById("qb-opt-D")?.value || "";
+        var correct = document.getElementById("qb-correct")?.value || "A";
+        var exp = document.getElementById("qb-explanation")?.value || "";
+
+        if (!qText.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi.");
+          return;
+        }
+
+        var qObj = {
+          question_no: 1,
+          question_type: "single_choice",
+          question: qText,
+          difficulty: difficulty,
+          options: [
+            { key: "A", text: optA },
+            { key: "B", text: optB },
+            { key: "C", text: optC },
+            { key: "D", text: optD }
+          ],
+          correct_answer: correct,
+          explanation: exp,
+          points: 1
+        };
+
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        var examObj = null;
+        if (raw) {
+          try { examObj = JSON.parse(raw); } catch(err) {}
+        }
+
+        if (!examObj) {
+          examObj = {
+            exam_code: targetCode,
+            title: "Đề ngẫu nhiên số 01",
+            duration_minutes: 150,
+            status: "published",
+            sections: [
+              { section_id: "math", section_label: "Tư duy Toán học", layout: "single", questions: [] },
+              { section_id: "reading", section_label: "Tư duy Đọc hiểu", layout: "passage", groups: [] },
+              { section_id: "science", section_label: "Tư duy Khoa học", layout: "passage", groups: [] }
+            ]
+          };
+        }
+
+        if (!Array.isArray(examObj.sections)) {
+          examObj.sections = [
+            { section_id: "math", section_label: "Tư duy Toán học", layout: "single", questions: [] }
+          ];
+        }
+
+        var mathSec = examObj.sections.find(s => s.section_id === "math");
+        if (!mathSec) {
+          mathSec = { section_id: "math", section_label: "Tư duy Toán học", layout: "single", questions: [] };
+          examObj.sections.push(mathSec);
+        }
+        if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+        
+        qObj.question_no = mathSec.questions.length + 1;
+        mathSec.questions.push(qObj);
+
+        try {
+          localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+          localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+        } catch(err) {}
+
+        alert("✓ Đã thêm câu hỏi mới thành công vào Ngân hàng câu hỏi (Mức độ " + difficulty + ")!");
+        
+        document.getElementById("qb-question-text").value = "";
+        document.getElementById("qb-opt-A").value = "";
+        document.getElementById("qb-opt-B").value = "";
+        document.getElementById("qb-opt-C").value = "";
+        document.getElementById("qb-opt-D").value = "";
+        document.getElementById("qb-explanation").value = "";
+        if (document.getElementById("qb-reason-box")) document.getElementById("qb-reason-box").style.display = "none";
+        
+        window.closeQuestionBankModal();
+        renderPracticeRoom();
+      };
+
+      window.deleteQbQuestion = function(index) {
+        if (!confirm("Bạn có chắc chắn muốn xóa câu hỏi này khỏi Ngân hàng câu hỏi?")) return;
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (raw) {
+          try {
+            var examObj = JSON.parse(raw);
+            if (examObj && Array.isArray(examObj.sections)) {
+              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+              if (mathSec && Array.isArray(mathSec.questions)) {
+                mathSec.questions.splice(index, 1);
+                localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+              }
+            }
+          } catch(e) {}
+        }
+        renderPracticeRoom();
+      };
+
+      window.isEditingSingleQbQuestion = false;
+
+      function toggleSingleQuestionEditMode(isSingleMode) {
+        var layout = document.querySelector(".math-split-layout");
+        var rightCol = document.querySelector(".math-wizard-wrapper");
+        var sidebarEditor = document.getElementById("sidebar-editor-nav");
+        var shell = document.querySelector(".teacher-shell");
+        var defaultDiff = document.getElementById("math-default-diff-row");
+        
+        if (isSingleMode) {
+          if (rightCol) rightCol.style.display = "none";
+          if (sidebarEditor) sidebarEditor.style.display = "none";
+          if (shell) shell.classList.add("hide-sidebar");
+          if (defaultDiff) defaultDiff.style.display = "none";
+          
+          var topbarMeta = document.getElementById("topbar-single-qb-metadata");
+          if (topbarMeta) topbarMeta.style.display = "flex";
+          
+          if (layout) {
+            layout.style.display = "block";
+            layout.style.width = "100%";
+          }
+          
+          window.injectSingleQuestionControls("math");
+        } else {
+          if (rightCol) rightCol.style.display = "flex";
+          if (sidebarEditor) sidebarEditor.style.display = "flex";
+          if (shell) shell.classList.remove("hide-sidebar");
+          if (defaultDiff) defaultDiff.style.display = "flex";
+          
+          var topbarMeta = document.getElementById("topbar-single-qb-metadata");
+          if (topbarMeta) topbarMeta.style.display = "none";
+          
+          if (layout) {
+            layout.style.display = "";
+            layout.style.width = "";
+          }
+          
+          var metaCard = document.getElementById("math-single-qb-metadata-card");
+          if (metaCard) metaCard.remove();
+          var bottomControls = document.getElementById("math-single-qb-controls");
+          if (bottomControls) bottomControls.remove();
+        }
+      }
+      window.toggleSingleQuestionEditMode = toggleSingleQuestionEditMode;
+
+      window.setMathQuestionType = function(type) {
+        try {
+          var btns = document.querySelectorAll("#topbar-question-type-tabs .math-type-btn");
+          btns.forEach(function(b) {
+            var isTarget = b.getAttribute("data-type") === type;
+            if (isTarget) {
+              b.style.background = "#c2272d";
+              b.style.color = "white";
+              b.style.fontWeight = "700";
+            } else {
+              b.style.background = "transparent";
+              b.style.color = "#475569";
+              b.style.fontWeight = "600";
+            }
+          });
+
+          if (typeof window.switchQuestionType === "function") {
+            window.switchQuestionType("math", type);
+          }
+          if (window.isEditingSingleQbQuestion && typeof window.injectSingleQuestionControls === "function") {
+            window.injectSingleQuestionControls("math");
+          }
+        } catch(err) {
+          console.error("setMathQuestionType error:", err);
+        }
+      };
+
+      window.injectSingleQuestionControls = function(sectionId) {
+        var oldCard = document.getElementById("math-single-qb-metadata-card");
+        if (oldCard) oldCard.remove();
+
+        var q = editingQuestion[sectionId] ? editingQuestion[sectionId].question : null;
+        var currTopic = q ? (q.topic || "Khảo sát hàm số") : "Khảo sát hàm số";
+        var currDiff = q ? (Number(q.difficulty || 1)) : 1;
+
+        var form = $("#" + sectionId + "-question-form");
+        if (!form) return;
+
+        var topHeaderCard = document.createElement("div");
+        topHeaderCard.id = "math-single-qb-metadata-card";
+        topHeaderCard.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; width: 100%; box-sizing: border-box; font-family: inherit;";
+
+        topHeaderCard.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Chủ đề:</span>
+              <select id="math-single-qb-topic-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; min-width: 230px; height: 36px; font-family: inherit;">
+                <option value="Khảo sát hàm số">Khảo sát hàm số</option>
+                <option value="Mũ và Lôgarit">Mũ và Lôgarit</option>
+                <option value="Nguyên hàm &amp; Tích phân">Nguyên hàm &amp; Tích phân</option>
+                <option value="Số phức">Số phức</option>
+                <option value="Tổ hợp &amp; Xác suất">Tổ hợp &amp; Xác suất</option>
+                <option value="Hình học không gian">Hình học không gian</option>
+                <option value="Hình học giải tích Oxyz">Hình học giải tích Oxyz</option>
+                <option value="Lượng giác">Lượng giác</option>
+                <option value="Dãy số &amp; Cấp số">Dãy số &amp; Cấp số</option>
+                <option value="Vectơ &amp; Hệ tọa độ">Vectơ &amp; Hệ tọa độ</option>
+                <option value="Phương trình &amp; Hệ phương trình">Phương trình &amp; Hệ phương trình</option>
+              </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Độ khó:</span>
+              <select id="math-q-difficulty-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; height: 36px; font-family: inherit;" onchange="window.updateCurrentMathDifficulty(this.value)">
+                <option value="1">Mức 1 (Dễ)</option>
+                <option value="2">Mức 2 (Trung bình)</option>
+                <option value="3">Mức 3 (Khó)</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" class="btn" onclick="window.autoClassifyMathQuestionForm()" style="background: #c2272d; color: #ffffff; font-weight: 700; font-size: 13px; padding: 0 18px; height: 36px; border-radius: 6px; border: none; cursor: pointer; transition: background 0.15s; white-space: nowrap; font-family: inherit;" onmouseover="this.style.background='#a81d22';" onmouseout="this.style.background='#c2272d';" title="AI Phân loại tự động chủ đề và độ khó">
+            AI Phân loại
+          </button>
+        `;
+
+        form.insertBefore(topHeaderCard, form.firstChild);
+
+        var topicSelect = document.getElementById("math-single-qb-topic-select");
+        if (topicSelect) {
+          var exists = Array.from(topicSelect.options).some(function(opt) { return opt.value === currTopic; });
+          if (!exists) {
+            var newOpt = document.createElement("option");
+            newOpt.value = currTopic;
+            newOpt.textContent = currTopic;
+            topicSelect.appendChild(newOpt);
+          }
+          topicSelect.value = currTopic;
+        }
+
+        var diffSelect = document.getElementById("math-q-difficulty-select");
+        if (diffSelect) {
+          diffSelect.value = String(currDiff);
+        }
+
+        var topbarMeta = document.getElementById("topbar-single-qb-metadata");
+        if (topbarMeta) topbarMeta.style.display = "flex";
+
+        if (!document.getElementById("math-single-qb-controls")) {
+          var bottomControls = document.createElement("div");
+          bottomControls.id = "math-single-qb-controls";
+          bottomControls.style.cssText = "display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1.5px solid #e2e8f0; width: 100%; font-family: inherit;";
+          
+          bottomControls.innerHTML = `
+            <div style="display: flex; gap: 12px; margin-right: auto;">
+              <button type="button" class="btn" onclick="window.autoOptimizeMathQuestion()" style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; font-weight: 700; font-size: 13.5px; padding: 11px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transit      function safeParseGeminiJson(rawText) {
+        if (!rawText || typeof rawText !== "string") return {};
+        var clean = rawText.trim();
+        clean = clean.replace(/^```(?:json)?\s*/gi, "").replace(/\s*```$/gi, "").trim();
+
+        try {
+          return JSON.parse(clean);
+        } catch (e1) {
+          console.warn("Direct JSON.parse failed, running automated LaTeX backslash repair:", e1.message);
+        }
+
+        var repaired = clean.replace(/\\([a-zA-Z]+)/g, function(match, word) {
+          if ((match === "\\n" || match === "\\r" || match === "\\t" || match === "\\b" || match === "\\f") &&
+              !/^(frac|dfrac|tfrac|text|tan|theta|times|tau|begin|bar|beta|binom|bbox|cdot|sqrt|left|right|limits|sum|int|log|lim|sin|cos|cot|vec|alpha|gamma|delta|omega|phi|pi|sigma|le|ge|neq)/i.test(word)) {
+            return match;
+          }
+          return "\\\\" + word;
+        }).replace(/\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})/g, "\\\\");
+
+        try {
+          return JSON.parse(repaired);
+        } catch (e2) {
+          console.warn("Second repair attempt failed, trying aggressive backslash escaping:", e2.message);
+          try {
+            var aggressive = clean.replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
+            return JSON.parse(aggressive);
+          } catch (e3) {
+            var match = clean.match(/\{[\s\S]*\}/);
+            if (match) {
+              var extracted = match[0].replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
+              try {
+                return JSON.parse(extracted);
+              } catch(e4) {}
+            }
+            throw new Error("Không thể xử lý định dạng công thức từ AI. Chi tiết: " + e1.message);
+          }
+        }
+      }
+      window.safeParseGeminiJson = safeParseGeminiJson;
+
+      window.saveTeacherAiPromptSetting = function() {
+        var val = document.getElementById("teacher-ai-prompt-input")?.value || "";
+        localStorage.setItem("tma_teacher_ai_style", val.trim());
+        if (document.getElementById("teacher-ai-prompt-modal")) {
+          document.getElementById("teacher-ai-prompt-modal").remove();
+        }
+        alert("✓ Đã lưu Prompt AI thành công! Tất cả các thao tác AI từ bây giờ sẽ lập tức áp dụng câu lệnh mới của bạn.");
+      };
+
+      window.autoOptimizeMathQuestion = function() {
+        var qTextEl = document.getElementById("math-q-text");
+        var explanationEl = document.getElementById("math-q-explanation");
+        var diffSelect = document.getElementById("math-q-difficulty-select");
+        var topicSelect = document.getElementById("math-single-qb-topic-select");
+        
+        var qText = qTextEl ? qTextEl.value : "";
+        if (!qText.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi Toán học vào ô nội dung trước khi yêu cầu AI tối ưu.");
+          return;
+        }
+        
+        var apiKey = localStorage.getItem("tma_gemini_api_key");
+        if (!apiKey) {
+          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
+          if (!inputKey) return;
+          apiKey = inputKey.trim();
+          localStorage.setItem("tma_gemini_api_key", apiKey);
+        }
+        
+        var aiBtn = document.querySelector("#math-single-qb-controls button[onclick*='autoOptimizeMathQuestion']");
+        var origHtml = aiBtn ? aiBtn.innerHTML : "";
+        if (aiBtn) {
+          aiBtn.disabled = true;
+          aiBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>AI đang phân tích & giải đề...</span>
+          `;
+        }
+        
+        var systemInstruction = "Bạn là chuyên gia thẩm định và tối ưu câu hỏi kỳ thi đánh giá tư duy TSA Bách Khoa Việt Nam. " +
+          "Nhiệm vụ của bạn là đọc câu hỏi toán thô được gửi lên, tối ưu lại câu từ cho chuyên nghiệp và chuẩn mực sư phạm (nếu cần thiết, nếu không hãy giữ nguyên ý), " +
+          "sau đó giải bài toán này từng bước một cách chặt chẽ, dễ hiểu. " +
+          "Bạn cũng phải xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất cho câu hỏi và xác định mức độ khó thích hợp (1: Dễ, 2: Trung bình, 3: Khó). " +
+          "Đầu ra BẮT BUỘC là một đối tượng JSON chuẩn có cấu trúc sau, không chứa ký tự markdown hay văn bản ngoài JSON:\n" +
+          "{\n" +
+          "  \"optimized_question\": \"Nội dung câu hỏi đã tối ưu (giữ nguyên LaTeX nếu có)\",\n" +
+          "  \"explanation\": \"Lời giải chi tiết từng bước, sử dụng LaTeX chuẩn (dùng \\\\dfrac cho phân số, \\\\limits cho giới hạn)\",\n" +
+          "  \"difficulty\": 1 | 2 | 3,\n" +
+          "  \"topic\": \"Khảo sát hàm số\" | \"Mũ và Lôgarit\" | \"Nguyên hàm & Tích phân\" | \"Số phức\" | \"Tổ hợp & Xác suất\" | \"Hình học không gian\" | \"Hình học giải tích Oxyz\" | \"Lượng giác\" | \"Dãy số & Cấp số\" | \"Vectơ & Hệ tọa độ\" | \"Phương trình & Hệ phương trình\"\n" +
+          "}\n\n" +
+          "LƯU Ý CỰC KỲ QUAN TRỌNG VỀ ĐỊNH DẠNG & LATEX:\n" +
+          "- TUYỆT ĐỐI KHÔNG sử dụng ký tự dấu sao ** hay * để bôi đậm hay làm danh sách (vd: KHÔNG viết **Bước 1:** hay * Ý 1). Hãy dùng thẻ <strong>...</strong> cho các tiêu đề bước hoặc viết chữ thường 'Bước 1: ...'.\n" +
+          "- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).\n" +
+          "- BẮT BUỘC escape tất cả các dấu gạch chéo ngược \\ thành song song hai gạch chéo ngược \\\\ (ví dụ write \\\\dfrac, \\\\left, \\\\right, \\\\sqrt, \\\\frac) trong chuỗi JSON để tạo ra JSON hợp lệ.";
+
+        var customStyle = localStorage.getItem("tma_teacher_ai_style");
+        if (customStyle && customStyle.trim()) {
+          systemInstruction += "\n\nPHONG CÁCH GIẢI BÀI VÀ TRÌNH BÀY CỦA GIÁO VIÊN (PHẢI TUÂN THỦ 100%):\n" + customStyle.trim();
+        }
+
+        window.setTeacherAiStyle = function() {
+          var current = localStorage.getItem("tma_teacher_ai_style") || "";
+          var val = prompt("Nhập phong cách / chỉ dẫn giải bài bạn muốn AI tuân theo (Ví dụ: 'Chia làm 3 bước: Giả thiết, Công thức, Thay số. Không dùng ký tự dấu sao **'):", current);
+          if (val !== null) {
+            localStorage.setItem("tma_teacher_ai_style", val.trim());
+            alert("Đã lưu phong cách giải bài thành công! Tất cả câu hỏi AI tạo hoặc tối ưu sau này sẽ tự động tuân thủ phong cách này.");
+          }
+        };
+          
+        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+        var requestPayload = {
+          contents: [{
+            parts: [{
+              text: "Hãy tối ưu và lập lời giải chi tiết cho câu hỏi toán học sau:\n\n" + qText
+            }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.15
+          },
+          systemInstruction: {
+            parts: [{
+              text: systemInstruction
+            }]
+          }
+        };
+        
+        fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestPayload)
+        })
+        .then(function(res) {
+          if (!res.ok) {
+            return res.text().then(function(err) {
+              throw new Error("Lỗi API Gemini: " + res.status + " - " + err);
+            });
+          }
+          return res.json();
+        })
+        .then(function(data) {
+          var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+          var result = safeParseGeminiJson(textResponse);          </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+              <button type="button" onclick="document.getElementById('teacher-ai-prompt-modal').remove()" style="background: #f1f5f9; color: #475569; border: none; font-weight: 700; padding: 9px 18px; border-radius: 8px; cursor: pointer; font-size: 13.5px;">Đóng</button>
+              <button type="button" onclick="window.saveTeacherAiPromptSetting()" style="background: #16a34a; color: white; border: none; font-weight: 700; padding: 9px 22px; border-radius: 8px; cursor: pointer; font-size: 13.5px;">Lưu Prompt AI</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      };
+
+      window.saveTeacherAiPromptSetting = function() {
+        var val = document.getElementById("teacher-ai-prompt-input")?.value || "";
+        localStorage.setItem("tma_teacher_ai_style", val.trim());
+        if (document.getElementById("teacher-ai-prompt-modal")) {
+          document.getElementById("teacher-ai-prompt-modal").remove();
+        }
+        alert("✓ Đã lưu Prompt AI thành công! Tất cả các thao tác AI từ bây giờ sẽ lập tức áp dụng câu lệnh mới của bạn.");
+      };
+
+      window.autoOptimizeMathQuestion = function() {
+        var qTextEl = document.getElementById("math-q-text");
+        var explanationEl = document.getElementById("math-q-explanation");
+        var diffSelect = document.getElementById("math-q-difficulty-select");
+        var topicSelect = document.getElementById("math-single-qb-topic-select");
+        
+        var qText = qTextEl ? qTextEl.value : "";
+        if (!qText.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi Toán học vào ô nội dung trước khi yêu cầu AI tối ưu.");
+          return;
+        }
+        
+        var apiKey = localStorage.getItem("tma_gemini_api_key");
+        if (!apiKey) {
+          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
+          if (!inputKey) return;
+          apiKey = inputKey.trim();
+          localStorage.setItem("tma_gemini_api_key", apiKey);
+        }
+        
+        var aiBtn = document.querySelector("#math-single-qb-controls button[onclick*='autoOptimizeMathQuestion']");
+        var origHtml = aiBtn ? aiBtn.innerHTML : "";
+        if (aiBtn) {
+          aiBtn.disabled = true;
+          aiBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>AI đang phân tích & giải đề...</span>
+          `;
+        }
+        
+        var systemInstruction = "Bạn là chuyên gia thẩm định và tối ưu câu hỏi kỳ thi đánh giá tư duy TSA Bách Khoa Việt Nam. " +
+          "Nhiệm vụ của bạn là đọc câu hỏi toán thô được gửi lên, tối ưu lại câu từ cho chuyên nghiệp và chuẩn mực sư phạm (nếu cần thiết, nếu không hãy giữ nguyên ý), " +
+          "sau đó giải bài toán này từng bước một cách chặt chẽ, dễ hiểu. " +
+          "Bạn cũng phải xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất cho câu hỏi và xác định mức độ khó thích hợp (1: Dễ, 2: Trung bình, 3: Khó). " +
+          "Đầu ra BẮT BUỘC là một đối tượng JSON chuẩn có cấu trúc sau, không chứa ký tự markdown hay văn bản ngoài JSON:\n" +
+          "{\n" +
+          "  \"optimized_question\": \"Nội dung câu hỏi đã tối ưu (giữ nguyên LaTeX nếu có)\",\n" +
+          "  \"explanation\": \"Lời giải chi tiết từng bước, sử dụng LaTeX chuẩn (dùng \\\\dfrac cho phân số, \\\\limits cho giới hạn)\",\n" +
+          "  \"difficulty\": 1 | 2 | 3,\n" +
+          "  \"topic\": \"Khảo sát hàm số\" | \"Mũ và Lôgarit\" | \"Nguyên hàm & Tích phân\" | \"Số phức\" | \"Tổ hợp & Xác suất\" | \"Hình học không gian\" | \"Hình học giải tích Oxyz\" | \"Lượng giác\" | \"Dãy số & Cấp số\" | \"Vectơ & Hệ tọa độ\" | \"Phương trình & Hệ phương trình\"\n" +
+          "}\n\n" +
+          "LƯU Ý CỰC KỲ QUAN TRỌNG VỀ ĐỊNH DẠNG & LATEX:\n" +
+          "- TUYỆT ĐỐI KHÔNG sử dụng ký tự dấu sao ** hay * để bôi đậm hay làm danh sách (vd: KHÔNG viết **Bước 1:** hay * Ý 1). Hãy dùng thẻ <strong>...</strong> cho các tiêu đề bước hoặc viết chữ thường 'Bước 1: ...'.\n" +
+          "- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).\n" +
+          "- BẮT BUỘC escape ký tự gạch chéo ngược thành song song hai gạch chéo ngược (\\\\\\\\( ... \\\\\\\\) và \\\\\\\\[ ... \\\\\\\\]) trong chuỗi JSON để tránh lỗi cú pháp parse JSON.";
+
+        var customStyle = localStorage.getItem("tma_teacher_ai_style");
+        if (customStyle && customStyle.trim()) {
+          systemInstruction += "\n\nPHONG CÁCH GIẢI BÀI VÀ TRÌNH BÀY CỦA GIÁO VIÊN (PHẢI TUÂN THỦ 100%):\n" + customStyle.trim();
+        }
+
+        window.setTeacherAiStyle = function() {
+          var current = localStorage.getItem("tma_teacher_ai_style") || "";
+          var val = prompt("Nhập phong cách / chỉ dẫn giải bài bạn muốn AI tuân theo (Ví dụ: 'Chia làm 3 bước: Giả thiết, Công thức, Thay số. Không dùng ký tự dấu sao **'):", current);
+          if (val !== null) {
+            localStorage.setItem("tma_teacher_ai_style", val.trim());
+            alert("Đã lưu phong cách giải bài thành công! Tất cả câu hỏi AI tạo hoặc tối ưu sau này sẽ tự động tuân thủ phong cách này.");
+          }
+        };
+          
+        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+        var requestPayload = {
+          contents: [{
+            parts: [{
+              text: "Hãy tối ưu và lập lời giải chi tiết cho câu hỏi toán học sau:\n\n" + qText
+            }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.15
+          },
+          systemInstruction: {
+            parts: [{
+              text: systemInstruction
+            }]
+          }
+        };
+        
+        fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestPayload)
+        })
+        .then(function(res) {
+          if (!res.ok) {
+            return res.text().then(function(err) {
+              throw new Error("Lỗi API Gemini: " + res.status + " - " + err);
+            });
+          }
+          return res.json();
+        })
+        .then(function(data) {
+          var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+          var result = JSON.parse(textResponse);
+          
+          if (qTextEl && result.optimized_question) {
+            qTextEl.value = result.optimized_question;
+          }
+          if (explanationEl && result.explanation) {
+            explanationEl.value = result.explanation;
+          }
+          if (diffSelect && result.difficulty) {
+            diffSelect.value = String(result.difficulty);
+            window.updateCurrentMathDifficulty(result.difficulty);
+          }
+          if (topicSelect && result.topic) {
+            var exists = Array.from(topicSelect.options).some(function(opt) { return opt.value === result.topic; });
+            if (!exists) {
+              var newOpt = document.createElement("option");
+              newOpt.value = result.topic;
+              newOpt.textContent = result.topic;
+              topicSelect.appendChild(newOpt);
+            }
+            topicSelect.value = result.topic;
+          }
+          
+          if (typeof updatePreview === "function") {
+            updatePreview("math");
+          }
+          
+          alert("✓ AI đã tối ưu câu hỏi và viết lời giải chi tiết thành công!");
+        })
+        .catch(function(err) {
+          console.error(err);
+          alert("Có lỗi xảy ra khi gọi AI: " + err.message);
+        })
+        .finally(function() {
+          if (aiBtn) {
+            aiBtn.disabled = false;
+            aiBtn.innerHTML = origHtml;
+          }
+        });
+      };
+
+      window.editQbQuestion = function(index) {
+        window.isEditingSingleQbQuestion = true;
+        window.currentEditingSubject = "math";
+        
+        var targetQNo = (index !== undefined && index >= 0) ? (index + 1) : 1;
+        window.startEditingExam("Ngân hàng câu hỏi Luyện đề ngẫu nhiên", "TMA_RANDOM_001", "math");
+        if (typeof window.selectMathWizardQuestion === "function") {
+          window.selectMathWizardQuestion(targetQNo);
+        }
+        window.toggleSingleQuestionEditMode(true);
+      };
+
+      var activePreviewIndex = -1;
+      
+      window.previewQbQuestion = function(index) {
+        activePreviewIndex = index;
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (!raw) return;
+        
+        try {
+          var examObj = JSON.parse(raw);
+          var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+          if (!mathSec || !Array.isArray(mathSec.questions) || !mathSec.questions[index]) {
+            alert("Không tìm thấy câu hỏi để xem trước!");
+            return;
+          }
+          
+          var q = mathSec.questions[index];
+          
+          // Render tags
+          var diffEl = document.getElementById("preview-q-diff-badge");
+          var topicEl = document.getElementById("preview-q-topic-badge");
+          var typeEl = document.getElementById("preview-q-type-badge");
+          
+          var diff = Number(q.difficulty) || 1;
+          if (diff === 3) {
+            diffEl.innerHTML = "Mức 3 (Khó)";
+            diffEl.style.cssText = "background: #ffe4e6; color: #c2272d; border: 1px solid #fecdd3; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px;";
+          } else if (diff === 2) {
+            diffEl.innerHTML = "Mức 2 (Trung bình)";
+            diffEl.style.cssText = "background: #fef3c7; color: #d97706; border: 1px solid #fde68a; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px;";
+          } else {
+            diffEl.innerHTML = "Mức 1 (Dễ)";
+            diffEl.style.cssText = "background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px;";
+          }
+          
+          topicEl.textContent = "Chủ đề: " + (q.topic || "Toán đại cương");
+          
+          var qTypeLabel = "Trắc nghiệm đơn";
+          if (q.question_type === "multiple_choice") qTypeLabel = "Trắc nghiệm nhiều đáp án";
+          else if (q.question_type === "true_false") qTypeLabel = "Đúng/Sai";
+          else if (q.question_type === "numeric_answer") qTypeLabel = "Điền số";
+          else if (q.question_type === "drag_drop") qTypeLabel = "Kéo thả";
+          typeEl.textContent = qTypeLabel;
+          
+          // Question text
+          var qTextEl = document.getElementById("preview-q-text");
+          qTextEl.innerHTML = q.question || "";
+          
+          // Options
+          var optionsContainer = document.getElementById("preview-q-options-container");
+          optionsContainer.innerHTML = "";
+          
+          if (q.question_type === "single_choice" || q.question_type === "multiple_choice" || !q.question_type) {
+            var options = [];
+            if (Array.isArray(q.options)) {
+              options = q.options;
+            } else if (q.options && typeof q.options === "object") {
+              options = Object.keys(q.options).map(function(k) { return { key: k, text: q.options[k] }; });
+            }
+            
+            options.forEach(function(opt) {
+              var optRow = document.createElement("div");
+              optRow.style.cssText = "display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; color: #334155; font-weight: 500; background: #ffffff; cursor: pointer; transition: all 0.15s;";
+              
+              var keyCircle = `<span style="width: 22px; height: 22px; border-radius: 50%; background: #f1f5f9; color: #475569; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11.5px; border: 1px solid #cbd5e1; flex-shrink: 0;">${opt.key}</span>`;
+              
+              var isCorrect = false;
+              if (q.question_type === "multiple_choice") {
+                isCorrect = Array.isArray(q.correct_answer) && q.correct_answer.indexOf(opt.key) !== -1;
+              } else {
+                isCorrect = q.correct_answer === opt.key;
+              }
+              
+              optRow.setAttribute("data-correct", isCorrect ? "true" : "false");
+              optRow.setAttribute("data-key", opt.key);
+              optRow.innerHTML = keyCircle + `<div style="line-height: 1.6; flex-grow: 1;">${opt.text}</div>`;
+              optionsContainer.appendChild(optRow);
+            });
+          } else if (q.question_type === "true_false") {
+            var statements = q.statements || [];
+            statements.forEach(function(stmt) {
+              var stmtRow = document.createElement("div");
+              stmtRow.style.cssText = "display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; background: #ffffff;";
+              
+              var correctVal = (q.correct_answer && q.correct_answer[stmt.id] !== undefined) ? q.correct_answer[stmt.id] : true;
+              
+              stmtRow.innerHTML = `
+                <div style="font-weight: 600; color: #1e293b; line-height: 1.5;">[Mệnh đề ${stmt.id.toUpperCase()}] ${stmt.text}</div>
+                <div style="display: flex; gap: 14px; margin-top: 4px;" data-stmt-id="${stmt.id}" data-correct-val="${correctVal}">
+                  <span style="font-size: 12.5px; font-weight: 700; background: #f1f5f9; border: 1.5px solid #cbd5e1; padding: 4px 16px; border-radius: 6px; color: #475569; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">Đúng</span>
+                  <span style="font-size: 12.5px; font-weight: 700; background: #f1f5f9; border: 1.5px solid #cbd5e1; padding: 4px 16px; border-radius: 6px; color: #475569; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">Sai</span>
+                </div>
+              `;
+              optionsContainer.appendChild(stmtRow);
+            });
+          } else if (q.question_type === "numeric_answer") {
+            var inputWrapper = document.createElement("div");
+            inputWrapper.style.cssText = "padding: 10px 0;";
+            inputWrapper.innerHTML = `
+              <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Đáp số của bạn:</label>
+              <input class="input" type="text" placeholder="Nhập số..." disabled style="width: 200px; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background: #f8fafc; cursor: not-allowed; font-family: inherit;">
+            `;
+            optionsContainer.appendChild(inputWrapper);
+          } else if (q.question_type === "drag_drop") {
+            var dragBox = document.createElement("div");
+            dragBox.style.cssText = "padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; background: #fafafa; font-size: 13.5px; line-height: 1.7; color: #334155;";
+            var bodyText = "";
+            if (Array.isArray(q.body)) {
+              q.body.forEach(function(part) {
+                if (part.type === "text") bodyText += part.content;
+                else bodyText += `<span style="display: inline-block; width: 60px; height: 22px; border-bottom: 2px dashed #64748b; margin: 0 4px; vertical-align: middle; text-align: center; font-weight: 700; color: #1d4ed8;">[${part.id}]</span>`;
+              });
+            }
+            dragBox.innerHTML = `
+              <div style="font-weight: 600; margin-bottom: 8px; color: #475569;">Đoạn văn điền khuyết:</div>
+              <div>${bodyText}</div>
+            `;
+            optionsContainer.appendChild(dragBox);
+          }
+          
+          // Setup correct answer display value
+          var correctValEl = document.getElementById("preview-q-correct-answer-value");
+          var formattedAnswer = "A";
+          if (q.correct_answer !== undefined && q.correct_answer !== null) {
+            if (typeof q.correct_answer === "object") {
+              if (Array.isArray(q.correct_answer)) {
+                formattedAnswer = q.correct_answer.join(", ");
+              } else {
+                formattedAnswer = Object.keys(q.correct_answer).map(function(k) {
+                  var v = q.correct_answer[k];
+                  if (v === true) return k.toUpperCase() + ": Đúng";
+                  if (v === false) return k.toUpperCase() + ": Sai";
+                  return k.toUpperCase() + ": " + v;
+                }).join("; ");
+              }
+            } else {
+              formattedAnswer = String(q.correct_answer);
+            }
+          }
+          correctValEl.textContent = formattedAnswer;
+          
+          // Setup explanation content
+          var explEl = document.getElementById("preview-q-explanation-content");
+          explEl.innerHTML = q.explanation || "Không có giải thích chi tiết.";
+          
+          // Reset explanation box state (hidden initially)
+          var explanationBox = document.getElementById("preview-q-explanation-box");
+          var toggleBtn = document.getElementById("preview-toggle-explanation-btn");
+          var toggleText = document.getElementById("preview-toggle-text");
+          explanationBox.style.display = "none";
+          toggleBtn.style.background = "#fff5f6";
+          toggleBtn.style.color = "#c2272d";
+          toggleBtn.style.borderColor = "#fecdd3";
+          if (toggleText) toggleText.textContent = "Hiện Đáp Án & Lời Giải Chi Tiết";
+          
+          // Show Preview Modal
+          document.getElementById("modal-qb-preview").style.display = "flex";
+          
+          // Render MathJax to draw equations
+          setTimeout(function() {
+            if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+              window.MathJax.typesetPromise([qTextEl, optionsContainer, explEl]).catch(function(err){ console.error(err); });
+            }
+          }, 80);
+          
+        } catch(e) {
+          console.error(e);
+          alert("Lỗi xem trước: " + e.message);
+        }
+      };
+      
+      window.closeQbPreviewModal = function() {
+        document.getElementById("modal-qb-preview").style.display = "none";
+      };
+      
+      window.togglePreviewExplanation = function() {
+        var box = document.getElementById("preview-q-explanation-box");
+        var toggleBtn = document.getElementById("preview-toggle-explanation-btn");
+        var toggleText = document.getElementById("preview-toggle-text");
+        var isHidden = box.style.display === "none";
+        
+        if (isHidden) {
+          box.style.display = "flex";
+          toggleBtn.style.background = "#f0fdf4";
+          toggleBtn.style.color = "#15803d";
+          toggleBtn.style.borderColor = "#bbf7d0";
+          if (toggleText) toggleText.textContent = "Ẩn Đáp Án & Lời Giải Chi Tiết";
+          
+          // Highlight correct choices in options container
+          var qOptions = document.querySelectorAll("#preview-q-options-container > div");
+          qOptions.forEach(function(optRow) {
+            var isCorr = optRow.getAttribute("data-correct") === "true";
+            var k = optRow.getAttribute("data-key");
+            if (isCorr) {
+              optRow.style.borderColor = "#22c55e";
+              optRow.style.background = "#f0fdf4";
+              var badge = optRow.querySelector("span");
+              if (badge) {
+                badge.style.background = "#22c55e";
+                badge.style.color = "white";
+                badge.style.borderColor = "#22c55e";
+              }
+            }
+            
+            // Highlight statement choices
+            var stmtContainer = optRow.querySelector("div[data-stmt-id]");
+            if (stmtContainer) {
+              var corrVal = stmtContainer.getAttribute("data-correct-val") === "true";
+              var choices = stmtContainer.querySelectorAll("span");
+              if (choices.length === 2) {
+                if (corrVal) {
+                  choices[0].style.borderColor = "#22c55e";
+                  choices[0].style.background = "#22c55e";
+                  choices[0].style.color = "white";
+                } else {
+                  choices[1].style.borderColor = "#ef4444";
+                  choices[1].style.background = "#ef4444";
+                  choices[1].style.color = "white";
+                }
+              }
+            }
+          });
+        } else {
+          box.style.display = "none";
+          toggleBtn.style.background = "#fff5f6";
+          toggleBtn.style.color = "#c2272d";
+          toggleBtn.style.borderColor = "#fecdd3";
+          if (toggleText) toggleText.textContent = "Hiện Đáp Án & Lời Giải Chi Tiết";
+          
+          // Reset option displays
+          var qOptions = document.querySelectorAll("#preview-q-options-container > div");
+          qOptions.forEach(function(optRow) {
+            optRow.style.borderColor = "#e2e8f0";
+            optRow.style.background = "#ffffff";
+            var badge = optRow.querySelector("span");
+            if (badge) {
+              badge.style.background = "#f1f5f9";
+              badge.style.color = "#475569";
+              badge.style.borderColor = "#cbd5e1";
+            }
+            
+            // Reset statement choices
+            var stmtContainer = optRow.querySelector("div[data-stmt-id]");
+            if (stmtContainer) {
+              var choices = stmtContainer.querySelectorAll("span");
+              choices.forEach(function(c) {
+                c.style.borderColor = "#cbd5e1";
+                c.style.background = "#f1f5f9";
+                c.style.color = "#475569";
+              });
+            }
+          });
+        }
+      };
+
+      window.previewRandomExamAsStudent = function() {
+        if (typeof window.generateRandomTSAExam === "function") {
+          window.generateRandomTSAExam("TMA_RANDOM_001");
+        }
+        if (typeof window.startExamDirectly === "function") {
+          window.startExamDirectly("Phòng Luyện Đề Ngẫu Nhiên", "waiting.html?exam=TMA_RANDOM_001");
+        } else if (typeof window.startDirectExamRandom === "function") {
+          window.startDirectExamRandom("TMA_RANDOM_001");
+        } else {
+          window.open("waiting.html?exam=TMA_RANDOM_001", "_blank");
+        }
+      };
+
+      window.updateCurrentMathDifficulty = function(val) {
+        var q = getQuestionDraft("math");
+        if (q) q.difficulty = Number(val);
+      };
+
+      window.autoClassifyMathQuestionForm = function() {
+        var txt = document.getElementById("math-q-text")?.value || "";
+        var selectEl = document.getElementById("math-q-difficulty-select");
+        var topicEl = document.getElementById("math-single-qb-topic-select");
+        
+        if (!txt.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi trước khi phân loại.");
+          return;
+        }
+
+        var apiKey = localStorage.getItem("tma_gemini_api_key");
+        if (!apiKey) {
+          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
+          if (!inputKey) return;
+          apiKey = inputKey.trim();
+          localStorage.setItem("tma_gemini_api_key", apiKey);
+        }
+
+        var aiBtn = document.querySelector("button[onclick*='autoClassifyMathQuestionForm']");
+        var origHtml = aiBtn ? aiBtn.innerHTML : "";
+        if (aiBtn) {
+          aiBtn.disabled = true;
+          aiBtn.innerHTML = `⏳ AI Phân tích...`;
+        }
+
+        var systemInstruction = "Bạn là chuyên gia khảo thí kì thi đánh giá tư duy TSA Bách Khoa Việt Nam. " +
+          "Nhiệm vụ của bạn là phân tích câu hỏi toán học được gửi lên để xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất và mức độ khó của nó.\n" +
+          "Chủ đề BẮT BUỘC phải là một trong các giá trị sau:\n" +
+          "\"Khảo sát hàm số\", \"Mũ và Lôgarit\", \"Nguyên hàm & Tích phân\", \"Số phức\", \"Tổ hợp & Xác suất\", \"Hình học không gian\", \"Hình học giải tích Oxyz\", \"Lượng giác\", \"Dãy số & Cấp số\", \"Vectơ & Hệ tọa độ\", \"Phương trình & Hệ phương trình\".\n" +
+          "Độ khó BẮT BUỘC là 1 (Dễ), 2 (Trung bình) hoặc 3 (Khó).\n" +
+          "Đầu ra duy nhất là một đối tượng JSON có định dạng:\n" +
+          "{\n" +
+          "  \"topic\": \"chủ đề\",\n" +
+          "  \"difficulty\": 1 | 2 | 3\n" +
+          "}";
+
+        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+        var requestPayload = {
+          contents: [{
+            parts: [{
+              text: "Hãy phân tích câu hỏi toán sau và trả về JSON chủ đề, độ khó:\n\n" + txt
+            }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.1
+          },
+          systemInstruction: {
+            parts: [{
+              text: systemInstruction
+            }]
+          }
+        };
+
+        fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestPayload)
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error("API error");
+          return res.json();
+        })
+        .then(function(data) {
+          var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+          var result = safeParseGeminiJson(textResponse);
+          
+          if (selectEl && result.difficulty) {
+            selectEl.value = String(result.difficulty);
+            window.updateCurrentMathDifficulty(result.difficulty);
+          }
+          if (topicEl && result.topic) {
+            var exists = Array.from(topicEl.options).some(function(opt) { return opt.value === result.topic; });
+            if (!exists) {
+              var newOpt = document.createElement("option");
+              newOpt.value = result.topic;
+              newOpt.textContent = result.topic;
+              topicEl.appendChild(newOpt);
+            }
+            topicEl.value = result.topic;
+          }
+          
+          alert("✓ AI đã phân tích chủ đề và độ khó thành công!");
+        })
+        .catch(function(err) {
+          console.error(err);
+          var level = 1;
+          var topic = "Khảo sát hàm số";
+          if (txt.includes("\\int") || txt.includes("\\lim") || txt.includes("phương trình mặt phẳng") || txt.includes("biện luận")) {
+            level = 3;
+            topic = txt.includes("phương trình mặt phẳng") ? "Hình học giải tích Oxyz" : "Nguyên hàm & Tích phân";
+          } else if (txt.includes("xác suất") || txt.includes("tổ hợp") || txt.includes("chọn")) {
+            level = 2;
+            topic = "Tổ hợp & Xác suất";
+          }
+          if (selectEl) { selectEl.value = String(level); window.updateCurrentMathDifficulty(level); }
+          if (topicEl) topicEl.value = topic;
+          alert("✓ Đã tự động phân loại chủ đề và độ khó theo thuật toán phân tích nhanh!");
+        })
+        .finally(function() {
+          if (aiBtn) {
+            aiBtn.disabled = false;
+            aiBtn.innerHTML = origHtml;
+          }
+        });
+      };
+
+      window.switchQbMode = function(mode) {
+        var btnAi = document.getElementById("qb-tab-ai");
+        var btnManual = document.getElementById("qb-tab-manual");
+        var boxAi = document.getElementById("qb-mode-ai-box");
+        var formManual = document.getElementById("question-bank-form");
+
+        if (mode === "ai") {
+          if (btnAi) { btnAi.style.background = "#c2272d"; btnAi.style.color = "white"; btnAi.style.border = "none"; }
+          if (btnManual) { btnManual.style.background = "white"; btnManual.style.color = "#475569"; btnManual.style.border = "1.5px solid #cbd5e1"; }
+          if (boxAi) boxAi.style.display = "flex";
+          if (formManual) formManual.style.display = "none";
+        } else {
+          if (btnManual) { btnManual.style.background = "#c2272d"; btnManual.style.color = "white"; btnManual.style.border = "none"; }
+          if (btnAi) { btnAi.style.background = "white"; btnAi.style.color = "#475569"; btnAi.style.border = "1.5px solid #cbd5e1"; }
+          if (formManual) formManual.style.display = "flex";
+          if (boxAi) boxAi.style.display = "none";
+        }
+      };
+
+      window.onQbSubjectChange = function() {
+        var subj = document.getElementById("qb-subject")?.value || "math";
+        var passageWrap = document.getElementById("qb-passage-wrapper");
+        var diffWrap = document.getElementById("qb-difficulty-wrapper");
+
+        if (subj === "reading" || subj === "science") {
+          if (passageWrap) passageWrap.style.display = "flex";
+          if (diffWrap) diffWrap.style.display = "none";
+        } else {
+          if (passageWrap) passageWrap.style.display = "none";
+          if (diffWrap) diffWrap.style.display = "block";
+        }
+      };
+
+      window.processAiSmartExtract = function() {
+        var rawText = document.getElementById("qb-ai-raw-text")?.value || "";
+        var statusEl = document.getElementById("qb-ai-status");
+
+        if (!rawText.trim()) {
+          alert("Vui lòng dán nội dung bài đọc hoặc câu hỏi trước khi chạy AI.");
+          return;
+        }
+
+        var apiKey = localStorage.getItem("tma_gemini_api_key");
+        if (!apiKey) {
+          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
+          if (!inputKey) return;
+          apiKey = inputKey.trim();
+          localStorage.setItem("tma_gemini_api_key", apiKey);
+        }
+
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.style.color = "#2563eb";
+          statusEl.textContent = "⏳ AI đang phân tích, giải đề và phân loại độ khó...";
+        }
+
+        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.
+Nhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.
+
+CHỈ THỊ VỀ NỘI DUNG VÀ KHẢ NĂNG SUY LUẬN:
+1. Đọc kỹ câu hỏi, tự suy luận giải bài toán đó và viết LỜI GIẢI CHI TIẾT ("explanation") từng bước một cách chặt chẽ, dễ hiểu. Sử dụng định dạng LaTeX cho tất cả công thức.
+2. Phân tích nội dung câu hỏi Toán để xác định:
+   - "topic": Chủ đề Toán học cụ thể bám sát chương trình sách giáo khoa trung học phổ thông (SGK cấp 3 Việt Nam). BẮT BUỘC chỉ chọn một trong các chủ đề chuẩn sau làm "topic" (không tự biên soạn chủ đề khác): "Khảo sát hàm số", "Mũ và Lôgarit", "Nguyên hàm & Tích phân", "Số phức", "Tổ hợp & Xác suất", "Hình học không gian", "Hình học giải tích Oxyz", "Lượng giác", "Dãy số & Cấp số", "Vectơ & Hệ tọa độ", "Phương trình & Hệ phương trình".
+   - "difficulty": Độ khó từ 1 đến 3 (1: Dễ - nhận biết cơ bản; 2: Trung bình - thông hiểu, vận dụng thấp từ 2-3 bước tính toán; 3: Khó - vận dụng cao, suy luận logic phức tạp).
+3. ĐỐI VỚI ĐỀ ĐỌC HIỂU/KHOA HỌC:
+   - Nếu văn bản nhập vào có dạng ngữ liệu nền (đoạn văn dài) kèm các câu hỏi đi kèm, tự động gom nhóm chúng lại và xác định section_id là "reading" (Đọc hiểu) hoặc "science" (Khoa học - nếu chứa kiến thức Vật lý, Hóa học, Sinh học).
+   - Đặt toàn bộ thông tin ngữ liệu nền trong thuộc tính "group".
+
+YÊU CẦU VỀ ĐỊNH DẠNG CÔNG THỨC TOÁN (LƯU Ý CỰC KỲ QUAN TRỌNG):
+- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).
+- BẮT BUỘC escape ký tự gạch chéo ngược thành song song hai gạch chéo ngược (\\\\\\\\( ... \\\\\\\\) và \\\\\\\\[ ... \\\\\\\\]) trong chuỗi JSON để tránh lỗi cú pháp parse JSON trong JavaScript.
+- Để công thức hiển thị đẹp nhất: sử dụng \\\\dfrac thay vì \\\\frac cho các phân số; sử dụng \\\\limits cho giới hạn tổng/tích (ví dụ: \\\\sum\\\\limits_{k=1}^{n}).
+
+Cấu trúc JSON đầu ra yêu cầu duy nhất:
+{
+  "section_id": "math" | "reading" | "science",
+  "data": {
+    "questions": [
+      {
+        "question_no": 1,
+        "question_type": "single_choice" | "multiple_choice" | "true_false" | "numeric_answer" | "drag_drop",
+        "question": "Nội dung câu hỏi Toán...",
+        "options": [
+          { "key": "A", "text": "Phương án A" },
+          { "key": "B", "text": "Phương án B" },
+          { "key": "C", "text": "Phương án C" },
+          { "key": "D", "text": "Phương án D" }
+        ],
+        "correct_answer": "A" | ["A", "B"] | { "a": true, "b": false } | 12.5,
+        "difficulty": 1 | 2 | 3,
+        "topic": "Chủ đề Toán học...",
+        "explanation": "Lời giải từng bước chi tiết..."
+      }
+    ],
+    "group": {
+      "title": "Tiêu đề bài đọc",
+      "passage": "Văn bản ngữ liệu nền...",
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "single_choice",
+          "question": "Câu hỏi số 1...",
+          "options": [
+            { "key": "A", "text": "..." }
+          ],
+          "correct_answer": "A",
+          "explanation": "Lời giải chi tiết..."
+        }
+      ]
+    }
+  }
+}`;
+
+        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
+        var promptText = systemInstruction + "\n\nNỘI DUNG VĂN BẢN CẦN PHÂN TÍCH:\n" + rawText;
+
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: "user",
+                parts: [
+                  { text: promptText }
+                ]
+              }
+            ],
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
+          })
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            return response.text().then(function(err) {
+              throw new Error("Lỗi API Gemini: " + response.status + " - " + err);
+            });
+          }
+          return response.json();
+        })
+        .then(function(resData) {
+          var jsonText = resData.candidates[0].content.parts[0].text;
+          var result = safeParseGeminiJson(jsonText);
+          
+          var targetCode = "TMA_RANDOM_001";
+          var examObj = null;
+          var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (stored) {
+            try { examObj = JSON.parse(stored); } catch(e) {}
+          }
+          if (!examObj || !Array.isArray(examObj.sections)) {
+            examObj = {
+              exam_code: targetCode,
+              title: "Ngân hàng câu hỏi Luyện đề ngẫu nhiên",
+              duration_minutes: 150,
+              status: "published",
+              sections: [
+                { section_id: "math", section_label: "Tư duy Toán học", questions: [] },
+                { section_id: "reading", section_label: "Tư duy Đọc hiểu", groups: [] },
+                { section_id: "science", section_label: "Tư duy Khoa học", groups: [] }
+              ]
+            };
+          }
+
+          if (result.section_id === "math") {
+            var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+            if (!mathSec) {
+              mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
+              examObj.sections.push(mathSec);
+            }
+            if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+
+            var addedCount = 0;
+            if (result.data && Array.isArray(result.data.questions)) {
+              result.data.questions.forEach(function(newQ) {
+                newQ.question_no = mathSec.questions.length + 1;
+                mathSec.questions.push(newQ);
+                addedCount++;
+              });
+            }
+            
+            if (statusEl) {
+              statusEl.style.color = "#166534";
+              statusEl.textContent = "✅ Đã nạp thành công " + addedCount + " câu hỏi Toán học thông minh!";
+            }
+          } else if (result.section_id === "reading" || result.section_id === "science") {
+            var secId = result.section_id;
+            var sec = examObj.sections.find(function(s) { return s.section_id === secId; });
+            if (!sec) {
+              sec = { section_id: secId, section_label: secId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
+              examObj.sections.push(sec);
+            }
+            if (!Array.isArray(sec.groups)) sec.groups = [];
+
+            if (result.data && result.data.group) {
+              var newGroup = result.data.group;
+              newGroup.group_id = "g_" + Date.now();
+              sec.groups.push(newGroup);
+              
+              if (statusEl) {
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp thành công Ngữ liệu nền Đọc hiểu/Khoa học kèm câu hỏi!";
+              }
+            } else {
+              throw new Error("Dữ liệu ngữ liệu từ AI không đúng cấu trúc.");
+            }
+          } else {
+            throw new Error("Không xác định được môn thi (section_id).");
+          }
+
+          localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+          localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+          document.getElementById("qb-ai-raw-text").value = "";
+          setTimeout(function() {
+            if (typeof renderPracticeRoom === "function") renderPracticeRoom();
+          }, 800);
+
+        })
+        .catch(function(error) {
+          console.error(error);
+          if (statusEl) {
+            statusEl.style.color = "#ef4444";
+            statusEl.textContent = "❌ Lỗi: " + error.message;
+          }
+          alert("Lỗi khi xử lý với AI: " + error.message);
+        });
+      };
 
     })();

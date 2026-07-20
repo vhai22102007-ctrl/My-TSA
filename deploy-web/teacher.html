@@ -53,7 +53,7 @@
 
 
 
-  <script defer src="js/question-renderers.js?v=1.0.4"></script>
+  <script defer src="js/question-renderers.js?v=1.0.5"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
 </head>
 <body>
@@ -460,7 +460,7 @@
         <!-- 1. TAB: PHÒNG LUYỆN -->
         <div id="tab-practice" class="tab-panel">
           <div class="topbar">
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
               <button class="btn-topbar-toggle" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng thanh bên">
                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -470,7 +470,7 @@
                   <polygon points="10,10 6,12 10,14" fill="currentColor" stroke="none"></polygon>
                 </svg>
               </button>
-              <h1 id="practice-room-title">Phòng luyện đề: Đánh giá tư duy - TSA</h1>
+              <h1 id="practice-room-title" style="flex: 1; margin: 0; font-size: 13.5px; font-weight: normal;">Phòng luyện đề: Đánh giá tư duy - TSA</h1>
             </div>
           </div>
 
@@ -1190,15 +1190,35 @@
                 <h1 id="page-title">Bộ soạn đề TSA</h1>
                 <p style="margin:6px 0 0;color:var(--muted);display:none!important;" id="editor-subtitle">Đang chỉnh sửa đề thi.</p>
               </div>
-              <div id="topbar-editor-controls" style="display: none; align-items: center; gap: 16px; margin-left: 12px;">
-                <div class="question-number-circle" id="topbar-qno-circle">1</div>
-                <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding-left: 0; display: flex; gap: 16px; flex-wrap: wrap;">
-                  <button type="button" class="editor-role-tab-btn active" id="global-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Giáo viên
+              <div id="topbar-editor-controls" style="display: none; align-items: center; justify-content: space-between; width: 100%; gap: 16px; font-family: inherit;">
+                <!-- Left Side: Back button, Circle 1, Role Tabs -->
+                <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+                  <button type="button" class="btn" id="topbar-back-btn" onclick="exitEditingMode()" style="display: inline-flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 6px; padding: 0 14px; height: 36px; font-family: inherit; font-size: 13px; color: #c2272d; border: 1.5px solid #fecdd3; background: #fff5f6; cursor: pointer; transition: all 0.15s; box-sizing: border-box;" onmouseover="this.style.background='#c2272d'; this.style.color='#ffffff';" onmouseout="this.style.background='#fff5f6'; this.style.color='#c2272d';">
+                    Quay lại
                   </button>
-                  <button type="button" class="editor-role-tab-btn" id="global-role-tab-student" onclick="setGlobalEditorRoleView('student')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Giao diện học sinh
-                  </button>
+
+                  <div class="question-number-circle" id="topbar-qno-circle" style="width: 34px; height: 34px; line-height: 34px; font-size: 14px; font-weight: 800; border-radius: 50%; background: #c2272d; color: #ffffff; text-align: center; flex-shrink: 0;">1</div>
+
+                  <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding-left: 0; display: flex; gap: 12px; align-items: center; height: 36px;">
+                    <button type="button" class="editor-role-tab-btn active" id="global-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')" style="height: 36px; display: inline-flex; align-items: center; padding: 0 10px; font-size: 13.5px; font-weight: 700;">
+                      Giáo viên
+                    </button>
+                    <button type="button" class="editor-role-tab-btn" id="global-role-tab-student" onclick="setGlobalEditorRoleView('student')" style="height: 36px; display: inline-flex; align-items: center; padding: 0 10px; font-size: 13.5px; font-weight: 600;">
+                      Giao diện học sinh
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Right Side: Question Type Selector Tabs (Moved from Image 2 to Topbar) -->
+                <div id="topbar-single-qb-metadata" style="display: none; align-items: center; gap: 6px; margin-left: auto; flex-wrap: nowrap;">
+                  <div id="topbar-question-type-tabs" style="display: flex; align-items: center; gap: 4px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 3px; height: 36px; box-sizing: border-box;">
+                    <button type="button" class="math-type-btn active" data-type="single_choice" onclick="window.setMathQuestionType('single_choice')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 700; border-radius: 6px; border: none; background: #c2272d; color: white; cursor: pointer; white-space: nowrap;">Trắc nghiệm 4 đáp án</button>
+                    <button type="button" class="math-type-btn" data-type="single_choice_2" onclick="window.setMathQuestionType('single_choice_2')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #475569; cursor: pointer; white-space: nowrap;">Trắc nghiệm 2 đáp án</button>
+                    <button type="button" class="math-type-btn" data-type="multiple_choice" onclick="window.setMathQuestionType('multiple_choice')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #475569; cursor: pointer; white-space: nowrap;">Trắc nghiệm nhiều đáp án</button>
+                    <button type="button" class="math-type-btn" data-type="true_false" onclick="window.setMathQuestionType('true_false')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #475569; cursor: pointer; white-space: nowrap;">Đúng / Sai</button>
+                    <button type="button" class="math-type-btn" data-type="fill_blank" onclick="window.setMathQuestionType('fill_blank')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #475569; cursor: pointer; white-space: nowrap;">Điền đáp án</button>
+                    <button type="button" class="math-type-btn" data-type="drag_drop" onclick="window.setMathQuestionType('drag_drop')" style="height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; background: transparent; color: #475569; cursor: pointer; white-space: nowrap;">Chọn thẻ vào chỗ trống</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1747,6 +1767,202 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
     </div>
   </div>
 
+  <!-- QUESTION BANK MANAGER MODAL (AI CLASSIFIER) -->
+  <div class="modal-backdrop" id="modal-question-bank-manager" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2200; justify-content: center; align-items: center;">
+    <div class="modal-content" style="background: white; border-radius: 12px; width: 750px; max-width: 92%; max-height: 90vh; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; overflow-y: auto; font-family: 'Inter', sans-serif;">
+      
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.3);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #1e293b;">Thêm Ngân Hàng Câu Hỏi</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="background: linear-gradient(135deg, #fff5f6 0%, #ffe4e6 100%); color: #c2272d; font-size: 11.5px; font-weight: 800; padding: 5px 12px; border-radius: 20px; border: 1px solid #fecdd3; display: flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(194,39,45,0.08);">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #c2272d;"></span>
+            AI MATRIX ENGINE
+          </span>
+          <button type="button" class="btn" onclick="window.closeQuestionBankModal()" style="border-radius: 50%; width: 30px; height: 30px; padding: 0; background: #f1f5f9; border: none; font-size: 14px; font-weight: 700; cursor: pointer; color: #64748b; transition: all 0.2s;">✕</button>
+        </div>
+      </div>
+
+      <!-- MODE: 100% AI SMART EXTRACTOR -->
+      <div id="qb-mode-ai-box" style="display: flex; flex-direction: column; gap: 14px; margin-top: 4px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; color: #0f172a;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#c2272d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Dán Văn Bản Thô / Bài Đọc / Đề Thi:
+            </label>
+            <span style="font-size: 11px; font-weight: 700; color: #c2272d; background: #fff5f6; padding: 3px 10px; border-radius: 6px; border: 1px solid #ffe4e6;">⚡ Tự động trích xuất bài đọc & phân loại</span>
+          </div>
+          <textarea id="qb-ai-raw-text" rows="11" placeholder="Ví dụ dán bài đọc Đọc hiểu / Khoa học:&#10;[1] Trên con đường phát triển kiến trúc...&#10;Câu 1. Theo đoạn [1]...&#10;A. Đáp án A   B. Đáp án B   C. Đáp án C   D. Đáp án D&#10;Đáp án đúng: A&#10;&#10;Hoặc dán câu hỏi Toán:&#10;Cho hàm số y = f(x) có đạo hàm f'(x) = x(x-1)^2..." style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 13.5px; outline: none; font-family: inherit; box-sizing: border-box; line-height: 1.6; background: #fafafa; transition: all 0.25s ease;" onfocus="this.style.borderColor='#c2272d'; this.style.background='#ffffff'; this.style.boxShadow='0 0 0 4px rgba(194, 39, 45, 0.08)';" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#fafafa'; this.style.boxShadow='none';"></textarea>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+          <div id="qb-ai-status" style="font-size: 13.5px; font-weight: 700; color: #166534; display: none;"></div>
+          <div style="display: flex; gap: 10px; margin-left: auto;">
+            <button type="button" class="btn" onclick="window.closeQuestionBankModal()" style="padding: 10px 18px; border-radius: 10px; border: 1px solid #cbd5e1; background: white; font-size: 13.5px; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.2s;">Hủy</button>
+            <button type="button" class="btn" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; font-weight: 800; padding: 10px 24px; border-radius: 10px; border: none; cursor: pointer; font-size: 13.5px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(194, 39, 45, 0.3); transition: all 0.2s;" onclick="window.processAiSmartExtract()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              AI Phân Tích & Nạp Ngân Hàng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT PREVIEW MODAL -->
+  <div class="modal-backdrop" id="modal-qb-preview" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2300; justify-content: center; align-items: center; box-sizing: border-box;">
+    <div class="modal-content" style="background: white; border-radius: 12px; width: 680px; max-width: 92%; max-height: 90vh; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; overflow-y: auto; font-family: 'Inter', sans-serif;">
+      
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e293b;">Xem Trước Câu Hỏi (Học Sinh)</h3>
+            <span style="font-size: 11px; color: #64748b; font-weight: 500;">Giao diện hiển thị trực quan trong phòng thi</span>
+          </div>
+        </div>
+        <button type="button" class="btn" onclick="window.closeQbPreviewModal()" style="border-radius: 50%; width: 30px; height: 30px; padding: 0; background: #f1f5f9; border: none; font-size: 14px; font-weight: 700; cursor: pointer; color: #64748b; transition: all 0.2s;">✕</button>
+      </div>
+
+      <!-- Metadata (Difficulty, Topic) -->
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <span id="preview-q-diff-badge"></span>
+        <span id="preview-q-topic-badge" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;">Chủ đề: Hàm số</span>
+        <span id="preview-q-type-badge" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;">Trắc nghiệm đơn</span>
+      </div>
+
+      <!-- Question Content -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; line-height: 1.6; font-size: 14.5px; color: #0f172a; min-height: 60px;" id="preview-q-text">
+        <!-- Question body with LaTeX -->
+      </div>
+
+      <!-- Options Container -->
+      <div id="preview-q-options-container" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Dynamically rendered choices -->
+      </div>
+
+      <!-- Explanation & Answer Toggle Section -->
+      <div style="border-top: 1.5px solid #f1f5f9; padding-top: 16px; margin-top: 6px;">
+        <button type="button" class="btn" id="preview-toggle-explanation-btn" onclick="window.togglePreviewExplanation()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff5f6; color: #c2272d; border: 1.5px dashed #fecdd3; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13.5px; cursor: pointer; transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span id="preview-toggle-text">Hiện Đáp Án & Lời Giải Chi Tiết</span>
+        </button>
+
+        <!-- Hidden Explanations content -->
+        <div id="preview-q-explanation-box" style="display: none; margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; flex-direction: column; gap: 12px; box-sizing: border-box;">
+          <div>
+            <span style="font-weight: 800; color: #166534; font-size: 13px; display: inline-block; margin-bottom: 4px;">🎯 ĐÁP ÁN ĐÚNG:</span>
+            <span id="preview-q-correct-answer-value" style="font-weight: 800; color: #15803d; font-size: 13.5px; background: #dcfce7; padding: 2px 10px; border-radius: 6px; border: 1px solid #bbf7d0; display: inline-block; margin-left: 6px;">A</span>
+          </div>
+          <div>
+            <span style="font-weight: 800; color: #166534; font-size: 13px; display: block; margin-bottom: 6px;">💡 LỜI GIẢI CHI TIẾT (AI GENERATED):</span>
+            <div id="preview-q-explanation-content" style="font-size: 13.5px; color: #14532d; line-height: 1.7; font-family: inherit;">
+              <!-- Explanations with LaTeX -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EDIT QUESTION MODAL -->
+  <div class="modal-backdrop" id="modal-qb-edit" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2300; justify-content: center; align-items: center; box-sizing: border-box;">
+    <div class="modal-content" style="background: white; border-radius: 12px; width: 700px; max-width: 95%; max-height: 90vh; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; overflow-y: auto; font-family: 'Inter', sans-serif;">
+      
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.2);">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e293b;">Chỉnh sửa Câu hỏi Ngân hàng</h3>
+            <span style="font-size: 11px; color: #64748b; font-weight: 500;">Cập nhật nội dung trực tiếp vào Ngân hàng đề ngẫu nhiên</span>
+          </div>
+        </div>
+        <button type="button" class="btn" onclick="window.closeQbEditModal()" style="border-radius: 50%; width: 30px; height: 30px; padding: 0; background: #f1f5f9; border: none; font-size: 14px; font-weight: 700; cursor: pointer; color: #64748b; transition: all 0.2s;">✕</button>
+      </div>
+
+      <!-- Form Grid -->
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Row 1: Type, Difficulty, Topic -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Loại câu hỏi:</label>
+            <select id="edit-qb-type" onchange="window.onEditQbTypeChange()" style="padding: 8px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; font-size: 13.5px; outline: none; background: white; font-family: inherit;">
+              <option value="single_choice">Trắc nghiệm đơn</option>
+              <option value="multiple_choice">Trắc nghiệm nhiều đáp án</option>
+              <option value="true_false">Đúng / Sai</option>
+              <option value="numeric_answer">Điền số đáp số</option>
+            </select>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Độ khó:</label>
+            <select id="edit-qb-difficulty" style="padding: 8px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; font-size: 13.5px; outline: none; background: white; font-family: inherit;">
+              <option value="1">Mức 1 (Dễ)</option>
+              <option value="2">Mức 2 (Trung bình)</option>
+              <option value="3">Mức 3 (Khó)</option>
+            </select>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Chủ đề (SGK):</label>
+            <select id="edit-qb-topic" style="padding: 8px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 600; font-size: 13.5px; outline: none; background: white; font-family: inherit;">
+              <option value="Khảo sát hàm số">Khảo sát hàm số</option>
+              <option value="Mũ và Lôgarit">Mũ và Lôgarit</option>
+              <option value="Nguyên hàm & Tích phân">Nguyên hàm & Tích phân</option>
+              <option value="Số phức">Số phức</option>
+              <option value="Tổ hợp & Xác suất">Tổ hợp & Xác suất</option>
+              <option value="Hình học không gian">Hình học không gian</option>
+              <option value="Hình học giải tích Oxyz">Hình học giải tích Oxyz</option>
+              <option value="Lượng giác">Lượng giác</option>
+              <option value="Dãy số & Cấp số">Dãy số & Cấp số</option>
+              <option value="Vectơ & Hệ tọa độ">Vectơ & Hệ tọa độ</option>
+              <option value="Phương trình & Hệ phương trình">Phương trình & Hệ phương trình</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Question Text -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Nội dung câu hỏi (hỗ trợ LaTeX):</label>
+          <textarea id="edit-qb-question-text" rows="5" style="padding: 10px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 14px; outline: none; line-height: 1.5; font-family: inherit; font-weight: 500; resize: vertical;"></textarea>
+        </div>
+
+        <!-- Row 3: Options Editor wrapper -->
+        <div id="edit-qb-options-editor-container" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Dynamically loaded inputs based on type -->
+        </div>
+
+        <!-- Row 4: Correct Answer -->
+        <div id="edit-qb-correct-answer-wrapper" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Dynamically loaded correct answer inputs -->
+        </div>
+
+        <!-- Row 5: Explanation -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Lời giải chi tiết (hỗ trợ LaTeX):</label>
+          <textarea id="edit-qb-explanation" rows="4" style="padding: 10px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 14px; outline: none; line-height: 1.5; font-family: inherit; font-weight: 500; resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1.5px solid #f1f5f9; padding-top: 16px; margin-top: 6px;">
+        <button type="button" class="btn" onclick="window.closeQbEditModal()" style="background: white; border: 1.5px solid #cbd5e1; color: #475569; font-weight: 700; padding: 10px 20px; border-radius: 8px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; font-family: inherit;">Hủy bỏ</button>
+        <button type="button" class="btn" onclick="window.saveQbEditedQuestion()" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; border: none; font-weight: 700; padding: 10px 24px; border-radius: 8px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; font-family: inherit; box-shadow: 0 4px 12px rgba(194,39,45,0.2);">Lưu Thay Đổi</button>
+      </div>
+
+    </div>
+  </div>
+
   <style>
     @keyframes spin {
       to { transform: rotate(360deg); }
@@ -1812,7 +2028,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
   </style>
 
   <script src="js/tsa001-fallback.js"></script>
-  <script src="js/teacher-page.js?v=1.0.4"></script>
+  <script src="js/teacher-page.js?v=1.0.5"></script>
 
   
 

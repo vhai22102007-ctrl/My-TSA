@@ -8,7 +8,14 @@
 
   function preprocessMathContent(text) {
     if (!text) return "";
-    return String(text)
+    var str = String(text);
+    // Parse Markdown bold **text** or ++text++ -> <strong>text</strong>
+    str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    str = str.replace(/\+\+(.*?)\+\+/g, '<strong>$1</strong>');
+    // Replace standalone bullet points
+    str = str.replace(/(^|\n)[\s]*[\*\-]\s+(.*?)(?=\n|$)/g, '$1&bull; $2');
+
+    return str
       .replace(/\\\(/g, '\\(\\displaystyle ')
       .replace(/\$(?!\$)/g, '$\\displaystyle ')
       .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
@@ -748,6 +755,81 @@
         } else {
           answerEl.innerHTML = '<div class="render-error">Không hỗ trợ dạng câu hỏi: ' + type + '</div>';
         }
+      }
+    }
+
+    // Check if in student preview mode
+    var isUrlPreview = new URLSearchParams(window.location.search).get("preview") === "true";
+    if (isUrlPreview && answerEl) {
+      var previewControls = document.createElement("div");
+      previewControls.className = "preview-answer-drawer-container";
+      previewControls.style.cssText = "margin-top: 20px; border-top: 1.5px dashed #cbd5e1; padding-top: 16px; width: 100%; font-family: inherit;";
+      
+      // Determine the answer string to display
+      var answerStr = "";
+      var corr = question.correct_answer;
+      if (corr !== undefined && corr !== null) {
+        if (type === "single_choice" || type === "multiple_choice") {
+          if (Array.isArray(corr)) {
+            answerStr = corr.join(", ");
+          } else {
+            answerStr = String(corr);
+          }
+        } else if (type === "true_false") {
+          if (typeof corr === "object") {
+            answerStr = Object.keys(corr).map(function(k) {
+              return k.toUpperCase() + ": " + (corr[k] ? "Đúng" : "Sai");
+            }).join(" | ");
+          } else {
+            answerStr = String(corr);
+          }
+        } else {
+          answerStr = String(corr);
+        }
+      } else {
+        answerStr = "Chưa có đáp án cấu hình.";
+      }
+      
+      var explanationStr = (question.explanation || question.solution_details || question.solution_detail || question.solution || "").trim() || "Chưa có lời giải chi tiết.";
+      
+      previewControls.innerHTML = `
+        <button type="button" class="btn" style="background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" onclick="window.togglePreviewAnswerDrawer(this)">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          Xem đáp án &amp; Lời giải (Preview)
+        </button>
+        <div class="preview-answer-content" style="display: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 12px; font-family: inherit;">
+          <div style="margin-bottom: 10px; font-size: 14px;">
+            <span style="font-weight: 800; color: #1e293b;">🎯 Đáp án đúng:</span> 
+            <span class="badge" style="background: #dcfce7; color: #166534; font-weight: 800; padding: 4px 8px; border-radius: 6px; font-size: 13.5px; border: 1px solid #bbf7d0; margin-left: 6px;">${answerStr}</span>
+          </div>
+          <div>
+            <span style="font-weight: 800; color: #1e293b; display: block; margin-bottom: 6px;">💡 Lời giải chi tiết:</span>
+            <div style="font-size: 13.5px; color: #334155; line-height: 1.6; word-break: break-word;">${explanationStr}</div>
+          </div>
+        </div>
+      `;
+      answerEl.appendChild(previewControls);
+      
+      if (!window.togglePreviewAnswerDrawer) {
+        window.togglePreviewAnswerDrawer = function(btn) {
+          var content = btn.nextElementSibling;
+          if (content.style.display === "none") {
+            content.style.display = "block";
+            btn.innerHTML = `
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              Ẩn đáp án &amp; Lời giải
+            `;
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise([content]).catch(function() {});
+            }
+          } else {
+            content.style.display = "none";
+            btn.innerHTML = `
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Xem đáp án &amp; Lời giải (Preview)
+            `;
+          }
+        };
       }
     }
 

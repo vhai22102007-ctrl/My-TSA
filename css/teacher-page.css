@@ -2055,3 +2055,24 @@
   transform: translateY(-3px) !important;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08) !important;
 }
+
+/* Extra spacing for single question editing workspace to prevent cramping */
+.math-split-layout #math-question-form {
+  padding: 16px 8px !important;
+}
+.math-split-layout #math-question-form .field {
+  margin-bottom: 24px !important;
+  gap: 10px !important;
+}
+.math-split-layout #math-question-form label {
+  font-size: 13.5px !important;
+  font-weight: 750 !important;
+  color: #1e293b !important;
+  margin-bottom: 8px !important;
+}
+.math-split-layout #math-question-form .textarea {
+  min-height: 140px !important;
+  height: 140px !important;
+  line-height: 1.6 !important;
+  padding: 12px 18px !important;
+}

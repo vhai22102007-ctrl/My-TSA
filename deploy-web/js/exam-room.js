@@ -186,7 +186,14 @@
 
   function preprocessMathContent(text) {
     if (!text) return "";
-    return String(text)
+    var str = String(text);
+    // Parse Markdown bold **text** or ++text++ -> <strong>text</strong>
+    str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    str = str.replace(/\+\+(.*?)\+\+/g, '<strong>$1</strong>');
+    // Replace standalone bullet points
+    str = str.replace(/(^|\n)[\s]*[\*\-]\s+(.*?)(?=\n|$)/g, '$1&bull; $2');
+
+    return str
       .replace(/\\\(/g, '\\(\\displaystyle ')
       .replace(/\$(?!\$)/g, '$\\displaystyle ')
       .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
@@ -756,7 +763,8 @@
 
     container.appendChild(feedbackDiv);
 
-    if (question.explanation) {
+    const explanationText = (question.explanation || question.solution_details || question.solution_detail || question.solution || "").trim();
+    if (explanationText) {
       const solutionContainer = document.createElement("div");
       solutionContainer.className = "solution-container";
       solutionContainer.style.cssText = "margin-top:16px; text-align: left;";
@@ -801,7 +809,7 @@
           <span>Lời giải chi tiết:</span>
         </div>
         <div class="explanation-content text-left" style="color: #334155; font-size: 13.5px; line-height: 1.6;">
-          ${sanitizeHtml(question.explanation)}
+          ${sanitizeHtml(explanationText)}
         </div>
       `;
 
@@ -2670,6 +2678,16 @@
           splitContainer.classList.add('show-questions');
         }
       });
+    });
+
+    // Automatic sync: reload exam data if draft is saved in another tab
+    window.addEventListener("storage", (e) => {
+      if (e.key && (e.key.startsWith("tma_tsa_teacher_draft_") || e.key.startsWith("tma_tsa_exam_"))) {
+        console.log("Teacher draft updated from another tab, reloading questions...");
+        if (typeof loadExamData === "function") {
+          loadExamData().catch(err => console.error(err));
+        }
+      }
     });
   }
 })();
