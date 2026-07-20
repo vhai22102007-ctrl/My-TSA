@@ -7153,6 +7153,8 @@ YÊU CẦU QUAN TRỌNG:
       }
 
       async function uploadAssetFile(event) {
+        alert("Chức năng tải lên trực tiếp đã được tắt để tránh làm đầy dung lượng của Supabase. Vui lòng nhập link ảnh trực tiếp từ Cloudflare R2.");
+        return;
         var client = window.supabaseClient;
         if (!client) {
           alert("Supabase Client chưa sẵn sàng!");

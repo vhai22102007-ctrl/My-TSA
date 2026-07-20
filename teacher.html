@@ -1506,14 +1506,13 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
         <button type="button" onclick="closeLmsAssetModal()" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: #888; font-weight: bold; line-height: 1;">&times;</button>
       </div>
 
-      <!-- Upload Section -->
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px dashed #cbd5e1;">
-        <div style="font-size: 13px; color: #64748b; font-weight: 500;">Tải ảnh nền mới lên từ thiết bị (.png, .jpg, .jpeg)</div>
+      <!-- Upload Section (Vô hiệu hóa để bảo vệ dung lượng Supabase) -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px dashed #e2e8f0;">
+        <div style="font-size: 13px; color: #94a3b8; font-weight: 500;">Tải lên trực tiếp đã khóa (Tránh đầy Supabase). Hãy dùng Cloudflare R2!</div>
         <div>
-          <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('lms-asset-upload-input').click()" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; font-size: 12px; padding: 6px 14px; color: white;">
-            + Tải lên tệp
+          <button class="btn btn-primary btn-sm" type="button" disabled style="background-color: #e2e8f0; border-color: #e2e8f0; font-weight: 700; font-size: 12px; padding: 6px 14px; color: #94a3b8; cursor: not-allowed;">
+            Tải lên đã khóa
           </button>
-          <input type="file" id="lms-asset-upload-input" accept="image/*" style="display: none;" onchange="uploadAssetFile(event)">
         </div>
       </div>
 
