@@ -1,7 +1,7 @@
 :root {
-      --brand: #135c97;
-      --brand-dark: #0f4a7a;
-      --brand-soft: #eff6ff;
+      --brand: #c2272d;
+      --brand-dark: #a81c21;
+      --brand-soft: #fff5f6;
       --page: #f8fafc;
       --card: #ffffff;
       --text: #111827;
@@ -466,7 +466,7 @@
     }
 
     .card {
-      border: 1px solid var(--line);
+      border: none;
       border-radius: var(--radius);
       background: var(--card);
       box-shadow: var(--shadow);
@@ -696,7 +696,7 @@
 
     .table-wrap {
       overflow-x: auto;
-      border: 1px solid var(--line);
+      border: none;
       border-radius: 8px;
     }
 
@@ -810,7 +810,7 @@
       margin-top: 12px;
     }
     .exam-card {
-      border: 1px solid var(--line);
+      border: none;
       background: #ffffff;
       border-radius: 10px;
       overflow: hidden;
@@ -910,6 +910,15 @@
     /* Sidebar collapse styles */
     .teacher-shell {
       transition: grid-template-columns 0.3s ease;
+    }
+    .teacher-shell.hide-sidebar {
+      grid-template-columns: 1fr !important;
+    }
+    .teacher-shell.hide-sidebar .sidebar {
+      display: none !important;
+    }
+    .teacher-shell.hide-sidebar .btn-topbar-toggle {
+      display: none !important;
     }
     .teacher-shell.sidebar-collapsed {
       grid-template-columns: 64px minmax(0, 1fr) !important;
@@ -1443,7 +1452,6 @@
       background-color: var(--brand);
       border-radius: 99px;
     }
-    
     /* Topbar Group Tabs overrides */
     #topbar-group-tabs-container .reading-tabs-nav,
     #topbar-group-tabs-container .science-tabs-nav {
@@ -1489,6 +1497,208 @@
       justify-content: center;
       flex-shrink: 0;
     }
+    /* Drag Drop forms */
+    #math-question-form #drag-body, #reading-question-form #drag-body, #science-question-form #drag-body {
+      min-height: 100px !important;
+      height: 100px !important;
+    }
+
+    /* Tab styles overrides */
+    #tab-math .card-body, #tab-reading .card-body, #tab-science .card-body {
+      padding: 20px 24px !important;
+    }
+    #tab-math .card, #tab-reading .card, #tab-science .card {
+      margin-bottom: 20px !important;
+    }
+    #tab-math .btn, #tab-reading .btn, #tab-science .btn {
+      min-height: 38px !important;
+      height: 38px !important;
+      padding: 0 16px !important;
+      font-size: 13.5px !important;
+      border-radius: 10px !important;
+    }
+    #tab-math .btn-row, #tab-reading .btn-row, #tab-science .btn-row {
+      margin-top: 14px !important;
+      gap: 10px !important;
+    }
+    #tab-reading table th, #tab-reading table td,
+    #tab-science table th, #tab-science table td {
+      padding: 8px 12px !important;
+      font-size: 13px !important;
+    }
+    #tab-reading .mini-list, #tab-science .mini-list {
+      gap: 10px !important;
+      margin-top: 16px !important;
+    }
+    #tab-reading .mini-item, #tab-science .mini-item {
+      padding: 12px 14px !important;
+      border-radius: 10px !important;
+    }
+    #tab-reading .mini-item h4, #tab-science .mini-item h4 {
+      margin-bottom: 6px !important;
+      font-size: 13.5px !important;
+    }
+    #tab-reading .mini-item p, #tab-science .mini-item p {
+      font-size: 12px !important;
+    }
+    .main:has(#tab-math.active),
+    .main:has(#tab-reading.active),
+    .main:has(#tab-science.active) {
+      padding: 16px 20px !important;
+    }
+    .math-split-layout {
+      display: grid;
+      grid-template-columns: 1fr 365px;
+      gap: 20px;
+      align-items: stretch;
+    }
+    @media (max-width: 1080px) {
+      .math-split-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    #tab-reading .passage-layout > div:first-child {
+      border-right: 1px solid var(--line);
+      padding-right: 28px;
+    }
+    .table-row-active {
+      background-color: var(--brand-soft) !important;
+    }
+    .table-row-active td {
+      color: var(--brand) !important;
+      font-weight: 600;
+    }
+
+    /* Sidebar nav-button styling consistency override */
+    body .teacher-shell:not(.sidebar-collapsed) #sidebar-normal-nav .nav-button {
+      justify-content: flex-start !important;
+      padding: 10px 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+    
+    body .teacher-shell #sidebar-normal-nav .nav-button {
+      font-size: 13.5px !important;
+      font-weight: 650 !important;
+      min-height: 40px !important;
+      border-radius: 10px !important;
+      color: #374151 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      border: none !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button:hover,
+    body .teacher-shell #sidebar-normal-nav .nav-button.active {
+      background: var(--brand-soft) !important;
+      color: var(--brand) !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button .menu-icon {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 20px !important;
+      height: 20px !important;
+      flex-shrink: 0 !important;
+    }
+
+    body .teacher-shell #sidebar-normal-nav .nav-button .menu-icon svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke: currentColor !important;
+      stroke-width: 1.8 !important;
+      fill: none !important;
+      display: block !important;
+    }
+
+    /* Editor Role switcher tabs (Giáo viên vs Giao diện học sinh) */
+    .editor-role-tabs-nav {
+      display: flex;
+      gap: 20px;
+      border-bottom: 1.5px solid var(--line);
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+    .editor-role-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      font-size: 13.5px;
+      font-weight: 750;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .editor-role-tab-btn:hover {
+      color: var(--brand);
+    }
+    .editor-role-tab-btn.active {
+      color: var(--brand);
+    }
+    .editor-role-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1.5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--brand);
+      border-radius: 99px;
+    }
+    
+    /* Topbar Group Tabs overrides */
+    #topbar-group-tabs-container .reading-tabs-nav,
+    #topbar-group-tabs-container .science-tabs-nav {
+      margin-bottom: 12px !important;
+      padding-left: 8px !important;
+      gap: 20px !important;
+    }
+
+    /* Horizontal Chapter-Lesson Tree Diagram */
+    .tree-wrapper {
+      display: flex;
+      gap: 60px;
+      padding: 40px 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      position: relative;
+      min-width: 100%;
+    }
+    
+    .tree-root-col {
+      display: flex;
+      align-items: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .tree-root-col::after {
+      content: '';
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      width: 30px;
+      height: 2px;
+      background: #cbd5e1;
+    }
+    
+    .tree-branches-col {
+      display: flex;
+      flex-direction: column;
+    }
+      gap: 30px;
+      position: relative;
+      justify-content: center;
+      flex-shrink: 0;
+    }
     .tree-branches-col::before {
       content: '';
       position: absolute;
@@ -1518,7 +1728,7 @@
     
     .tree-node {
       background: #ffffff;
-      border: 1.5px solid var(--line);
+      border: none;
       border-radius: 8px;
       padding: 12px 18px;
       font-weight: 700;
@@ -1605,7 +1815,7 @@
       position: relative;
       flex-shrink: 0;
     }
-        .tree-leaf-item::before {
+    .tree-leaf-item::before {
       content: '';
       position: absolute;
       left: -30px;
@@ -1614,8 +1824,7 @@
       height: 2px;
       background: #cbd5e1;
     }
-
-    /* Teacher Course Grid Cards (matched to student card layout) */
+    
     .lms-courses-grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1625,8 +1834,8 @@
     
     .lms-courses-grid-container .course-card {
       background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 0px;
+      border: none;
+      border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.02);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -1635,8 +1844,7 @@
     }
     .lms-courses-grid-container .course-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-      border-color: var(--brand);
+      box-shadow: 0 12px 28px rgba(194, 39, 45, 0.08);
     }
     
     .lms-courses-grid-container .course-hero {
@@ -1645,8 +1853,8 @@
       background-position: center;
       position: relative;
     }
-
-.lms-courses-grid-container .course-body {
+    
+    .lms-courses-grid-container .course-body {
       padding: 18px;
       display: flex;
       flex-direction: column;
@@ -1699,23 +1907,14 @@
       font-size: 12px;
       border: none;
       cursor: pointer;
-      background: var(--brand);
+      background: #c2272d;
       color: #ffffff;
-      transition: background 0.15s ease;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
     }
     .lms-courses-grid-container .enter-btn:hover {
-      background: var(--brand-dark);
+      box-shadow: 0 4px 10px rgba(194, 39, 45, 0.15);
     }
 
-/* =========================================
-   COPIED LIBRARY FILTER STYLES FOR TEACHER
-   ========================================= */
-.library-category-pills {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
 .lib-pill-btn {
   background: #f1f5f9 !important;
   border: 1px solid #e2e8f0 !important;
@@ -1792,28 +1991,67 @@
   border-bottom-color: #0f5a9e !important;
 }
 
-
-
-
 /* COLORFUL SIDEBAR ICONS */
+.nav-button[data-tab-target="overview"] .menu-icon svg {
+  stroke: #3b82f6 !important;
+}
 .nav-button[data-tab-target="practice"] .menu-icon svg {
   stroke: #ff7a00 !important;
 }
 .nav-button[data-tab-target="exams"] .menu-icon svg {
   stroke: #ec4899 !important;
 }
-.nav-button[data-tab-target="student-management"] .menu-icon svg {
+.nav-button[data-tab-target="manage-students"] .menu-icon svg {
   stroke: #10b981 !important;
 }
-.nav-button[data-tab-target="system-settings"] .menu-icon svg {
+.nav-button[data-tab-target="approve-courses"] .menu-icon svg {
+  stroke: #06b6d4 !important;
+}
+.nav-button[data-tab-target="manage-documents"] .menu-icon svg {
+  stroke: #059669 !important;
+}
+.nav-button[data-tab-target="manage-courses"] .menu-icon svg {
+  stroke: #6366f1 !important;
+}
+.nav-button[data-tab-target="activation-codes"] .menu-icon svg {
   stroke: #8b5cf6 !important;
+}
+.nav-button[data-tab-target="security-logs"] .menu-icon svg {
+  stroke: #7c3aed !important;
+}
+.nav-button[data-tab-target="manage-links"] .menu-icon svg {
+  stroke: #d946ef !important;
 }
 .nav-button[onclick*="teacherLogout"] .menu-icon svg {
   stroke: #ef4444 !important;
 }
 
+.student-admin-tab-btn, .system-admin-tab-btn, .tabs-nav-wrapper {
+  display: none !important;
+}
 
 /* PERMANENTLY HIDE REDUNDANT TOPBAR ELEMENTS */
 #page-title, #summary-grid, #autosave-status, #editor-subtitle {
   display: none !important;
+}
+
+/* Exact Mockup Exam Card style matching student side */
+.tsa-exam-item-card {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  width: 100% !important;
+  max-width: 380px !important;
+}
+.tsa-exam-item-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08) !important;
 }

@@ -1130,7 +1130,7 @@
     /* DETAILED COMPACT EXAM CARD (LIKE SCREENSHOT) */
     .exam-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin-top: 12px;
     }
@@ -1211,13 +1211,13 @@
     }
 
     .badge-green {
-      background: #f0fdf4;
-      color: #16a34a;
+      background: #fff5f6;
+      color: #c2272d;
       font-size: 11px;
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 9999px;
-      border: 1px solid #dcfce7;
+      border: 1px solid #ffe4e6;
     }
 
     .exam-card-footer {
@@ -3864,7 +3864,7 @@
     /* PRACTICE ROOM PREMIUM CARDS (LIKE SCREENSHOT) */
     .practice-grid-dynamic {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin-top: 16px;
     }
@@ -9326,12 +9326,14 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
   background: #f1f3f5 !important;
   border: 1px solid transparent !important;
   border-radius: 8px !important;
-  padding: 16px !important;
+  padding: 20px 20px !important;
+  min-height: 136px !important;
   display: flex !important;
-  gap: 16px !important;
-  align-items: flex-start !important;
+  gap: 18px !important;
+  align-items: center !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   cursor: pointer !important;
+  box-sizing: border-box !important;
 }
 .lib-folder-item:hover {
   transform: translateY(-2px) !important;
@@ -10219,7 +10221,7 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
    ========================================== */
 .library-docs-grid {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 16px !important;
 }
 
@@ -10231,13 +10233,15 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
   background: #f1f3f5 !important; /* Flat grayish background to match Mapstudy */
   border: none !important;
   border-radius: 8px !important;
-  padding: 16px 20px !important;
+  padding: 20px 20px !important;
+  min-height: 162px !important;
   display: flex !important;
   gap: 18px !important;
   align-items: center !important;
   box-shadow: none !important; /* Remove shadow for flat Mapstudy styling */
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   cursor: pointer !important;
+  box-sizing: border-box !important;
 }
 
 #course-study-modal .lib-doc-card:hover,
@@ -10293,7 +10297,13 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
   display: none !important;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .library-docs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
   .library-docs-grid {
     grid-template-columns: 1fr !important;
   }
@@ -10364,3 +10374,24 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 .select-page[data-theme="dark"] .metric-card.purple-card {
   border: none !important;
 }
+
+.tsa-shell.is-tsa .topbar-activate-btn {
+  color: #c2272d !important;
+}
+.tsa-shell.is-tsa .topbar-separator {
+  background-color: #c2272d !important;
+}
+.tsa-shell.is-tsa .topbar-icon-bell {
+  color: #c2272d !important;
+}
+.tsa-shell.is-tsa .topbar-nav-btn:hover,
+.tsa-shell.is-tsa .topbar-nav-btn.active {
+  color: #c2272d !important;
+}
+
+.library-folders-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+

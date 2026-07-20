@@ -3942,8 +3942,59 @@
 
         const category = currentPracticeCategory.toUpperCase(); // 'TSA', 'HSA', 'THPT', 'VACT', 'QDA'
         const subtabsContainer = document.getElementById("practice-subtabs-container");
+        const headerBox = document.querySelector("#tab-practice .tab-header-box");
+        const breadcrumbEl = document.getElementById("practice-breadcrumb");
+
+        let categoryName = "Đánh giá tư duy - TSA";
+        if (currentPracticeCategory === "tsa") {
+          categoryName = "Đánh giá tư duy - TSA";
+        } else if (currentPracticeCategory === "hsa") {
+          categoryName = "Đánh giá năng lực - HSA";
+        } else if (currentPracticeCategory === "thpt") {
+          categoryName = "Thi tốt nghiệp THPTQG";
+        } else if (currentPracticeCategory === "vact") {
+          categoryName = "Đánh giá năng lực - VACT";
+        } else if (currentPracticeCategory === "qda") {
+          categoryName = "Đánh giá năng lực - QDA";
+        }
+
+        // Render dynamic breadcrumb paths to support back navigation clicking
+        if (breadcrumbEl) {
+          if (!window.activePracticePackage) {
+            breadcrumbEl.innerHTML = `
+              <a href="#overview" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;" style="display: flex; align-items: center; color: #c2272d; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              </a>
+              <span>&gt;</span>
+              <span style="color: #64748b; cursor: pointer;" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;">Phòng luyện</span>
+              <span>&gt;</span>
+              <span id="practice-breadcrumb-category" style="color: #c2272d; font-weight: 600;">${categoryName}</span>
+            `;
+          } else {
+            let packageName = window.activePracticePackage === "free" ? "Phòng Luyện Miễn Phí" : "Phòng Luyện thực chiến TSA 2027";
+            if (currentPracticeCategory !== "tsa" && window.activePracticePackage === "premium") {
+              packageName = `Phòng Luyện thực chiến ${category} 2027`;
+            }
+            breadcrumbEl.innerHTML = `
+              <a href="#overview" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;" style="display: flex; align-items: center; color: #64748b; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              </a>
+              <span>&gt;</span>
+              <span style="color: #64748b; cursor: pointer;" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;">Phòng luyện</span>
+              <span>&gt;</span>
+              <span style="color: #64748b; cursor: pointer; font-weight: 500;" onclick="window.goBackToPackages()">${categoryName}</span>
+              <span>&gt;</span>
+              <span style="color: #c2272d; font-weight: 600;">Gói đề: ${packageName}</span>
+            `;
+          }
+        }
 
         if (!window.activePracticePackage) {
+          if (headerBox) {
+            headerBox.style.display = "flex";
+            const searchInput = document.getElementById("practice-search-input");
+            if (searchInput) searchInput.placeholder = "Tìm kiếm phòng luyện...";
+          }
           if (subtabsContainer) subtabsContainer.style.display = "none";
           
           grid.style.display = "grid";
@@ -3959,75 +4010,113 @@
           }
 
           var premiumCount = 9;
+          var premiumCompletedCount = 0;
+          for (let i = 2; i <= 10; i++) {
+            const numStr3 = String(i).padStart(3, "0");
+            const numStr2 = String(i).padStart(2, "0");
+            let examCodeToCheck = "TSA" + numStr3;
+            if (category === "TSA") {
+              const hasTma = (window.EXAMS_LIST || []).some(e => e.exam_code === "TMA" + numStr3);
+              examCodeToCheck = hasTma ? ("TMA" + numStr3) : ("TSA_PRACTICE_FULL_" + numStr2);
+            }
+            if (completedExams && completedExams.has(examCodeToCheck)) {
+              premiumCompletedCount++;
+            }
+          }
+          var premiumProgress = `${premiumCompletedCount}/${premiumCount} đề`;
+          var premiumPercent = Math.round((premiumCompletedCount / premiumCount) * 100);
 
           var freeCard = document.createElement("div");
           freeCard.className = "pkg-card";
-          freeCard.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 10px 30px rgba(0,0,0,0.03); height: 320px; text-align: left; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;";
+          freeCard.style.cssText = "background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 320px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
           freeCard.innerHTML = `
             <div>
               <div style="display: flex; align-items: flex-start; gap: 16px;">
-                <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.2);">
+                <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
                   <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
-                  <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; text-transform: none; line-height: 1.2;">Phòng Luyện Miễn Phí</h3>
+                  <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; text-transform: none; line-height: 1.2; font-family: inherit;">Phòng Luyện Miễn Phí</h3>
                   <div style="display: flex; gap: 8px; align-items: center;">
-                    <span style="font-size: 11px; background: #fdf2f8; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${category}</span>
-                    <span style="font-size: 11px; background: #eff6ff; color: #3b82f6; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">Miễn phí</span>
+                    <span style="font-size: 11px; background: #fdf2f8; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">${category}</span>
+                    <span style="font-size: 11px; background: #eff6ff; color: #3b82f6; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">Miễn phí</span>
                   </div>
                 </div>
               </div>
-              <p style="color: #64748b; font-size: 14px; font-weight: 500; margin: 12px 0 0 0;">Miễn Phí</p>
-              <div style="margin-top: 16px;">
-                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #475569; font-weight: 500;">
+              <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 12px 0 0 0; font-family: inherit;">Miễn Phí</p>
+              
+              <!-- Metrics pushed up near description -->
+              <div style="margin-top: 12px;">
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 Đề
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; font-weight: 500; margin-top: 12px;">
+              </div>
+            </div>
+            
+            <!-- Bottom section containing progress bar and button to ensure alignment -->
+            <div style="width: 100%;">
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; font-weight: 400; font-family: inherit;">
                   <span>Tiến độ hoàn thành</span>
-                  <span style="color: #c2272d; font-weight: 700;">${freeProgress}</span>
+                  <span style="color: #c2272d; font-weight: 600; font-family: inherit;">${freeProgress}</span>
                 </div>
                 <div style="background: #f1f5f9; height: 8px; border-radius: 4px; margin-top: 6px; overflow: hidden;">
                   <div style="background: #c2272d; width: ${freePercent}%; height: 100%; border-radius: 4px;"></div>
                 </div>
               </div>
-            </div>
-            <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 16px;">
-              <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s;" onclick="window.selectPracticePackage('free')">
-                Bắt đầu Luyện Đề →
-              </button>
+              <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 600; width: 100%; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s; font-family: inherit;" onclick="window.selectPracticePackage('free')">
+                  Bắt đầu Luyện Đề <span style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 16px; margin-left: 6px; display: inline-block; transform: translateY(-0.5px);">&rarr;</span>
+                </button>
+              </div>
             </div>
           `;
 
           var premiumCard = document.createElement("div");
           premiumCard.className = "pkg-card";
-          premiumCard.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 10px 30px rgba(0,0,0,0.03); height: 320px; text-align: left; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;";
+          premiumCard.style.cssText = "background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 320px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
           premiumCard.innerHTML = `
             <div>
               <div style="display: flex; align-items: flex-start; gap: 16px;">
-                <div style="background: #94a3b8; width: 56px; height: 56px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);">
+                <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
                   <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
-                  <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; text-transform: none; line-height: 1.2;">Phòng Luyện LAB 2k9</h3>
+                  <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; text-transform: none; line-height: 1.2; font-family: inherit;">Phòng Luyện thực chiến TSA 2027</h3>
                   <div style="display: flex; gap: 8px; align-items: center;">
-                    <span style="font-size: 11px; background: #f1f5f9; color: #64748b; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${category}</span>
+                    <span style="font-size: 11px; background: #fdf2f8; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">${category}</span>
                   </div>
                 </div>
               </div>
-              <p style="color: #64748b; font-size: 14px; font-weight: 500; margin: 12px 0 0 0;">Phòng luyện giai đoạn 1</p>
-              <div style="margin-top: 16px;">
-                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #475569; font-weight: 500;">
+              <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 12px 0 0 0; font-family: inherit;">Phòng luyện giai đoạn 1</p>
+              
+              <!-- Metrics pushed up near description -->
+              <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> ${premiumCount} Đề
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #94a3b8; font-weight: 600; margin-top: 12px;">
-                  🔒 Chưa sở hữu gói đề này
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #94a3b8; font-weight: 400; font-family: inherit;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Chưa sở hữu gói đề này
                 </div>
               </div>
             </div>
-            <div style="border-top: 1px solid #f1f5f9; margin-top: 16px; padding-top: 16px;">
-              <button class="btn" style="background: #94a3b8; border-color: #94a3b8; color: white; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; border: 1px solid #94a3b8; transition: all 0.2s;" onclick="window.selectPracticePackage('premium')">
-                Xem các đề trong gói
-              </button>
+            
+            <!-- Bottom section containing progress bar and button to ensure alignment -->
+            <div style="width: 100%;">
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; font-weight: 400; font-family: inherit;">
+                  <span>Tiến độ hoàn thành</span>
+                  <span style="color: #c2272d; font-weight: 600; font-family: inherit;">${premiumProgress}</span>
+                </div>
+                <div style="background: #f1f5f9; height: 8px; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="background: #c2272d; width: ${premiumPercent}%; height: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+              <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 600; width: 100%; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s; font-family: inherit;" onclick="window.selectPracticePackage('premium')">
+                  Xem các đề trong gói <span style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 16px; margin-left: 6px; display: inline-block; transform: translateY(-0.5px);">&rarr;</span>
+                </button>
+              </div>
             </div>
           `;
 
@@ -4037,17 +4126,12 @@
         }
 
         if (window.activePracticePackage === "free") {
+          if (headerBox) {
+            headerBox.style.display = "flex";
+            const searchInput = document.getElementById("practice-search-input");
+            if (searchInput) searchInput.placeholder = "Tìm kiếm đề thi...";
+          }
           if (subtabsContainer) subtabsContainer.style.display = "none";
-
-          var header = document.createElement("div");
-          header.style.cssText = "grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; width: 100%;";
-          header.innerHTML = `
-            <button onclick="window.goBackToPackages()" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #475569; font-weight: bold; display: flex; align-items: center; padding: 4px 8px; border-radius: 4px; margin-right: 4px;">
-              ← 
-            </button>
-            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Gói đề: Phòng Luyện Miễn Phí</h2>
-          `;
-          grid.appendChild(header);
 
           var i = 1;
           var numStr2 = String(i).padStart(2, "0");
@@ -4058,37 +4142,73 @@
           var redirectUrl = category === "TSA" ? ("waiting.html?exam=" + examCodeToCheck) : (`confirm.html?exam=${examCodeToCheck}&single=true`);
 
           var card = document.createElement("div");
-          card.className = "exam-card";
-          card.style.cssText = "background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; width: 320px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px; text-align: left;";
+          card.className = "tsa-exam-item-card";
           
           var hasCompleted = completedExams && completedExams.has(examCodeToCheck);
           var xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`Đề số 01\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem lịch sử</a>`
-            : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600;">Xem lịch sử</span>`;
+            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600; cursor: not-allowed;">Xem kết quả</span>`;
 
           card.innerHTML = `
-            <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Đề Số 01</h3>
-            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
-              <div style="display: flex; justify-content: space-between;">
-                <span style="color: #64748b;">Trạng thái:</span>
-                <span style="background: #ffe4e6; color: #be123c; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">Đang mở</span>
-              </div>
-              <div style="display: flex; justify-content: space-between;">
-                <span style="color: #64748b;">Số phần thi:</span>
-                <span style="color: #0f172a; font-weight: 700;">${category === "TSA" ? "3 Phần" : "1 Phần"}</span>
-              </div>
-              <div style="display: flex; justify-content: space-between;">
-                <span style="color: #64748b;">Hình thức:</span>
-                <span style="color: #0f172a; font-weight: 700;">Miễn phí</span>
-              </div>
-              <div style="display: flex; justify-content: space-between;">
-                <span style="color: #64748b;">Ngày tạo:</span>
-                <span style="color: #0f172a; font-weight: 700;">23/6/2026</span>
+            <!-- Header Section -->
+            <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
+                <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
               </div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 4px;">
+
+            <!-- Body Section -->
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
+              <!-- Row 1: Hình thức -->
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức thi:</span>
+                </div>
+                <span style="background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px;">Tự do</span>
+              </div>
+
+              <!-- Row 2: Thời gian đăng ký -->
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian đăng ký:</span>
+                </div>
+                <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right; line-height: 1.3; white-space: nowrap;">31/05/2026 - 31/05/2027</span>
+              </div>
+
+              <!-- Row 3: Thời gian thi -->
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian thi:</span>
+                </div>
+                <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right;">31/05/2026 - 31/05/2027</span>
+              </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box;">
               ${xemKetQuaHtml}
-              <button class="btn btn-sm" style="background: #be123c; border-color: #be123c; color: white; font-weight: 800; padding: 8px 20px; border-radius: 8px; cursor: pointer; border: 1px solid #be123c;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Vào làm ➔</button>
+              <button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 600; padding: 8px 24px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
             </div>
           `;
           grid.appendChild(card);
@@ -4096,15 +4216,7 @@
         }
 
         if (window.activePracticePackage === "premium") {
-          var header = document.createElement("div");
-          header.style.cssText = "grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; width: 100%;";
-          header.innerHTML = `
-            <button onclick="window.goBackToPackages()" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #475569; font-weight: bold; display: flex; align-items: center; padding: 4px 8px; border-radius: 4px; margin-right: 4px;">
-              ← 
-            </button>
-            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; text-transform: none;">Gói đề: Phòng Luyện LAB 2k9</h2>
-          `;
-          grid.appendChild(header);
+          if (headerBox) headerBox.style.display = "none";
         }
 
         grid.style.display = "";
@@ -4112,7 +4224,7 @@
         grid.style.gap = "";
 
         if (category === "TSA") {
-          // Show TSA Subtabs Segment Controller (4 tabs: Đề tổng hợp, Tư duy Toán học, Tư duy Đọc hiểu, Tư duy Khoa học)
+          // Show TSA Subtabs Segment Controller (4 tabs: Đề tổng hợp, Tư duy Toán học, Tư duy Đọc hiểu, Tư duy Khoa học) with right-side search input
           if (subtabsContainer) {
             subtabsContainer.style.display = "flex";
             subtabsContainer.innerHTML = `
@@ -4154,6 +4266,10 @@
                   </svg>
                   Tư duy Khoa học
                 </button>
+              </div>
+              <div class="search-box-wrapper" style="position: relative; width: 300px; flex-shrink: 0; margin-bottom: 8px;">
+                <input type="text" id="practice-exam-search-input" class="history-search-input" placeholder="Tìm kiếm đề thi..." oninput="window.filterPracticeExams()">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="practice-search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               </div>
             `;
             // Attach click listeners
@@ -4262,7 +4378,7 @@
 
             const hasCompleted = completedExams.has(examCodeToCheck);
             const xemKetQuaHtml = hasCompleted 
-              ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
               : `<span></span>`;
 
             let actionBtnHtml = "";
@@ -4270,7 +4386,7 @@
               actionBtnHtml = `
                 <footer class="exam-card-footer">
                   ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
+                  <button class="btn btn-sm" style="background: #c2272d; border-color: #c2272d; color: #ffffff; font-weight: 600; padding: 8px 24px; border-radius: 6px; border: 1px solid #c2272d; cursor: pointer; transition: opacity 0.15s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
@@ -4350,19 +4466,20 @@
         uploadedExams.forEach((exam) => {
           const examCodeToCheck = exam.code;
           const examTitle = exam.title;
+          const redirectUrl = `confirm.html?exam=${examCodeToCheck}&single=true`;
 
           const card = document.createElement("div");
           card.className = "exam-card";
 
           const hasCompleted = completedExams.has(examCodeToCheck);
           const xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
             : `<span></span>`;
 
           actionBtnHtml = `
             <footer class="exam-card-footer">
               ${xemKetQuaHtml}
-              <button class="btn btn-sm" style="background: #22c55e; border-color: #22c55e; color: #ffffff; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid #22c55e; cursor: pointer; transition: background 0.15s;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
+              <button class="btn btn-sm" style="background: #c2272d; border-color: #c2272d; color: #ffffff; font-weight: 600; padding: 8px 24px; border-radius: 6px; border: 1px solid #c2272d; cursor: pointer; transition: opacity 0.15s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
             </footer>
           `;
 
@@ -4394,26 +4511,104 @@
         });
       }
 
-            function updatePracticeRoomUI() {
+      window.filterPracticeInput = function() {
+        const query = (document.getElementById("practice-search-input")?.value || "").toLowerCase().trim();
+        if (!window.activePracticePackage) {
+          // Filter package cards
+          const cards = document.querySelectorAll("#practice-grid-dynamic .pkg-card");
+          cards.forEach(card => {
+            const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+            const desc = (card.querySelector("p")?.textContent || "").toLowerCase();
+            if (title.includes(query) || desc.includes(query)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        } else {
+          // Filter exam cards inside the Free package
+          const cards = document.querySelectorAll("#practice-grid-dynamic .exam-card");
+          cards.forEach(card => {
+            const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+            if (title.includes(query)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        }
+      };
+
+      window.filterPracticeExams = function() {
+        const query = (document.getElementById("practice-exam-search-input")?.value || "").toLowerCase().trim();
+        const cards = document.querySelectorAll("#practice-grid-dynamic .exam-card");
+        cards.forEach(card => {
+          const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+          if (title.includes(query)) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      };
+
+      function updatePracticeRoomUI() {
         window.activePracticePackage = null; // Reset state when tab changes
-        const titleEl = document.getElementById("practice-title");
-        const descEl = document.getElementById("practice-desc");
         
+        // Clear search input on tab change
+        const searchInput = document.getElementById("practice-search-input");
+        if (searchInput) {
+          searchInput.value = "";
+        }
+        const breadcrumbCatEl = document.getElementById("practice-breadcrumb-category");
+        let categoryName = "Đánh giá tư duy - TSA";
         if (currentPracticeCategory === "tsa") {
-          titleEl.textContent = "Phòng luyện đề: Đánh giá tư duy - TSA";
-          descEl.textContent = "Khám phá các chế độ rèn luyện cấu trúc đề thi TSA Bách Khoa để khắc phục điểm yếu kiến thức.";
+          categoryName = "Đánh giá tư duy - TSA";
         } else if (currentPracticeCategory === "hsa") {
-          titleEl.textContent = "Phòng luyện đề: Đánh giá năng lực - HSA";
-          descEl.textContent = "Khám phá các chế độ rèn luyện cấu trúc đề thi HSA ĐHQGHN để khắc phục điểm yếu kiến thức.";
+          categoryName = "Đánh giá năng lực - HSA";
         } else if (currentPracticeCategory === "thpt") {
-          titleEl.textContent = "Phòng luyện đề: Thi tốt nghiệp THPTQG";
-          descEl.textContent = "Khám phá các chế độ rèn luyện cấu trúc đề thi tốt nghiệp THPTQG để khắc phục điểm yếu kiến thức.";
+          categoryName = "Thi tốt nghiệp THPTQG";
         } else if (currentPracticeCategory === "vact") {
-          titleEl.textContent = "Phòng luyện đề: Đánh giá năng lực - VACT";
-          descEl.textContent = "Khám phá các chế độ rèn luyện cấu trúc đề thi VACT ĐHQG TP.HCM để khắc phục điểm yếu kiến thức.";
+          categoryName = "Đánh giá năng lực - VACT";
         } else if (currentPracticeCategory === "qda") {
-          titleEl.textContent = "Phòng luyện đề: Đánh giá năng lực - QDA";
-          descEl.textContent = "Khám phá các chế độ rèn luyện cấu trúc đề thi QDA Bộ Quốc phòng để khắc phục điểm yếu kiến thức.";
+          categoryName = "Đánh giá năng lực - QDA";
+        }
+        if (breadcrumbCatEl) {
+          breadcrumbCatEl.textContent = categoryName;
+          breadcrumbCatEl.style.color = "#c2272d";
+        }
+
+        // Fill in motivational quote for practice room
+        const practiceGreetingEl = document.getElementById("practice-welcome-greeting");
+        if (practiceGreetingEl) {
+          let studentDisplayName = "Học sinh";
+          const sidebarNameEl = document.getElementById("sidebar-student-name");
+          if (sidebarNameEl) {
+            studentDisplayName = sidebarNameEl.textContent;
+          }
+
+          const quotes = [
+            "Học tập chăm chỉ mỗi ngày là chiếc chìa khóa duy nhất mở cánh cửa Đại học mơ ước của bạn!",
+            "Mỗi đề thi bạn luyện tập hôm nay là một bước chuẩn bị vững vàng cho kỳ thi thực chiến ngày mai!",
+            "Đừng đợi đến ngày mai mới bắt đầu. Hãy tập trung cao độ, hoàn thành thật tốt từng câu hỏi ngay lúc này!",
+            "Mọi nỗ lực bền bỉ và giọt mồ hôi hôm nay chắc chắn sẽ được đền đáp xứng đáng bằng tấm vé đỗ nguyện vọng 1!"
+          ];
+          const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+          
+          practiceGreetingEl.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 8px; background: #fff5f5; border: 1px solid #fee2e2; border-radius: 8px; padding: 14px 18px; font-family: 'Inter', sans-serif; box-sizing: border-box; width: fit-content; max-width: 100%;">
+              <div style="display: flex; align-items: flex-start; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="#c2272d" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"></path>
+                  <line x1="9" y1="18" x2="15" y2="18"></line>
+                  <line x1="10" y1="22" x2="14" y2="22"></line>
+                </svg>
+                <p style="margin: 0; font-size: 13.5px; font-style: italic; color: #4b5563; line-height: 1.5;">
+                  Chào <strong style="color: #c2272d;">${studentDisplayName}</strong>, "${randomQuote}"
+                </p>
+              </div>
+            </div>
+          `;
         }
 
         renderPracticeRoom();
@@ -4451,7 +4646,7 @@
 
             const hasCompleted = completedExams.has(examCode);
             const xemKetQuaHtml = hasCompleted 
-              ? `<a href="#" onclick="window.showHustResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              ? `<a href="#" onclick="window.showHustResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
               : `<span></span>`;
 
             let actionBtnHtml = "";
@@ -4459,7 +4654,7 @@
               actionBtnHtml = `
                 <footer class="exam-card-footer">
                   ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
+                  <button class="btn btn-sm" style="background:#c2272d;border-color:#c2272d;color:#fff;font-weight:600;padding:8px 24px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;font-size:13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
                 </footer>
               `;
             } else {
@@ -4537,14 +4732,14 @@
           
           const hasCompleted = completedExams.has(exam.exam_code);
           const xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: var(--brand-red); font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
             : `<span></span>`;
 
           if (isOpen) {
             actionBtnHtml = `
               <footer class="exam-card-footer">
                 ${xemKetQuaHtml}
-                <button class="btn btn-sm" style="background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
+                <button class="btn btn-sm" style="background:#c2272d;border-color:#c2272d;color:#fff;font-weight:600;padding:8px 24px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;font-size:13.5px;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
               </footer>
             `;
           } else {
@@ -4947,30 +5142,46 @@
           };
 
           item.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; width: 76px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; width: 84px;">
               <!-- Beautiful custom Folder + PDF sheet SVG -->
-              <svg viewBox="0 0 64 48" width="64" height="48" style="flex-shrink: 0;">
-              <!-- Folder Back -->
-              <path d="M4 8a2 2 0 0 1 2-2h12l4 6h36a2 2 0 0 1 2 2v26a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z" fill="#60a5fa"/>
-              <!-- Paper Sheet 1 (Back) -->
-              <path d="M26 8 h11.5 Q 38.5 8 39.2 8.7 L 43.3 12.8 Q 44 13.5 44 14.5 v17.5 H26 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
-              <!-- Corner fold for Sheet 1 -->
-              <path d="M38 8 L 38 12.5 Q 38 14 39.5 14 L 44 14 Z" fill="#cbd5e1"/>
-              <!-- Lines on Sheet 1 -->
-              <rect x="29" y="15" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
-              <rect x="29" y="19" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
-              <rect x="29" y="23" width="7" height="1.5" rx="0.75" fill="#cbd5e1"/>
-              <!-- Paper Sheet 2 (Front) -->
-              <path d="M16 12 h11.5 Q 28.5 12 29.2 12.7 L 33.3 16.8 Q 34 17.5 34 18.5 v17.5 H16 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
-              <!-- Corner fold for Sheet 2 -->
-              <path d="M28 12 L 28 16.5 Q 28 18 29.5 18 L 34 18 Z" fill="#cbd5e1"/>
-              <!-- Red Acrobat loop on Sheet 2 -->
-              <g transform="translate(19, 19) scale(0.9)">
-                <path d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" fill="#ef4444"/>
-              </g>
-              <!-- Folder Front -->
-              <path d="M4 14a2 2 0 0 1 2-2h52a2 2 0 0 1 2 2v22a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V14z" fill="#2563eb"/>
-            </svg>
+              <svg viewBox="0 0 64 48" width="76" height="57" style="flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));">
+                <defs>
+                  <linearGradient id="folderBackGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4ea8de"/>
+                    <stop offset="100%" stop-color="#0a81d1"/>
+                  </linearGradient>
+                  <linearGradient id="folderFrontGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#1d4ed8"/>
+                  </linearGradient>
+                  <linearGradient id="folderGloss" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- Folder Back -->
+                <path d="M4 8a2 2 0 0 1 2-2h12l4 6h36a2 2 0 0 1 2 2v26a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z" fill="url(#folderBackGrad)"/>
+                <!-- Paper Sheet 1 (Back) -->
+                <path d="M26 8 h11.5 Q 38.5 8 39.2 8.7 L 43.3 12.8 Q 44 13.5 44 14.5 v17.5 H26 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+                <!-- Corner fold for Sheet 1 -->
+                <path d="M38 8 L 38 12.5 Q 38 14 39.5 14 L 44 14 Z" fill="#cbd5e1"/>
+                <!-- Lines on Sheet 1 -->
+                <rect x="29" y="15" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                <rect x="29" y="19" width="10" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                <rect x="29" y="23" width="7" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                <!-- Paper Sheet 2 (Front) -->
+                <path d="M16 12 h11.5 Q 28.5 12 29.2 12.7 L 33.3 16.8 Q 34 17.5 34 18.5 v17.5 H16 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+                <!-- Corner fold for Sheet 2 -->
+                <path d="M28 12 L 28 16.5 Q 28 18 29.5 18 L 34 18 Z" fill="#cbd5e1"/>
+                <!-- Red Acrobat loop on Sheet 2 -->
+                <g transform="translate(19, 19) scale(0.9)">
+                  <path d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" fill="#ef4444"/>
+                </g>
+                <!-- Folder Front -->
+                <path d="M4 14a2 2 0 0 1 2-2h52a2 2 0 0 1 2 2v22a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V14z" fill="url(#folderFrontGrad)"/>
+                <!-- Glossy Highlight -->
+                <path d="M4 14a2 2 0 0 1 2-2h20L10 38H6a2 2 0 0 1-2-2V14z" fill="url(#folderGloss)" pointer-events="none" opacity="0.4"/>
+              </svg>
               <span class="lib-folder-badge">${folder.classTag}</span>
             </div>
             <div class="lib-folder-info">
@@ -5007,6 +5218,43 @@
         window.renderLibraryFolders();
       }
 
+      function updateAppLogo(tabId) {
+        const logoFullEl = document.querySelector(".tsa-sidebar .logo-full");
+        const logoCollapsedEl = document.querySelector(".tsa-sidebar .logo-collapsed");
+        const topbarLogoEl = document.querySelector(".topbar-left-logo-search img");
+        
+        const isTsaPractice = (tabId === "tsa-practice");
+        
+        if (isTsaPractice) {
+          const redLogoUrl = "https://assets.tmastudy.io.vn/assets/logo2.png?v=5";
+          if (logoFullEl) {
+            logoFullEl.src = redLogoUrl;
+            logoFullEl.removeAttribute("onerror");
+          }
+          if (logoCollapsedEl) {
+            logoCollapsedEl.src = redLogoUrl;
+          }
+          if (topbarLogoEl) {
+            topbarLogoEl.src = redLogoUrl;
+            topbarLogoEl.removeAttribute("onerror");
+          }
+        } else {
+          const blueLogoFullUrl = "https://assets.tmastudy.io.vn/assets/tmaaaa.png?v=2";
+          const blueLogoCollapsedUrl = "https://assets.tmastudy.io.vn/assets/logo_blue.png";
+          if (logoFullEl) {
+            logoFullEl.src = blueLogoFullUrl;
+            logoFullEl.onerror = function() { this.src = 'https://assets.tmastudy.io.vn/assets/logo1.png'; };
+          }
+          if (logoCollapsedEl) {
+            logoCollapsedEl.src = blueLogoCollapsedUrl;
+          }
+          if (topbarLogoEl) {
+            topbarLogoEl.src = blueLogoFullUrl;
+            topbarLogoEl.onerror = function() { this.src = 'https://assets.tmastudy.io.vn/assets/logo1.png'; };
+          }
+        }
+      }
+
       window.switchTab = switchTab;
       function switchTab(tabId) {
         if (typeof window.closeLibraryDetailView === "function") {
@@ -5017,13 +5265,26 @@
           tabId = "documents";
         }
 
-        // Toggle full screen sidebar hidden mode for documents, history, and account tabs
+        // Update logo color dynamically based on active page
+        updateAppLogo(tabId);
+
+        // Toggle full screen sidebar hidden mode for documents, history, account, and practice tabs
         const shellContainer = document.querySelector(".tsa-shell");
         if (shellContainer) {
-          if (["documents", "history", "account"].includes(tabId)) {
+          if (["documents", "history", "account", "tsa-practice", "hsa-practice", "vact-practice", "qda-practice", "thpt-practice"].includes(tabId)) {
             shellContainer.classList.add("hide-sidebar");
           } else {
             shellContainer.classList.remove("hide-sidebar");
+          }
+
+          const isTsa = tabId.startsWith("tsa") || 
+                        (tabId === "practice" && currentPracticeCategory === "tsa") ||
+                        (tabId === "courses" && currentExamCategory === "tsa") ||
+                        (tabId === "tsa-exam" && currentExamTypeCategory === "tsa");
+          if (isTsa) {
+            shellContainer.classList.add("is-tsa");
+          } else {
+            shellContainer.classList.remove("is-tsa");
           }
         }
 
@@ -5957,32 +6218,32 @@
             var p3 = t3 > 0 ? (c3 / t3) * 100 : 0;
 
             var subjectBreakdownsHtml = `
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
-                  <span>${label1}</span>
-                  <span style="color: #0f172a; font-weight: 700;">${c1}/${t1}</span>
+              <div style="font-family: 'Inter', sans-serif;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569; font-family: inherit;">
+                  <span style="font-family: inherit;">${label1}</span>
+                  <span style="color: #0f172a; font-weight: 700; font-family: inherit;">${c1}/${t1}</span>
                 </div>
                 <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
-                  <div style="background: #c2272d; width: dots%; height: 100%; border-radius: 4px; width: ${p1}%;"></div>
+                  <div style="background: #c2272d; height: 100%; border-radius: 4px; width: ${p1}%;"></div>
                 </div>
               </div>
             `;
 
             if (grandTotal > 40) {
               subjectBreakdownsHtml += `
-                <div>
-                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
-                    <span>${label2}</span>
-                    <span style="color: #0f172a; font-weight: 700;">${c2}/${t2}</span>
+                <div style="font-family: 'Inter', sans-serif;">
+                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569; font-family: inherit;">
+                    <span style="font-family: inherit;">${label2}</span>
+                    <span style="color: #0f172a; font-weight: 700; font-family: inherit;">${c2}/${t2}</span>
                   </div>
                   <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
                     <div style="background: #c2272d; width: ${p2}%; height: 100%; border-radius: 4px;"></div>
                   </div>
                 </div>
-                <div>
-                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569;">
-                    <span>${label3}</span>
-                    <span style="color: #0f172a; font-weight: 700;">${c3}/${t3}</span>
+                <div style="font-family: 'Inter', sans-serif;">
+                  <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #475569; font-family: inherit;">
+                    <span style="font-family: inherit;">${label3}</span>
+                    <span style="color: #0f172a; font-weight: 700; font-family: inherit;">${c3}/${t3}</span>
                   </div>
                   <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden; margin-top: 3px;">
                     <div style="background: #c2272d; width: ${p3}%; height: 100%; border-radius: 4px;"></div>
@@ -5994,30 +6255,30 @@
             const attemptId = result.id || result.created_at;
             const card = document.createElement("div");
             card.innerHTML = `
-              <div class="history-attempt-card" style="background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; height: 236px; max-width: 380px; width: 100%; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; box-shadow: 0 6px 16px rgba(0,0,0,0.015);">
+              <div class="history-attempt-card" style="background: white; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; height: 246px; max-width: 380px; width: 100%; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                    <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; font-family: inherit;">
+                    <div style="font-family: inherit;">
                       <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; text-transform: none; font-family: inherit; letter-spacing: -0.3px;">Ngày thi ${dateStr}</h4>
-                      <div style="display: flex; gap: 8px; margin-top: 8px;">
+                      <div style="display: flex; gap: 8px; margin-top: 8px; font-family: inherit;">
                         <span style="font-size: 11px; background: #ffe4e6; color: #e11d48; padding: 3px 12px; border-radius: 6px; font-weight: 700; font-family: inherit;">${categoryLabel} - Đánh giá tư duy</span>
                         <span style="font-size: 11px; background: #fef3c7; color: #d97706; padding: 3px 12px; border-radius: 6px; font-weight: 700; font-family: inherit;">Đang làm</span>
                       </div>
                     </div>
                   </div>
-                  <div style="display: flex; gap: 20px; align-items: center; margin-top: 16px;">
-                    <div style="width: 76px; height: 76px; border-radius: 50%; border: 5px solid #f1f5f9; display: flex; align-items: center; justify-content: center; color: #c2272d; font-size: 26px; font-weight: 700; flex-shrink: 0;">
+                  <div style="display: flex; gap: 20px; align-items: center; margin-top: 16px; font-family: inherit;">
+                    <div style="width: 76px; height: 76px; border-radius: 50%; border: 5px solid #f1f5f9; display: flex; align-items: center; justify-content: center; color: #c2272d; font-size: 26px; font-weight: 700; flex-shrink: 0; font-family: inherit;">
                       ${scaledScore}
                     </div>
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; font-family: inherit;">
                       ${subjectBreakdownsHtml}
                     </div>
                   </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 12px; font-size: 13px; color: #64748b; font-weight: 500; font-family: inherit;">
-                  <div style="display: flex; gap: 14px; align-items: center;">
-                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> &nbsp;${dateStr}</span>
-                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> &nbsp;1 phút</span>
+                  <div style="display: flex; gap: 14px; align-items: center; font-family: inherit;">
+                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b; font-family: inherit;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px; font-family: inherit;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> &nbsp;${dateStr}</span>
+                    <span style="display: flex; align-items: center; gap: 2px; color: #64748b; font-family: inherit;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px; font-family: inherit;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> &nbsp;1 phút</span>
                   </div>
                   <a href="#" onclick="window.viewAttemptDetail('${examCode}', '${attemptId}'); return false;" style="color: #94a3b8; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 2px; font-family: inherit;">
                     Chi tiết →
@@ -6521,7 +6782,7 @@
         } else {
           const hash = window.location.hash.substring(1);
           if (shellContainer) {
-            if (["history", "account"].includes(hash)) {
+            if (["history", "account", "tsa-practice", "hsa-practice", "vact-practice", "qda-practice", "thpt-practice"].includes(hash)) {
               shellContainer.classList.add("hide-sidebar");
             } else {
               shellContainer.classList.remove("hide-sidebar");

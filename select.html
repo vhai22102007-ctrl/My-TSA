@@ -724,9 +724,131 @@
 
         <!-- TAB 3: PHÒNG LUYỆN -->
         <div id="tab-practice" class="tab-panel">
-          <div class="tab-header-box">
-            <h2 class="tab-header-title" id="practice-title">Phòng luyện đề</h2>
-            <p class="tab-header-desc" id="practice-desc">Khám phá các chế độ rèn luyện đa dạng để khắc phục điểm yếu kiến thức.</p>
+          <!-- Breadcrumb & Top Section -->
+          <div class="library-breadcrumb" id="practice-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+            <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #c2272d; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </a>
+            <span>&gt;</span>
+            <span style="color: #64748b; cursor: pointer;" onclick="switchTab('overview')">Phòng luyện</span>
+            <span>&gt;</span>
+            <span id="practice-breadcrumb-category" style="color: #c2272d; font-weight: 600;">Đánh giá tư duy - TSA</span>
+          </div>
+
+          <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; padding-right: 16px; padding-left: 8px;">
+            <div style="flex: 1; min-width: 0; max-width: 75%;">
+              <div class="tab-welcome-greeting" id="practice-welcome-greeting" style="width: fit-content;"></div>
+            </div>
+            <div class="search-box-wrapper" style="position: relative; width: 300px; flex-shrink: 0;">
+              <style>
+                #practice-search-input {
+                  background: #eff3f8 !important;
+                  color: #1e293b !important;
+                  border: 1px solid transparent !important;
+                  font-weight: 500 !important;
+                  padding: 10px 16px 10px 38px !important;
+                  border-radius: 8px !important;
+                  height: 42px !important;
+                  box-sizing: border-box !important;
+                  font-size: 13.5px !important;
+                  transition: all 0.2s ease !important;
+                }
+                #practice-search-input:focus {
+                  border: 1px solid #c2272d !important;
+                  background: #ffffff !important;
+                  box-shadow: 0 0 0 3px rgba(194, 39, 45, 0.1) !important;
+                  outline: none !important;
+                }
+                .search-box-wrapper .practice-search-icon {
+                  color: #c2272d !important;
+                  opacity: 1 !important;
+                  left: 14px !important;
+                  width: 14px !important;
+                  height: 14px !important;
+                  position: absolute !important;
+                  top: 50% !important;
+                  transform: translateY(-50%) !important;
+                  pointer-events: none !important;
+                  transition: all 0.2s ease !important;
+                }
+                #practice-search-input:focus + .practice-search-icon {
+                  color: #a81c21 !important;
+                }
+
+                /* Active Subtab Red Style Overrides */
+                .tsa-practice-subtab-btn.active {
+                  color: #c2272d !important;
+                }
+                .tsa-practice-subtab-btn.active .tab-icon {
+                  stroke: #c2272d !important;
+                }
+                .tsa-practice-subtab-btn.active::after {
+                  background-color: #c2272d !important;
+                }
+
+                /* Subtabs row structure override when active */
+                #practice-subtabs-container {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-end;
+                  width: 100%;
+                  border-bottom: 2px solid #e5e7eb;
+                  margin-bottom: 24px;
+                  box-sizing: border-box;
+                }
+                #practice-subtabs-container .practice-tabs-container {
+                  border-bottom: none !important;
+                  margin-bottom: 0 !important;
+                  width: auto !important;
+                }
+
+                /* Inner Exam Search Input styling */
+                #practice-exam-search-input {
+                  background: #eff3f8 !important;
+                  color: #1e293b !important;
+                  border: 1px solid transparent !important;
+                  font-weight: 500 !important;
+                  padding: 10px 16px 10px 38px !important;
+                  border-radius: 8px !important;
+                  height: 42px !important;
+                  box-sizing: border-box !important;
+                  font-size: 13.5px !important;
+                  transition: all 0.2s ease !important;
+                }
+                #practice-exam-search-input:focus {
+                  border: 1px solid #c2272d !important;
+                  background: #ffffff !important;
+                  box-shadow: 0 0 0 3px rgba(194, 39, 45, 0.1) !important;
+                  outline: none !important;
+                }
+                #practice-exam-search-input:focus + .practice-search-icon {
+                  color: #a81c21 !important;
+                }
+
+                /* Exact Mockup Exam Card style */
+                .tsa-exam-item-card {
+                  background: #ffffff !important;
+                  border: 1.5px solid #cbd5e1 !important;
+                  border-radius: 12px !important;
+                  padding: 20px !important;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  text-align: left !important;
+                  box-sizing: border-box !important;
+                  font-family: 'Inter', sans-serif !important;
+                  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+                  width: 100% !important;
+                  max-width: 380px !important;
+                }
+                .tsa-exam-item-card:hover {
+                  transform: translateY(-3px) !important;
+                  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08) !important;
+                }
+              </style>
+              <input type="text" id="practice-search-input" class="history-search-input" placeholder="Tìm kiếm phòng luyện..." oninput="window.filterPracticeInput()">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="practice-search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
           </div>
           <!-- TSA Sub-tabs Segment Controller Container -->
           <div id="practice-subtabs-container" style="display: none; margin-bottom: 24px;"></div>
@@ -854,7 +976,7 @@
                   <h4 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif;">Kho tài liệu</h4>
                   <a href="#" onclick="alert('Đang cập nhật thêm thư mục mới...'); return false;" style="font-size: 13px; color: var(--brand-red, #135c97); font-weight: 600; text-decoration: none;">Xem tất cả &gt;&gt;&gt;</a>
                 </div>
-                <div class="library-folders-list" id="library-folders-list" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="library-folders-list" id="library-folders-list">
                   <!-- Rendered dynamically -->
                 </div>
               </div>
@@ -2047,12 +2169,17 @@
     <!-- HUST PRACTICE HISTORY MODAL -->
   <div class="tsa-modal-container" id="hust-history-modal" style="z-index: 2200;" hidden>
     <div class="tsa-modal-backdrop" id="hust-history-modal-backdrop" style="z-index: 2150; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);" onclick="window.closeHustHistoryModal()"></div>
-    <div class="modal" style="position: relative; width: min(850px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 2250; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; font-family: system-ui, -apple-system, sans-serif; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; border: 1px solid rgba(0,0,0,0.05); max-height: 85vh; color: #1a1a1a;">
+    <div class="modal" style="position: relative; width: min(850px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 2250; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; font-family: 'Inter', system-ui, -apple-system, sans-serif; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; border: 1px solid rgba(0,0,0,0.05); max-height: 85vh; color: #1a1a1a;">
       
       <!-- Header -->
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px;">
-        <h3 id="hust-history-title" style="margin: 0; font-weight: 800; font-size: 20px; color: #1e293b; text-transform: none;">Lịch sử làm bài</h3>
-        <button type="button" onclick="window.closeHustHistoryModal()" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #94a3b8; font-weight: bold; line-height: 1; padding: 0;">&times;</button>
+        <h3 id="hust-history-title" style="margin: 0; font-weight: 800; font-size: 20px; color: #1e293b; text-transform: none; font-family: inherit;">Lịch sử làm bài</h3>
+        <button type="button" onclick="window.closeHustHistoryModal()" style="background: transparent; border: none; cursor: pointer; color: #94a3b8; padding: 0; display: flex; align-items: center; justify-content: center; transition: color 0.15s; outline: none;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
 
       <!-- Attempts list -->
@@ -2065,7 +2192,7 @@
 
   <div class="tsa-modal-container" id="hust-result-modal" style="z-index: 2100;" hidden>
     <div class="tsa-modal-backdrop" id="hust-result-modal-backdrop" style="z-index: 2050; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"></div>
-    <div class="modal" style="position: relative; width: min(680px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); z-index: 2100; padding: 25px 30px 30px 30px; box-sizing: border-box; display: flex; flex-direction: column; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid rgba(0,0,0,0.05); color: #1a1a1a;">
+    <div class="modal" style="position: relative; width: min(680px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); z-index: 2100; padding: 25px 30px 30px 30px; box-sizing: border-box; display: flex; flex-direction: column; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; font-family: 'Inter', system-ui, -apple-system, sans-serif; border: 1px solid rgba(0,0,0,0.05); color: #1a1a1a;">
       
       <!-- Circle Cross Close Button -->
       <button id="close-hust-modal" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: #adb5bd; transition: color 0.15s; padding: 0; display: flex; align-items: center; justify-content: center; outline: none; opacity: 0.85;">

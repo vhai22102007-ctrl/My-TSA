@@ -91,9 +91,9 @@
 
         var card = document.createElement("div");
         card.className = "student-card";
-        card.style.cssText = "background: #ffffff; border: 1.5px solid " + theme.border + "; border-radius: 8px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.01);";
-        card.setAttribute("onmouseover", "this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.04)'; this.style.borderColor='var(--brand)';");
-        card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.01)'; this.style.borderColor='" + theme.border + "';");
+        card.style.cssText = "background: #ffffff; border: none; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.015); box-sizing: border-box; width: 100%;";
+        card.setAttribute("onmouseover", "this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(194, 39, 45, 0.08)';");
+        card.setAttribute("onmouseout", "this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.015)';");
         card.onclick = function() {
           viewStudentDetails(s.email);
         };
@@ -103,14 +103,14 @@
         var displaySchool = s.school || "Chưa cập nhật";
 
         card.innerHTML = '\n' +
-'          <div style="width: 48px; height: 48px; border-radius: 50%; background: ' + theme.bg + '; color: ' + theme.fg + '; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; border: 1.5px solid ' + theme.border + '; text-transform: uppercase;">\n' +
+'          <div style="width: 52px; height: 52px; border-radius: 50%; background: #fff5f6; color: #c2272d; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; border: 1.5px solid #ffe4e6; text-transform: uppercase; box-shadow: inset 0 2px 4px rgba(194,39,45,0.03);">\n' +
 '            ' + esc(firstChar) + '\n' +
 '          </div>\n' +
-'          <div style="font-weight: 700; color: #1e293b; font-size: 14px; word-break: break-word; margin-bottom: 2px;">' + esc(s.name) + '</div>\n' +
-'          <div style="display: flex; flex-direction: column; gap: 5px; width: 100%; font-size: 11px; color: #64748b; text-align: left; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; box-sizing: border-box; overflow: hidden;">\n' +
-'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #3b82f6; font-size: 12.5px;">📧</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayEmail) + '">' + esc(displayEmail) + '</span></div>\n' +
-'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #10b981; font-size: 12.5px;">📞</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayPhone) + '">' + esc(displayPhone) + '</span></div>\n' +
-'            <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span style="color: #eab308; font-size: 12.5px;">🏫</span> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displaySchool) + '">' + esc(displaySchool) + '</span></div>\n' +
+'          <div style="font-weight: 700; color: #1e293b; font-size: 14.5px; word-break: break-word; margin-bottom: 2px;">' + esc(s.name) + '</div>\n' +
+'          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; font-size: 11.5px; color: #64748b; text-align: left; padding: 10px 14px; background: #fff5f6; border-radius: 10px; border: none; box-sizing: border-box; overflow: hidden; box-shadow: inset 0 1px 2px rgba(194,39,45,0.015);">\n' +
+'            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayEmail) + '">' + esc(displayEmail) + '</span></div>\n' +
+'            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displayPhone) + '">' + esc(displayPhone) + '</span></div>\n' +
+'            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg> <span style="overflow: hidden; text-overflow: ellipsis;" title="' + esc(displaySchool) + '">' + esc(displaySchool) + '</span></div>\n' +
 '          </div>\n' +
 '        ';
         approvedGrid.appendChild(card);
@@ -355,6 +355,136 @@
     var currentExamCategory = "tsa";
     var currentTsaPracticeSubtab = "tong-hop";
 
+    window.activeTeacherPracticePackage = null;
+    window.selectTeacherPracticePackage = function(pkg) {
+      window.activeTeacherPracticePackage = pkg;
+      renderPracticeRoom();
+    };
+    window.goBackToTeacherPackages = function() {
+      window.activeTeacherPracticePackage = null;
+      renderPracticeRoom();
+    };
+
+    window.filterTeacherPracticeInput = function() {
+      const query = (document.getElementById("teacher-practice-search-input")?.value || "").toLowerCase().trim();
+      const cards = document.querySelectorAll("#practice-grid-dynamic .exam-card");
+      cards.forEach(card => {
+        const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+        const code = (card.querySelector(".exam-info-row .info-value")?.textContent || "").toLowerCase();
+        if (title.includes(query) || code.includes(query)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    };
+
+    window.teacherAddPracticeExam = function() {
+      var category = currentPracticeCategory.toUpperCase();
+      var pkg = window.activeTeacherPracticePackage || "free";
+      
+      var indexList = [];
+      try {
+        var raw = localStorage.getItem("tma_tsa_exam_index");
+        if (raw) indexList = JSON.parse(raw);
+      } catch(e) {}
+      if (!Array.isArray(indexList)) indexList = [];
+
+      var defaultTitle = "";
+      var autoCode = "";
+      var displayCategory = category === "THPT" ? "THPTQG" : category;
+      
+      if (category === "TSA") {
+        if (pkg === "free") {
+          var freeCount = indexList.filter(e => e.exam_code.startsWith("TMA_FREE_")).length;
+          var nextNum = freeCount + 1;
+          do {
+            autoCode = `TMA_FREE_${String(nextNum).padStart(3, "0")}`;
+            var exists = indexList.some(e => e.exam_code === autoCode);
+            if (!exists) break;
+            nextNum++;
+          } while(true);
+          defaultTitle = `Đề Số ${String(nextNum + 1).padStart(2, "0")}`;
+        } else {
+          if (currentTsaPracticeSubtab === "tong-hop") {
+            var premiumCount = indexList.filter(e => e.exam_code.startsWith("TMA") && !e.exam_code.startsWith("TMA_FREE_")).length;
+            var nextNum = Math.max(11, premiumCount + 1);
+            do {
+              autoCode = `TMA_${String(nextNum).padStart(3, "0")}`;
+              var exists = indexList.some(e => e.exam_code === autoCode);
+              if (!exists) break;
+              nextNum++;
+            } while(true);
+            defaultTitle = `Đề tổng hợp số ${String(nextNum).padStart(2, "0")}`;
+          } else {
+            var subPrefix = currentTsaPracticeSubtab.toUpperCase();
+            var prefix = `TSA_PRACTICE_${subPrefix}_`;
+            var count = indexList.filter(e => e.exam_code.startsWith(prefix)).length;
+            var nextNum = Math.max(10, count + 1);
+            do {
+              autoCode = `${prefix}${String(nextNum).padStart(2, "0")}`;
+              var exists = indexList.some(e => e.exam_code === autoCode);
+              if (!exists) break;
+              nextNum++;
+            } while(true);
+            var subLabel = currentTsaPracticeSubtab === "math" ? "Tư duy Toán học" : currentTsaPracticeSubtab === "reading" ? "Đọc hiểu" : "Khoa học";
+            defaultTitle = `Đề TSA số ${String(nextNum).padStart(2, "0")} - ${subLabel}`;
+          }
+        }
+      } else {
+        if (pkg === "free") {
+          var prefix = category;
+          var count = indexList.filter(e => e.exam_code.startsWith(prefix)).length;
+          var nextNum = Math.max(2, count + 1);
+          do {
+            autoCode = `${prefix}${String(nextNum).padStart(2, "0")}`;
+            var exists = indexList.some(e => e.exam_code === autoCode);
+            if (!exists) break;
+            nextNum++;
+          } while(true);
+          defaultTitle = `Đề ${displayCategory} số ${String(nextNum).padStart(2, "0")}`;
+        } else {
+          var prefix = `${displayCategory}_PRACTICE_`;
+          var count = indexList.filter(e => e.exam_code.startsWith(prefix)).length;
+          var nextNum = Math.max(2, count + 1);
+          do {
+            autoCode = `${prefix}${String(nextNum).padStart(2, "0")}`;
+            var exists = indexList.some(e => e.exam_code === autoCode);
+            if (!exists) break;
+            nextNum++;
+          } while(true);
+          defaultTitle = `Đề ${displayCategory} số ${String(nextNum).padStart(2, "0")}`;
+        }
+      }
+
+      var newTitle = window.prompt("Nhập tên đề mới:", defaultTitle);
+      if (!newTitle) return;
+
+      var newExam = window.createEmptyExam(autoCode, newTitle, 45, "published");
+      localStorage.setItem("tma_tsa_exam_" + autoCode, JSON.stringify(newExam));
+
+      var idx = indexList.findIndex(e => e.exam_code === autoCode);
+      var meta = {
+        exam_code: autoCode,
+        title: newTitle,
+        status: "published",
+        duration_minutes: 45,
+        is_open: false,
+        subject: (function() {
+          if (autoCode.includes("_MATH_")) return "math";
+          if (autoCode.includes("_READING_")) return "reading";
+          if (autoCode.includes("_SCIENCE_")) return "science";
+          return "tong-hop";
+        })(),
+        file: "data/exams/" + autoCode + ".json"
+      };
+      if (idx === -1) indexList.push(meta);
+      else indexList[idx] = meta;
+      localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
+
+      renderPracticeRoom();
+    };
+
     function selectCategoryTab(type, category, element) {
       // 1. Update UI state in sidebar
       document.querySelectorAll(".submenu-item").forEach(function(item) {
@@ -373,6 +503,9 @@
         btn.classList.remove("active");
       });
 
+      // Reset package state when switching tabs
+      window.activeTeacherPracticePackage = null;
+
       // 2. Open dashboard tabs
       if (type === "practice") {
         currentPracticeCategory = category;
@@ -388,8 +521,8 @@
 
     window.selectExamCategoryLobby = function(category) {
       if (category === 'tsa') {
-        if (typeof startEditingExam === 'function') {
-          startEditingExam('Đề thi thử TSA', 'TSA_EXAM_01');
+        if (typeof window.startEditingExam === 'function') {
+          window.startEditingExam('Đề thi thử TSA', 'TSA_EXAM_01');
           return;
         }
       }
@@ -672,29 +805,38 @@
             </tr>
           `;
         } else {
-          // Read-only Row mode
           html += `
             <tr>
               <td style="padding: 16px 20px;">
-                <div style="font-weight: 700; color: #1e293b; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 14px;">${
-                    material.title.includes('Đề') || material.title.includes('de') || material.title.includes('Thi') ? '📝' :
-                    material.title.includes('Sách') || material.title.includes('Tài liệu') || material.title.includes('Lý thuyết') ? '📚' : '📄'
-                  }</span>
+                <div style="font-weight: 700; color: #1e293b; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#c2272d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                   <span>${esc(material.title)}</span>
                 </div>
-                <span style="padding: 2.5px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 6px; material.subject === 'TOÁN' ? 'background: #ffe2e2; color: #ef4444; border: 1px solid #fca5a5;' :material.subject === 'LÝ' ? 'background: #e0f7fa; color: #0891b2; border: 1px solid #67e8f9;' :material.subject === 'HOÁ' ? 'background: #f3e5f5; color: #ab47bc; border: 1px solid #e9d5ff;' :material.subject === 'SINH' ? 'background: #e8f5e9; color: #16a34a; border: 1px solid #86efac;' :material.subject === 'ANH' ? 'background: #fff8e1; color: #d97706; border: 1px solid #fde047;' :'background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;'">
+                <span style="padding: 2.5px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-top: 6px; ${
+                  material.subject === 'TOÁN' ? 'background: #fff5f6; color: #c2272d;' :
+                  material.subject === 'LÝ' ? 'background: #eff6ff; color: #1d4ed8;' :
+                  material.subject === 'HOÁ' ? 'background: #f5f3ff; color: #6d28d9;' :
+                  material.subject === 'SINH' ? 'background: #ecfdf5; color: #047857;' :
+                  material.subject === 'ANH' ? 'background: #fffbeb; color: #b45309;' :
+                  'background: #f1f5f9; color: #475569;'
+                }">
                   ${material.subject}
                 </span>
               </td>
               <td style="padding: 16px 20px;">
-                <span style="padding: 4px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; material.category === 'ĐGTD' ? 'background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe;' :material.category === 'ĐGNL' ? 'background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;' :material.category === 'LỚP 12' ? 'background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;' :material.category === 'LỚP 11' ? 'background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa;' :'background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0;'">
+                <span style="padding: 4px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; ${
+                  material.category === 'ĐGTD' ? 'background: #fff5f6; color: #c2272d;' :
+                  material.category === 'ĐGNL' ? 'background: #eff6ff; color: #1d4ed8;' :
+                  material.category === 'LỚP 12' ? 'background: #ecfdf5; color: #047857;' :
+                  material.category === 'LỚP 11' ? 'background: #fffbeb; color: #b45309;' :
+                  'background: #f1f5f9; color: #475569;'
+                }">
                   ${material.category}
                 </span>
               </td>
               <td style="padding: 16px 20px;">
-                <a href="${esc(material.url)}" target="_blank" style="color: #0f5a9e; font-size: 13px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; display: inline-flex; align-items: center; gap: 6px;" title="${esc(material.url)}">
-                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2 2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <a href="${esc(material.url)}" target="_blank" style="color: #c2272d; font-size: 13px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;" title="${esc(material.url)}">
+                  <svg viewBox="0 0 24 24" width="13" height="13" stroke="#c2272d" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2 2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                   Link tài liệu
                 </a>
               </td>
@@ -703,8 +845,8 @@
               </td>
               <td style="padding: 16px 20px;">
                 <div style="display: flex; gap: 6px;">
-                  <button class="btn" type="button" onclick="window.startEditingRow('${material.id}')" style="color: #0f5a9e; border: 1px solid #bfdbfe; background: #eff6ff; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 11.5px;">Sửa</button>
-                  <button class="btn" type="button" onclick="window.removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: 1px solid #ffcccc; background: #fff0f0; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 11.5px;">Xóa</button>
+                  <button class="btn" type="button" onclick="window.startEditingRow('${material.id}')" style="color: #c2272d; border: none; background: #fff5f6; font-weight: 700; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 11.5px; transition: opacity 0.15s;">Sửa</button>
+                  <button class="btn" type="button" onclick="window.removeDocumentFromList('${material.id}')" style="color: #ff3b30; border: none; background: #fff0f0; font-weight: 700; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 11.5px; transition: opacity 0.15s;">Xóa</button>
                 </div>
               </td>
             </tr>
@@ -903,10 +1045,221 @@
       };
       
       var info = labels[category] || labels.TSA;
-      if (roomTitle) roomTitle.textContent = "Phòng luyện đề: " + info[0];
-      if (roomDesc) roomDesc.textContent = info[1];
+
+      // 1. Render Package Lobby if no package is selected
+      if (!window.activeTeacherPracticePackage) {
+        document.querySelector(".teacher-shell")?.classList.remove("hide-sidebar");
+        var headerBox = document.getElementById("teacher-practice-header-box");
+        if (headerBox) headerBox.style.display = "none";
+        if (roomTitle) roomTitle.innerHTML = "Phòng luyện đề: " + info[0];
+        if (roomDesc) {
+          roomDesc.style.display = "block";
+          roomDesc.textContent = info[1];
+        }
+        if (subtabsContainer) subtabsContainer.style.display = "none";
+        
+        grid.style.display = "grid";
+        grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(280px, 1fr))";
+        grid.style.gap = "20px";
+
+        var freeCard = document.createElement("div");
+        freeCard.className = "pkg-card";
+        freeCard.style.cssText = "background: white; border: none; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 260px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
+        freeCard.innerHTML = `
+          <div>
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; text-transform: none; line-height: 1.2; font-family: inherit;">Phòng Luyện Miễn Phí</h3>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 11px; background: #fff5f6; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">${category}</span>
+                  <span style="font-size: 11px; background: #f0fdf4; color: #16a34a; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">Miễn phí</span>
+                </div>
+              </div>
+            </div>
+            <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 16px 0 0 0; font-family: inherit;">Tổng số lượng đề thi công khai phục vụ ôn luyện tự do.</p>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 Đề
+            </div>
+          </div>
+          <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; width: 100%;">
+            <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 600; width: 100%; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s; font-family: inherit;" onclick="window.selectTeacherPracticePackage('free')">
+              Quản lý phòng đề &rarr;
+            </button>
+          </div>
+        `;
+
+        var premiumCard = document.createElement("div");
+        premiumCard.className = "pkg-card";
+        premiumCard.style.cssText = "background: white; border: none; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 260px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
+        premiumCard.innerHTML = `
+          <div>
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; text-transform: none; line-height: 1.2; font-family: inherit;">Phòng Luyện thực chiến ${category} 2027</h3>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span style="font-size: 11px; background: #fff5f6; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">${category}</span>
+                  <span style="font-size: 11px; background: #fff5f5; color: #e03131; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">Premium</span>
+                </div>
+              </div>
+            </div>
+            <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 16px 0 0 0; font-family: inherit;">Danh sách đề thực chiến có cấu trúc phân mảnh theo các phần thi.</p>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 9 Đề
+            </div>
+          </div>
+          <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; width: 100%;">
+            <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 600; width: 100%; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s; font-family: inherit;" onclick="window.selectTeacherPracticePackage('premium')">
+              Quản lý phòng đề &rarr;
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(freeCard);
+        grid.appendChild(premiumCard);
+        return;
+      }
+
+      // 2. Inside a Package View
+      document.querySelector(".teacher-shell")?.classList.add("hide-sidebar");
+      const packageName = window.activeTeacherPracticePackage === "free" ? "Phòng Luyện Miễn Phí" : "Phòng Luyện thực chiến " + category + " 2027";
+      if (roomTitle) {
+        roomTitle.innerHTML = `<span style="color: #64748b; cursor: pointer;" onclick="window.goBackToTeacherPackages()">${info[0]}</span> <span style="color: #cbd5e1; margin: 0 8px;">&gt;</span> <span style="color: #1e293b; font-weight: 700;">Gói đề: ${packageName}</span>`;
+      }
+      if (roomDesc) roomDesc.style.display = "none";
+
+      var headerBox = document.getElementById("teacher-practice-header-box");
+      if (headerBox) {
+        headerBox.style.display = "block";
+        headerBox.style.padding = "0";
+        headerBox.innerHTML = `
+          <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; background: #fff5f6; padding: 16px 20px; border-radius: 12px; border: 1.5px solid #ffe4e6; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="background: #c2272d; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+              </div>
+              <span style="color: #c2272d; font-size: 14.5px; font-weight: 700; font-family: inherit;">Chào giáo viên, chúc thầy/cô một ngày làm việc hiệu quả và nhiều niềm vui!</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="search-box-wrapper" style="position: relative; width: 260px;">
+                <input type="text" id="teacher-practice-search-input" class="history-search-input" placeholder="Tìm kiếm đề thi..." style="width:100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px 12px 8px 36px; font-size:13.5px; outline:none; font-family:inherit;" oninput="window.filterTeacherPracticeInput()">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="#94a3b8" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </div>
+              <button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 700; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13.5px; display: flex; align-items: center; gap: 6px; font-family: inherit;" onclick="window.teacherAddPracticeExam()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Thêm đề
+              </button>
+            </div>
+          </div>
+        `;
+      }
 
       if (category === "TSA") {
+        if (window.activeTeacherPracticePackage === "free") {
+          if (subtabsContainer) subtabsContainer.style.display = "none";
+          
+          let openStatus = {};
+          try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+          
+          var freeExams = [];
+          freeExams.push({
+            exam_code: "TMA001",
+            title: "Đề Số 01",
+            is_open: openStatus["TMA001"] === true,
+            hasExam: (window.EXAMS_LIST || []).some(e => e.exam_code === "TMA001") || localStorage.getItem("tma_tsa_exam_TMA001") || localStorage.getItem("tma_tsa_teacher_draft_TMA001")
+          });
+
+          var practiceIndexList = [];
+          try {
+            var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+            if (rawIdx) practiceIndexList = JSON.parse(rawIdx) || [];
+          } catch(e) {}
+          
+          if (Array.isArray(practiceIndexList)) {
+            practiceIndexList.forEach(function(e) {
+              var ec = String(e.exam_code || "").toUpperCase();
+              if (ec.startsWith("TMA_FREE_")) {
+                var hasExam = (window.EXAMS_LIST || []).some(item => item.exam_code === e.exam_code) || localStorage.getItem("tma_tsa_exam_" + e.exam_code) || localStorage.getItem("tma_tsa_teacher_draft_" + e.exam_code);
+                freeExams.push({
+                  exam_code: e.exam_code,
+                  title: e.title,
+                  is_open: e.is_open === true || openStatus[e.exam_code] === true,
+                  hasExam: !!hasExam
+                });
+              }
+            });
+          }
+
+          freeExams.forEach(function(item) {
+            var examTitle = item.title;
+            var examCode = item.exam_code;
+            var hasExam = item.hasExam;
+            const isOpen = hasExam && item.is_open;
+
+            var card = document.createElement("div");
+            card.className = "tsa-exam-item-card";
+            card.innerHTML = `
+              <!-- Header Section -->
+              <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
+                  <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
+                </div>
+              </div>
+
+              <!-- Body Section -->
+              <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Mã đề:</span>
+                  <span style="color: #1f2937; font-size: 13px; font-weight: 700;">${examCode}</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Trạng thái:</span>
+                  <span class="${hasExam ? 'badge-green' : 'badge-red'}" style="padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                    ${hasExam ? 'ĐÃ CÓ ĐỀ' : 'CHƯA CÓ ĐỀ'}
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức:</span>
+                  <span style="color: #1f2937; font-size: 13px; font-weight: 600;">Thi trực tuyến</span>
+                </div>
+              </div>
+
+              <!-- Footer Section -->
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 8px;">
+                <span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12.5px;font-weight:600;' : 'font-size:12.5px;'}">
+                  ${isOpen ? 'Đang mở đề' : 'Đang đóng đề'}
+                </span>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #c2272d; border: 1px solid #c2272d; color: #fff; border-radius: 6px;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
+                  ${hasExam ? `
+                    ${isOpen ? `
+                      <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border: 1px solid #ef4444; color: #fff; border-radius: 6px;" onclick="toggleExamOpen('${examCode}', false)">Đóng</button>
+                    ` : `
+                      <button class="btn btn-sm" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #16a34a; border: 1px solid #16a34a; color: #fff; border-radius: 6px;" onclick="toggleExamOpen('${examCode}', true)">Mở</button>
+                    `}
+                    <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #94a3b8; border: 1px solid #94a3b8; color: #fff; border-radius: 6px;" onclick="deleteExamPermanently('${examCode}', '${examTitle}')">Xóa</button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+          return;
+        }
+
+        // TSA Premium
         if (subtabsContainer) {
           subtabsContainer.style.display = "flex";
           subtabsContainer.innerHTML = `
@@ -926,7 +1279,6 @@
           });
         }
 
-        // Generate dynamic count of exams for selected TSA subtab
         var maxPracticeIndex = 10;
         var practiceIndexList = [];
         try {
@@ -950,22 +1302,22 @@
         try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
 
         var examsToRender = [];
-        
-        // 1. Add existing exams matching this category
         practiceIndexList.forEach(function(e) {
           var ec = String(e.exam_code || "").toUpperCase();
-          var isFullExam = ec.startsWith("TMA") || ec.startsWith("TSA_PRACTICE_FULL_");
           
+          // Exclude TMA001 from Premium tong-hop list
+          if (ec === "TMA001" && currentTsaPracticeSubtab === "tong-hop") return;
+
+          var isFullExam = ec.startsWith("TMA") || ec.startsWith("TSA_PRACTICE_FULL_");
           var matchesCategory = false;
           if (isFullExam) {
-            matchesCategory = true; // Show in all tabs
+            matchesCategory = (currentTsaPracticeSubtab === "tong-hop");
           } else {
-            var category = "tong-hop";
-            if (ec.includes("_MATH_")) category = "math";
-            else if (ec.includes("_READING_")) category = "reading";
-            else if (ec.includes("_SCIENCE_")) category = "science";
-            
-            matchesCategory = (category === currentTsaPracticeSubtab);
+            var cat = "tong-hop";
+            if (ec.includes("_MATH_")) cat = "math";
+            else if (ec.includes("_READING_")) cat = "reading";
+            else if (ec.includes("_SCIENCE_")) cat = "science";
+            matchesCategory = (cat === currentTsaPracticeSubtab);
           }
 
           if (matchesCategory) {
@@ -978,38 +1330,49 @@
           }
         });
 
-        // 2. Add default slots if they are not already present
-        var defaultCount = 9;
-        for (let i = 1; i <= defaultCount; i++) {
-          var numStr = String(i).padStart(2, "0");
-          var numStr3 = String(i).padStart(3, "0");
-          
-          // Rename default codes to TMA001, TMA002... across all tabs
-          var defaultCode = "TMA" + numStr3; 
-          var defaultTitle = "";
-          
-          if (currentTsaPracticeSubtab === "tong-hop") {
-            defaultTitle = `Đề tổng hợp số ${numStr}`;
-          } else if (currentTsaPracticeSubtab === "math") {
-            defaultTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
-          } else if (currentTsaPracticeSubtab === "reading") {
-            defaultTitle = `Đề TSA số ${numStr} - Đọc hiểu`;
-          } else if (currentTsaPracticeSubtab === "science") {
-            defaultTitle = `Đề TSA số ${numStr} - Khoa học`;
+        // Add default slots for TSA premium subtabs
+        if (currentTsaPracticeSubtab === "tong-hop") {
+          // TMA002 to TMA010
+          for (let i = 2; i <= 10; i++) {
+            var numStr3 = String(i).padStart(3, "0");
+            var numStr2 = String(i).padStart(2, "0");
+            var defaultCode = "TMA" + numStr3;
+            var defaultTitle = `Đề tổng hợp số ${numStr2}`;
+            
+            var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
+            if (!alreadyIn) {
+              examsToRender.push({
+                exam_code: defaultCode,
+                title: defaultTitle,
+                is_open: false,
+                hasExam: false
+              });
+            }
           }
+        } else {
+          // math, reading, science: TSA_PRACTICE_MATH_01 to 09, etc.
+          var subPrefix = currentTsaPracticeSubtab.toUpperCase();
+          for (let i = 1; i <= 9; i++) {
+            var numStr2 = String(i).padStart(2, "0");
+            var defaultCode = `TSA_PRACTICE_${subPrefix}_${numStr2}`;
+            var defaultTitle = "";
+            if (currentTsaPracticeSubtab === "math") defaultTitle = `Đề TSA số ${numStr2} - Tư duy Toán học`;
+            else if (currentTsaPracticeSubtab === "reading") defaultTitle = `Đề TSA số ${numStr2} - Đọc hiểu`;
+            else if (currentTsaPracticeSubtab === "science") defaultTitle = `Đề TSA số ${numStr2} - Khoa học`;
 
-          var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
-          if (!alreadyIn) {
-            examsToRender.push({
-              exam_code: defaultCode,
-              title: defaultTitle,
-              is_open: false,
-              hasExam: false
-            });
+            var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
+            if (!alreadyIn) {
+              examsToRender.push({
+                exam_code: defaultCode,
+                title: defaultTitle,
+                is_open: false,
+                hasExam: false
+              });
+            }
           }
         }
 
-        // Sort: existing exams first, then empty default slots
+        // Sort and render
         examsToRender.sort(function(a, b) {
           if (a.hasExam !== b.hasExam) {
             return b.hasExam ? -1 : 1;
@@ -1050,10 +1413,6 @@
                 <span class="info-label">Hình thức:</span>
                 <span class="info-value font-bold">Thi trực tuyến</span>
               </div>
-              <div class="exam-info-row">
-                <span class="info-label">Lệ phí:</span>
-                <span class="info-value font-bold">Miễn phí</span>
-              </div>
             </div>
             <footer class="exam-card-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
               <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
@@ -1076,44 +1435,92 @@
         return;
       }
 
-      // Other categories
+      // Other Categories (non-TSA)
       if (subtabsContainer) subtabsContainer.style.display = "none";
-
       var displayCategory = category === "THPT" ? "THPTQG" : category;
-      for (let i = 1; i <= 10; i++) {
-        var numStr = String(i).padStart(2, "0");
-        var examTitle = `Đề ${displayCategory} số ${numStr}`;
-        var examCode = `${displayCategory}_PRACTICE_${numStr}`;
 
+      if (window.activeTeacherPracticePackage === "free") {
+        // Only show i = 1
+        var numStr = "01";
+        var examTitle = `Đề ${displayCategory} số ${numStr}`;
+        var examCode = `${category}01`;
         var card = document.createElement("div");
-        card.className = "exam-card";
+        card.className = "tsa-exam-item-card";
         card.innerHTML = `
-          <header class="exam-card-header">
-            <h3 style="text-transform: none;">${examTitle}</h3>
-          </header>
-          <div class="exam-card-body">
-            <div class="exam-info-row">
-              <span class="info-label">Hình thức thi:</span>
-              <span class="badge-green">Thi trực tuyến</span>
-            </div>
-            <div class="exam-info-row">
-              <span class="info-label">Thời gian đăng ký:</span>
-              <span class="info-value">Hằng ngày</span>
-            </div>
-            <div class="exam-info-row">
-              <span class="info-label">Lệ phí:</span>
-              <span class="info-value font-bold">Miễn phí</span>
-            </div>
-            <div class="exam-info-row">
-              <span class="info-label">Thời gian thi:</span>
-              <span class="info-value">Hằng ngày</span>
+          <!-- Header Section -->
+          <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+              <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
+              <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
             </div>
           </div>
-          <footer class="exam-card-footer">
-            <button class="btn btn-sm btn-primary" style="font-weight: 800;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
-          </footer>
+
+          <!-- Body Section -->
+          <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Mã đề:</span>
+              <span style="color: #1f2937; font-size: 13px; font-weight: 700;">${examCode}</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức:</span>
+              <span style="color: #1f2937; font-size: 13px; font-weight: 600;">Thi trực tuyến</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian đăng ký:</span>
+              <span style="color: #1f2937; font-size: 13px; font-weight: 600;">Hằng ngày</span>
+            </div>
+          </div>
+
+          <!-- Footer Section -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box;">
+            <span style="color: #c2272d; font-size: 12.5px; font-weight: 600;">Miễn phí</span>
+            <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #c2272d; border-color: #c2272d; color: #fff; border-radius: 6px;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
+          </div>
         `;
         grid.appendChild(card);
+      } else {
+        // Show Premium (i = 2 to 10)
+        for (let i = 2; i <= 10; i++) {
+          var numStr = String(i).padStart(2, "0");
+          var examTitle = `Đề ${displayCategory} số ${numStr}`;
+          var examCode = `${displayCategory}_PRACTICE_${numStr}`;
+
+          var card = document.createElement("div");
+          card.className = "exam-card";
+          card.innerHTML = `
+            <header class="exam-card-header">
+              <h3 style="text-transform: none;">${examTitle}</h3>
+            </header>
+            <div class="exam-card-body">
+              <div class="exam-info-row">
+                <span class="info-label">Mã đề:</span>
+                <span class="info-value font-bold">${examCode}</span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Hình thức thi:</span>
+                <span class="badge-green">Thi trực tuyến</span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Thời gian đăng ký:</span>
+                <span class="info-value">Hằng ngày</span>
+              </div>
+              <div class="exam-info-row">
+                <span class="info-label">Lệ phí:</span>
+                <span class="info-value font-bold">Miễn phí</span>
+              </div>
+            </div>
+            <footer class="exam-card-footer">
+              <button class="btn btn-sm btn-primary" style="font-weight: 800;" onclick="startEditingExam('${examTitle}', '${examCode}')">Chỉnh sửa</button>
+            </footer>
+          `;
+          grid.appendChild(card);
+        }
       }
     }
 
@@ -1318,6 +1725,8 @@
     };
 
     function switchSystemTab(tabId) {
+      var originalTabId = tabId;
+
       // Map old subtab targets to the unified settings panel
       var systemSubtabs = ["manage-courses", "activation-codes", "security-logs", "manage-links"];
       var activeSubtab = null;
@@ -1340,20 +1749,20 @@
       });
 
       // Update sidebar nav active states
-      if (tabId === "approve-students" || tabId === "student-management" || tabId === "system-settings" || tabId === "exams") {
-        document.querySelectorAll("#sidebar-normal-nav .nav-button").forEach(function(btn) {
-          var target = btn.getAttribute("data-tab-target");
-          btn.classList.toggle("active", target === tabId);
-        });
-        document.querySelectorAll(".submenu-item").forEach(function(item) {
-          item.classList.remove("active");
-        });
-        document.querySelectorAll(".menu-group").forEach(function(g) {
-          g.classList.remove("has-active");
-        });
-      }
+      document.querySelectorAll("#sidebar-normal-nav .nav-button").forEach(function(btn) {
+        var target = btn.getAttribute("data-tab-target");
+        btn.classList.toggle("active", target === originalTabId);
+      });
+      document.querySelectorAll(".submenu-item").forEach(function(item) {
+        item.classList.remove("active");
+      });
+      document.querySelectorAll(".menu-group").forEach(function(g) {
+        g.classList.remove("has-active");
+      });
 
-      if (tabId === "practice") {
+      if (tabId === "overview") {
+        if (typeof renderOverview === "function") renderOverview();
+      } else if (tabId === "practice") {
         renderPracticeRoom();
       } else if (tabId === "exams") {
         if (typeof backToExamsLobby === "function") backToExamsLobby();
@@ -4027,6 +4436,7 @@
         }
 
         // Enter Editing Mode
+        document.querySelector(".teacher-shell")?.classList.remove("hide-sidebar");
         document.getElementById("dashboard-container").style.display = "none";
         document.getElementById("sidebar-normal-nav").style.display = "none";
 
@@ -4308,6 +4718,7 @@
 
       window.startEditingExam = startEditingExam;
       window.exitEditingMode = exitEditingMode;
+      window.createEmptyExam = createEmptyExam;
 
       async function deleteExamPermanently(examCode, examTitle) {
         var cleanCode = normalizeCode(examCode);
@@ -6340,21 +6751,21 @@ YÊU CẦU QUAN TRỌNG:
       tbody.innerHTML = "";
       lmsCodes.forEach(function(codeObj) {
         var tr = document.createElement("tr");
-        tr.style.borderBottom = "1px solid var(--border)";
+        tr.style.borderBottom = "1px solid #f1f5f9";
 
         var courseTitle = codeObj.courses ? (codeObj.courses.title || "Khóa học") : "Khóa học (Mock)";
         var statusBadge = codeObj.active 
-          ? `<span style="color:#15803d; background:#e2fbe8; padding:3px 8px; border-radius: 8px; font-size:11px; font-weight:700;">Đang chạy</span>`
-          : `<span style="color:#b9152a; background:#fee2e2; padding:3px 8px; border-radius: 8px; font-size:11px; font-weight:700;">Tạm khóa</span>`;
+          ? `<span style="color: #16a34a; background: #f0fdf4; padding: 4px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Đang chạy</span>`
+          : `<span style="color: #c2272d; background: #fff5f6; padding: 4px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Tạm khóa</span>`;
 
         tr.innerHTML = `
-          <td style="padding:12px 16px; font-weight:700; color:var(--brand); font-size:13px;">${codeObj.code}</td>
-          <td style="padding:12px 16px; font-size:13px;">${courseTitle}</td>
-          <td style="padding:12px 16px; font-size:13px; font-weight:600;">${codeObj.used_count || 0} / ${codeObj.max_uses || 1}</td>
-          <td style="padding:12px 16px; font-size:13px;">${statusBadge}</td>
-          <td style="padding:12px 16px; text-align:right; display:flex; gap:6px; justify-content:flex-end;">
-            <button class="btn btn-outline btn-xs" type="button" onclick="toggleActivationCodeActive('${codeObj.id}', ${codeObj.active})">${codeObj.active ? 'Khóa' : 'Mở'}</button>
-            <button class="btn btn-danger btn-xs" type="button" onclick="deleteActivationCode('${codeObj.id}')">Xóa</button>
+          <td style="padding: 16px 20px; font-weight: 700; color: #c2272d; font-size: 13.5px;">${codeObj.code}</td>
+          <td style="padding: 16px 20px; font-size: 13px; color: #334155;">${courseTitle}</td>
+          <td style="padding: 16px 20px; font-size: 13px; font-weight: 600; color: #334155;">${codeObj.used_count || 0} / ${codeObj.max_uses || 1}</td>
+          <td style="padding: 16px 20px; font-size: 13px;">${statusBadge}</td>
+          <td style="padding: 16px 20px; text-align: right; display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+            <button class="btn" type="button" onclick="toggleActivationCodeActive('${codeObj.id}', ${codeObj.active})" style="color: #c2272d; border: none; background: #fff5f6; font-weight: 700; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 11.5px; transition: opacity 0.15s;">${codeObj.active ? 'Khóa' : 'Mở'}</button>
+            <button class="btn" type="button" onclick="deleteActivationCode('${codeObj.id}')" style="color: #ff3b30; border: none; background: #fff0f0; font-weight: 700; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 11.5px; transition: opacity 0.15s;">Xóa</button>
           </td>
         `;
 
@@ -6572,18 +6983,18 @@ YÊU CẦU QUAN TRỌNG:
         tbody.innerHTML = "";
         filteredLogs.forEach(function(log) {
           var tr = document.createElement("tr");
-          tr.style.borderBottom = "1px solid var(--border)";
+          tr.style.borderBottom = "1px solid #f1f5f9";
           
           var timeStr = new Date(log.viewed_at).toLocaleString('vi-VN');
           var uaShort = log.user_agent ? (log.user_agent.includes("Chrome") ? "Chrome/Web" : log.user_agent.includes("Safari") ? "Safari/iOS" : "Mobile/Device") : "Unknown";
 
           tr.innerHTML = `
-            <td style="padding:12px 16px; font-weight:700; font-size:13px;">${log.user_email}</td>
-            <td style="padding:12px 16px; font-size:13px; font-weight:600;">${log.lesson_title || "Bài học"}</td>
-            <td style="padding:12px 16px; font-size:13px; color:var(--muted);">${log.course_title || "Khóa học"}</td>
-            <td style="padding:12px 16px; font-size:13px; font-family:monospace; color:var(--brand);">${log.ip_address}</td>
-            <td style="padding:12px 16px; font-size:13px;">${timeStr}</td>
-            <td style="padding:12px 16px; font-size:12px; color:var(--muted); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.user_agent}">${uaShort}</td>
+            <td style="padding: 16px 20px; font-weight: 700; font-size: 13px; color: #1e293b;">${log.user_email}</td>
+            <td style="padding: 16px 20px; font-size: 13px; font-weight: 600; color: #334155;">${log.lesson_title || "Bài học"}</td>
+            <td style="padding: 16px 20px; font-size: 13px; color: #64748b;">${log.course_title || "Khóa học"}</td>
+            <td style="padding: 16px 20px; font-size: 13px; font-family: monospace; color: #c2272d; font-weight: 600;">${log.ip_address}</td>
+            <td style="padding: 16px 20px; font-size: 13px; color: #334155;">${timeStr}</td>
+            <td style="padding: 16px 20px; font-size: 12.5px; color: #64748b; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.user_agent}">${uaShort}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -6613,23 +7024,23 @@ YÊU CẦU QUAN TRỌNG:
       });
 
       if (warningAccounts.length === 0) {
-        warningsTbody.innerHTML = "<tr><td colspan='5' style='padding:20px; text-align:center; color:#15803d; background:#e2fbe8; font-weight:700;'>✅ Hệ thống an toàn. Chưa phát hiện tài khoản nào nghi ngờ chia sẻ thiết bị trong 24h qua.</td></tr>";
+        warningsTbody.innerHTML = "<tr><td colspan='5' style='padding: 24px; text-align: center; color: #16a34a; background: #f0fdf4; font-weight: 700; font-family: \"Inter\", sans-serif; font-size: 13.5px; border-radius: 0 0 12px 12px;'>Hệ thống an toàn. Chưa phát hiện tài khoản nào nghi ngờ chia sẻ thiết bị trong 24h qua.</td></tr>";
       } else {
         warningsTbody.innerHTML = "";
         warningAccounts.forEach(function(email) {
           var info = ipGroups[email];
           var tr = document.createElement("tr");
-          tr.style.cssText = "border-bottom: 1px solid #fee2e2; background:#fff1f2;";
+          tr.style.cssText = "border-bottom: 1px solid #ffe4e6; background: #fff5f6;";
 
           var lastTimeStr = new Date(info.lastTime).toLocaleString('vi-VN');
 
           tr.innerHTML = `
-            <td style="padding:12px 16px; font-weight:800; font-size:13px; color:#b91c1c;">🚨 ${email}</td>
-            <td style="padding:12px 16px; font-size:13px; font-weight:800; color:#b91c1c;">${info.ips.size} Địa chỉ IP khác nhau</td>
-            <td style="padding:12px 16px; font-size:13px; font-weight:600;">${info.lastLesson}</td>
-            <td style="padding:12px 16px; font-size:13px;">${lastTimeStr}</td>
-            <td style="padding:12px 16px; text-align:right;">
-              <button class="btn btn-danger btn-xs" type="button" onclick="kickAnomalyStudent('${email}')" style="background:#b91c1c; font-weight:800;">Khóa tài khoản</button>
+            <td style="padding: 16px 20px; font-weight: 800; font-size: 13px; color: #c2272d;">${email}</td>
+            <td style="padding: 16px 20px; font-size: 13px; font-weight: 800; color: #c2272d;">${info.ips.size} Địa chỉ IP khác nhau</td>
+            <td style="padding: 16px 20px; font-size: 13px; font-weight: 600; color: #334155;">${info.lastLesson}</td>
+            <td style="padding: 16px 20px; font-size: 13px; color: #334155;">${lastTimeStr}</td>
+            <td style="padding: 16px 20px; text-align: right;">
+              <button class="btn" type="button" onclick="kickAnomalyStudent('${email}')" style="background: #c2272d; color: white; border: none; font-weight: 700; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 11.5px; transition: opacity 0.15s;">Khóa tài khoản</button>
             </td>
           `;
           warningsTbody.appendChild(tr);
@@ -6815,10 +7226,10 @@ YÊU CẦU QUAN TRỌNG:
           }
         });
 
-        // Initial setup for the system dashboard
         renderPracticeRoom();
         renderExamsList();
         renderStudents();
+        if (typeof renderOverview === "function") renderOverview();
 
         // Tải danh sách đề từ Supabase Storage để đồng bộ local storage của giáo viên
         if (window.SUPABASE_CONFIG) {
@@ -7324,5 +7735,210 @@ YÊU CẦU QUAN TRỌNG:
           }
         };
       }
+
+      var currentChartRange = "1M";
+
+      var chartData = {
+        "1D": {
+          labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"],
+          values: [12, 5, 18, 45, 80, 55, 30]
+        },
+        "1W": {
+          labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+          values: [120, 150, 180, 140, 220, 310, 280]
+        },
+        "1M": {
+          labels: ["01", "05", "10", "15", "20", "25", "30"],
+          values: [320, 410, 380, 520, 680, 710, 890]
+        },
+        "1Y": {
+          labels: ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"],
+          values: [1200, 1800, 2400, 2100, 3200, 4500, 4800, 5100, 6200, 7800, 8900, 9800]
+        }
+      };
+
+      window.updateOverviewChartRange = function(range) {
+        currentChartRange = range;
+        var container = document.getElementById("tab-overview");
+        if (!container) return;
+        var buttons = container.querySelectorAll(".chart-range-btn");
+        buttons.forEach(function(btn) {
+          var isTarget = btn.getAttribute("onclick").indexOf("'" + range + "'") !== -1;
+          btn.classList.toggle("active", isTarget);
+          if (isTarget) {
+            btn.style.background = "#ffffff";
+            btn.style.color = "#c2272d";
+            btn.style.boxShadow = "0 1px 2px rgba(0,0,0,0.05)";
+          } else {
+            btn.style.background = "transparent";
+            btn.style.color = "#64748b";
+            btn.style.boxShadow = "none";
+          }
+        });
+        drawOverviewChart();
+      };
+
+      function drawOverviewChart() {
+        var container = document.getElementById("overview-chart-container");
+        if (!container) return;
+        var range = currentChartRange;
+        var data = chartData[range];
+        var width = container.clientWidth || 600;
+        var height = 320;
+        var paddingLeft = 50;
+        var paddingRight = 20;
+        var paddingTop = 30;
+        var paddingBottom = 40;
+
+        var graphWidth = width - paddingLeft - paddingRight;
+        var graphHeight = height - paddingTop - paddingBottom;
+
+        var maxVal = Math.max.apply(null, data.values) * 1.15;
+        var pointsCount = data.values.length;
+
+        var svgContent = '<svg width="100%" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none" style="overflow: visible;">';
+        
+        svgContent += '<defs>';
+        svgContent += '<linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">';
+        svgContent += '<stop offset="0%" stop-color="#c2272d" stop-opacity="0.25"/>';
+        svgContent += '<stop offset="100%" stop-color="#c2272d" stop-opacity="0.0"/>';
+        svgContent += '</linearGradient>';
+        svgContent += '<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">';
+        svgContent += '<feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#c2272d" flood-opacity="0.3"/>';
+        svgContent += '</filter>';
+        svgContent += '</defs>';
+
+        var gridLines = 5;
+        for (var i = 0; i <= gridLines; i++) {
+          var y = paddingTop + (graphHeight * (1 - i / gridLines));
+          var val = Math.round(maxVal * (i / gridLines));
+          svgContent += '<line x1="' + paddingLeft + '" y1="' + y + '" x2="' + (width - paddingRight) + '" y2="' + y + '" stroke="#f1f5f9" stroke-width="1.2"/>';
+          svgContent += '<text x="' + (paddingLeft - 12) + '" y="' + (y + 4) + '" fill="#94a3b8" font-size="11" font-weight="600" text-anchor="end" font-family="inherit">' + val + '</text>';
+        }
+
+        var coords = [];
+        for (var i = 0; i < pointsCount; i++) {
+          var cx = paddingLeft + (graphWidth * (i / (pointsCount - 1)));
+          var cy = paddingTop + (graphHeight * (1 - data.values[i] / maxVal));
+          coords.push({x: cx, y: cy, label: data.labels[i], val: data.values[i]});
+        }
+
+        var linePath = "";
+        for (var i = 0; i < coords.length; i++) {
+          if (i === 0) {
+            linePath += "M " + coords[i].x + " " + coords[i].y;
+          } else {
+            var prev = coords[i-1];
+            var curr = coords[i];
+            var cpX1 = prev.x + (curr.x - prev.x) / 3;
+            var cpY1 = prev.y;
+            var cpX2 = prev.x + 2 * (curr.x - prev.x) / 3;
+            var cpY2 = curr.y;
+            linePath += " C " + cpX1 + " " + cpY1 + ", " + cpX2 + " " + cpY2 + ", " + curr.x + " " + curr.y;
+          }
+        }
+
+        var areaPath = linePath + " L " + coords[coords.length - 1].x + " " + (paddingTop + graphHeight) + " L " + coords[0].x + " " + (paddingTop + graphHeight) + " Z";
+
+        svgContent += '<path d="' + areaPath + '" fill="url(#chartGrad)"/>';
+        svgContent += '<path d="' + linePath + '" fill="none" stroke="#c2272d" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)"/>';
+
+        for (var i = 0; i < coords.length; i++) {
+          var x = coords[i].x;
+          var y = paddingTop + graphHeight;
+          svgContent += '<text x="' + x + '" y="' + (y + 20) + '" fill="#94a3b8" font-size="11" font-weight="600" text-anchor="middle" font-family="inherit">' + coords[i].label + '</text>';
+        }
+
+        for (var i = 0; i < coords.length; i++) {
+          svgContent += '<circle cx="' + coords[i].x + '" cy="' + coords[i].y + '" r="4.5" fill="#ffffff" stroke="#c2272d" stroke-width="2.5" style="cursor: pointer;" class="chart-point" data-index="' + i + '"/>';
+        }
+
+        svgContent += '</svg>';
+        svgContent += '<div id="chart-tooltip" style="position: absolute; display: none; background: #1e293b; color: #ffffff; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15); pointer-events: none; white-space: nowrap; z-index: 100; font-family: inherit;"></div>';
+
+        container.innerHTML = svgContent;
+
+        var points = container.querySelectorAll(".chart-point");
+        var tooltip = container.querySelector("#chart-tooltip");
+        points.forEach(function(pt) {
+          pt.addEventListener("mouseover", function(e) {
+            var idx = parseInt(pt.getAttribute("data-index"));
+            var ptData = coords[idx];
+            tooltip.innerHTML = '<div style="color: #94a3b8; font-size: 11px; font-weight: 500; margin-bottom: 2px;">' + (range === '1D' ? 'Giờ: ' : range === '1W' ? 'Thứ: ' : range === '1M' ? 'Ngày: ' : 'Tháng: ') + ptData.label + '</div><div>Hoạt động: ' + ptData.val + '</div>';
+            tooltip.style.display = "block";
+            var containerRect = container.getBoundingClientRect();
+            var xPos = ptData.x - (tooltip.clientWidth / 2);
+            var yPos = ptData.y - tooltip.clientHeight - 10;
+            tooltip.style.left = xPos + "px";
+            tooltip.style.top = yPos + "px";
+            pt.setAttribute("r", "6.5");
+          });
+
+          pt.addEventListener("mouseout", function() {
+            tooltip.style.display = "none";
+            pt.setAttribute("r", "4.5");
+          });
+        });
+      }
+
+      window.renderOverview = function() {
+        var users = [];
+        try {
+          var raw = localStorage.getItem("tmaTsaUsers");
+          if (raw) users = JSON.parse(raw);
+        } catch(e) {}
+        var studentCountEl = document.getElementById("overview-student-count");
+        if (studentCountEl) {
+          studentCountEl.innerText = users.length + " Học sinh";
+        }
+
+        var links = {};
+        try {
+          var raw = localStorage.getItem("tmaTsaDriveLinks");
+          if (raw) links = JSON.parse(raw);
+        } catch(e) {}
+        var docCount = 0;
+        for (var k in links) {
+          if (Array.isArray(links[k])) docCount += links[k].length;
+        }
+        var docCountEl = document.getElementById("overview-doc-count");
+        if (docCountEl) {
+          docCountEl.innerText = docCount + " File";
+        }
+
+        var activityContainer = document.getElementById("overview-activities-list");
+        if (activityContainer) {
+          var activities = [
+            { name: "Nguyễn Văn Hùng", text: "đã luyện tập Đề TSA số 01 đạt 8.5 điểm", time: "2 phút trước" },
+            { name: "Trần Thị Lan", text: "đã tải về tài liệu ôn tập Đọc hiểu", time: "15 phút trước" },
+            { name: "Lê Minh Tuấn", text: "đã đăng ký thành công khóa học Premium", time: "1 giờ trước" },
+            { name: "Giáo viên", text: "đã cập nhật ngân hàng câu hỏi môn Toán", time: "2 giờ trước" },
+            { name: "Hoàng Văn Nam", text: "đã mở tài khoản học sinh mới", time: "3 giờ trước" }
+          ];
+
+          var html = "";
+          activities.forEach(function(act) {
+            html += '<div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f8fafc; padding-bottom: 12px;">';
+            html += '<div style="background: #fff5f6; width: 8px; height: 8px; border-radius: 999px; margin-top: 6px; flex-shrink: 0; background-color: #c2272d;"></div>';
+            html += '<div style="display: flex; flex-direction: column; gap: 3px; flex-grow: 1;">';
+            html += '<div style="font-size: 13.5px; color: #1e293b; font-weight: 500;"><strong style="font-weight: 700;">' + act.name + '</strong> ' + act.text + '</div>';
+            html += '<div style="font-size: 12px; color: #94a3b8; font-weight: 500;">' + act.time + '</div>';
+            html += '</div>';
+            html += '</div>';
+          });
+          activityContainer.innerHTML = html;
+        }
+
+        setTimeout(function() {
+          drawOverviewChart();
+        }, 50);
+      };
+
+      window.addEventListener("resize", function() {
+        var container = document.getElementById("overview-chart-container");
+        if (container && container.offsetParent !== null) {
+          drawOverviewChart();
+        }
+      });
 
     })();
