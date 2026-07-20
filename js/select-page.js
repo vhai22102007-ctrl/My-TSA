@@ -3934,6 +3934,18 @@
         window.activePracticePackage = null;
         renderPracticeRoom();
       };
+      window.startDirectExamRandom = function(examCode) {
+        var targetCode = examCode || "TMA_RANDOM_001";
+        var redirectUrl = targetCode.startsWith("TMA_") 
+          ? ("waiting.html?exam=" + targetCode) 
+          : ("confirm.html?exam=" + targetCode + "&single=true");
+        
+        if (typeof window.startExamDirectly === "function") {
+          window.startExamDirectly("Đề ngẫu nhiên số 01", redirectUrl);
+        } else {
+          window.location.href = redirectUrl;
+        }
+      };
 
       function renderPracticeRoom() {
         const grid = document.getElementById("practice-grid-dynamic");
@@ -4120,8 +4132,129 @@
             </div>
           `;
 
+          var randomCard = document.createElement("div");
+          randomCard.className = "pkg-card";
+          randomCard.style.cssText = "background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,0,0,0.02); height: 320px; text-align: left; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif;";
+          randomCard.innerHTML = `
+            <div>
+              <div style="display: flex; align-items: flex-start; gap: 16px;">
+                <div style="background: #c2272d; width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(194, 39, 45, 0.15);">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <h3 style="font-size: 18px; font-weight: 600; color: #1f2937; margin: 0; text-transform: none; line-height: 1.2; font-family: inherit;">Phòng Luyện Đề Ngẫu Nhiên</h3>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-size: 11px; background: #fdf2f8; color: #c2272d; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">${category}</span>
+                    <span style="font-size: 11px; background: #fef3c7; color: #d97706; padding: 2px 10px; border-radius: 9999px; font-weight: 500; font-family: inherit;">Ngẫu nhiên</span>
+                  </div>
+                </div>
+              </div>
+              <p style="color: #64748b; font-size: 14px; font-weight: 400; margin: 12px 0 0 0; font-family: inherit;">Ngân hàng đề trộn ngẫu nhiên câu hỏi theo cấu trúc đề thi chuẩn.</p>
+              
+              <div style="margin-top: 12px;">
+                <div style="display: flex; align-items: center; gap: 4px; font-size: 13.5px; color: #64748b; font-weight: 400; font-family: inherit;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Nhiều Đề Ngẫu Nhiên
+                </div>
+              </div>
+            </div>
+            
+            <div style="width: 100%;">
+              <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748b; font-weight: 400; font-family: inherit;">
+                  <span>Tiến độ hoàn thành</span>
+                  <span style="color: #c2272d; font-weight: 600; font-family: inherit;">Tự do</span>
+                </div>
+                <div style="background: #f1f5f9; height: 8px; border-radius: 4px; margin-top: 6px; overflow: hidden;">
+                  <div style="background: #c2272d; width: 100%; height: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+              <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                <button class="btn" style="background: #c2272d; border-color: #c2272d; color: white; font-weight: 600; width: 100%; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #c2272d; transition: all 0.2s; font-family: inherit;" onclick="window.startDirectExamRandom('${category === 'TSA' ? 'TMA_RANDOM_001' : (category + '_RANDOM_01')}')">
+                  Bắt đầu vào phòng luyện <span style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 16px; margin-left: 6px; display: inline-block; transform: translateY(-0.5px);">&rarr;</span>
+                </button>
+              </div>
+            </div>
+          `;
+
           grid.appendChild(freeCard);
           grid.appendChild(premiumCard);
+          grid.appendChild(randomCard);
+          return;
+        }
+
+        if (window.activePracticePackage === "random") {
+          if (headerBox) {
+            headerBox.style.display = "flex";
+            const searchInput = document.getElementById("practice-search-input");
+            if (searchInput) searchInput.placeholder = "Tìm kiếm đề ngẫu nhiên...";
+          }
+          if (subtabsContainer) subtabsContainer.style.display = "none";
+
+          var practiceIndexList = [];
+          try {
+            var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+            if (rawIdx) practiceIndexList = JSON.parse(rawIdx) || [];
+          } catch(e) {}
+
+          var randomExams = [];
+          if (Array.isArray(practiceIndexList)) {
+            practiceIndexList.forEach(function(e) {
+              var ec = String(e.exam_code || "").toUpperCase();
+              if (ec.startsWith("TMA_RANDOM_")) {
+                randomExams.push({
+                  exam_code: e.exam_code,
+                  title: e.title,
+                  is_open: e.is_open !== false
+                });
+              }
+            });
+          }
+
+          if (randomExams.length === 0) {
+            randomExams.push({
+              exam_code: "TMA_RANDOM_001",
+              title: "Đề ngẫu nhiên số 01",
+              is_open: true
+            });
+          }
+
+          randomExams.forEach(function(item) {
+            var examTitle = item.title;
+            var examCode = item.exam_code;
+            var redirectUrl = "waiting.html?exam=" + examCode;
+            var hasCompleted = completedExams && completedExams.has(examCode);
+            var xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showHustResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600; cursor: not-allowed;">Xem kết quả</span>`;
+
+            var card = document.createElement("div");
+            card.className = "tsa-exam-item-card";
+            card.innerHTML = `
+              <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
+                  <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức:</span>
+                  <span style="color: #1f2937; font-size: 13px; font-weight: 600;">Thi trực tuyến</span>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box;">
+                ${xemKetQuaHtml}
+                <button class="btn btn-sm btn-primary" style="font-weight: 600; padding: 8px 24px; font-size: 13.5px; border-radius: 6px; background: #c2272d; border: 1px solid #c2272d; color: #fff;" onclick="window.location.href='${redirectUrl}'">Bắt đầu</button>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
           return;
         }
 

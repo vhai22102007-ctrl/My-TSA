@@ -2049,7 +2049,7 @@
   font-family: 'Inter', sans-serif !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   width: 100% !important;
-  max-width: 380px !important;
+  max-width: none !important;
 }
 .tsa-exam-item-card:hover {
   transform: translateY(-3px) !important;
