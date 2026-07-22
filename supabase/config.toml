@@ -1,0 +1,5 @@
+project_id = "jlnfnnrboozwywikxtel"
+
+[functions.tma-ai]
+verify_jwt = true
+

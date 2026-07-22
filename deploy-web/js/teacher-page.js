@@ -504,15 +504,10 @@
       else indexList[idx] = meta;
       localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
 
-      if (window.supabaseClient) {
+      if (window.TMAR2) {
         try {
-          var indexJsonStr = JSON.stringify(indexList, null, 2);
-          var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-          supabaseClient.storage.from('exams').upload('index.json', indexBlob, { cacheControl: '3600', upsert: true }).catch(function(){});
-
-          var examJsonStr = JSON.stringify(newExam, null, 2);
-          var examBlob = new Blob([examJsonStr], { type: "application/json" });
-          supabaseClient.storage.from('exams').upload(autoCode + ".json", examBlob, { cacheControl: '3600', upsert: true }).catch(function(){});
+          window.TMAR2.putJson('data/exams/index.json', indexList).catch(function(){});
+          window.TMAR2.putJson('data/exams/' + autoCode + '.json', window.TMAExamSecurity.createPublicExamCopy(newExam)).catch(function(){});
         } catch(err) {}
       }
 
@@ -906,8 +901,7 @@
     }
 
     async function autoSaveDocuments() {
-      var client = window.supabaseClient;
-      if (!client) return;
+      if (!window.TMAR2) return;
 
       var saveIndicator = document.getElementById("save-documents-indicator");
       if (saveIndicator) {
@@ -920,14 +914,7 @@
       try {
         localStorage.setItem("tmaTsaDriveLinks", JSON.stringify(currentMaterialsList));
 
-        var jsonStr = JSON.stringify(currentMaterialsList, null, 2);
-        var blob = new Blob([jsonStr], { type: "application/json" });
-        await client.storage
-          .from('exams')
-          .upload('drive_links.json', blob, {
-            cacheControl: '3600',
-            upsert: true
-          });
+        await window.TMAR2.putJson('data/exams/drive_links.json', currentMaterialsList);
 
         if (saveIndicator) {
           saveIndicator.textContent = "✓ Đã tự động lưu lên Cloud";
@@ -998,10 +985,9 @@
       autoSaveDocuments();
     }
 
-    async function saveDocumentsToSupabase() {
-      var client = window.supabaseClient;
-      if (!client) {
-        window.alert("Supabase Client chưa được khởi tạo. Vui lòng đợi.");
+    async function saveDocumentsToR2() {
+      if (!window.TMAR2) {
+        window.alert("Cloudflare R2 chưa được cấu hình. Vui lòng tải lại trang.");
         return;
       }
 
@@ -1015,20 +1001,11 @@
       try {
         localStorage.setItem("tmaTsaDriveLinks", JSON.stringify(currentMaterialsList));
 
-        var jsonStr = JSON.stringify(currentMaterialsList, null, 2);
-        var blob = new Blob([jsonStr], { type: "application/json" });
-        var { error } = await client.storage
-          .from('exams')
-          .upload('drive_links.json', blob, {
-            cacheControl: '3600',
-            upsert: true
-          });
-
-        if (error) throw error;
-        window.alert("✓ Đã lưu danh sách tài liệu lên Supabase Cloud thành công!");
+        await window.TMAR2.putJson('data/exams/drive_links.json', currentMaterialsList);
+        window.alert("✓ Đã lưu danh sách tài liệu lên Cloudflare R2 thành công!");
       } catch(err) {
         console.error(err);
-        window.alert("Lỗi khi tải tài liệu lên Supabase:\n" + (err.message || err));
+        window.alert("Lỗi khi tải tài liệu lên R2:\n" + (err.message || err));
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1049,7 +1026,7 @@
 
     window.addNewDocumentToList = addNewDocumentToList;
     window.removeDocumentFromList = removeDocumentFromList;
-    window.saveDocumentsToSupabase = saveDocumentsToSupabase;
+    window.saveDocumentsToR2 = saveDocumentsToR2;
     window.clearAllDocumentLinks = clearAllDocumentLinks;
     window.onTeacherLibFilterChange = function() {
       renderManageDocuments();
@@ -1418,41 +1395,37 @@
         }
 
         if (window.activeTeacherPracticePackage === "random") {
-          if (subtabsContainer) subtabsContainer.style.display = "none";
+          window.currentRandomPracticeSubtab = window.currentRandomPracticeSubtab || "math";
+
+          if (subtabsContainer) {
+            subtabsContainer.style.display = "flex";
+            subtabsContainer.innerHTML = `
+              <div style="display: flex; background: #e2e8f0; padding: 4px; border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); gap: 4px; overflow-x: auto; max-width: 100%;">
+                <button type="button" class="random-subtab-btn ${window.currentRandomPracticeSubtab === 'math' ? 'active' : ''}" data-subtab="math" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${window.currentRandomPracticeSubtab === 'math' ? '#ffffff' : 'transparent'}; color: ${window.currentRandomPracticeSubtab === 'math' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Tư duy Toán học</button>
+                <button type="button" class="random-subtab-btn ${window.currentRandomPracticeSubtab === 'reading' ? 'active' : ''}" data-subtab="reading" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${window.currentRandomPracticeSubtab === 'reading' ? '#ffffff' : 'transparent'}; color: ${window.currentRandomPracticeSubtab === 'reading' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Tư duy Đọc hiểu</button>
+                <button type="button" class="random-subtab-btn ${window.currentRandomPracticeSubtab === 'science' ? 'active' : ''}" data-subtab="science" style="padding: 8px 20px; font-size: 13px; border-radius: 10px; border: 0; background: ${window.currentRandomPracticeSubtab === 'science' ? '#ffffff' : 'transparent'}; color: ${window.currentRandomPracticeSubtab === 'science' ? 'var(--brand)' : '#475569'}; font-weight: 800; cursor: pointer; transition: all 0.15s; white-space: nowrap;">Tư duy Khoa học</button>
+              </div>
+            `;
+            
+            subtabsContainer.querySelectorAll(".random-subtab-btn").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                window.currentRandomPracticeSubtab = btn.getAttribute("data-subtab");
+                renderPracticeRoom();
+              });
+            });
+          }
+
           grid.innerHTML = "";
           grid.style.display = "flex";
           grid.style.flexDirection = "column";
           grid.style.gap = "20px";
 
-          var qList = [];
-          var easyCount = 0;
-          var medCount = 0;
-          var hardCount = 0;
-
-          function getQuestionsFromObj(examObj) {
-            if (!examObj) return;
-            if (Array.isArray(examObj.questions)) {
-              examObj.questions.forEach(function(q) {
-                if (q && String(q.question || q.content || "").trim().length > 0) qList.push(q);
-              });
-            }
-            if (Array.isArray(examObj.sections)) {
-              examObj.sections.forEach(function(s) {
-                if (Array.isArray(s.questions)) {
-                  s.questions.forEach(function(q) {
-                    if (q && String(q.question || q.content || "").trim().length > 0) qList.push(q);
-                  });
-                }
-              });
-            }
-          }
-
           var targetCode = "TMA_RANDOM_001";
           var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          var examObj = null;
           if (raw) {
-            try { getQuestionsFromObj(JSON.parse(raw)); } catch(e) {}
+            try { examObj = JSON.parse(raw); } catch(e) {}
           }
-          // Ngân hàng đề ngẫu nhiên chỉ quản lý các câu hỏi thuộc gói TMA_RANDOM_001
 
           var tableCard = document.createElement("div");
           tableCard.style.cssText = "background: white; border-radius: 12px; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;";
@@ -1469,83 +1442,159 @@
             </div>
           `;
 
-          if (qList.length === 0) {
-            tableCard.innerHTML = tableHeaderHtml + `
-              <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
-                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                <div style="font-weight: 600; color: #334155; font-size: 15px;">Ngân hàng chưa có câu hỏi nào!</div>
-                <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp câu hỏi vào ngân hàng.</div>
-              </div>
-            `;
-          } else {
-            var rowsHtml = "";
-            qList.forEach(function(q, idx) {
-              var diff = Number(q.difficulty) || 1;
-              var diffBadge = (diff === 3) 
-                ? '<span style="background: #ffe4e6; color: #c2272d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 3 (Khó)</span>'
-                : ((diff === 2)
-                  ? '<span style="background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 2 (TB)</span>'
-                  : '<span style="background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 1 (Dễ)</span>');
-              
-              var topicText = q.topic || "Toán đại cương";
-              var topicBadge = `<span style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 12px; white-space: nowrap;">${topicText}</span>`;
-
-              var rawTxt = String(q.question || q.content || "").replace(/<[^>]*>?/gm, '');
-              var previewText = rawTxt.length > 70 ? (rawTxt.substring(0, 70) + "...") : rawTxt;
-
-              // Format answer to avoid [object Object]
-              var ansText = "A";
-              if (q.correct_answer !== undefined && q.correct_answer !== null) {
-                if (typeof q.correct_answer === "object") {
-                  if (Array.isArray(q.correct_answer)) {
-                    ansText = q.correct_answer.join(", ");
-                  } else {
-                    ansText = Object.keys(q.correct_answer).map(function(k) {
-                      var val = q.correct_answer[k];
-                      if (val === true) return k + ":Đ";
-                      if (val === false) return k + ":S";
-                      return k + ":" + val;
-                    }).join(", ");
-                  }
-                } else {
-                  ansText = String(q.correct_answer);
-                }
+          if (window.currentRandomPracticeSubtab === "math") {
+            var qList = [];
+            if (examObj && Array.isArray(examObj.sections)) {
+              var mathSec = examObj.sections.find(s => s.section_id === "math");
+              if (mathSec && Array.isArray(mathSec.questions)) {
+                qList = mathSec.questions;
               }
+            }
 
-              rowsHtml += `
-                <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
-                  <td style="padding: 12px 10px;"><span style="background: #fff5f6; color: #c2272d; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid #ffe4e6; white-space: nowrap;">TMA${String(idx + 1).padStart(3, '0')}</span></td>
-                  <td style="padding: 12px 10px;">${diffBadge}</td>
-                  <td style="padding: 12px 10px;">${topicBadge}</td>
-                  <td style="padding: 12px 10px; color: #1e293b; font-weight: 500;">${previewText}</td>
-                  <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${ansText}</span></td>
-                  <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
-                    <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbQuestion(${idx})">✏️ Chỉnh sửa</button>
-                    <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbQuestion(${idx})">Xóa</button>
-                  </td>
-                </tr>
+            if (qList.length === 0) {
+              tableCard.innerHTML = tableHeaderHtml + `
+                <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <div style="font-weight: 600; color: #334155; font-size: 15px;">Chưa có câu hỏi Toán học nào!</div>
+                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp câu hỏi Toán học.</div>
+                </div>
               `;
-            });
+            } else {
+              var rowsHtml = "";
+              qList.forEach(function(q, idx) {
+                var diff = Number(q.difficulty) || 1;
+                var diffBadge = (diff === 3) 
+                  ? '<span style="background: #ffe4e6; color: #c2272d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 3 (Khó)</span>'
+                  : ((diff === 2)
+                    ? '<span style="background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 2 (TB)</span>'
+                    : '<span style="background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 700;">Mức 1 (Dễ)</span>');
+                
+                var topicText = q.topic || "Khảo sát hàm số";
+                var topicBadge = `<span style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 12px; white-space: nowrap;">${topicText}</span>`;
 
-            tableCard.innerHTML = tableHeaderHtml + `
-              <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;">
-                  <thead>
-                    <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b; font-weight: 600; font-size: 12.5px;">
-                      <th style="padding: 10px;">ID CÂU HỎI</th>
-                      <th style="padding: 10px;">ĐỘ KHÓ</th>
-                      <th style="padding: 10px;">CHỦ ĐỀ</th>
-                      <th style="padding: 10px;">NỘI DUNG CÂU HỎI</th>
-                      <th style="padding: 10px; text-align: center;">ĐÁP ÁN</th>
-                      <th style="padding: 10px; text-align: right;">THAO TÁC</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${rowsHtml}
-                  </tbody>
-                </table>
-              </div>
-            `;
+                var rawTxt = String(q.question || q.content || "").replace(/<[^>]*>?/gm, '');
+                var previewText = rawTxt.length > 70 ? (rawTxt.substring(0, 70) + "...") : rawTxt;
+
+                var ansText = "A";
+                if (q.correct_answer !== undefined && q.correct_answer !== null) {
+                  if (typeof q.correct_answer === "object") {
+                    if (Array.isArray(q.correct_answer)) {
+                      ansText = q.correct_answer.join(", ");
+                    } else {
+                      ansText = Object.keys(q.correct_answer).map(function(k) {
+                        var val = q.correct_answer[k];
+                        if (val === true) return k + ":Đ";
+                        if (val === false) return k + ":S";
+                        return k + ":" + val;
+                      }).join(", ");
+                    }
+                  } else {
+                    ansText = String(q.correct_answer);
+                  }
+                }
+
+                rowsHtml += `
+                  <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
+                    <td style="padding: 12px 10px;"><span style="background: #fff5f6; color: #c2272d; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid #ffe4e6; white-space: nowrap;">TMAm${String(idx + 1).padStart(3, '0')}</span></td>
+                    <td style="padding: 12px 10px;">${diffBadge}</td>
+                    <td style="padding: 12px 10px;">${topicBadge}</td>
+                    <td style="padding: 12px 10px; color: #1e293b; font-weight: 500;">${previewText}</td>
+                    <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${ansText}</span></td>
+                    <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
+                      <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbQuestion(${idx})">✏️ Chỉnh sửa</button>
+                      <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbQuestion(${idx})">Xóa</button>
+                    </td>
+                  </tr>
+                `;
+              });
+
+              tableCard.innerHTML = tableHeaderHtml + `
+                <div style="overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;">
+                    <thead>
+                      <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b; font-weight: 600; font-size: 12.5px;">
+                        <th style="padding: 10px; width: 120px;">ID CÂU HỎI</th>
+                        <th style="padding: 10px; width: 150px;">ĐỘ KHÓ</th>
+                        <th style="padding: 10px; width: 200px;">CHỦ ĐỀ</th>
+                        <th style="padding: 10px;">NỘI DUNG CÂU HỎI</th>
+                        <th style="padding: 10px; text-align: center; width: 100px;">ĐÁP ÁN</th>
+                        <th style="padding: 10px; text-align: right; width: 180px;">THAO TÁC</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${rowsHtml}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }
+          } else {
+            // Reading or Science passage groups
+            var groupsList = [];
+            var sectionId = window.currentRandomPracticeSubtab;
+            if (examObj && Array.isArray(examObj.sections)) {
+              var sec = examObj.sections.find(s => s.section_id === sectionId);
+              if (sec && Array.isArray(sec.groups)) {
+                groupsList = sec.groups;
+              }
+            }
+
+            var sectionLabel = sectionId === "reading" ? "Đọc hiểu" : "Khoa học";
+
+            if (groupsList.length === 0) {
+              tableCard.innerHTML = tableHeaderHtml + `
+                <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                  <div style="font-weight: 600; color: #334155; font-size: 15px;">Chưa có ngữ liệu ${sectionLabel} nào!</div>
+                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp ngữ liệu.</div>
+                </div>
+              `;
+            } else {
+              var rowsHtml = "";
+              groupsList.forEach(function(g, idx) {
+                var qCount = (g.questions || []).length;
+                var rawTxt = String(g.passage || "").replace(/<[^>]*>?/gm, '');
+                var previewText = rawTxt.length > 70 ? (rawTxt.substring(0, 70) + "...") : rawTxt;
+                var titleText = g.title || "Chưa có tiêu đề";
+
+                var prefix = sectionId === "reading" ? "TMAr" : "TMAs";
+                var idBg = sectionId === "reading" ? "#eff6ff" : "#f0fdf4";
+                var idText = sectionId === "reading" ? "#1e40af" : "#166534";
+                var idBorder = sectionId === "reading" ? "#bfdbfe" : "#bbf7d0";
+
+                rowsHtml += `
+                  <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
+                    <td style="padding: 12px 10px;"><span style="background: ${idBg}; color: ${idText}; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid ${idBorder}; white-space: nowrap;">${prefix}${String(idx + 1).padStart(3, '0')}</span></td>
+                    <td style="padding: 12px 10px; color: #1e293b; font-weight: 700;">${titleText}</td>
+                    <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${qCount} câu hỏi</span></td>
+                    <td style="padding: 12px 10px; color: #475569; font-weight: 500;">${previewText}</td>
+                    <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
+                      <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbGroup('${g.group_id}', '${sectionId}')">✏️ Chỉnh sửa</button>
+                      <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbGroup('${g.group_id}', '${sectionId}')">Xóa</button>
+                    </td>
+                  </tr>
+                `;
+              });
+
+              tableCard.innerHTML = tableHeaderHtml + `
+                <div style="overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;">
+                    <thead>
+                      <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b; font-weight: 600; font-size: 12.5px;">
+                        <th style="padding: 10px; width: 120px;">MÃ NGỮ LIỆU</th>
+                        <th style="padding: 10px; width: 220px;">TIÊU ĐỀ NGỮ LIỆU</th>
+                        <th style="padding: 10px; text-align: center; width: 120px;">SỐ CÂU HỎI</th>
+                        <th style="padding: 10px;">NỘI DUNG TÓM TẮT</th>
+                        <th style="padding: 10px; text-align: right; width: 180px;">THAO TÁC</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${rowsHtml}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }
           }
 
           grid.appendChild(tableCard);
@@ -2412,14 +2461,71 @@
           if (!Array.isArray(getSection(id).groups)) getSection(id).groups = [];
         });
 
+        var isRandomPractice = (exam.exam_code === "TMA_RANDOM_001");
+
+        // Helper to fix image URLs in HTML strings
+        function fixImageUrlsInHtml(html) {
+          if (!html) return html;
+          var isLocalFile = (window.location.protocol === "file:");
+          return html.replace(/<img\s+([^>]*\s+)?src=(["'])([^"'\s]+)\2/gi, function(match, prefix, quote, src) {
+            var newSrc = src;
+            if (src.indexOf("http://") !== 0 && src.indexOf("https://") !== 0 && src.indexOf("data:") !== 0) {
+              if (isLocalFile) {
+                if (src.indexOf("assets/") === 0) {
+                  newSrc = src;
+                } else {
+                  newSrc = "assets/" + src;
+                }
+              } else {
+                if (src.indexOf("assets/") === 0) {
+                  newSrc = "https://assets.tmastudy.io.vn/" + src;
+                } else {
+                  newSrc = "https://assets.tmastudy.io.vn/assets/" + src;
+                }
+              }
+            } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+              newSrc = src.replace("https://assets.tmastudy.io.vn/", "");
+            }
+            return '<img ' + (prefix || '') + 'src=' + quote + newSrc + quote;
+          });
+        }
+
         // Enforce Reading Section Schema (exactly 2 groups, 10 questions each)
         var readingSec = getSection("reading");
         if (readingSec) {
           if (!Array.isArray(readingSec.groups)) readingSec.groups = [];
           
-          // Keep only g1 and g2
-          readingSec.groups = readingSec.groups.filter(function(g) {
-            return g.group_id === "g1" || g.group_id === "g2";
+          if (!isRandomPractice) {
+            // Keep only g1 and g2
+            readingSec.groups = readingSec.groups.filter(function(g) {
+              return g.group_id === "g1" || g.group_id === "g2";
+            });
+          }
+
+          // Ensure stimulus/passage synchronization and structure for all reading groups
+          readingSec.groups.forEach(function(g) {
+            if (!g.stimulus) {
+              g.stimulus = { type: "text", content: "", image_url: "", image_width: 100 };
+            }
+            if (g.passage && !g.stimulus.content) {
+              g.stimulus.content = g.passage;
+            }
+            if (g.stimulus.content && !g.passage) {
+              g.passage = g.stimulus.content;
+            }
+            // Fix image URLs
+            if (g.stimulus.content) g.stimulus.content = fixImageUrlsInHtml(g.stimulus.content);
+            if (g.passage) g.passage = fixImageUrlsInHtml(g.passage);
+            if (g.stimulus.image_url) {
+              var src = g.stimulus.image_url;
+              if (src.indexOf("http://") !== 0 && src.indexOf("https://") !== 0 && src.indexOf("data:") !== 0) {
+                if (src.indexOf("assets/") === 0) {
+                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/" + src;
+                } else {
+                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/assets/" + src;
+                }
+              }
+            }
           });
           
           // Check/Create Group 1 (g1)
@@ -2434,12 +2540,14 @@
             readingSec.groups.push(g1);
           }
           if (!Array.isArray(g1.questions)) g1.questions = [];
-          if (g1.questions.length > 10) {
+          if (g1.questions.length > 10 && !isRandomPractice) {
             g1.questions = g1.questions.slice(0, 10);
           }
-          // Strip legacy demo placeholder text if still present
-          if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
-          if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
+          // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
+          if (!isRandomPractice) {
+            if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
+            if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
+          }
           while (g1.questions.length < 10) {
             var nextNo = g1.questions.length + 1;
             g1.questions.push({
@@ -2476,12 +2584,14 @@
             readingSec.groups.push(g2);
           }
           if (!Array.isArray(g2.questions)) g2.questions = [];
-          if (g2.questions.length > 10) {
+          if (g2.questions.length > 10 && !isRandomPractice) {
             g2.questions = g2.questions.slice(0, 10);
           }
-          // Strip legacy demo placeholder text if still present
-          if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
-          if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
+          // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
+          if (!isRandomPractice) {
+            if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
+            if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
+          }
           while (g2.questions.length < 10) {
             var nextNo = g2.questions.length + 11; // 11 to 20
             g2.questions.push({
@@ -2521,10 +2631,38 @@
         if (scienceSec) {
           if (!Array.isArray(scienceSec.groups)) scienceSec.groups = [];
           
-          // Keep only g1 to g8
           var allowedScienceGroups = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8"];
-          scienceSec.groups = scienceSec.groups.filter(function(g) {
-            return allowedScienceGroups.indexOf(g.group_id) !== -1;
+          if (!isRandomPractice) {
+            // Keep only g1 to g8
+            scienceSec.groups = scienceSec.groups.filter(function(g) {
+              return allowedScienceGroups.indexOf(g.group_id) !== -1;
+            });
+          }
+
+          // Ensure stimulus/passage synchronization and structure for all science groups
+          scienceSec.groups.forEach(function(g) {
+            if (!g.stimulus) {
+              g.stimulus = { type: "text", content: "", image_url: "", image_width: 100 };
+            }
+            if (g.passage && !g.stimulus.content) {
+              g.stimulus.content = g.passage;
+            }
+            if (g.stimulus.content && !g.passage) {
+              g.passage = g.stimulus.content;
+            }
+            // Fix image URLs
+            if (g.stimulus.content) g.stimulus.content = fixImageUrlsInHtml(g.stimulus.content);
+            if (g.passage) g.passage = fixImageUrlsInHtml(g.passage);
+            if (g.stimulus.image_url) {
+              var src = g.stimulus.image_url;
+              if (src.indexOf("http://") !== 0 && src.indexOf("https://") !== 0 && src.indexOf("data:") !== 0) {
+                if (src.indexOf("assets/") === 0) {
+                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/" + src;
+                } else {
+                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/assets/" + src;
+                }
+              }
+            }
           });
           
           for (var gIdx = 1; gIdx <= 8; gIdx++) {
@@ -2540,12 +2678,14 @@
               scienceSec.groups.push(group);
             }
             if (!Array.isArray(group.questions)) group.questions = [];
-            if (group.questions.length > 5) {
+            if (group.questions.length > 5 && !isRandomPractice) {
               group.questions = group.questions.slice(0, 5);
             }
-            // Strip legacy demo placeholder text if still present
-            if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
-            if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
+            // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
+            if (!isRandomPractice) {
+              if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
+              if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
+            }
             
             var startNo = (gIdx - 1) * 5 + 1;
             while (group.questions.length < 5) {
@@ -2678,27 +2818,7 @@
 
       function moveGroupTabsToTopbar(tab) {
         var container = document.getElementById("topbar-group-tabs-container");
-        if (!container) return;
-        container.innerHTML = "";
-        if (tab === "reading") {
-          var nav = document.querySelector("#tab-reading .reading-tabs-nav") || document.querySelector(".reading-tabs-nav");
-          if (nav) {
-            container.appendChild(nav);
-            container.style.display = "block";
-          } else {
-            container.style.display = "none";
-          }
-        } else if (tab === "science") {
-          var nav = document.querySelector("#tab-science .science-tabs-nav") || document.querySelector(".science-tabs-nav");
-          if (nav) {
-            container.appendChild(nav);
-            container.style.display = "block";
-          } else {
-            container.style.display = "none";
-          }
-        } else {
-          container.style.display = "none";
-        }
+        if (container) container.style.display = "none";
       }
 
       function restoreGroupTabsToPanels() {
@@ -2735,14 +2855,16 @@
         });
 
         var titles = {
-          setup: "Thiết lập đề thi",
-          'ai-import': "AI Nhập đề tự động",
+          setup: "Khởi tạo đề thi",
           math: "Soạn phần Tư duy Toán học",
           reading: "Soạn phần Đọc hiểu",
           science: "Soạn phần Khoa học",
           export: "Lưu và xuất đề"
         };
-        $("#page-title").textContent = titles[tab] || "Bộ soạn đề TSA";
+        var pageTitleEl = $("#page-title") || document.getElementById("page-title");
+        if (pageTitleEl) {
+          pageTitleEl.textContent = titles[tab] || "Bộ soạn đề TSA";
+        }
 
         // Hide/show topbar title/subtitle, autosave, and summary grid on math, reading, science tabs
         var isSubjectTab = (tab === "math" || tab === "reading" || tab === "science");
@@ -2752,27 +2874,48 @@
         var summaryGrid = document.getElementById("summary-grid");
         var topbar = document.querySelector("#editor-container .topbar");
 
+        var setupControls = document.getElementById("topbar-setup-controls");
+        var mathControls = document.getElementById("topbar-math-controls");
+
+        if (window.isEditingSingleQbQuestion) {
+          if (setupControls) setupControls.style.display = "none";
+          if (mathControls) mathControls.style.display = "flex";
+          if (topbar) {
+            topbar.style.display = "flex";
+            topbar.style.marginBottom = "12px";
+            topbar.style.paddingBottom = "0px";
+          }
+        } else {
+          if (setupControls) {
+            setupControls.style.display = (tab === "setup") ? "flex" : "none";
+          }
+          if (mathControls) {
+            mathControls.style.display = (tab === "math") ? "flex" : "none";
+          }
+        }
+
         if (isSubjectTab) {
           if (titleWrapper) titleWrapper.style.display = "none";
-          if (editorControls) editorControls.style.display = "flex";
+          if (editorControls) editorControls.style.display = "none";
           if (autosaveStatus) autosaveStatus.style.display = "none";
           if (summaryGrid) summaryGrid.style.display = "none";
-          if (topbar) {
+          if (topbar && !window.isEditingSingleQbQuestion) {
+            topbar.style.display = (tab === "math") ? "flex" : "none";
             topbar.style.marginBottom = (tab === "math") ? "12px" : "0px";
             topbar.style.paddingBottom = "0px";
           }
           updateTopbarQNo();
         } else {
-          if (titleWrapper) titleWrapper.style.display = "block";
+          if (titleWrapper) titleWrapper.style.display = (tab === "setup") ? "none" : "block";
           if (editorControls) editorControls.style.display = "none";
-          if (autosaveStatus) autosaveStatus.style.display = "block";
-          if (summaryGrid) summaryGrid.style.display = "grid";
-          if (topbar) {
+          if (autosaveStatus) autosaveStatus.style.display = (tab === "setup") ? "none" : "block";
+          if (summaryGrid) summaryGrid.style.display = (tab === "setup") ? "none" : "grid";
+          if (topbar && !window.isEditingSingleQbQuestion) {
+            topbar.style.display = (tab === "setup") ? "flex" : "block";
             topbar.style.marginBottom = "18px";
             topbar.style.paddingBottom = "";
           }
         }
-
         var previewBtn = document.getElementById("header-preview-btn");
         if (previewBtn) {
           if (tab === "math") {
@@ -2784,7 +2927,25 @@
 
         renderAll();
         moveGroupTabsToTopbar(tab);
+
+        // Auto collapse sidebar on subject tabs (math, reading, science) ONLY in 40-question exam mode, NOT in single-qb-mode!
+        var shell = document.querySelector(".teacher-shell");
+        if (shell) {
+          if (!document.body.classList.contains("single-qb-mode") && (tab === "math" || tab === "reading" || tab === "science")) {
+            shell.classList.add("sidebar-collapsed");
+          } else {
+            shell.classList.remove("sidebar-collapsed");
+          }
+        }
       }
+
+      function toggleSidebar() {
+        var shell = document.querySelector(".teacher-shell");
+        if (shell) {
+          shell.classList.toggle("sidebar-collapsed");
+        }
+      }
+      window.toggleSidebar = toggleSidebar;
 
       // Expose to window for clicks
       window.switchEditorTab = switchEditorTab;
@@ -2821,10 +2982,11 @@
         if (sectionId === "math") {
           ensureSchema();
           if (!activeMathQuestionNo || activeMathQuestionNo < 1) activeMathQuestionNo = 1;
-          if (!editingQuestion["math"] || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
-            var mathQs = getSection("math").questions;
-            var mathTarget = mathQs[activeMathQuestionNo - 1];
-            var q = clone(mathTarget || defaultQuestion("math"));
+          if (!editingQuestion["math"] || !editingQuestion["math"].question || editingQuestion["math"].index !== activeMathQuestionNo - 1) {
+            var mathSec = getSection("math");
+            var mathQs = mathSec ? (mathSec.questions || []) : [];
+            var mathTarget = mathQs[activeMathQuestionNo - 1] || defaultQuestion("math");
+            var q = clone(mathTarget) || defaultQuestion("math");
             if (q) q.question_no = activeMathQuestionNo; // always align displayed number with slot
             editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: q };
           }
@@ -2886,23 +3048,12 @@
             '<input type="hidden" id="' + sectionId + '-q-no" value="' + attr(q.question_no || 1) + '">' +
             '<input type="hidden" id="' + sectionId + '-q-type" value="' + attr(q.question_type) + '">' +
 
-            // Editor View Wrapper
-            '<div id="' + sectionId + '-editor-view" style="width: 100%; display: flex; flex-direction: column; gap: 20px;">' +
-              // Row 2: Question Type tabs
-              '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
-                typeTabsHtml(sectionId, q.question_type) +
-              '</div>' +
-              (sectionId === "math" ? 
-                '<div id="math-default-diff-row" style="display: flex; gap: 12px; align-items: center; background: #fff5f6; border: 1px solid #ffe4e6; padding: 10px 14px; border-radius: 8px; margin-bottom: 4px; font-family: inherit;">' +
-                  '<span style="font-weight: 700; font-size: 13px; color: #c2272d;">🎯 Độ khó (AI Classifier):</span>' +
-                  '<select id="math-q-difficulty-select" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #cbd5e1; font-weight: 600; font-size: 13px; outline: none; background: white;" onchange="window.updateCurrentMathDifficulty(this.value)">' +
-                    '<option value="1" ' + (Number(q.difficulty || 1) === 1 ? 'selected' : '') + '>Mức 1 (Dễ - 37.5%)</option>' +
-                    '<option value="2" ' + (Number(q.difficulty || 1) === 2 ? 'selected' : '') + '>Mức 2 (Trung bình - 37.5%)</option>' +
-                    '<option value="3" ' + (Number(q.difficulty || 1) === 3 ? 'selected' : '') + '>Mức 3 (Khó - 25%)</option>' +
-                  '</select>' +
-                  '<button type="button" class="btn" style="background: #c2272d; color: white; font-weight: 700; font-size: 12.5px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="window.autoClassifyMathQuestionForm()">🤖 AI Phân loại độ khó</button>' +
-                  '<span id="math-ai-reason-span" style="font-size: 12px; color: #166534; font-weight: 600; display: none;"></span>' +
-                '</div>' : '') +
+              // Question Type tabs (Only for non-math sections, as math has Vách 1 sidebar)
+              (sectionId === "math" ? "" :
+                '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
+                  typeTabsHtml(sectionId, q.question_type) +
+                '</div>'
+              ) +
               // Inputs
               '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Nhập nội dung câu hỏi">' + esc(q.question || "") + '</textarea></div>' +
               '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
@@ -2912,38 +3063,32 @@
                 '</div>' +
               '</div>' +
               '<div class="field full" id="' + sectionId + '-type-fields" style="width: 100%;"></div>' +
-              '<div class="field full"><label>Giải thích lời giải</label><textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || q.solution_details || q.solution_detail || q.solution || "") + '</textarea></div>' +
+              '<div class="field full">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">' +
+                  '<label style="margin-bottom:0;">Giải thích lời giải</label>' +
+                  '<button type="button" class="btn btn-secondary btn-sm" id="' + sectionId + '-ai-explain-btn" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600; background:#c2272d; color:#fff; border:none; cursor:pointer;" onclick="window.generateAiExplanation(\'' + sectionId + '\')">🤖 AI Làm lời giải</button>' +
+                '</div>' +
+                '<textarea class="textarea" id="' + sectionId + '-q-explanation">' + esc(q.explanation || q.solution_details || q.solution_detail || q.solution || "") + '</textarea>' +
+              '</div>' +
             '</div>' +
 
-            // Preview View Wrapper
-            '<div id="' + sectionId + '-preview-view" style="display: none; width: 100%;">' +
-              (sectionId === "math"
-                ? ('<div style="display: flex; flex-direction: column; gap: 16px; width: 100%;">' +
-                    '<div class="question-card" style="width: 100%; box-sizing: border-box;">' +
-                      '<div class="question-layout-row" style="width: 100%;">' +
-                        '<div class="question-number-circle" id="' + sectionId + '-preview-qno-circle">' + attr(q.question_no || 1) + '</div>' +
-                        '<div class="question-text-content" style="flex: 1; min-width: 0;">' +
-                          '<div class="question-body" id="' + sectionId + '-preview-body" style="width: 100%; word-break: break-word;"></div>' +
-                          '<div class="answer-area" id="' + sectionId + '-preview-answer" style="width: 100%;"></div>' +
-                        '</div>' +
-                      '</div>' +
+            // Preview View Wrapper (for reading/science split view if needed)
+            (sectionId === "math" ? "" :
+            ('<div id="' + sectionId + '-preview-view" style="display: none; width: 100%;">' +
+              '<div style="display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr); gap: 0; width: 100%; min-height: 480px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff;">' +
+                '<div id="' + sectionId + '-preview-stimulus" style="overflow-y: auto; padding: 20px 24px; border-right: 1.5px solid var(--line); background: #f8fafc; line-height: 1.85;"></div>' +
+                '<div style="overflow-y: auto; padding: 20px 24px;">' +
+                  '<div class="question-layout-row" style="width: 100%; align-items: flex-start;">' +
+                    '<div class="question-number-circle" id="' + sectionId + '-preview-qno-circle">' + attr(q.question_no || 1) + '</div>' +
+                    '<div class="question-text-content" style="flex: 1; min-width: 0;">' +
+                      '<div class="question-body" id="' + sectionId + '-preview-body" style="width: 100%; word-break: break-word;"></div>' +
+                      '<div class="answer-area" id="' + sectionId + '-preview-answer" style="width: 100%;"></div>' +
                     '</div>' +
-                  '</div>')
-                : ('<div style="display: grid; grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr); gap: 0; width: 100%; min-height: 480px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff;">' +
-                    '<div id="' + sectionId + '-preview-stimulus" style="overflow-y: auto; padding: 20px 24px; border-right: 1.5px solid var(--line); background: #f8fafc; line-height: 1.85;"></div>' +
-                    '<div style="overflow-y: auto; padding: 20px 24px;">' +
-                      '<div class="question-layout-row" style="width: 100%; align-items: flex-start;">' +
-                        '<div class="question-number-circle" id="' + sectionId + '-preview-qno-circle">' + attr(q.question_no || 1) + '</div>' +
-                        '<div class="question-text-content" style="flex: 1; min-width: 0;">' +
-                          '<div class="question-body" id="' + sectionId + '-preview-body" style="width: 100%; word-break: break-word;"></div>' +
-                          '<div class="answer-area" id="' + sectionId + '-preview-answer" style="width: 100%;"></div>' +
-                        '</div>' +
-                      '</div>' +
-                    '</div>' +
-                  '</div>')
-              ) +
-            '</div>' +
-          '</div>';
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>')
+          );
         renderTypeFields(sectionId, q);
         
         var slider = $("#" + sectionId + "-q-image-width");
@@ -2954,7 +3099,11 @@
           });
         }
 
-        $all("#" + sectionId + "-question-form input, #" + sectionId + "-question-form textarea, #" + sectionId + "-question-form select").forEach(function (input) {
+        var inputSelectors = "#" + sectionId + "-question-form input, #" + sectionId + "-question-form textarea, #" + sectionId + "-question-form select";
+        if (sectionId === "math") {
+          inputSelectors += ", #math-pane-sidebar select, #vach1-question-type-tabs button";
+        }
+        $all(inputSelectors).forEach(function (input) {
           input.addEventListener("input", function () { updatePreview(sectionId); });
           input.addEventListener("change", function () { updatePreview(sectionId); });
         });
@@ -2971,6 +3120,8 @@
         if (window.isEditingSingleQbQuestion && typeof window.injectSingleQuestionControls === "function") {
           window.injectSingleQuestionControls(sectionId);
         }
+
+        updatePreview(sectionId);
       }
 
       function applyTypeDefaults(q) {
@@ -3017,7 +3168,7 @@
         
         var html = '<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
           '<input type="checkbox" id="' + sectionId + '-options-are-images" ' + (optionsAreImages ? 'checked' : '') + ' onchange="toggleTeacherOptionsAreImages(this, \'' + sectionId + '\')" style="width: 16px; height: 16px; cursor: pointer;">' +
-          '<label for="' + sectionId + '-options-are-images" style="font-weight: bold; cursor: pointer; color: var(--text-dark); font-size: 13.5px;">Đáp án bằng hình ảnh (4 lựa chọn là ảnh)</label>' +
+          '<label for="' + sectionId + '-options-are-images" style="font-weight: 750; cursor: pointer; color: #c2272d; font-size: 13.5px;">Đáp án bằng hình ảnh (4 lựa chọn là ảnh)</label>' +
           '</div>';
 
         html += '<div class="choices-container ' + containerClass + '" style="display: flex; flex-direction: column; gap: 10px;">';
@@ -3339,14 +3490,19 @@
           
           var isActive = i === activeMathQuestionNo;
           
-          var styleStr = "display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; padding: 0;";
-          if (isFilled) {
-            styleStr += " background: var(--brand); border: 1.5px solid var(--brand-dark); color: #fff;";
-          } else {
-            styleStr += " background: #fff; border: 1.5px solid var(--line); color: var(--muted);";
-          }
+          var styleStr = "display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; min-width: 22px; flex-shrink: 0; border-radius: 50%; font-size: 10.5px; cursor: pointer; transition: all 0.15s ease; padding: 0; box-sizing: border-box;";
           if (isActive) {
-            styleStr += " box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--brand); z-index: 1; font-weight: 800;";
+            if (isFilled) {
+              styleStr += " background: #c2272d; color: #ffffff; border: 2px solid #881337; font-weight: 800; transform: scale(1.15); box-shadow: 0 2px 4px rgba(194,39,45,0.35); z-index: 2;";
+            } else {
+              styleStr += " background: #ffffff; color: #c2272d; border: 2px solid #c2272d; font-weight: 800; transform: scale(1.15); box-shadow: 0 2px 4px rgba(194,39,45,0.25); z-index: 2;";
+            }
+          } else {
+            if (isFilled) {
+              styleStr += " background: #c2272d; color: #ffffff; border: none; font-weight: 700; opacity: 0.9;";
+            } else {
+              styleStr += " background: #f8fafc; color: #64748b; border: 1px solid #cbd5e1; font-weight: 600;";
+            }
           }
           
           var btnHtml = '<button type="button" style="' + styleStr + '" onclick="selectMathWizardQuestion(' + i + ')">' + i + '</button>';
@@ -3355,7 +3511,7 @@
         
         var progressEl = $("#math-wizard-progress");
         if (progressEl) {
-          progressEl.textContent = "Tiến độ: " + editedCount + "/40 câu đã soạn";
+          progressEl.textContent = "Tiến độ: " + editedCount + "/40 câu";
         }
         
         var prevBtn = $("#math-wizard-prev");
@@ -3374,10 +3530,6 @@
             nextBtn.textContent = "Lưu & Câu tiếp →";
           }
         }
-        
-        if (typeof window.toggleSingleQuestionEditMode === "function") {
-          window.toggleSingleQuestionEditMode(window.isEditingSingleQbQuestion);
-        }
       }
       window.renderMathWizardNav = renderMathWizardNav;
       window.selectMathWizardQuestion = selectMathWizardQuestion;
@@ -3387,20 +3539,32 @@
         if (qNo < 1 || qNo > 40) return;
         
         // Auto-save current draft before switching
-        if (editingQuestion["math"]) {
+        if (editingQuestion["math"] && editingQuestion["math"].question) {
           var currentVal = collectBaseQuestion("math", false);
           currentVal.question_no = activeMathQuestionNo; // always keep question_no correct
           ensureSchema();
           var mathSec2 = getSection("math");
-          mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+          if (mathSec2 && Array.isArray(mathSec2.questions)) {
+            mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+          }
           saveDraft();
         }
         
         activeMathQuestionNo = qNo;
         ensureSchema();
         var mathSec = getSection("math");
-        // Load by array slot (ensureSchema ensures 40 items), then force question_no to match slot
-        var targetQ = clone(mathSec.questions[activeMathQuestionNo - 1]);
+        
+        // Load by array slot safely
+        var rawQ = (mathSec && mathSec.questions) ? mathSec.questions[activeMathQuestionNo - 1] : null;
+        if (!rawQ) {
+          rawQ = defaultQuestion("math");
+          rawQ.question_no = activeMathQuestionNo;
+          if (mathSec && Array.isArray(mathSec.questions)) {
+            mathSec.questions[activeMathQuestionNo - 1] = rawQ;
+          }
+        }
+        
+        var targetQ = clone(rawQ) || defaultQuestion("math");
         targetQ.question_no = activeMathQuestionNo; // always correct the displayed number
         
         editingQuestion["math"] = { index: activeMathQuestionNo - 1, question: targetQ };
@@ -3409,7 +3573,7 @@
         setEditorRoleView("math", "teacher");
         
         var form = $("#math-question-form");
-        if (form) form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (form && typeof form.scrollIntoView === "function") form.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       window.selectMathWizardQuestion = selectMathWizardQuestion;
 
@@ -3674,29 +3838,42 @@
         tbody.innerHTML = "";
         ensureSchema();
 
-        if (sectionId === "reading") {
-          var readingSec = getSection("reading");
-          var gId = activeGroupIds["reading"] || "g1";
-          var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
-          var numberLabel = gId === "g1" ? "1" : "2";
-          var rangeLabel = gId === "g1" ? "Câu 1 - 10" : "Câu 11 - 20";
+        if (sectionId === "reading" || sectionId === "science") {
+          var sec = getSection(sectionId);
+          var groups = sec ? (sec.groups || []) : [];
+          var gId = activeGroupIds[sectionId];
+          if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+            gId = groups[0].group_id;
+            activeGroupIds[sectionId] = gId;
+          }
+          var group = groups.find(function(g) { return g.group_id === gId; });
+          var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+          if (gIdx === -1) gIdx = 0;
+          var numberLabel = String(gIdx + 1);
+
+          var startNo = 1;
+          for (var i = 0; i < gIdx; i++) {
+            startNo += (groups[i].questions || []).length;
+          }
+          var qCount = group ? (group.questions || []).length : 0;
+          var rangeLabel = "Câu " + startNo + " - " + (startNo + Math.max(0, qCount - 1));
           
           var html = "";
-          
-          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-bottom: 1.5px solid var(--line);">Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')</td></tr>';
+          var displayLabel = sectionId === "reading" ? "Ngữ liệu " : "Dữ liệu ";
+          html += '<tr><td colspan="4" style="background: #f8fafc; font-weight: 700; color: var(--brand); padding: 8px 12px; border-bottom: 1.5px solid var(--line);">' + displayLabel + numberLabel + ' (' + rangeLabel + ')</td></tr>';
           var gList = group ? (group.questions || []) : [];
           if (!gList.length) {
-            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho Ngữ liệu ' + numberLabel + '.</td></tr>';
+            html += '<tr><td colspan="4" class="empty">Chưa có câu hỏi nào cho ' + displayLabel + numberLabel + '.</td></tr>';
           } else {
             html += gList.map(function (q, index) {
               var label = (QUESTION_TYPES.find(function (t) { return t[0] === q.question_type; }) || ["", "Khác"])[1];
-              var isActive = editingQuestion["reading"]?.index === index;
+              var isActive = editingQuestion[sectionId]?.index === index;
               return '<tr class="' + (isActive ? 'table-row-active' : '') + '">' +
                 '<td class="table-main" style="text-align:center;">' + q.question_no + '</td>' +
                 '<td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(q.question || "Nội dung trống") + '</td>' +
                 '<td><span class="status type">' + label + '</span></td>' +
                 '<td><div class="actions">' +
-                '<button class="btn btn-small btn-outline" onclick="editReadingQuestion(\'' + gId + '\', ' + index + ')">Sửa</button>' +
+                '<button class="btn btn-small btn-outline" onclick="window.editGroupQuestion(\'' + sectionId + '\', \'' + gId + '\', ' + index + ')">Sửa</button>' +
                 '</div></td>' +
                 '</tr>';
             }).join("");
@@ -3731,12 +3908,13 @@
 
 
 
-      function editReadingQuestion(groupId, index) {
+      function editGroupQuestion(sectionId, groupId, index) {
         ensureSchema();
-        activeGroupIds["reading"] = groupId;
-        editQuestion("reading", index);
+        activeGroupIds[sectionId] = groupId;
+        editQuestion(sectionId, index);
       }
-      window.editReadingQuestion = editReadingQuestion;
+      window.editGroupQuestion = editGroupQuestion;
+      window.editReadingQuestion = editGroupQuestion; // legacy support
 
       function renderGroupList(sectionId) {
         var listEl = $("#" + sectionId + "-group-list");
@@ -3772,29 +3950,42 @@
         if (sectionId === "reading") {
           ensureSchema();
           var readingSec = getSection("reading");
-          var gId = activeGroupIds["reading"] || "g1";
-          var group = readingSec.groups.find(function(g) { return g.group_id === gId; });
+          var groups = readingSec.groups || [];
+          var gId = activeGroupIds["reading"];
+          if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+            gId = groups[0].group_id;
+            activeGroupIds["reading"] = gId;
+          }
+          var group = groups.find(function(g) { return g.group_id === gId; });
           if (!group) return;
           
-          var numberLabel = gId === "g1" ? "1" : "2";
-          var rangeLabel = gId === "g1" ? "Câu 1 - 10" : "Câu 11 - 20";
+          var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+          if (gIdx === -1) gIdx = 0;
+          var numberLabel = String(gIdx + 1);
+
+          var startQ = 1;
+          for (var i = 0; i < gIdx; i++) {
+            startQ += (groups[i].questions || []).length;
+          }
+          var qCount = (group.questions || []).length;
+          var rangeLabel = "Câu " + startQ + " - " + (startQ + Math.max(0, qCount - 1));
           
           form.innerHTML = 
             '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; background: #fff;">' +
-              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
+              '<h3 style="font-size: 14px; font-weight: 700; color: #c2272d; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#c2272d;"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
               '</h3>' +
               '<div class="form-grid" style="gap: 18px 20px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Đọc hiểu số 0' + numberLabel + '"></div>' +
+                '<div class="field full"><label style="color:#c2272d; font-weight:750;">Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="reading-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Đọc hiểu số 0' + numberLabel + '"></div>' +
                 '<div class="field full" style="display:flex; flex-direction:column; gap:6px;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                  '<label style="margin-bottom:0;">Nội dung văn bản / dữ liệu ' + numberLabel + '</label>' +
+                  '<label style="margin-bottom:0; color:#c2272d; font-weight:750;">Nội dung văn bản / dữ liệu ' + numberLabel + '</label>' +
                   '<button type="button" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600;" onclick="insertCloudImageIntoGroupText(\'reading\', \'reading-' + gId + '-text\')">🖼️ Chèn ảnh từ Cloud</button>' +
                 '</div>' +
                 '<textarea class="textarea" id="reading-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung đoạn văn / ngữ liệu ' + numberLabel + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea>' +
               '</div>' +
                 '<div class="btn-row" style="margin-top: 8px;">' +
-                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveReadingGroupDirect(\'' + gId + '\')" style="background-color: #c2272d; border-color: #c2272d; font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -3824,38 +4015,50 @@
         if (sectionId === "science") {
           ensureSchema();
           var scienceSec = getSection("science");
-          var gId = activeGroupIds["science"] || "g1";
-          var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+          var groups = scienceSec.groups || [];
+          var gId = activeGroupIds["science"];
+          if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+            gId = groups[0].group_id;
+            activeGroupIds["science"] = gId;
+          }
+          var group = groups.find(function(g) { return g.group_id === gId; });
           if (!group) return;
           
-          var gIdx = Number(gId.replace("g", "")) || 1;
-          var startNo = (gIdx - 1) * 5 + 1;
-          var rangeLabel = "Câu " + startNo + " - " + (startNo + 4);
+          var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+          if (gIdx === -1) gIdx = 0;
+          var numberLabel = String(gIdx + 1);
+
+          var startQ = 1;
+          for (var i = 0; i < gIdx; i++) {
+            startQ += (groups[i].questions || []).length;
+          }
+          var qCount = (group.questions || []).length;
+          var rangeLabel = "Câu " + startQ + " - " + (startQ + Math.max(0, qCount - 1));
           
           var groupImgWidth = group.stimulus?.image_width || 100;
           
           form.innerHTML = 
             '<div class="passage-group-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; background: #fff;">' +
-              '<h3 style="font-size: 14px; font-weight: 700; color: var(--brand); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
-                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--brand);"></span> Ngữ liệu ' + gIdx + ' (' + rangeLabel + ')' +
+              '<h3 style="font-size: 14px; font-weight: 700; color: #c2272d; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+                '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#c2272d;"></span> Ngữ liệu ' + numberLabel + ' (' + rangeLabel + ')' +
               '</h3>' +
               '<div class="form-grid" style="gap: 18px 20px;">' +
-                '<div class="field full"><label>Tiêu đề ngữ liệu ' + gIdx + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Khoa học số 0' + gIdx + '"></div>' +
+                '<div class="field full"><label style="color:#c2272d; font-weight:750;">Tiêu đề ngữ liệu ' + numberLabel + '</label><input class="input" id="science-' + gId + '-title" value="' + attr(group.title || "") + '" placeholder="Ví dụ: Ngữ liệu Khoa học số 0' + numberLabel + '"></div>' +
                 '<div class="field full" style="display:flex; flex-direction:column; gap:6px;">' +
                 '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                  '<label style="margin-bottom:0;">Nội dung văn bản / dữ liệu ' + gIdx + '</label>' +
+                  '<label style="margin-bottom:0; color:#c2272d; font-weight:750;">Nội dung văn bản / dữ liệu ' + numberLabel + '</label>' +
                   '<button type="button" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:11px; border-radius:4px; font-weight:600;" onclick="insertCloudImageIntoGroupText(\'science\', \'science-' + gId + '-text\')">🖼️ Chèn ảnh từ Cloud</button>' +
                 '</div>' +
-                '<textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung dữ liệu khoa học ' + gIdx + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea>' +
+                '<textarea class="textarea" id="science-' + gId + '-text" style="min-height:240px;" placeholder="Nhập nội dung dữ liệu khoa học ' + numberLabel + ' vào đây...">' + esc(group.stimulus?.content || "") + '</textarea>' +
               '</div>' +
                 '<div class="field full" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0;">' +
-                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Kích thước ảnh ngữ liệu ' + gIdx + ': <span id="science-' + gId + '-image-width-val" style="font-weight:700; color:var(--brand);">' + groupImgWidth + '</span>%</label>' +
+                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label style="color:#c2272d; font-weight:750;">Kích thước ảnh ngữ liệu ' + numberLabel + ': <span id="science-' + gId + '-image-width-val" style="font-weight:700; color:#c2272d;">' + groupImgWidth + '</span>%</label>' +
                     '<input type="range" class="slider" id="science-' + gId + '-image-width" min="10" max="100" value="' + groupImgWidth + '" style="width: 100%; display: block; height: 28px; margin: 0; padding: 0; cursor: pointer;">' +
                   '</div>' +
-                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label>Đường dẫn ảnh ngữ liệu ' + gIdx + ' nếu có</label><input class="input" id="science-' + gId + '-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="https://assets.tmastudy.io.vn/assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
+                  '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%;"><label style="color:#c2272d; font-weight:750;">Đường dẫn ảnh ngữ liệu ' + numberLabel + ' nếu có</label><input class="input" id="science-' + gId + '-image" value="' + attr(group.stimulus?.image_url || "") + '" placeholder="https://assets.tmastudy.io.vn/assets/questions/' + attr(exam.exam_code) + '/ngu-lieu-01.webp"></div>' +
                 '</div>' +
                 '<div class="btn-row" style="margin-top: 8px;">' +
-                  '<button class="btn btn-primary btn-small" type="button" onclick="saveScienceGroupDirect(\'' + gId + '\')" style="background-color: var(--brand); border-color: var(--brand); font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + gIdx + '</button>' +
+                  '<button class="btn btn-primary btn-small" type="button" onclick="saveScienceGroupDirect(\'' + gId + '\')" style="background-color: #c2272d; border-color: #c2272d; font-weight: 700; color: #fff; border-radius: 8px; padding: 6px 12px;">Lưu ngữ liệu ' + numberLabel + '</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -3955,7 +4158,11 @@
         
         saveDraft();
         renderAll();
-        window.alert("Đã lưu nội dung " + (gId === "g1" ? "ngữ liệu 1" : "ngữ liệu 2") + " thành công!");
+        var readingSec = getSection("reading");
+        var groups = readingSec.groups || [];
+        var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+        var numLabel = gIdx !== -1 ? (gIdx + 1) : 1;
+        window.alert("Đã lưu nội dung ngữ liệu " + numLabel + " thành công!");
       }
       window.saveReadingGroupDirect = saveReadingGroupDirect;
 
@@ -3975,12 +4182,26 @@
       window.switchReadingGroupTab = switchReadingGroupTab;
 
       function updateReadingTabsUI() {
-        var activeId = activeGroupIds["reading"] || "g1";
-        var btnG1 = document.getElementById("reading-tab-btn-g1");
-        var btnG2 = document.getElementById("reading-tab-btn-g2");
-        if (btnG1 && btnG2) {
-          btnG1.classList.toggle("active", activeId === "g1");
-          btnG2.classList.toggle("active", activeId === "g2");
+        ensureSchema();
+        var readingSec = getSection("reading");
+        var groups = readingSec.groups || [];
+        var activeId = activeGroupIds["reading"];
+        if (groups.length > 0 && (!activeId || !groups.some(function(g) { return g.group_id === activeId; }))) {
+          activeId = groups[0].group_id;
+          activeGroupIds["reading"] = activeId;
+        }
+
+        var container = document.getElementById("reading-tabs-container");
+        if (container) {
+          container.innerHTML = groups.map(function(g, idx) {
+            var label = g.title || ("Ngữ liệu " + (idx + 1));
+            var labelShow = label.length > 20 ? label.substring(0, 20) + "..." : label;
+            var activeClass = g.group_id === activeId ? "active" : "";
+            return '<button class="reading-tab-btn ' + activeClass + '" id="reading-tab-btn-' + g.group_id + '" type="button" onclick="switchReadingGroupTab(\'' + g.group_id + '\')" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-family: inherit;">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" style="margin-right:2px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>' +
+              esc(labelShow) +
+            '</button>';
+          }).join("");
         }
       }
 
@@ -4004,9 +4225,21 @@
         if (sectionId === "math") {
           return activeMathQuestionNo;
         }
-        var gId = activeGroupIds[sectionId] || "g1";
-        var gIdx = Number(gId.replace("g", "")) || 1;
-        var startNo = (sectionId === "reading") ? (gId === "g1" ? 1 : 11) : ((gIdx - 1) * 5 + 1);
+        ensureSchema();
+        var sec = getSection(sectionId);
+        var groups = sec.groups || [];
+        var gId = activeGroupIds[sectionId];
+        if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+          gId = groups[0].group_id;
+        }
+        var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+        if (gIdx === -1) gIdx = 0;
+
+        var startNo = 1;
+        for (var i = 0; i < gIdx; i++) {
+          startNo += (groups[i].questions || []).length;
+        }
+
         var activeIdx = (editingQuestion[sectionId] && editingQuestion[sectionId].index !== undefined) ? editingQuestion[sectionId].index : 0;
         if (activeIdx === -1) activeIdx = 0;
         return startNo + activeIdx;
@@ -4088,12 +4321,25 @@
 
 
       function updateScienceTabsUI() {
-        var activeId = activeGroupIds["science"] || "g1";
-        for (var i = 1; i <= 8; i++) {
-          var btn = document.getElementById("science-tab-btn-g" + i);
-          if (btn) {
-            btn.classList.toggle("active", activeId === "g" + i);
-          }
+        ensureSchema();
+        var scienceSec = getSection("science");
+        var groups = scienceSec.groups || [];
+        var activeId = activeGroupIds["science"];
+        if (groups.length > 0 && (!activeId || !groups.some(function(g) { return g.group_id === activeId; }))) {
+          activeId = groups[0].group_id;
+          activeGroupIds["science"] = activeId;
+        }
+
+        var container = document.getElementById("science-tabs-container");
+        if (container) {
+          container.innerHTML = groups.map(function(g, idx) {
+            var label = g.title || ("Ngữ liệu " + (idx + 1));
+            var labelShow = label.length > 20 ? label.substring(0, 20) + "..." : label;
+            var activeClass = g.group_id === activeId ? "active" : "";
+            return '<button class="science-tab-btn ' + activeClass + '" id="science-tab-btn-' + g.group_id + '" type="button" onclick="switchScienceGroupTab(\'' + g.group_id + '\')" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-family: inherit;">' +
+              esc(labelShow) +
+            '</button>';
+          }).join("");
         }
       }
 
@@ -4115,8 +4361,10 @@
         
         saveDraft();
         renderAll();
-        var gIdx = Number(gId.replace("g", "")) || 1;
-        window.alert("Đã lưu nội dung ngữ liệu " + gIdx + " thành công!");
+        var groups = scienceSec.groups || [];
+        var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+        var numLabel = gIdx !== -1 ? (gIdx + 1) : 1;
+        window.alert("Đã lưu nội dung ngữ liệu " + numLabel + " thành công!");
       }
       window.saveScienceGroupDirect = saveScienceGroupDirect;
 
@@ -4127,15 +4375,25 @@
         
         ensureSchema();
         var sec = getSection(sectionId);
-        var gId = activeGroupIds[sectionId] || "g1";
-        var group = sec.groups.find(function(g) { return g.group_id === gId; });
+        var groups = sec.groups || [];
+        var gId = activeGroupIds[sectionId];
+        if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+          gId = groups[0].group_id;
+          activeGroupIds[sectionId] = gId;
+        }
+        var group = groups.find(function(g) { return g.group_id === gId; });
         if (!group) return;
         
         var questions = group.questions || [];
-        var numQuestions = sectionId === "reading" ? 10 : 5;
+        var numQuestions = Math.max(sectionId === "reading" ? 10 : 5, questions.length);
         
-        var gIdx = Number(gId.replace("g", "")) || 1;
-        var startNo = sectionId === "reading" ? (gId === "g1" ? 1 : 11) : ((gIdx - 1) * 5 + 1);
+        var gIdx = groups.findIndex(function(g) { return g.group_id === gId; });
+        if (gIdx === -1) gIdx = 0;
+        
+        var startNo = 1;
+        for (var i = 0; i < gIdx; i++) {
+          startNo += (groups[i].questions || []).length;
+        }
         
         var editedCount = 0;
         var activeIdx = editingQuestion[sectionId]?.index || 0;
@@ -4188,8 +4446,13 @@
       function selectSubjectWizardQuestion(sectionId, idx) {
         ensureSchema();
         var sec = getSection(sectionId);
-        var gId = activeGroupIds[sectionId] || "g1";
-        var group = sec.groups.find(function(g) { return g.group_id === gId; });
+        var groups = sec.groups || [];
+        var gId = activeGroupIds[sectionId];
+        if (groups.length > 0 && (!gId || !groups.some(function(g) { return g.group_id === gId; }))) {
+          gId = groups[0].group_id;
+          activeGroupIds[sectionId] = gId;
+        }
+        var group = groups.find(function(g) { return g.group_id === gId; });
         if (!group) return;
         
         // Auto-save currently edited question in the active group's question slot before switching
@@ -4218,8 +4481,9 @@
       window.selectSubjectWizardQuestion = selectSubjectWizardQuestion;
 
       function updatePreview(sectionId) {
-        var bodyEl = $("#" + sectionId + "-preview-body");
-        var ansEl = $("#" + sectionId + "-preview-answer");
+        var livePane = document.getElementById(sectionId + "-pane-preview");
+        var bodyEl = livePane ? livePane.querySelector("#" + sectionId + "-preview-body") : $("#" + sectionId + "-preview-body");
+        var ansEl = livePane ? livePane.querySelector("#" + sectionId + "-preview-answer") : $("#" + sectionId + "-preview-answer");
         var stimEl = $("#" + sectionId + "-preview-stimulus");
 
         if (!bodyEl) return;
@@ -4228,7 +4492,7 @@
         if (stimEl) stimEl.innerHTML = "";
 
         var qNo = getActiveQuestionNo(sectionId);
-        var qnoCircle = document.getElementById(sectionId + "-preview-qno-circle");
+        var qnoCircle = (livePane ? livePane.querySelector("#" + sectionId + "-preview-qno-circle") : null) || document.getElementById(sectionId + "-preview-qno-circle");
         if (qnoCircle) {
           qnoCircle.textContent = qNo;
         }
@@ -4250,12 +4514,12 @@
         }
 
         if (typeof window.renderQuestion === "function") {
-          window.renderQuestion(q, null, function () {}, { bodyEl: bodyEl, answerEl: ansEl });
+          window.renderQuestion(q, null, function () {}, { bodyEl: bodyEl, answerEl: ansEl, showSolution: true });
         } else {
           bodyEl.textContent = q.question;
         }
         if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-          window.MathJax.typesetPromise();
+          window.MathJax.typesetPromise([bodyEl, ansEl]).catch(function() {});
         }
       }
 
@@ -4323,16 +4587,11 @@
           localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
         }
 
-        if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+        if (window.TMAR2) {
           try {
-            var indexJsonStr = JSON.stringify(indexList, null, 2);
-            var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-            await supabaseClient.storage.from('exams').upload('index.json', indexBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
+            await window.TMAR2.putJson('data/exams/index.json', indexList);
           } catch (err) {
-            console.warn("Failed to sync index.json to Supabase:", err);
+            console.warn("Failed to sync index.json to R2:", err);
           }
         }
 
@@ -4383,7 +4642,7 @@
               examData = await response.json();
             }
           } catch (e) {
-            console.warn("Lỗi fetch từ Supabase:", e);
+            console.warn("Lỗi fetch từ R2:", e);
           }
         }
 
@@ -4428,15 +4687,15 @@
           console.warn("Lỗi lưu nháp mới:", e);
         }
 
-        // 4. Đồng bộ lên Supabase Cloud
-        if (!supabaseClient) {
-          window.alert("Đã sao lưu nháp offline dưới mã đề " + newExamCode + ".\nLưu ý: Không tìm thấy kết nối Supabase Client để đồng bộ tự động.");
+        // 4. Save answers to Database and publish the file to Cloudflare R2.
+        if (!supabaseClient || !window.TMAR2) {
+          window.alert("Đã sao lưu nháp offline dưới mã đề " + newExamCode + ".\nLưu ý: Chưa sẵn sàng kết nối Database hoặc Cloudflare R2 để đồng bộ tự động.");
           renderExamsList();
           renderPracticeRoom();
           return;
         }
 
-        var btn = $("#upload-supabase-button");
+        var btn = $("#upload-r2-button");
         var originalText = btn ? btn.textContent : "";
         if (btn) {
           btn.disabled = true;
@@ -4444,7 +4703,7 @@
         }
 
         try {
-          // Giai đoạn 2: Tách đáp án và lưu lên Database, chỉ upload đề đã xóa đáp án lên Storage
+          // Keep small answer rows in Database; publish the larger exam JSON on R2.
           var answersToInsert = [];
           if (clonedExam.sections && Array.isArray(clonedExam.sections)) {
             clonedExam.sections.forEach(function(section) {
@@ -4461,7 +4720,6 @@
                       accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
                       points: q.points || 1,
                       solution_details: q.explanation || "",
-                      course_id: examCopy.course_id || null,
                       course_id: clonedExam.course_id || null
                     });
                     // delete q.correct_answer;
@@ -4507,16 +4765,8 @@
             }
           }
 
-          var examJsonStr = JSON.stringify(clonedExam, null, 2);
-          var examBlob = new Blob([examJsonStr], { type: "application/json" });
-          var { error: uploadExamError } = await supabaseClient.storage
-            .from('exams')
-            .upload(newExamCode + ".json", examBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
-
-          if (uploadExamError) throw uploadExamError;
+          var publicClonedExam = window.TMAExamSecurity.createPublicExamCopy(clonedExam);
+          await window.TMAR2.putJson('data/exams/' + newExamCode + '.json', publicClonedExam);
 
           // Cập nhật index.json
           var meta = {
@@ -4536,16 +4786,7 @@
             indexList[existIdx] = meta;
           }
 
-          var indexJsonStr = JSON.stringify(indexList, null, 2);
-          var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-          var { error: uploadIndexError } = await supabaseClient.storage
-            .from('exams')
-            .upload('index.json', indexBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
-
-          if (uploadIndexError) throw uploadIndexError;
+          await window.TMAR2.putJson('data/exams/index.json', indexList);
 
           // Đồng bộ lại local index
           localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
@@ -4560,7 +4801,7 @@
           }
         } catch (err) {
           console.error(err);
-          window.alert("Lỗi khi tải dữ liệu lên Supabase:\n" + (err.message || err));
+          window.alert("Lỗi khi tải dữ liệu lên Cloud:\n" + (err.message || err));
         } finally {
           if (btn) {
             btn.disabled = false;
@@ -4570,19 +4811,19 @@
       }
       window.archiveMockToPractice = archiveMockToPractice;
 
-      async function saveToSupabaseCloud() {
-        if (!supabaseClient) {
-          window.alert("Thư viện Supabase chưa được nhúng hoặc bị lỗi kết nối.");
+      async function saveToR2Cloud() {
+        if (!supabaseClient || !window.TMAR2) {
+          window.alert("Database hoặc Cloudflare R2 chưa sẵn sàng.");
           return;
         }
 
-        var btn = $("#upload-supabase-button");
+        var btn = $("#upload-r2-button");
         var originalText = btn.textContent;
         btn.disabled = true;
         btn.textContent = "Đang lưu lên Cloud...";
 
         try {
-          // Giai đoạn 2: Tách đáp án và lưu lên Database, chỉ upload đề đã xóa đáp án lên Storage
+          // Keep small answer rows in Database; publish the larger exam JSON on R2.
           var answersToInsert = [];
           var examCopy = JSON.parse(JSON.stringify(exam));
           var newExamCode = examCopy.exam_code;
@@ -4645,41 +4886,23 @@
             }
           }
 
-          // 1. Lưu file JSON đề: [exam_code].json
-          var examJsonStr = JSON.stringify(examCopy, null, 2);
-          var examBlob = new Blob([examJsonStr], { type: "application/json" });
-          
+          examCopy = window.TMAExamSecurity.createPublicExamCopy(examCopy);
+
+          // 1. Publish exam JSON to R2.
           var examFileName = examCopy.exam_code + ".json";
-          var { data: uploadExamData, error: uploadExamError } = await supabaseClient.storage
-            .from('exams')
-            .upload(examFileName, examBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
+          await window.TMAR2.putJson('data/exams/' + examFileName, examCopy);
 
-          if (uploadExamError) throw uploadExamError;
-
-          // 2. Lưu file mục lục: index.json
+          // 2. Publish the R2 index.
           var indexList = getIndexListWithCurrent();
-          var indexJsonStr = JSON.stringify(indexList, null, 2);
-          var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-
-          var { data: uploadIndexData, error: uploadIndexError } = await supabaseClient.storage
-            .from('exams')
-            .upload('index.json', indexBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
-
-          if (uploadIndexError) throw uploadIndexError;
+          await window.TMAR2.putJson('data/exams/index.json', indexList);
 
           // Lưu index vào localStorage của giáo viên luôn để đồng bộ giao diện quản trị
           localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
 
-          window.alert("✓ Đã tải đề thi lên Supabase Cloud thành công!\nĐề thi hiện đã sẵn sàng phục vụ học sinh.");
+          window.alert("✓ Đã tải đề thi lên Cloudflare R2 thành công!\nĐề thi hiện đã sẵn sàng phục vụ học sinh.");
         } catch (error) {
           console.error(error);
-          window.alert("Lỗi khi tải đề lên Supabase:\n" + (error.message || error));
+          window.alert("Lỗi khi tải đề lên R2:\n" + (error.message || error));
         } finally {
           btn.disabled = false;
           btn.textContent = originalText;
@@ -4828,7 +5051,11 @@
         }
         
         // Track the current editing subject based on active subtab in lobby
-        window.currentEditingSubject = typeof currentTsaPracticeSubtab !== 'undefined' ? currentTsaPracticeSubtab : "tong-hop";
+        if (startTab) {
+          window.currentEditingSubject = startTab;
+        } else {
+          window.currentEditingSubject = typeof currentTsaPracticeSubtab !== 'undefined' ? currentTsaPracticeSubtab : "tong-hop";
+        }
         
         // Dynamically adjust sidebar buttons and AI dropdown
         adjustSidebarButtons(window.currentEditingSubject);
@@ -4852,23 +5079,35 @@
         }
 
         // Enter Editing Mode
-        document.querySelector(".teacher-shell")?.classList.remove("hide-sidebar");
-        document.getElementById("dashboard-container").style.display = "none";
-        document.getElementById("sidebar-normal-nav").style.display = "none";
+        var shell = document.querySelector(".teacher-shell");
+        if (shell) {
+          if (window.isEditingSingleQbQuestion) {
+            shell.classList.add("hide-sidebar");
+          } else {
+            shell.classList.remove("hide-sidebar");
+          }
+        }
+        
+        var dash = document.getElementById("dashboard-container");
+        if (dash) dash.style.display = "none";
+        
+        var normNav = document.getElementById("sidebar-normal-nav");
+        if (normNav) normNav.style.display = "none";
 
-        document.getElementById("editor-container").style.display = "block";
-        document.getElementById("sidebar-editor-nav").style.display = "flex";
+        var editCont = document.getElementById("editor-container");
+        if (editCont) editCont.style.display = "block";
+        
+        var editNav = document.getElementById("sidebar-editor-nav");
+        if (editNav) editNav.style.display = window.isEditingSingleQbQuestion ? "none" : "flex";
 
-        $("#editor-subtitle").textContent = `Đang chỉnh sửa: ${title} (${cleanCode})`;
+        var subTitle = document.getElementById("editor-subtitle");
+        if (subTitle) subTitle.textContent = `Đang chỉnh sửa: ${title} (${cleanCode})`;
+
         syncMetadataToForm();
         saveDraft();
 
-        // Load saved Gemini Key if exists
-        try {
-          var savedKey = localStorage.getItem("tma_gemini_api_key") || "";
-          var keyInput = document.getElementById("ai-gemini-key");
-          if (keyInput) keyInput.value = savedKey;
-        } catch (e) {}
+        // API key is kept in the Cloudflare Worker, never in the browser.
+        try { localStorage.removeItem("tma_gemini_api_key"); } catch (e) {}
 
         var defaultStartTab = "setup";
         if (window.currentEditingSubject === "math") defaultStartTab = "math";
@@ -4953,24 +5192,24 @@
             }
           }
 
-          // 1. Try fetching from Cloud (Supabase Storage) - works on both http/https and file:// protocols due to CORS wildcard
+          // 1. Load the published exam from Cloudflare R2.
           if (!fetched) {
-            var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
+            var r2ExamsUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
             var possibleUrls = [
-              supabaseStorageUrl + cleanCode + ".json",
-              supabaseStorageUrl + cleanCode.toLowerCase() + ".json"
+              r2ExamsUrl + cleanCode + ".json",
+              r2ExamsUrl + cleanCode.toLowerCase() + ".json"
             ];
             
             // Cross-check fallback codes
             if (cleanCode === "TSA001") {
-              possibleUrls.push(supabaseStorageUrl + "TSA_EXAM_01.json");
+              possibleUrls.push(r2ExamsUrl + "TSA_EXAM_01.json");
             } else if (cleanCode === "TSA_EXAM_01") {
-              possibleUrls.push(supabaseStorageUrl + "TSA001.json");
+              possibleUrls.push(r2ExamsUrl + "TSA001.json");
             }
             
             for (var url of possibleUrls) {
               try {
-                var response = await fetch(url, { cache: "no-store" });
+                var response = await fetch(url, { cache: "default" });
                 if (response.ok) {
                   var data = await response.json();
                   if (data && data.exam_code) {
@@ -4983,29 +5222,7 @@
             }
           }
           
-          // 2. If running locally on a server and cloud failed, fall back to local files
-          if (!fetched && window.location.protocol !== "file:") {
-            var possibleFiles = [
-              "data/exams/" + cleanCode.toLowerCase() + ".json",
-              "data/exams/" + cleanCode + ".json",
-              "data/exams/tsa001.json"
-            ];
-            for (var fPath of possibleFiles) {
-              try {
-                var response = await fetch(fPath, { cache: "no-store" });
-                if (response.ok) {
-                  var data = await response.json();
-                  if (data && data.exam_code) {
-                    fetchedData = data;
-                    fetched = true;
-                    break;
-                  }
-                }
-              } catch (err) {}
-            }
-          }
-          
-          // 3. Last resort offline fallback for TSA001 / TSA_EXAM_01
+          // 2. Last resort offline fallback for TSA001 / TSA_EXAM_01.
           if (!fetched && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
             fetchedData = JSON.parse(JSON.stringify(window.TSA001_FALLBACK_DATA));
             fetched = true;
@@ -5047,10 +5264,15 @@
         document.getElementById("dashboard-container").style.display = "block";
         document.getElementById("sidebar-normal-nav").style.display = "block";
 
+        if (typeof switchSystemTab === "function") {
+          switchSystemTab("practice");
+        }
+
         // Refresh views
         renderPracticeRoom();
         renderExamsList();
       }
+      window.exitEditingMode = exitEditingMode;
 
       // Expose to window object so clicking edit buttons work
       function refreshSetupTabStatus() {
@@ -5176,21 +5398,21 @@
           refreshSetupTabStatus();
         }
 
+        if (window.TMAR2) {
+          try {
+            await window.TMAR2.remove('data/exams/' + cleanCode + '.json');
+            await window.TMAR2.putJson('data/exams/index.json', indexList);
+          } catch(err) {
+            console.warn("Background R2 deletion warning:", err);
+          }
+        }
+
         if (window.supabaseClient) {
           try {
-            await supabaseClient.storage.from('exams').remove([cleanCode + ".json"]);
-            
-            var indexJsonStr = JSON.stringify(indexList, null, 2);
-            var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-            await supabaseClient.storage.from('exams').upload('index.json', indexBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
-
             await supabaseClient.from('exam_answers').delete().eq('exam_code', cleanCode);
             await supabaseClient.from('exam_results').delete().eq('exam_code', cleanCode);
           } catch(err) {
-            console.warn("Background Supabase deletion warning:", err);
+            console.warn("Background database deletion warning:", err);
           }
         }
       }
@@ -5307,7 +5529,7 @@
                     syncMetadataToForm();
                     saveDraft();
                     renderAll();
-                    window.alert("✓ Đã nhập đề thi từ file JSON thành công! Hãy kiểm tra lại các câu hỏi và nhấn 'Lưu lên Supabase Cloud' để lưu đề.");
+                    window.alert("✓ Đã nhập đề thi từ file JSON thành công! Hãy kiểm tra lại các câu hỏi và nhấn 'Lưu lên Cloudflare R2' để lưu đề.");
                   }
                 } catch (err) {
                   window.alert("Lỗi khi đọc file JSON: " + err.message);
@@ -5391,7 +5613,7 @@
                       syncMetadataToForm();
                       saveDraft();
                       renderAll();
-                      window.alert(`✓ Nhập phần ${label} thành công! Hãy kiểm tra và nhấn 'Lưu lên Supabase Cloud' để đồng bộ.`);
+                      window.alert(`✓ Nhập phần ${label} thành công! Hãy kiểm tra và nhấn 'Lưu lên Cloudflare R2' để đồng bộ.`);
                     }
                   } catch (err) {
                     window.alert("Lỗi khi đọc file JSON: " + err.message);
@@ -5410,28 +5632,18 @@
         var aiRunBtn = $("#ai-run-button");
         if (aiRunBtn) {
           aiRunBtn.addEventListener("click", async function () {
-            var apiKeyInput = $("#ai-gemini-key");
             var examTextInput = $("#ai-exam-text");
             var importSectionSelect = $("#ai-import-section");
-            if (!apiKeyInput || !examTextInput) return;
+            if (!examTextInput) return;
 
-            var apiKey = apiKeyInput.value.trim();
             var rawText = examTextInput.value.trim();
             var selectedSection = importSectionSelect ? importSectionSelect.value : "math";
 
-            if (!apiKey) {
-              window.alert("Vui lòng nhập Gemini API Key để sử dụng tính năng này!");
-              apiKeyInput.focus();
-              return;
-            }
             if (!rawText) {
               window.alert("Vui lòng dán nội dung đề thi vào ô văn bản!");
               examTextInput.focus();
               return;
             }
-
-            // Save key to local storage
-            localStorage.setItem("tma_gemini_api_key", apiKey);
 
             var originalText = aiRunBtn.textContent;
             aiRunBtn.disabled = true;
@@ -5633,32 +5845,43 @@ YÊU CẦU QUAN TRỌNG:
 - Nếu câu hỏi có liên quan đến hình ảnh tải lên từ máy tính, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
 `;
 
-              var apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-              var response = await fetch(apiUrl, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  contents: [
-                    {
-                      role: "user",
-                      parts: [
-                        {
-                          text: systemInstruction + "\n\nNỘI DUNG ĐỀ THI CẦN PHÂN TÍCH:\n" + rawText
-                        }
-                      ]
-                    }
-                  ],
-                  generationConfig: {
-                    responseMimeType: "application/json"
+              var payload = {
+                contents: [
+                  {
+                    role: "user",
+                    parts: [
+                      {
+                        text: systemInstruction + "\n\nNỘI DUNG ĐỀ THI CẦN PHÂN TÍCH:\n" + rawText
+                      }
+                    ]
                   }
-                })
-              });
+                ],
+                generationConfig: {
+                  responseMimeType: "application/json"
+                }
+              };
+              var response = await callGemini(payload);
 
               if (!response.ok) {
                 var errBody = await response.text();
-                throw new Error(`Gemini API trả về lỗi: ${response.status} - ${errBody}`);
+                var errMsg = "Lỗi kết nối API Gemini.";
+                try {
+                  var errObj = JSON.parse(errBody);
+                  if (errObj && errObj.error) {
+                    var status = errObj.error.status || "";
+                    var rawMsg = errObj.error.message || "";
+                    if (status === "RESOURCE_EXHAUSTED") {
+                      if (rawMsg.toLowerCase().includes("limit: 20") || rawMsg.toLowerCase().includes("daily")) {
+                        errMsg = "Hạn mức miễn phí hàng ngày (20 yêu cầu) của API Key này đã hết. Hãy tạo và sử dụng API Key mới hoặc nâng cấp hạn mức.";
+                      } else {
+                        errMsg = "Quá giới hạn tần suất gửi yêu cầu của gói miễn phí. Vui lòng chờ 15-30 giây rồi thử lại.";
+                      }
+                    } else {
+                      errMsg = rawMsg || errObj.error.message || errMsg;
+                    }
+                  }
+                } catch(e) {}
+                throw new Error(errMsg);
               }
 
               var resData = await response.json();
@@ -5724,7 +5947,7 @@ YÊU CẦU QUAN TRỌNG:
                 ensureSchema();
                 saveDraft();
                 renderAll();
-                window.alert("✓ Đã nạp thành công toàn bộ câu hỏi từ AI! Bạn có thể chuyển qua các tab Toán, Đọc hiểu, Khoa học để kiểm tra và sau đó bấm 'Lưu lên Supabase Cloud' để hoàn tất.");
+                window.alert("✓ Đã nạp thành công toàn bộ câu hỏi từ AI! Bạn có thể chuyển qua các tab Toán, Đọc hiểu, Khoa học để kiểm tra và sau đó bấm 'Lưu lên Cloudflare R2' để hoàn tất.");
               }
             } catch (err) {
               console.error(err);
@@ -5750,10 +5973,10 @@ YÊU CẦU QUAN TRỌNG:
             });
           });
         }
-        var uploadCloudBtn = $("#upload-supabase-button");
+        var uploadCloudBtn = $("#upload-r2-button");
         if (uploadCloudBtn) {
           uploadCloudBtn.addEventListener("click", function () {
-            saveToSupabaseCloud().catch(function (error) {
+            saveToR2Cloud().catch(function (error) {
               console.error(error);
               window.alert("Lỗi không mong muốn: " + error);
             });
@@ -6436,8 +6659,108 @@ YÊU CẦU QUAN TRỌNG:
       return mapping[lessonId] || null;
     }
 
-        async function syncMetadataToCloud() {
-      if (typeof supabaseClient === 'undefined' || !supabaseClient) return;
+        function adjustSidebarButtons(subject) {
+      try {
+        var list = document.querySelector(".editor-step-list");
+        if (!list) return;
+
+        var children = Array.from(list.children || []);
+        
+        var allowedTabs = ["setup", "ai-import", "export"];
+        if (subject === "math") {
+          allowedTabs.push("math");
+        } else if (subject === "reading") {
+          allowedTabs.push("reading");
+        } else if (subject === "science") {
+          allowedTabs.push("science");
+        } else {
+          allowedTabs.push("math", "reading", "science");
+        }
+
+        var visibleButtons = [];
+        children.forEach(function(el) {
+          if (el.tagName === "BUTTON" && el.hasAttribute("data-editor-tab-target")) {
+            var target = el.getAttribute("data-editor-tab-target");
+            if (allowedTabs.includes(target)) {
+              el.style.display = "";
+              visibleButtons.push(el);
+            } else {
+              el.style.display = "none";
+            }
+          } else if (el.classList && el.classList.contains("step-connector")) {
+            el.style.display = "none";
+          }
+        });
+
+        for (var i = 0; i < visibleButtons.length - 1; i++) {
+          var btn = visibleButtons[i];
+          var nextEl = btn.nextElementSibling;
+          while (nextEl && nextEl.classList && nextEl.classList.contains("step-connector")) {
+            nextEl.style.display = "";
+            nextEl = nextEl.nextElementSibling;
+          }
+        }
+      } catch (err) {
+        console.warn("adjustSidebarButtons warning:", err);
+      }
+    }
+    window.adjustSidebarButtons = adjustSidebarButtons;
+
+    function adjustAiImportDropdown(subject) {
+      try {
+        var select = document.getElementById("ai-import-section");
+        if (!select) return;
+
+        var rawOriginal = select.getAttribute("data-original-options");
+        if (!rawOriginal) {
+          var opts = Array.from(select.options || []).map(function(opt) {
+            return { value: opt.value, text: opt.textContent };
+          });
+          rawOriginal = JSON.stringify(opts);
+          select.setAttribute("data-original-options", rawOriginal);
+        }
+
+        var originalOpts = [];
+        try {
+          originalOpts = JSON.parse(rawOriginal || "[]");
+        } catch(e) {}
+        if (!Array.isArray(originalOpts)) originalOpts = [];
+
+        select.innerHTML = "";
+
+        var allowedValues = [];
+        if (subject === "math") {
+          allowedValues = ["math"];
+        } else if (subject === "reading") {
+          allowedValues = ["reading"];
+        } else if (subject === "science") {
+          allowedValues = ["science"];
+        } else {
+          allowedValues = ["math", "reading", "science", "auto"];
+        }
+
+        originalOpts.forEach(function(opt) {
+          if (allowedValues.includes(opt.value)) {
+            var el = document.createElement("option");
+            el.value = opt.value;
+            el.textContent = opt.text;
+            select.appendChild(el);
+          }
+        });
+        
+        if (allowedValues.length === 1) {
+          select.value = allowedValues[0];
+        } else if (!allowedValues.includes(select.value)) {
+          select.value = "auto";
+        }
+      } catch (err) {
+        console.warn("adjustAiImportDropdown warning:", err);
+      }
+    }
+    window.adjustAiImportDropdown = adjustAiImportDropdown;
+
+    async function syncMetadataToCloud() {
+      if (!window.TMAR2) return;
 
       try {
         var indexList = [];
@@ -6473,25 +6796,15 @@ YÊU CẦU QUAN TRỌNG:
           indexList[idx] = meta;
         }
 
-        // Upload index.json
-        var indexJsonStr = JSON.stringify(indexList, null, 2);
-        var indexBlob = new Blob([indexJsonStr], { type: "application/json" });
-        await supabaseClient.storage.from('exams').upload('index.json', indexBlob, {
-          cacheControl: '3600',
-          upsert: true
-        });
+        await window.TMAR2.putJson('data/exams/index.json', indexList);
 
         localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
 
-        // Upload exam file
-        var examJsonStr = JSON.stringify(exam, null, 2);
-        var examBlob = new Blob([examJsonStr], { type: "application/json" });
-        await supabaseClient.storage.from('exams').upload(exam.exam_code + ".json", examBlob, {
-          cacheControl: '3600',
-          upsert: true
-        });
+        // Publish the public exam copy to R2.
+        var publicExam = window.TMAExamSecurity.createPublicExamCopy(exam);
+        await window.TMAR2.putJson('data/exams/' + exam.exam_code + '.json', publicExam);
 
-        console.log("✓ Successfully synchronized exam metadata to Supabase Cloud.");
+        console.log("Successfully synchronized exam metadata to Cloudflare R2.");
       } catch (error) {
         console.error("Failed to sync exam metadata to Cloud:", error);
       }
@@ -6499,90 +6812,7 @@ YÊU CẦU QUAN TRỌNG:
     window.syncMetadataToCloud = syncMetadataToCloud;
 
 
-        function adjustSidebarButtons(subject) {
-      var list = document.querySelector(".editor-step-list");
-      if (!list) return;
 
-      var children = Array.from(list.children);
-      
-      var allowedTabs = ["setup", "ai-import", "export"];
-      if (subject === "math") {
-        allowedTabs.push("math");
-      } else if (subject === "reading") {
-        allowedTabs.push("reading");
-      } else if (subject === "science") {
-        allowedTabs.push("science");
-      } else {
-        allowedTabs.push("math", "reading", "science");
-      }
-
-      var visibleButtons = [];
-      children.forEach(function(el) {
-        if (el.tagName === "BUTTON" && el.hasAttribute("data-editor-tab-target")) {
-          var target = el.getAttribute("data-editor-tab-target");
-          if (allowedTabs.includes(target)) {
-            el.style.display = "";
-            visibleButtons.push(el);
-          } else {
-            el.style.display = "none";
-          }
-        } else if (el.classList.contains("step-connector")) {
-          el.style.display = "none";
-        }
-      });
-
-      for (var i = 0; i < visibleButtons.length - 1; i++) {
-        var btn = visibleButtons[i];
-        var nextEl = btn.nextElementSibling;
-        while (nextEl && nextEl.classList.contains("step-connector")) {
-          nextEl.style.display = "";
-          nextEl = nextEl.nextElementSibling;
-        }
-      }
-    }
-    window.adjustSidebarButtons = adjustSidebarButtons;
-
-    function adjustAiImportDropdown(subject) {
-      var select = document.getElementById("ai-import-section");
-      if (!select) return;
-
-      if (!select.dataset.originalOptions) {
-        var opts = Array.from(select.options).map(function(opt) {
-          return { value: opt.value, text: opt.textContent };
-        });
-        select.dataset.originalOptions = JSON.stringify(opts);
-      }
-
-      var originalOpts = JSON.parse(select.dataset.originalOptions);
-      select.innerHTML = "";
-
-      var allowedValues = [];
-      if (subject === "math") {
-        allowedValues = ["math"];
-      } else if (subject === "reading") {
-        allowedValues = ["reading"];
-      } else if (subject === "science") {
-        allowedValues = ["science"];
-      } else {
-        allowedValues = ["math", "reading", "science", "auto"];
-      }
-
-      originalOpts.forEach(function(opt) {
-        if (allowedValues.includes(opt.value)) {
-          var el = document.createElement("option");
-          el.value = opt.value;
-          el.textContent = opt.text;
-          select.appendChild(el);
-        }
-      });
-
-      if (allowedValues.length === 1) {
-        select.value = allowedValues[0];
-      } else {
-        select.value = "auto";
-      }
-    }
-    window.adjustAiImportDropdown = adjustAiImportDropdown;
 
 
     function populateParentLessonsDropdown(chapterName, currentLessonId) {
@@ -7519,9 +7749,17 @@ YÊU CẦU QUAN TRỌNG:
     });
 
     // Expose to window
-    function teacherLogout() {
-      localStorage.removeItem("teacherInfo");
-      window.location.href = "login.html#teacher";
+    async function teacherLogout() {
+      try {
+        if (window.supabaseClient && window.supabaseClient.auth) {
+          await window.supabaseClient.auth.signOut();
+        }
+      } catch (error) {
+        console.warn("Không thể đóng phiên Supabase:", error);
+      } finally {
+        localStorage.removeItem("teacherInfo");
+        window.location.href = "login.html#teacher";
+      }
     }
     window.teacherLogout = teacherLogout;
     window.renderManageCourses = renderManageCourses;
@@ -7629,10 +7867,10 @@ YÊU CẦU QUAN TRỌNG:
         renderStudents();
         if (typeof renderOverview === "function") renderOverview();
 
-        // Tải danh sách đề từ Supabase Storage để đồng bộ local storage của giáo viên
-        if (window.SUPABASE_CONFIG) {
-          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
-          fetch(`${supabaseStorageUrl}index.json`, { cache: "no-store" })
+        // Sync teacher caches from Cloudflare R2.
+        if (window.TMA_STORAGE_CONFIG) {
+          var r2ExamsUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
+          fetch(`${r2ExamsUrl}index.json`, { cache: "default" })
             .then(res => {
               if (res.ok) return res.json();
             })
@@ -7661,9 +7899,9 @@ YÊU CẦU QUAN TRỌNG:
                 renderExamsList();
               }
             })
-            .catch(err => console.warn("Cannot sync index from Supabase on start:", err));
+            .catch(err => console.warn("Cannot sync index from R2 on start:", err));
 
-          fetch(`${supabaseStorageUrl}drive_links.json`, { cache: "no-store" })
+          fetch(`${r2ExamsUrl}drive_links.json`, { cache: "default" })
             .then(res => {
               if (res.ok) return res.json();
             })
@@ -7676,7 +7914,7 @@ YÊU CẦU QUAN TRỌNG:
                 }
               }
             })
-            .catch(err => console.warn("Cannot sync documents index from Supabase on start:", err));
+            .catch(err => console.warn("Cannot sync documents index from R2 on start:", err));
         }
       }
 
@@ -7684,7 +7922,7 @@ YÊU CẦU QUAN TRỌNG:
         var textarea = document.getElementById(elementId);
         if (!textarea) return;
 
-        var url = prompt("Nhập link ảnh từ Cloud R2 hoặc Supabase muốn chèn:");
+        var url = prompt("Nhập link ảnh từ Cloudflare R2 muốn chèn:");
         if (!url) return;
         url = url.trim();
         if (!url) return;
@@ -7736,15 +7974,116 @@ YÊU CẦU QUAN TRỌNG:
       }
       window.toggleTeacherOptionsAreImages = toggleTeacherOptionsAreImages;
 
-      function triggerChoiceImageUpload(btn) {
+      
+      function compressImage(file) {
+        return new Promise(function(resolve) {
+          if (!file || !file.type || file.type.indexOf('image') === -1) {
+            resolve(file);
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+              var canvas = document.createElement('canvas');
+              var max_width = 1000;
+              var width = img.width;
+              var height = img.height;
+              
+              if (width > max_width) {
+                height = Math.round((height * max_width) / width);
+                width = max_width;
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              canvas.toBlob(function(blob) {
+                if (blob) {
+                  var compressedFile = new File([blob], file.name ? file.name.replace(/\.[^/.]+$/, ".jpg") : "image.jpg", {
+                    type: "image/jpeg",
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                } else {
+                  resolve(file);
+                }
+              }, "image/jpeg", 0.75);
+            };
+            img.onerror = function() { resolve(file); };
+            img.src = e.target.result;
+          };
+          reader.onerror = function() { resolve(file); };
+          reader.readAsDataURL(file);
+        });
+      }
+
+
+      function compressImage(file) {
+        return new Promise(function(resolve) {
+          if (!file || !file.type || file.type.indexOf('image') === -1) {
+            resolve(file);
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+              var canvas = document.createElement('canvas');
+              var max_width = 1000;
+              var width = img.width;
+              var height = img.height;
+              
+              if (width > max_width) {
+                height = Math.round((height * max_width) / width);
+                width = max_width;
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              canvas.toBlob(function(blob) {
+                if (blob) {
+                  var compressedFile = new File([blob], file.name ? file.name.replace(/\.[^/.]+$/, ".jpg") : "image.jpg", {
+                    type: "image/jpeg",
+                    lastModified: Date.now()
+                  });
+                  resolve(compressedFile);
+                } else {
+                  resolve(file);
+                }
+              }, "image/jpeg", 0.75);
+            };
+            img.onerror = function() { resolve(file); };
+            img.src = e.target.result;
+          };
+          reader.onerror = function() { resolve(file); };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function uploadToR2(file, pathFolder, fileName) {
+        var objectKey = (pathFolder || "passages/temp") + "/" + (fileName || file.name || "image.jpg");
+        var result = await window.TMAR2.upload(objectKey, file, file.type || "image/jpeg");
+        return result.url;
+      }
+
+
+function triggerChoiceImageUpload(btn) {
         var fileInput = btn.nextElementSibling;
         if (fileInput) fileInput.click();
       }
       window.triggerChoiceImageUpload = triggerChoiceImageUpload;
 
       async function handleChoiceImageUpload(input, key, sectionId) {
-        var file = input.files[0];
-        if (!file) return;
+        var rawFile = input.files[0];
+        if (!rawFile) return;
         
         var uploadBtn = input.previousElementSibling;
         var originalText = uploadBtn.textContent;
@@ -7752,25 +8091,10 @@ YÊU CẦU QUAN TRỌNG:
         uploadBtn.textContent = "Tải...";
         
         try {
-          if (!supabaseClient) {
-            alert("Vui lòng kết nối Supabase để tải ảnh lên Cloud!");
-            uploadBtn.disabled = false;
-            uploadBtn.textContent = originalText;
-            return;
-          }
-          
+          var file = await compressImage(rawFile);
           var examCode = window.exam?.exam_code || "temp";
           var questionId = getQuestionDraft(sectionId)?.id || "qtemp";
-          var path = "questions/" + examCode + "/" + questionId + "_" + key + "_" + Date.now() + ".png";
-          
-          var { data, error } = await supabaseClient.storage
-            .from('exams')
-            .upload(path, file, { cacheControl: '3600', upsert: true });
-            
-          if (error) throw error;
-          
-          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
-          var imageUrl = supabaseStorageUrl + path;
+          var imageUrl = await uploadToR2(file, "questions/" + examCode, questionId + "_" + key + "_" + Date.now() + ".jpg");
           
           // Update input value
           var textInput = uploadBtn.parentElement.querySelector('input[data-choice-key]');
@@ -7786,35 +8110,17 @@ YÊU CẦU QUAN TRỌNG:
             if (opt) opt.text = imageUrl;
           }
           
-          updatePreview(sectionId);
-          
+          alert("✓ Đã tải và chèn ảnh thành công!");
         } catch (err) {
-          console.error("Option image upload error:", err);
+          console.error("Choice image upload error:", err);
           alert("Lỗi tải ảnh lên: " + err.message);
         } finally {
           uploadBtn.disabled = false;
           uploadBtn.textContent = originalText;
+          input.value = "";
         }
       }
-      window.handleChoiceImageUpload = handleChoiceImageUpload;
 
-      function updateChoiceImagePreview(input) {
-        var wrap = input.parentElement.parentElement;
-        var preview = wrap.querySelector('.choice-image-preview');
-        var val = input.value.trim();
-        
-        if (val) {
-          if (!preview) {
-            preview = document.createElement('img');
-            preview.className = 'choice-image-preview';
-            preview.style.cssText = 'max-height: 80px; width: auto; max-width: 150px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 6px;';
-            wrap.appendChild(preview);
-          }
-          preview.src = val;
-        } else {
-          if (preview) preview.remove();
-        }
-      }
       function triggerPassageImageUpload(btn) {
         var fileInp = btn.nextElementSibling;
         if (fileInp) fileInp.click();
@@ -7822,8 +8128,8 @@ YÊU CẦU QUAN TRỌNG:
       window.triggerPassageImageUpload = triggerPassageImageUpload;
 
       async function handlePassageImageUpload(input, sectionId, elementId) {
-        var file = input.files[0];
-        if (!file) return;
+        var rawFile = input.files[0];
+        if (!rawFile) return;
 
         var uploadBtn = input.previousElementSibling;
         var originalText = uploadBtn.textContent;
@@ -7831,25 +8137,9 @@ YÊU CẦU QUAN TRỌNG:
         uploadBtn.textContent = "Tải...";
 
         try {
-          if (!supabaseClient) {
-            alert("Vui lòng kết nối Supabase để tải ảnh lên Cloud!");
-            uploadBtn.disabled = false;
-            uploadBtn.textContent = originalText;
-            return;
-          }
-
-          var ext = file.name.split('.').pop() || "png";
+          var file = await compressImage(rawFile);
           var examCode = window.exam?.exam_code || "temp";
-          var path = "passages/" + examCode + "/" + Date.now() + "." + ext;
-
-          var { data, error } = await supabaseClient.storage
-            .from('exams')
-            .upload(path, file, { cacheControl: '3600', upsert: true });
-
-          if (error) throw error;
-
-          var supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
-          var publicUrl = supabaseStorageUrl + path;
+          var publicUrl = await uploadToR2(file, "passages/" + examCode, Date.now() + ".jpg");
 
           var widthPercent = prompt("Ảnh tải lên thành công! Nhập kích thước ảnh (%) (Ví dụ: 30, 50, 80):", "80");
           if (widthPercent === null) widthPercent = "80"; // default if cancelled
@@ -7891,7 +8181,6 @@ YÊU CẦU QUAN TRỌNG:
           input.value = ""; // clear file input
         }
       }
-      window.handlePassageImageUpload = handlePassageImageUpload;
 
       // ==========================================
       // DYNAMIC LMS ASSET COVER MANAGER
@@ -7909,27 +8198,21 @@ YÊU CẦU QUAN TRỌNG:
       }
 
       async function loadLmsAssets() {
-        var client = window.supabaseClient;
         var grid = document.getElementById("lms-asset-grid");
         if (!grid) return;
         grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #888; font-size: 13px; padding: 20px;">Đang tải danh sách ảnh...</div>';
 
-        if (!client) {
-          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; font-size: 13px; padding: 20px;">Lỗi: Supabase Client chưa sẵn sàng!</div>';
+        if (!window.TMAR2) {
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; font-size: 13px; padding: 20px;">Lỗi: Cloudflare R2 chưa sẵn sàng!</div>';
           return;
         }
 
         try {
-          var { data, error } = await client.storage
-            .from('exams')
-            .list('assets/course_covers', {
-              limit: 100,
-              sortBy: { column: 'name', order: 'desc' }
-            });
-
-          if (error) throw error;
-
-          var files = (data || []).filter(function(item) {
+          var result = await window.TMAR2.list('assets/course_covers/');
+          var files = (result.objects || []).map(function(item) {
+            var name = item.key.split('/').pop();
+            return { name: name, url: item.url };
+          }).filter(function(item) {
             return item.name && item.name !== '.empty' && item.name !== 'placeholder.txt';
           });
 
@@ -7940,9 +8223,7 @@ YÊU CẦU QUAN TRỌNG:
 
           var html = "";
           files.forEach(function(file) {
-            var path = 'assets/course_covers/' + file.name;
-            var { data: urlData } = client.storage.from('exams').getPublicUrl(path);
-            var publicUrl = urlData.publicUrl;
+            var publicUrl = file.url;
 
             html += `
               <div class="asset-item-card" data-url="${publicUrl}" onclick="selectLmsAsset('${publicUrl}', this)">
@@ -7980,11 +8261,8 @@ YÊU CẦU QUAN TRỌNG:
       }
 
       async function uploadAssetFile(event) {
-        alert("Chức năng tải lên trực tiếp đã được tắt để tránh làm đầy dung lượng của Supabase. Vui lòng nhập link ảnh trực tiếp từ Cloudflare R2.");
-        return;
-        var client = window.supabaseClient;
-        if (!client) {
-          alert("Supabase Client chưa sẵn sàng!");
+        if (!window.TMAR2) {
+          alert("Cloudflare R2 chưa sẵn sàng!");
           return;
         }
 
@@ -8002,20 +8280,11 @@ YÊU CẦU QUAN TRỌNG:
         try {
           var cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
           var uploadPath = 'assets/course_covers/' + Date.now() + '_' + cleanName;
-
-          var { error } = await client.storage
-            .from('exams')
-            .upload(uploadPath, file, {
-              cacheControl: '3600',
-              upsert: true
-            });
-
-          if (error) throw error;
+          var uploadResult = await window.TMAR2.upload(uploadPath, file, file.type);
 
           await loadLmsAssets();
 
-          var { data: urlData } = client.storage.from('exams').getPublicUrl(uploadPath);
-          var publicUrl = urlData.publicUrl;
+          var publicUrl = uploadResult.url;
           selectedAssetUrl = publicUrl;
 
           setTimeout(function() {
@@ -8044,13 +8313,11 @@ YÊU CẦU QUAN TRỌNG:
           return;
         }
 
-        var client = window.supabaseClient;
-        if (!client) return;
+        if (!window.TMAR2) return;
 
         try {
           var path = 'assets/course_covers/' + filename;
-          var { error } = await client.storage.from('exams').remove([path]);
-          if (error) throw error;
+          await window.TMAR2.remove(path);
 
           if (selectedAssetUrl && selectedAssetUrl.includes(filename)) {
             selectedAssetUrl = "";
@@ -8510,16 +8777,200 @@ YÊU CẦU QUAN TRỌNG:
         renderPracticeRoom();
       };
 
+      window.clearAllQbQuestions = function() {
+        if (!confirm("Bạn có chắc chắn muốn xóa TẤT CẢ câu hỏi trong Ngân hàng câu hỏi Luyện đề ngẫu nhiên? Hành động này không thể hoàn tác!")) return;
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (raw) {
+          try {
+            var examObj = JSON.parse(raw);
+            if (examObj && Array.isArray(examObj.sections)) {
+              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+              if (mathSec) {
+                mathSec.questions = [];
+                localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+              }
+            }
+          } catch(e) {}
+        }
+        renderPracticeRoom();
+      };
+
+      window.editQbGroup = function(groupId, sectionId, targetQIdx) {
+        var startQIdx = (targetQIdx !== undefined && targetQIdx >= 0) ? targetQIdx : 0;
+        window.isEditingSingleQbQuestion = false;
+        window.currentEditingSubject = sectionId;
+        window.startEditingExam("Ngân hàng câu hỏi Luyện đề ngẫu nhiên", "TMA_RANDOM_001", sectionId);
+        
+        // Set active group ID for the section
+        activeGroupIds[sectionId] = groupId;
+        
+        // Ensure the editor tab is selected
+        if (typeof switchEditorTab === "function") {
+          switchEditorTab(sectionId);
+        }
+        
+        // Load the targeted question for this group
+        var sec = getSection(sectionId);
+        var group = sec ? sec.groups.find(function(g) { return g.group_id === groupId; }) : null;
+        if (group) {
+          var targetQ = group.questions && group.questions[startQIdx] ? clone(group.questions[startQIdx]) : defaultQuestion(sectionId);
+          editingQuestion[sectionId] = { index: startQIdx, question: targetQ };
+        }
+        
+        window.toggleSingleQuestionEditMode(false);
+        renderAll();
+      };
+
+      window.deleteQbGroup = function(groupId, sectionId) {
+        if (!confirm("Bạn có chắc chắn muốn xóa ngữ liệu này và toàn bộ câu hỏi liên quan?")) return;
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (raw) {
+          try {
+            var examObj = JSON.parse(raw);
+            if (examObj && Array.isArray(examObj.sections)) {
+              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+              if (sec && Array.isArray(sec.groups)) {
+                var idx = sec.groups.findIndex(function(g) { return g.group_id === groupId; });
+                if (idx !== -1) {
+                  sec.groups.splice(idx, 1);
+                  localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                  localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+                }
+              }
+            }
+          } catch(e) {}
+        }
+        renderPracticeRoom();
+      };
+
+      window.deleteQbGroupQuestion = function(groupId, sectionId, qIdx) {
+        if (!confirm("Bạn có chắc chắn muốn xóa câu hỏi này khỏi ngữ liệu?")) return;
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (raw) {
+          try {
+            var examObj = JSON.parse(raw);
+            if (examObj && Array.isArray(examObj.sections)) {
+              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+              if (sec && Array.isArray(sec.groups)) {
+                var group = sec.groups.find(function(g) { return g.group_id === groupId; });
+                if (group && Array.isArray(group.questions)) {
+                  group.questions.splice(qIdx, 1);
+                  localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                  localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+                }
+              }
+            }
+          } catch(e) {}
+        }
+        renderPracticeRoom();
+      };
+
+      window.generateAiExplanation = function(sectionId) {
+        var qText = document.getElementById(sectionId + "-q-text")?.value || "";
+        if (!qText.trim()) {
+          alert("Vui lòng nhập nội dung câu hỏi trước khi nhờ AI viết lời giải.");
+          return;
+        }
+
+        var passageText = "";
+        if (sectionId === "reading" || sectionId === "science") {
+          var group = getActiveGroup(sectionId);
+          if (group) {
+            passageText = group.passage || (group.stimulus ? group.stimulus.content : "") || "";
+          }
+        }
+
+        var optionsText = "";
+        var qType = document.getElementById(sectionId + "-q-type")?.value || "single_choice";
+        if (qType === "single_choice" || qType === "multiple_choice") {
+          for (var charCode = 65; charCode <= 68; charCode++) {
+            var key = String.fromCharCode(charCode);
+            var optEl = document.getElementById(sectionId + "-opt-" + key.toLowerCase());
+            if (optEl && optEl.value.trim()) {
+              optionsText += key + ". " + optEl.value.trim() + "\n";
+            }
+          }
+        }
+
+        var btn = document.getElementById(sectionId + "-ai-explain-btn");
+        var origText = btn ? btn.textContent : "🤖 AI Làm lời giải";
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "⏳ Đang giải...";
+        }
+
+        var promptText = "Bạn là một chuyên gia khảo thí tuyển sinh đại học Bách Khoa. Hãy viết phần LỜI GIẢI CHI TIẾT (bằng tiếng Việt, sử dụng định dạng LaTeX cho công thức toán) cho câu hỏi sau đây.\n" +
+          "Yêu cầu:\n" +
+          "- Trả về duy nhất lời giải chi tiết, không kèm theo bất kỳ văn bản dẫn hay chào hỏi nào.\n" +
+          "- Dùng ký hiệu \\( ... \\) cho công thức toán nội dòng và \\[ ... \\] cho công thức khối.\n" +
+          "- Phải viết lời giải logic từng bước rõ ràng.\n\n";
+
+        if (passageText) {
+          promptText += "NGỮ LIỆU ĐỀ BÀI:\n" + passageText + "\n\n";
+        }
+        promptText += "CÂU HỎI:\n" + qText + "\n\n";
+        if (optionsText) {
+          promptText += "CÁC PHƯƠNG ÁN LỰA CHỌN:\n" + optionsText + "\n\n";
+        }
+
+        var payload = {
+          contents: [{
+            parts: [{
+              text: promptText
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.2
+          }
+        };
+        callGemini(payload)
+        .then(function(res) {
+          return handleGeminiResponseError(res);
+        })
+        .then(function(data) {
+          var answerText = data.candidates[0].content.parts[0].text;
+          answerText = answerText.replace(/^```[a-zA-Z]*\n?/gm, "").replace(/```$/gm, "").trim();
+          var expArea = document.getElementById(sectionId + "-q-explanation");
+          if (expArea) {
+            expArea.value = answerText;
+            expArea.dispatchEvent(new Event("input"));
+          }
+        })
+        .catch(function(err) {
+          console.error(err);
+          alert("Không thể tạo lời giải bằng AI: " + (err.message || "Lỗi không xác định"));
+        })
+        .finally(function() {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = origText;
+          }
+        });
+      };
+
       window.isEditingSingleQbQuestion = false;
 
       function toggleSingleQuestionEditMode(isSingleMode) {
-        var layout = document.querySelector(".math-split-layout");
+        var layout = document.querySelector(".math-2col-layout") || document.querySelector(".math-split-layout");
         var rightCol = document.querySelector(".math-wizard-wrapper");
         var sidebarEditor = document.getElementById("sidebar-editor-nav");
         var shell = document.querySelector(".teacher-shell");
         var defaultDiff = document.getElementById("math-default-diff-row");
+        var editorContainer = document.getElementById("editor-container");
         
+        window.isEditingSingleQbQuestion = !!isSingleMode;
         if (isSingleMode) {
+          document.body.classList.add("single-qb-mode");
+        } else {
+          document.body.classList.remove("single-qb-mode");
+        }
+
+        if (isSingleMode) {
+          if (editorContainer) editorContainer.style.display = "block";
           if (rightCol) rightCol.style.display = "none";
           if (sidebarEditor) sidebarEditor.style.display = "none";
           if (shell) shell.classList.add("hide-sidebar");
@@ -8527,13 +8978,21 @@ YÊU CẦU QUAN TRỌNG:
           
           var topbarMeta = document.getElementById("topbar-single-qb-metadata");
           if (topbarMeta) topbarMeta.style.display = "flex";
+
+          if (typeof switchEditorTab === "function" && typeof activeEditorTab !== "undefined" && activeEditorTab !== "math") {
+            switchEditorTab("math");
+          }
           
           if (layout) {
-            layout.style.display = "block";
+            layout.style.display = "grid";
+            layout.style.gridTemplateColumns = "1.1fr 1fr";
             layout.style.width = "100%";
           }
           
-          window.injectSingleQuestionControls("math");
+          window.injectSingleQuestionControls(typeof activeEditorTab !== "undefined" ? activeEditorTab : "math");
+          if (typeof renderQuestionForm === "function") {
+            renderQuestionForm(typeof activeEditorTab !== "undefined" ? activeEditorTab : "math");
+          }
         } else {
           if (rightCol) rightCol.style.display = "flex";
           if (sidebarEditor) sidebarEditor.style.display = "flex";
@@ -8544,31 +9003,48 @@ YÊU CẦU QUAN TRỌNG:
           if (topbarMeta) topbarMeta.style.display = "none";
           
           if (layout) {
-            layout.style.display = "";
-            layout.style.width = "";
+            layout.style.display = "grid";
+            layout.style.gridTemplateColumns = "1.1fr 1fr";
+            layout.style.width = "100%";
           }
           
           var metaCard = document.getElementById("math-single-qb-metadata-card");
           if (metaCard) metaCard.remove();
           var bottomControls = document.getElementById("math-single-qb-controls");
           if (bottomControls) bottomControls.remove();
+          var qbTopbar = document.getElementById("math-single-qb-topbar");
+          if (qbTopbar) qbTopbar.remove();
         }
       }
       window.toggleSingleQuestionEditMode = toggleSingleQuestionEditMode;
 
       window.setMathQuestionType = function(type) {
         try {
-          var btns = document.querySelectorAll("#topbar-question-type-tabs .math-type-btn");
+          var btns = document.querySelectorAll("#topbar-question-type-tabs .math-type-btn, #vach1-question-type-tabs .math-type-btn");
           btns.forEach(function(b) {
             var isTarget = b.getAttribute("data-type") === type;
             if (isTarget) {
+              b.classList.add("active");
               b.style.background = "#c2272d";
-              b.style.color = "white";
+              b.style.color = "#ffffff";
+              b.style.border = "none";
+              b.style.boxShadow = "0 1px 2px rgba(194,39,45,0.25)";
               b.style.fontWeight = "700";
+              b.style.height = "24px";
+              b.style.fontSize = "11.5px";
+              b.style.padding = "0 10px";
+              b.style.borderRadius = "4px";
             } else {
+              b.classList.remove("active");
               b.style.background = "transparent";
               b.style.color = "#475569";
+              b.style.border = "none";
+              b.style.boxShadow = "none";
               b.style.fontWeight = "600";
+              b.style.height = "24px";
+              b.style.fontSize = "11.5px";
+              b.style.padding = "0 10px";
+              b.style.borderRadius = "4px";
             }
           });
 
@@ -8577,6 +9053,9 @@ YÊU CẦU QUAN TRỌNG:
           }
           if (window.isEditingSingleQbQuestion && typeof window.injectSingleQuestionControls === "function") {
             window.injectSingleQuestionControls("math");
+          }
+          if (typeof updatePreview === "function") {
+            updatePreview("math");
           }
         } catch(err) {
           console.error("setMathQuestionType error:", err);
@@ -8591,77 +9070,135 @@ YÊU CẦU QUAN TRỌNG:
         var currTopic = q ? (q.topic || "Khảo sát hàm số") : "Khảo sát hàm số";
         var currDiff = q ? (Number(q.difficulty || 1)) : 1;
 
-        var form = $("#" + sectionId + "-question-form");
-        if (!form) return;
-
-        var topHeaderCard = document.createElement("div");
-        topHeaderCard.id = "math-single-qb-metadata-card";
-        topHeaderCard.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; width: 100%; box-sizing: border-box; font-family: inherit;";
-
-        topHeaderCard.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Chủ đề:</span>
-              <select id="math-single-qb-topic-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; min-width: 230px; height: 36px; font-family: inherit;">
-                <option value="Khảo sát hàm số">Khảo sát hàm số</option>
-                <option value="Mũ và Lôgarit">Mũ và Lôgarit</option>
-                <option value="Nguyên hàm &amp; Tích phân">Nguyên hàm &amp; Tích phân</option>
-                <option value="Số phức">Số phức</option>
-                <option value="Tổ hợp &amp; Xác suất">Tổ hợp &amp; Xác suất</option>
-                <option value="Hình học không gian">Hình học không gian</option>
-                <option value="Hình học giải tích Oxyz">Hình học giải tích Oxyz</option>
-                <option value="Lượng giác">Lượng giác</option>
-                <option value="Dãy số &amp; Cấp số">Dãy số &amp; Cấp số</option>
-                <option value="Vectơ &amp; Hệ tọa độ">Vectơ &amp; Hệ tọa độ</option>
-                <option value="Phương trình &amp; Hệ phương trình">Phương trình &amp; Hệ phương trình</option>
-              </select>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Độ khó:</span>
-              <select id="math-q-difficulty-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; height: 36px; font-family: inherit;" onchange="window.updateCurrentMathDifficulty(this.value)">
-                <option value="1">Mức 1 (Dễ)</option>
-                <option value="2">Mức 2 (Trung bình)</option>
-                <option value="3">Mức 3 (Khó)</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="button" class="btn" onclick="window.autoClassifyMathQuestionForm()" style="background: #c2272d; color: #ffffff; font-weight: 700; font-size: 13px; padding: 0 18px; height: 36px; border-radius: 6px; border: none; cursor: pointer; transition: background 0.15s; white-space: nowrap; font-family: inherit;" onmouseover="this.style.background='#a81d22';" onmouseout="this.style.background='#c2272d';" title="AI Phân loại tự động chủ đề và độ khó">
-            AI Phân loại
-          </button>
-        `;
-
-        form.insertBefore(topHeaderCard, form.firstChild);
-
-        var topicSelect = document.getElementById("math-single-qb-topic-select");
-        if (topicSelect) {
-          var exists = Array.from(topicSelect.options).some(function(opt) { return opt.value === currTopic; });
-          if (!exists) {
-            var newOpt = document.createElement("option");
-            newOpt.value = currTopic;
-            newOpt.textContent = currTopic;
-            topicSelect.appendChild(newOpt);
+        if (sectionId === "math") {
+          var v1Topic = document.getElementById("math-single-qb-topic-select");
+          if (v1Topic) {
+            var optsArr = v1Topic.options ? Array.from(v1Topic.options) : [];
+            var exists = optsArr.some(function(opt) { return opt.value === currTopic; });
+            if (!exists) {
+              var newOpt = document.createElement("option");
+              newOpt.value = currTopic;
+              newOpt.textContent = currTopic;
+              v1Topic.appendChild(newOpt);
+            }
+            v1Topic.value = currTopic;
           }
-          topicSelect.value = currTopic;
-        }
+          var v1Diff = document.getElementById("math-q-difficulty-select");
+          if (v1Diff) v1Diff.value = String(currDiff);
 
-        var diffSelect = document.getElementById("math-q-difficulty-select");
-        if (diffSelect) {
-          diffSelect.value = String(currDiff);
-        }
-
-        var topbarMeta = document.getElementById("topbar-single-qb-metadata");
-        if (topbarMeta) topbarMeta.style.display = "flex";
-        
-        if (!document.getElementById("math-single-qb-controls")) {
-          var bottomControls = document.createElement("div");
-          bottomControls.id = "math-single-qb-controls";
-          bottomControls.style.cssText = "display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1.5px solid #e2e8f0; width: 100%; font-family: inherit;";
+          var activeType = q ? q.question_type : "single_choice";
+          var btns = document.querySelectorAll("#topbar-question-type-tabs .math-type-btn");
+          btns.forEach(function(b) {
+            var isTarget = b.getAttribute("data-type") === activeType;
+            if (isTarget) {
+              b.classList.add("active");
+              b.style.background = "#c2272d";
+              b.style.color = "#ffffff";
+              b.style.fontWeight = "700";
+            } else {
+              b.classList.remove("active");
+              b.style.background = "transparent";
+              b.style.color = "#475569";
+              b.style.fontWeight = "600";
+            }
+          });
           
-          bottomControls.innerHTML = `
-            <div style="display: flex; gap: 12px; margin-right: auto;">
-              <button type="button" class="btn" onclick="window.autoOptimizeMathQuestion()" style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; font-weight: 700; font-size: 13.5px; padding: 11px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transit      function safeParseGeminiJson(rawText) {
+          if (window.isEditingSingleQbQuestion) {
+            // Render the clean horizontal question type tabs next to the topbar Back button
+            var tabsContainer = document.getElementById("math-single-qb-type-tabs-container");
+            if (tabsContainer) {
+              tabsContainer.innerHTML = typeTabsHtml("math", q ? q.question_type : "single_choice");
+            }
+
+            // Create metadata card with topic, difficulty selects AND "AI Phân loại" button (Borderless)
+            var form = document.getElementById("math-question-form");
+            if (form && !document.getElementById("math-single-qb-metadata-card")) {
+              var topHeaderCard = document.createElement("div");
+              topHeaderCard.id = "math-single-qb-metadata-card";
+              topHeaderCard.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 16px; background: transparent; border: none; border-radius: 0; padding: 0; margin-top: 4px; margin-bottom: 16px; width: 100%; box-sizing: border-box; font-family: inherit;";
+
+              topHeaderCard.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Chủ đề:</span>
+                    <select id="math-single-qb-topic-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; min-width: 230px; height: 36px; font-family: inherit;">
+                      <option value="Khảo sát hàm số">Khảo sát hàm số</option>
+                      <option value="Mũ và Lôgarit">Mũ và Lôgarit</option>
+                      <option value="Nguyên hàm &amp; Tích phân">Nguyên hàm &amp; Tích phân</option>
+                      <option value="Số phức">Số phức</option>
+                      <option value="Tổ hợp &amp; Xác suất">Tổ hợp &amp; Xác suất</option>
+                      <option value="Hình học không gian">Hình học không gian</option>
+                      <option value="Hình học giải tích Oxyz">Hình học giải tích Oxyz</option>
+                      <option value="Lượng giác">Lượng giác</option>
+                      <option value="Dãy số &amp; Cấp số">Dãy số &amp; Cấp số</option>
+                      <option value="Vectơ &amp; Hệ tọa độ">Vectơ &amp; Hệ tọa độ</option>
+                      <option value="Phương trình &amp; Hệ phương trình">Phương trình &amp; Hệ phương trình</option>
+                    </select>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap;">Độ khó:</span>
+                    <select id="math-q-difficulty-select" style="border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-weight: 600; font-size: 13px; outline: none; cursor: pointer; color: #0f172a; background: #ffffff; height: 36px; font-family: inherit;" onchange="window.updateCurrentMathDifficulty(this.value)">
+                      <option value="1">Mức 1 (Dễ)</option>
+                      <option value="2">Mức 2 (Trung bình)</option>
+                      <option value="3">Mức 3 (Khó)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="button" class="btn" onclick="window.autoClassifyMathQuestionForm()" style="background: #c2272d; color: #ffffff; font-weight: 700; font-size: 13px; padding: 0 18px; height: 36px; border-radius: 6px; border: none; cursor: pointer; transition: background 0.15s; white-space: nowrap; font-family: inherit;" onmouseover="this.style.background='#a81d22';" onmouseout="this.style.background='#c2272d';" title="AI Phân loại tự động chủ đề và độ khó">
+                  AI Phân loại
+                </button>
+              `;
+
+              form.insertBefore(topHeaderCard, form.firstChild);
+
+              // Update values inside newly injected selects
+              var topicSelect = document.getElementById("math-single-qb-topic-select");
+              if (topicSelect) {
+                var exists = Array.from(topicSelect.options).some(function(opt) { return opt.value === currTopic; });
+                if (!exists) {
+                  var newOpt = document.createElement("option");
+                  newOpt.value = currTopic;
+                  newOpt.textContent = currTopic;
+                  topicSelect.appendChild(newOpt);
+                }
+                topicSelect.value = currTopic;
+              }
+              var diffSelect = document.getElementById("math-q-difficulty-select");
+              if (diffSelect) diffSelect.value = String(currDiff);
+            }
+
+            // Render bottom controls
+            if (!document.getElementById("math-single-qb-controls")) {
+              var bottomControls = document.createElement("div");
+              bottomControls.id = "math-single-qb-controls";
+              bottomControls.style.cssText = "display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1.5px solid #e2e8f0; width: 100%; font-family: inherit;";
+              
+              bottomControls.innerHTML = `
+                <div style="display: flex; gap: 12px; margin-right: auto; align-items: center; flex-wrap: wrap;">
+                  <button type="button" class="btn" onclick="window.openTeacherAiPromptModal()" style="background: #ffffff; color: #4f46e5; border: 1.5px solid #c7d2fe; font-weight: 700; font-size: 13.5px; padding: 11px 18px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(79,70,229,0.1); transition: all 0.2s;" onmouseover="this.style.background='#f5f3ff';" onmouseout="this.style.background='#ffffff';">⚙️ Cấu hình Prompt AI</button>
+                  <button type="button" class="btn" onclick="window.autoOptimizeMathQuestion()" style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; font-weight: 700; font-size: 13.5px; padding: 11px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transition: all 0.2s;">✨ Tối ưu bằng AI</button>
+                </div>
+                <button type="button" class="btn" onclick="saveMathWizardQuestion(false)" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; border: none; font-weight: 700; padding: 11px 32px; border-radius: 10px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit;">Lưu Thay Đổi</button>
+              `;
+              var mathForm = document.getElementById("math-question-form");
+              if (mathForm) mathForm.appendChild(bottomControls);
+            }
+          }
+        } else {
+          // Reading & Science
+          if (window.isEditingSingleQbQuestion) {
+            var tabsContainer = document.getElementById("math-single-qb-type-tabs-container");
+            if (tabsContainer) {
+              var sectionLabel = sectionId === "reading" ? "Đọc hiểu" : "Khoa học";
+              tabsContainer.innerHTML = `<span style="font-size: 14.5px; font-weight: 700; color: #475569; font-family: inherit;">Ngữ liệu ${sectionLabel}</span>`;
+            }
+          }
+        }
+      };
+
+      function safeParseGeminiJson(rawText) {
         if (!rawText || typeof rawText !== "string") return {};
         var clean = rawText.trim();
         clean = clean.replace(/^```(?:json)?\s*/gi, "").replace(/\s*```$/gi, "").trim();
@@ -8701,119 +9238,68 @@ YÊU CẦU QUAN TRỌNG:
       }
       window.safeParseGeminiJson = safeParseGeminiJson;
 
-      window.saveTeacherAiPromptSetting = function() {
-        var val = document.getElementById("teacher-ai-prompt-input")?.value || "";
-        localStorage.setItem("tma_teacher_ai_style", val.trim());
-        if (document.getElementById("teacher-ai-prompt-modal")) {
-          document.getElementById("teacher-ai-prompt-modal").remove();
+
+      async function callGemini(payload) {
+        if (!window.TMA_AI || typeof window.TMA_AI.generate !== "function") {
+          throw new Error("Dịch vụ AI chưa được tải. Hãy tải lại trang.");
         }
-        alert("✓ Đã lưu Prompt AI thành công! Tất cả các thao tác AI từ bây giờ sẽ lập tức áp dụng câu lệnh mới của bạn.");
+        return window.TMA_AI.generate(payload);
+      }
+      window.callGemini = callGemini;
+
+      async function refreshTeacherAiBackendStatus() {
+        var container = document.getElementById("teacher-ai-backend-status");
+        var dot = document.getElementById("teacher-ai-status-dot");
+        var text = document.getElementById("teacher-ai-status-text");
+        if (!container || !dot || !text || !window.TMA_AI) return;
+        try {
+          var status = await window.TMA_AI.health();
+          if (!status.configured) throw new Error("Backend chưa có GEMINI_API_KEY");
+          dot.style.background = "#16825d";
+          text.textContent = "AI sẵn sàng";
+          container.style.borderColor = "#9acdbb";
+          container.style.background = "#edf9f4";
+          container.style.color = "#167257";
+          container.title = "AI đang chạy qua backend với " + (status.model || "Gemini");
+        } catch (error) {
+          dot.style.background = "#b42318";
+          text.textContent = "Kiểm tra backend AI";
+          container.style.borderColor = "#efb2ad";
+          container.style.background = "#fff3f2";
+          container.style.color = "#b42318";
+          container.title = error.message || "Backend AI chưa sẵn sàng";
+        }
+      }
+      window.setTimeout(refreshTeacherAiBackendStatus, 500);
+
+
+      function handleGeminiResponseError(response) {
+        if (!response.ok) {
+          return response.text().then(function(errText) {
+            var errMsg = "Lỗi kết nối API Gemini.";
+            try {
+              var errObj = JSON.parse(errText);
+              if (errObj && errObj.error) {
+                var status = errObj.error.status || "";
+                var rawMsg = errObj.error.message || "";
+                if (status === "RESOURCE_EXHAUSTED") {
+                  errMsg = "Giới hạn API (RESOURCE_EXHAUSTED): " + rawMsg;
+                } else {
+                  errMsg = rawMsg || errObj.error.message || errMsg;
+                }
+              }
+            } catch(e) {}
+            throw new Error(errMsg);
+          });
+        }
+        return response.json();
+      }
+      window.handleGeminiResponseError = handleGeminiResponseError;
+
+      window.openTeacherAiPromptModal = function() {
+        window.location.href = "ai-studio.html";
       };
-
-      window.autoOptimizeMathQuestion = function() {
-        var qTextEl = document.getElementById("math-q-text");
-        var explanationEl = document.getElementById("math-q-explanation");
-        var diffSelect = document.getElementById("math-q-difficulty-select");
-        var topicSelect = document.getElementById("math-single-qb-topic-select");
-        
-        var qText = qTextEl ? qTextEl.value : "";
-        if (!qText.trim()) {
-          alert("Vui lòng nhập nội dung câu hỏi Toán học vào ô nội dung trước khi yêu cầu AI tối ưu.");
-          return;
-        }
-        
-        var apiKey = localStorage.getItem("tma_gemini_api_key");
-        if (!apiKey) {
-          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
-          if (!inputKey) return;
-          apiKey = inputKey.trim();
-          localStorage.setItem("tma_gemini_api_key", apiKey);
-        }
-        
-        var aiBtn = document.querySelector("#math-single-qb-controls button[onclick*='autoOptimizeMathQuestion']");
-        var origHtml = aiBtn ? aiBtn.innerHTML : "";
-        if (aiBtn) {
-          aiBtn.disabled = true;
-          aiBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span>AI đang phân tích & giải đề...</span>
-          `;
-        }
-        
-        var systemInstruction = "Bạn là chuyên gia thẩm định và tối ưu câu hỏi kỳ thi đánh giá tư duy TSA Bách Khoa Việt Nam. " +
-          "Nhiệm vụ của bạn là đọc câu hỏi toán thô được gửi lên, tối ưu lại câu từ cho chuyên nghiệp và chuẩn mực sư phạm (nếu cần thiết, nếu không hãy giữ nguyên ý), " +
-          "sau đó giải bài toán này từng bước một cách chặt chẽ, dễ hiểu. " +
-          "Bạn cũng phải xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất cho câu hỏi và xác định mức độ khó thích hợp (1: Dễ, 2: Trung bình, 3: Khó). " +
-          "Đầu ra BẮT BUỘC là một đối tượng JSON chuẩn có cấu trúc sau, không chứa ký tự markdown hay văn bản ngoài JSON:\n" +
-          "{\n" +
-          "  \"optimized_question\": \"Nội dung câu hỏi đã tối ưu (giữ nguyên LaTeX nếu có)\",\n" +
-          "  \"explanation\": \"Lời giải chi tiết từng bước, sử dụng LaTeX chuẩn (dùng \\\\dfrac cho phân số, \\\\limits cho giới hạn)\",\n" +
-          "  \"difficulty\": 1 | 2 | 3,\n" +
-          "  \"topic\": \"Khảo sát hàm số\" | \"Mũ và Lôgarit\" | \"Nguyên hàm & Tích phân\" | \"Số phức\" | \"Tổ hợp & Xác suất\" | \"Hình học không gian\" | \"Hình học giải tích Oxyz\" | \"Lượng giác\" | \"Dãy số & Cấp số\" | \"Vectơ & Hệ tọa độ\" | \"Phương trình & Hệ phương trình\"\n" +
-          "}\n\n" +
-          "LƯU Ý CỰC KỲ QUAN TRỌNG VỀ ĐỊNH DẠNG & LATEX:\n" +
-          "- TUYỆT ĐỐI KHÔNG sử dụng ký tự dấu sao ** hay * để bôi đậm hay làm danh sách (vd: KHÔNG viết **Bước 1:** hay * Ý 1). Hãy dùng thẻ <strong>...</strong> cho các tiêu đề bước hoặc viết chữ thường 'Bước 1: ...'.\n" +
-          "- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).\n" +
-          "- BẮT BUỘC escape tất cả các dấu gạch chéo ngược \\ thành song song hai gạch chéo ngược \\\\ (ví dụ write \\\\dfrac, \\\\left, \\\\right, \\\\sqrt, \\\\frac) trong chuỗi JSON để tạo ra JSON hợp lệ.";
-
-        var customStyle = localStorage.getItem("tma_teacher_ai_style");
-        if (customStyle && customStyle.trim()) {
-          systemInstruction += "\n\nPHONG CÁCH GIẢI BÀI VÀ TRÌNH BÀY CỦA GIÁO VIÊN (PHẢI TUÂN THỦ 100%):\n" + customStyle.trim();
-        }
-
-        window.setTeacherAiStyle = function() {
-          var current = localStorage.getItem("tma_teacher_ai_style") || "";
-          var val = prompt("Nhập phong cách / chỉ dẫn giải bài bạn muốn AI tuân theo (Ví dụ: 'Chia làm 3 bước: Giả thiết, Công thức, Thay số. Không dùng ký tự dấu sao **'):", current);
-          if (val !== null) {
-            localStorage.setItem("tma_teacher_ai_style", val.trim());
-            alert("Đã lưu phong cách giải bài thành công! Tất cả câu hỏi AI tạo hoặc tối ưu sau này sẽ tự động tuân thủ phong cách này.");
-          }
-        };
-          
-        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-        var requestPayload = {
-          contents: [{
-            parts: [{
-              text: "Hãy tối ưu và lập lời giải chi tiết cho câu hỏi toán học sau:\n\n" + qText
-            }]
-          }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            temperature: 0.15
-          },
-          systemInstruction: {
-            parts: [{
-              text: systemInstruction
-            }]
-          }
-        };
-        
-        fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestPayload)
-        })
-        .then(function(res) {
-          if (!res.ok) {
-            return res.text().then(function(err) {
-              throw new Error("Lỗi API Gemini: " + res.status + " - " + err);
-            });
-          }
-          return res.json();
-        })
-        .then(function(data) {
-          var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-          var result = safeParseGeminiJson(textResponse);          </div>
-
-            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-              <button type="button" onclick="document.getElementById('teacher-ai-prompt-modal').remove()" style="background: #f1f5f9; color: #475569; border: none; font-weight: 700; padding: 9px 18px; border-radius: 8px; cursor: pointer; font-size: 13.5px;">Đóng</button>
-              <button type="button" onclick="window.saveTeacherAiPromptSetting()" style="background: #16a34a; color: white; border: none; font-weight: 700; padding: 9px 22px; border-radius: 8px; cursor: pointer; font-size: 13.5px;">Lưu Prompt AI</button>
-            </div>
-          </div>
-        `;
-
-        document.body.appendChild(modal);
-      };
+      window.setTeacherAiStyle = window.openTeacherAiPromptModal;
 
       window.saveTeacherAiPromptSetting = function() {
         var val = document.getElementById("teacher-ai-prompt-input")?.value || "";
@@ -8834,14 +9320,6 @@ YÊU CẦU QUAN TRỌNG:
         if (!qText.trim()) {
           alert("Vui lòng nhập nội dung câu hỏi Toán học vào ô nội dung trước khi yêu cầu AI tối ưu.");
           return;
-        }
-        
-        var apiKey = localStorage.getItem("tma_gemini_api_key");
-        if (!apiKey) {
-          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
-          if (!inputKey) return;
-          apiKey = inputKey.trim();
-          localStorage.setItem("tma_gemini_api_key", apiKey);
         }
         
         var aiBtn = document.querySelector("#math-single-qb-controls button[onclick*='autoOptimizeMathQuestion']");
@@ -8884,7 +9362,6 @@ YÊU CẦU QUAN TRỌNG:
           }
         };
           
-        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
         var requestPayload = {
           contents: [{
             parts: [{
@@ -8902,22 +9379,13 @@ YÊU CẦU QUAN TRỌNG:
           }
         };
         
-        fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestPayload)
-        })
+        callGemini(requestPayload)
         .then(function(res) {
-          if (!res.ok) {
-            return res.text().then(function(err) {
-              throw new Error("Lỗi API Gemini: " + res.status + " - " + err);
-            });
-          }
-          return res.json();
+          return handleGeminiResponseError(res);
         })
         .then(function(data) {
           var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-          var result = JSON.parse(textResponse);
+          var result = safeParseGeminiJson(textResponse);
           
           if (qTextEl && result.optimized_question) {
             qTextEl.value = result.optimized_question;
@@ -9253,14 +9721,6 @@ YÊU CẦU QUAN TRỌNG:
           return;
         }
 
-        var apiKey = localStorage.getItem("tma_gemini_api_key");
-        if (!apiKey) {
-          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
-          if (!inputKey) return;
-          apiKey = inputKey.trim();
-          localStorage.setItem("tma_gemini_api_key", apiKey);
-        }
-
         var aiBtn = document.querySelector("button[onclick*='autoClassifyMathQuestionForm']");
         var origHtml = aiBtn ? aiBtn.innerHTML : "";
         if (aiBtn) {
@@ -9273,13 +9733,25 @@ YÊU CẦU QUAN TRỌNG:
           "Chủ đề BẮT BUỘC phải là một trong các giá trị sau:\n" +
           "\"Khảo sát hàm số\", \"Mũ và Lôgarit\", \"Nguyên hàm & Tích phân\", \"Số phức\", \"Tổ hợp & Xác suất\", \"Hình học không gian\", \"Hình học giải tích Oxyz\", \"Lượng giác\", \"Dãy số & Cấp số\", \"Vectơ & Hệ tọa độ\", \"Phương trình & Hệ phương trình\".\n" +
           "Độ khó BẮT BUỘC là 1 (Dễ), 2 (Trung bình) hoặc 3 (Khó).\n" +
+          "QUY TẮC BẮT BUỘC KHI VIẾT LỜI GIẢI (\"explanation\") - TRÌNH BÀY NHƯ BÀI THI THẬT:\n" +
+          "1. TUYỆT ĐỐI KHÔNG DÙNG KÝ TỰ RÁC:\n" +
+          "   - TUYỆT ĐỐI KHÔNG dùng dấu sao (*) hoặc (**) trong bất kỳ câu chữ hay công thức nào.\n" +
+          "   - TUYỆT ĐỐI KHÔNG chèn icon/emoji (như 🎯, 📘, 💡, 🤖...).\n" +
+          "2. BẮT BUỘC XUỐNG DÒNG RÕ RÀNG CHO TỪNG Ý VÀ TỪNG BƯỚC:\n" +
+          "   - Mặc định chia lời giải thành các bước đánh số rõ ràng: 1. ..., 2. ..., 3. ...\n" +
+          "   - Trước MỖI số thứ tự bước (2., 3., 4....) BẮT BUỘC phải xuống dòng bằng \\n\\n.\n" +
+          "   - Các ý gạch đầu dòng chi tiết bên trong từng bước BẮT BUỘC xuống dòng riêng bằng \\n.\n" +
+          "3. CHUẨN NĂNG LỰC TOÁN VÀ LATEX TSA:\n" +
+          "   - Dùng \\( ... \\) cho các biến số, công thức ngắn, đơn vị (ví dụ: \\(P = 32{,}6\\text{ kW}\\)).\n" +
+          "   - KHÔNG chèn \\displaystyle vào trong \\( ... \\).\n" +
+          "   - Dùng \\dfrac cho phân số và \\cdot cho dấu nhân.\n" +
+          "   - Số thập phân dùng dấu phẩy theo chuẩn Việt Nam (32,6 thay vì 32.6).\n" +
           "Đầu ra duy nhất là một đối tượng JSON có định dạng:\n" +
           "{\n" +
           "  \"topic\": \"chủ đề\",\n" +
           "  \"difficulty\": 1 | 2 | 3\n" +
           "}";
 
-        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
         var requestPayload = {
           contents: [{
             parts: [{
@@ -9297,14 +9769,9 @@ YÊU CẦU QUAN TRỌNG:
           }
         };
 
-        fetch(apiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestPayload)
-        })
+        callGemini(requestPayload)
         .then(function(res) {
-          if (!res.ok) throw new Error("API error");
-          return res.json();
+          return handleGeminiResponseError(res);
         })
         .then(function(data) {
           var textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
@@ -9340,7 +9807,7 @@ YÊU CẦU QUAN TRỌNG:
           }
           if (selectEl) { selectEl.value = String(level); window.updateCurrentMathDifficulty(level); }
           if (topicEl) topicEl.value = topic;
-          alert("✓ Đã tự động phân loại chủ đề và độ khó theo thuật toán phân tích nhanh!");
+          alert("AI chưa phản hồi. Hệ thống đã phân loại tạm bằng quy tắc; vui lòng kiểm tra lại chủ đề và độ khó.");
         })
         .finally(function() {
           if (aiBtn) {
@@ -9392,12 +9859,140 @@ YÊU CẦU QUAN TRỌNG:
           return;
         }
 
-        var apiKey = localStorage.getItem("tma_gemini_api_key");
-        if (!apiKey) {
-          var inputKey = prompt("Hệ thống chưa cấu hình Gemini API Key. Vui lòng nhập API Key của bạn để sử dụng (hoặc lấy khóa tại aistudio.google.com):");
-          if (!inputKey) return;
-          apiKey = inputKey.trim();
-          localStorage.setItem("tma_gemini_api_key", apiKey);
+        var cleanInput = rawText.trim();
+        var isDirectJson = false;
+        var directParsed = null;
+        if (cleanInput.startsWith("{") && cleanInput.endsWith("}")) {
+          try {
+            directParsed = JSON.parse(cleanInput);
+            isDirectJson = true;
+          } catch(e) {
+            try {
+              directParsed = safeParseGeminiJson(cleanInput);
+              if (directParsed && (directParsed.section_id || directParsed.exam_code)) {
+                isDirectJson = true;
+              }
+            } catch(err) {}
+          }
+        }
+
+        if (isDirectJson && directParsed) {
+          try {
+            var targetCode = "TMA_RANDOM_001";
+            var examObj = null;
+            var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+            if (stored) {
+              try { examObj = JSON.parse(stored); } catch(e) {}
+            }
+            if (!examObj || !Array.isArray(examObj.sections)) {
+              examObj = {
+                exam_code: targetCode,
+                title: "Ngân hàng câu hỏi Luyện đề ngẫu nhiên",
+                duration_minutes: 150,
+                status: "published",
+                sections: [
+                  { section_id: "math", section_label: "Tư duy Toán học", questions: [] },
+                  { section_id: "reading", section_label: "Tư duy Đọc hiểu", groups: [] },
+                  { section_id: "science", section_label: "Tư duy Khoa học", groups: [] }
+                ]
+              };
+            }
+
+            var sectionId = directParsed.section_id || "math";
+            if (sectionId === "math") {
+              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+              if (!mathSec) {
+                mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
+                examObj.sections.push(mathSec);
+              }
+              if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+              
+              var list = directParsed.questions || [];
+              if (directParsed.data && Array.isArray(directParsed.data.questions)) {
+                list = directParsed.data.questions;
+              }
+              var addedCount = 0;
+              list.forEach(function(newQ) {
+                newQ.question_no = mathSec.questions.length + 1;
+                mathSec.questions.push(newQ);
+                addedCount++;
+              });
+
+              if (statusEl) {
+                statusEl.style.display = "block";
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp thành công " + addedCount + " câu hỏi Toán học từ file JSON!";
+              }
+            } else if (sectionId === "reading" || sectionId === "science") {
+              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+              if (!sec) {
+                sec = { section_id: sectionId, section_label: sectionId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
+                examObj.sections.push(sec);
+              }
+              if (!Array.isArray(sec.groups)) sec.groups = [];
+
+              var addedGroups = 0;
+              var sourceGroups = [];
+              if (Array.isArray(directParsed.groups)) {
+                sourceGroups = directParsed.groups;
+              } else if (directParsed.data && directParsed.data.group) {
+                sourceGroups = [directParsed.data.group];
+              } else if (directParsed.group) {
+                sourceGroups = [directParsed.group];
+              }
+
+              sourceGroups.forEach(function(g) {
+                var newGroup = {
+                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
+                  title: g.title || "Tiêu đề bài đọc",
+                  passage: g.passage || (g.stimulus ? g.stimulus.content : "") || "",
+                  questions: g.questions || []
+                };
+                if (g.stimulus) {
+                  newGroup.stimulus = Object.assign({}, g.stimulus);
+                } else {
+                  newGroup.stimulus = {
+                    type: "text",
+                    content: newGroup.passage,
+                    image_url: g.image_url || g.passage_image_url || "",
+                    image_width: g.image_width || 100
+                  };
+                }
+                if (g.passage_image_url) {
+                  newGroup.passage_image_url = g.passage_image_url;
+                } else if (newGroup.stimulus.image_url) {
+                  newGroup.passage_image_url = newGroup.stimulus.image_url;
+                }
+                sec.groups.push(newGroup);
+                addedGroups++;
+              });
+
+              if (statusEl) {
+                statusEl.style.display = "block";
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp thành công " + addedGroups + " ngữ liệu từ file JSON!";
+              }
+            } else {
+              throw new Error("Không xác định được môn thi (section_id).");
+            }
+
+            localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+            localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+            document.getElementById("qb-ai-raw-text").value = "";
+            setTimeout(function() {
+              if (typeof renderPracticeRoom === "function") renderPracticeRoom();
+            }, 800);
+
+            return;
+          } catch(err) {
+            if (statusEl) {
+              statusEl.style.display = "block";
+              statusEl.style.color = "#ef4444";
+              statusEl.textContent = "❌ Lỗi đọc JSON: " + err.message;
+            }
+            return;
+          }
         }
 
         if (statusEl) {
@@ -9408,20 +10003,10 @@ YÊU CẦU QUAN TRỌNG:
 
         var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.
 Nhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.
-
-CHỈ THỊ VỀ NỘI DUNG VÀ KHẢ NĂNG SUY LUẬN:
-1. Đọc kỹ câu hỏi, tự suy luận giải bài toán đó và viết LỜI GIẢI CHI TIẾT ("explanation") từng bước một cách chặt chẽ, dễ hiểu. Sử dụng định dạng LaTeX cho tất cả công thức.
-2. Phân tích nội dung câu hỏi Toán để xác định:
-   - "topic": Chủ đề Toán học cụ thể bám sát chương trình sách giáo khoa trung học phổ thông (SGK cấp 3 Việt Nam). BẮT BUỘC chỉ chọn một trong các chủ đề chuẩn sau làm "topic" (không tự biên soạn chủ đề khác): "Khảo sát hàm số", "Mũ và Lôgarit", "Nguyên hàm & Tích phân", "Số phức", "Tổ hợp & Xác suất", "Hình học không gian", "Hình học giải tích Oxyz", "Lượng giác", "Dãy số & Cấp số", "Vectơ & Hệ tọa độ", "Phương trình & Hệ phương trình".
-   - "difficulty": Độ khó từ 1 đến 3 (1: Dễ - nhận biết cơ bản; 2: Trung bình - thông hiểu, vận dụng thấp từ 2-3 bước tính toán; 3: Khó - vận dụng cao, suy luận logic phức tạp).
-3. ĐỐI VỚI ĐỀ ĐỌC HIỂU/KHOA HỌC:
-   - Nếu văn bản nhập vào có dạng ngữ liệu nền (đoạn văn dài) kèm các câu hỏi đi kèm, tự động gom nhóm chúng lại và xác định section_id là "reading" (Đọc hiểu) hoặc "science" (Khoa học - nếu chứa kiến thức Vật lý, Hóa học, Sinh học).
-   - Đặt toàn bộ thông tin ngữ liệu nền trong thuộc tính "group".
-
-YÊU CẦU VỀ ĐỊNH DẠNG CÔNG THỨC TOÁN (LƯU Ý CỰC KỲ QUAN TRỌNG):
-- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).
-- BẮT BUỘC escape ký tự gạch chéo ngược thành song song hai gạch chéo ngược (\\\\\\\\( ... \\\\\\\\) và \\\\\\\\[ ... \\\\\\\\]) trong chuỗi JSON để tránh lỗi cú pháp parse JSON trong JavaScript.
-- Để công thức hiển thị đẹp nhất: sử dụng \\\\dfrac thay vì \\\\frac cho các phân số; sử dụng \\\\limits cho giới hạn tổng/tích (ví dụ: \\\\sum\\\\limits_{k=1}^{n}).
+- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).
+- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).
+- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.
+- Viết Lời giải chi tiết ("explanation") chia thành các bước rõ ràng (1. Xác định..., 2. Chuyển đổi..., 3. Thiết lập..., 4. Thực hiện...), KHÔNG dùng dấu sao ** để bôi đậm câu chữ trong công thức.
 
 Cấu trúc JSON đầu ra yêu cầu duy nhất:
 {
@@ -9463,35 +10048,24 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
   }
 }`;
 
-        var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
         var promptText = systemInstruction + "\n\nNỘI DUNG VĂN BẢN CẦN PHÂN TÍCH:\n" + rawText;
-
-        fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  { text: promptText }
-                ]
-              }
-            ],
-            generationConfig: {
-              responseMimeType: "application/json"
+        var payload = {
+          contents: [
+            {
+              role: "user",
+              parts: [
+                { text: promptText }
+              ]
             }
-          })
-        })
-        .then(function(response) {
-          if (!response.ok) {
-            return response.text().then(function(err) {
-              throw new Error("Lỗi API Gemini: " + response.status + " - " + err);
-            });
+          ],
+          generationConfig: {
+            responseMimeType: "application/json"
           }
-          return response.json();
+        };
+
+        callGemini(payload)
+        .then(function(response) {
+          return handleGeminiResponseError(response);
         })
         .then(function(resData) {
           var jsonText = resData.candidates[0].content.parts[0].text;
@@ -9578,8 +10152,134 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
             statusEl.style.color = "#ef4444";
             statusEl.textContent = "❌ Lỗi: " + error.message;
           }
-          alert("Lỗi khi xử lý với AI: " + error.message);
         });
       };
+
+      window.changeTmaGeminiApiKey = function() {
+        window.location.href = "ai-studio.html";
+      };
+
+      // One-time cleanup for TMA_RANDOM_001 junk data
+      (function() {
+        try {
+          var targetCode = "TMA_RANDOM_001";
+          var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (raw) {
+            var examObj = JSON.parse(raw);
+            if (examObj && Array.isArray(examObj.sections)) {
+              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+              if (mathSec && Array.isArray(mathSec.questions)) {
+                var initialLength = mathSec.questions.length;
+                var uniqueTexts = new Set();
+                mathSec.questions = mathSec.questions.filter(function(q) {
+                  if (!q) return false;
+                  var text = String(q.question || q.content || "").trim().toLowerCase();
+                  if (text.includes("uttewrt") || text.includes("wertwert") || text.includes("werlert") || text.includes("tma007")) {
+                    return false;
+                  }
+                  if (uniqueTexts.has(text)) {
+                    return false;
+                  }
+                  uniqueTexts.add(text);
+                  return true;
+                });
+                
+                // Re-index question_no
+                mathSec.questions.forEach(function(q, i) {
+                  q.question_no = i + 1;
+                });
+
+                if (mathSec.questions.length !== initialLength) {
+                  localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                  localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+                }
+              }
+            }
+          }
+        } catch(e) {}
+      })();
+
+      // Paste & Drag-Drop direct upload handlers for all textareas in the editor
+      function uploadAndInsertImage(textarea, rawFile) {
+        // Insert loading placeholder
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        var text = textarea.value;
+        var placeholder = "[IMG: Tải ảnh...]";
+        textarea.value = text.substring(0, start) + placeholder + text.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + placeholder.length;
+        textarea.dispatchEvent(new Event('input')); // Update draft/preview
+
+        compressImage(rawFile).then(function(file) {
+          var examCode = (window.exam && window.exam.exam_code) || 
+                         new URLSearchParams(window.location.search).get("exam") || 
+                         window.currentExamCode || 
+                         "temp";
+          examCode = String(examCode).trim().replace(/_TEACHER_DRAFT/g, "");
+
+          return uploadToR2(file, "passages/" + examCode, Date.now() + ".jpg")
+            .then(function(publicUrl) {
+              // Replace placeholder with final tag
+              var updatedText = textarea.value;
+              var finalTag = "[IMG: " + publicUrl + "]";
+              textarea.value = updatedText.replace(placeholder, finalTag);
+              textarea.dispatchEvent(new Event('input')); // Trigger update
+            });
+        }).catch(function(err) {
+          console.error("Paste image upload error:", err);
+          var updatedText = textarea.value;
+          textarea.value = updatedText.replace(placeholder, "[Lỗi tải ảnh]");
+          textarea.dispatchEvent(new Event('input'));
+          alert("Lỗi tải ảnh lên: " + (err.message || err));
+        });
+      }
+
+      document.addEventListener('paste', function(e) {
+        var target = e.target;
+        if (target && target.tagName === 'TEXTAREA') {
+          var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') === 0) {
+              var file = items[i].getAsFile();
+              if (file) {
+                e.preventDefault();
+                uploadAndInsertImage(target, file);
+              }
+            }
+          }
+        }
+      }, true);
+
+      document.addEventListener('dragover', function(e) {
+        var target = e.target;
+        if (target && target.tagName === 'TEXTAREA') {
+          var hasFiles = false;
+          if (e.dataTransfer && e.dataTransfer.types) {
+            for (var i = 0; i < e.dataTransfer.types.length; i++) {
+              if (e.dataTransfer.types[i] === 'Files') {
+                hasFiles = true;
+                break;
+              }
+            }
+          }
+          if (hasFiles) {
+            e.preventDefault();
+          }
+        }
+      }, true);
+
+      document.addEventListener('drop', function(e) {
+        var target = e.target;
+        if (target && target.tagName === 'TEXTAREA') {
+          var files = e.dataTransfer.files;
+          if (files && files.length > 0) {
+            var file = files[0];
+            if (file.type.indexOf('image') === 0) {
+              e.preventDefault();
+              uploadAndInsertImage(target, file);
+            }
+          }
+        }
+      }, true);
 
     })();

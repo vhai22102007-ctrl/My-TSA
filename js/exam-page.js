@@ -1,9 +1,4 @@
 (() => {
-  let supabaseClient = null;
-  if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
-    supabaseClient = supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey);
-  }
-
   const elements = {
     lobbyUi: document.getElementById("lobby-ui"),
     loadingUi: document.getElementById("loading-ui"),
@@ -37,31 +32,22 @@
   }
 
   // Display user profile info
-  elements.studentName.textContent = studentInfo.name || studentInfo.email || studentInfo.username || "Học sinh";
-  elements.profileFooter.style.display = "flex";
+  if (elements.studentName) {
+    elements.studentName.textContent = studentInfo.name || studentInfo.email || studentInfo.username || "Học sinh";
+  }
+  if (elements.profileFooter) elements.profileFooter.style.display = "flex";
 
   // Logout handler
-  elements.logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("studentInfo");
-    window.location.reload();
-  });
+  if (elements.logoutBtn) {
+    elements.logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("studentInfo");
+      window.location.reload();
+    });
+  }
 
-  // Dynamic code formatting (XXXX-XXXX-XX)
+  // Keep long room codes intact; only remove unsupported characters.
   elements.codeInput.addEventListener("input", (e) => {
-    let value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-    if (value.length > 10) value = value.slice(0, 10);
-    
-    let formatted = "";
-    if (value.length > 0) {
-      formatted += value.slice(0, 4);
-    }
-    if (value.length > 4) {
-      formatted += "-" + value.slice(4, 8);
-    }
-    if (value.length > 8) {
-      formatted += "-" + value.slice(8, 10);
-    }
-    e.target.value = formatted;
+    e.target.value = e.target.value.replace(/[^A-Za-z0-9_-]/g, "").toUpperCase().slice(0, 64);
   });
 
   function isFullscreenActive() {
@@ -137,8 +123,8 @@
       return;
     }
 
-    if (rawCode.length !== 10) {
-      elements.errorMsg.textContent = "Mã dự thi phải gồm đúng 10 ký tự.";
+    if (!/^[A-Za-z0-9_]{4,64}$/.test(rawCode)) {
+      elements.errorMsg.textContent = "Mã phòng thi chỉ gồm chữ, số hoặc dấu gạch dưới.";
       return;
     }
 
@@ -148,33 +134,27 @@
 
     const examCode = rawCode.toUpperCase();
 
-    // Query exam code from database
+    // Validate the room against the R2 index to avoid a Database request.
     let isValid = false;
     let examTitle = "Đề thi thử TSA";
 
-    if (supabaseClient) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('exams')
-          .select('exam_code, title')
-          .eq('exam_code', examCode)
-          .maybeSingle();
-
-        if (!error && data) {
-          isValid = true;
-          examTitle = data.title || examTitle;
+    // Exact match only. Never accept a room-code prefix.
+    {
+      const indexSources = [window.TMA_STORAGE_CONFIG.examsBaseUrl + "index.json"];
+      for (const source of indexSources) {
+        try {
+          const response = await fetch(source, { cache: "default" });
+          if (!response.ok) continue;
+          const index = await response.json();
+          const match = Array.isArray(index) ? index.find((item) => String(item.exam_code || "").toUpperCase() === examCode) : null;
+          if (match && match.status !== "draft" && match.is_open === true && Number(match.question_count || 1) > 0) {
+            isValid = true;
+            examTitle = match.title || examTitle;
+            break;
+          }
+        } catch (error) {
+          console.warn("Không tải được nguồn mã phòng thi:", source, error);
         }
-      } catch (err) {
-        console.error("DB Query error:", err);
-      }
-    }
-
-    // Local check fallback
-    if (!isValid) {
-      const fallbackExams = ["TSA_PRACTICE_FULL_01", "TSA_PRACTICE_FULL_02", "TSA_PRACTICE_FULL_03", "TSA_PRACTICE_FULL_04", "TSA_PRACTICE_FULL_05"];
-      if (fallbackExams.includes(examCode) || examCode.startsWith("TSA_")) {
-        isValid = true;
-        examTitle = "Bài thi thử: " + examCode.replace(/_/g, " ");
       }
     }
 

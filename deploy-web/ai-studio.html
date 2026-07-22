@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Prompt Lab dành cho giáo viên TMA TSA.">
+  <meta name="theme-color" content="#ffffff">
+  <title>TMA TSA | Prompt Lab</title>
+  <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/ai-studio.css">
+  <script>
+    try {
+      var promptLabTeacher = JSON.parse(localStorage.getItem("teacherInfo") || "null");
+      if (!promptLabTeacher || promptLabTeacher.role !== "teacher" || !promptLabTeacher.token) {
+        window.location.replace("login.html#teacher");
+      }
+    } catch (error) {
+      window.location.replace("login.html#teacher");
+    }
+  </script>
+</head>
+<body>
+  <div class="studio-shell">
+    <header class="studio-header">
+      <div class="header-left">
+        <a class="icon-button" href="teacher.html" aria-label="Quay lại trang giáo viên" title="Quay lại trang giáo viên">
+          <i data-lucide="arrow-left"></i>
+        </a>
+        <img class="studio-logo" src="https://assets.tmastudy.io.vn/assets/logo1.png" alt="TMA TSA">
+        <div class="product-title">
+          <strong>Prompt Lab</strong>
+          <span>Cấu hình phong cách AI</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="backend-state checking" id="backend-state"><span class="state-dot"></span><span id="backend-state-text">Đang kiểm tra AI</span></span>
+        <button class="button secondary" id="import-button" type="button"><i data-lucide="upload"></i><span>Nhập</span></button>
+        <button class="button secondary" id="export-button" type="button"><i data-lucide="download"></i><span>Xuất</span></button>
+        <input id="import-file" type="file" accept="application/json" hidden>
+      </div>
+    </header>
+
+    <div class="studio-layout">
+      <aside class="profile-sidebar" aria-label="Hồ sơ Prompt">
+        <div class="sidebar-heading">
+          <div>
+            <span class="eyebrow">Hồ sơ</span>
+            <h1>Phong cách AI</h1>
+          </div>
+          <button class="icon-button" id="new-profile-button" type="button" aria-label="Tạo hồ sơ mới" title="Tạo hồ sơ mới"><i data-lucide="plus"></i></button>
+        </div>
+        <div class="profile-list" id="profile-list"></div>
+        <div class="sidebar-note">
+          <i data-lucide="shield-check"></i>
+          <p>API key nằm trong Supabase Edge Function. Trình duyệt chỉ lưu quy tắc trình bày, không lưu khóa bí mật.</p>
+        </div>
+      </aside>
+
+      <main class="studio-main">
+        <section class="editor-section" aria-labelledby="editor-heading">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Đang chỉnh sửa</span>
+              <h2 id="editor-heading">Hồ sơ Prompt</h2>
+            </div>
+            <div class="section-actions">
+              <button class="icon-button danger" id="delete-profile-button" type="button" aria-label="Xóa hồ sơ" title="Xóa hồ sơ"><i data-lucide="trash-2"></i></button>
+              <button class="button secondary" id="duplicate-profile-button" type="button"><i data-lucide="copy"></i><span>Nhân bản</span></button>
+              <button class="button primary" id="save-profile-button" type="button"><i data-lucide="save"></i><span>Lưu hồ sơ</span></button>
+            </div>
+          </div>
+
+          <div class="field-grid identity-grid">
+            <label class="field">
+              <span>Tên hồ sơ</span>
+              <input id="profile-name" type="text" maxlength="100" autocomplete="off">
+            </label>
+            <label class="field temperature-field">
+              <span>Độ sáng tạo <output id="temperature-output">0.2</output></span>
+              <input id="profile-temperature" type="range" min="0" max="1" step="0.05" value="0.2">
+            </label>
+          </div>
+
+          <div class="field-grid prompt-grid">
+            <label class="field field-large">
+              <span>Vai trò và phong cách <small id="system-count">0/12000</small></span>
+              <textarea id="profile-system" rows="8" maxlength="12000" placeholder="Mô tả cách AI suy luận, giải thích và dùng giọng văn của bạn..."></textarea>
+            </label>
+            <label class="field">
+              <span>Quy tắc LaTeX <small id="latex-count">0/6000</small></span>
+              <textarea id="profile-latex" rows="8" maxlength="6000" placeholder="Quy tắc phân số, công thức nội dòng, công thức khối..."></textarea>
+            </label>
+            <label class="field">
+              <span>Quy tắc đầu ra <small id="output-count">0/6000</small></span>
+              <textarea id="profile-output" rows="8" maxlength="6000" placeholder="JSON, cách xuống dòng, từ ngữ không được dùng..."></textarea>
+            </label>
+            <label class="field field-large">
+              <span>Ví dụ mẫu <small id="examples-count">0/12000</small></span>
+              <textarea id="profile-examples" rows="8" maxlength="12000" placeholder="Dán 1-3 ví dụ lời giải đúng phong cách của bạn. Không cần đưa dữ liệu thật của học sinh."></textarea>
+            </label>
+          </div>
+
+          <div class="editor-footer">
+            <span id="save-state">Các nút AI dùng hồ sơ đang được kích hoạt.</span>
+            <button class="button active-button" id="activate-profile-button" type="button"><i data-lucide="check-circle-2"></i><span>Kích hoạt hồ sơ</span></button>
+          </div>
+        </section>
+
+        <section class="test-section" aria-labelledby="test-heading">
+          <div class="section-heading compact">
+            <div>
+              <span class="eyebrow">Kiểm thử</span>
+              <h2 id="test-heading">Đọc đề và chuyển LaTeX</h2>
+            </div>
+            <button class="button test-button" id="run-test-button" type="button"><i data-lucide="sparkles"></i><span>Chạy thử</span></button>
+          </div>
+
+          <div class="test-grid">
+            <div class="test-inputs">
+              <label class="field">
+                <span>Văn bản hoặc yêu cầu</span>
+                <textarea id="test-input" rows="9" placeholder="Dán đề thô hoặc yêu cầu AI chuyển công thức sang LaTeX..."></textarea>
+              </label>
+              <label class="file-picker" for="test-file">
+                <i data-lucide="paperclip"></i>
+                <span><strong id="file-label">Đính kèm ảnh hoặc PDF</strong><small>Tối đa 10 MB</small></span>
+                <input id="test-file" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" hidden>
+              </label>
+            </div>
+            <div class="test-output">
+              <div class="output-tabs" role="tablist" aria-label="Kết quả AI">
+                <button class="output-tab active" type="button" data-output-tab="json">JSON</button>
+                <button class="output-tab" type="button" data-output-tab="preview">Xem LaTeX</button>
+              </div>
+              <pre id="test-json-output" class="output-panel active">Kết quả có cấu trúc sẽ xuất hiện ở đây.</pre>
+              <div id="test-preview-output" class="output-panel latex-preview">Công thức LaTeX sẽ được dựng ở đây.</div>
+            </div>
+          </div>
+          <div class="test-status" id="test-status" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] }, options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"] } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/ai-service.js?v=1.0.0"></script>
+  <script src="js/ai-studio.js?v=1.0.0"></script>
+</body>
+</html>
+

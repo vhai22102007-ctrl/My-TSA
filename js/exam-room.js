@@ -9,6 +9,23 @@
 (function () {
   "use strict";
 
+  // Global auto-fallback for broken relative images (redirect to CDN)
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.tagName === 'IMG') {
+      var img = e.target;
+      if (img.dataset.failedOnce) return;
+      img.dataset.failedOnce = 'true';
+      var src = img.getAttribute('src') || '';
+      if (src && src.indexOf('http://') !== 0 && src.indexOf('https://') !== 0 && src.indexOf('data:') !== 0) {
+        if (src.indexOf('assets/') === 0) {
+          img.src = 'https://assets.tmastudy.io.vn/' + src;
+        } else {
+          img.src = 'https://assets.tmastudy.io.vn/assets/' + src;
+        }
+      }
+    }
+  }, true);
+
   if (!document.body || !document.body.classList.contains("exam-page")) return;
 
   // Keep localStorage drafts to sync teacher edits directly to student view
@@ -67,7 +84,7 @@
   // Khởi tạo Supabase Client từ cấu hình dùng chung
   let supabaseClient = null;
   let supabaseUrl = '';
-  let supabaseStorageUrl = '';
+  const examStorageUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
   let studentEmail = studentInfo ? studentInfo.email : '';
   let studentToken = studentInfo ? studentInfo.token : '';
   if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
@@ -80,7 +97,6 @@
         }
       }
     });
-    supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
   } else {
     console.error("Supabase config or library not loaded!");
   }
@@ -187,6 +203,33 @@
   function preprocessMathContent(text) {
     if (!text) return "";
     var str = String(text);
+
+    // Parse short image tag: [IMG: filename] or [IMG: filename | width]
+    str = str.replace(/\[IMG:\s*([^\]\|]+)(?:\|\s*([^\]]+))?\]/gi, function(match, file, width) {
+      file = file.trim();
+      width = (width || "48%").trim();
+      
+      // If no file extension, default to .png
+      var filename = file;
+      if (!filename.includes(".") && !filename.startsWith("data:")) {
+        filename += ".png";
+      }
+
+      var src = filename;
+      if (!src.startsWith("http://") && !src.startsWith("https://") && !src.startsWith("data:") && !src.startsWith("assets/")) {
+        var folder = (function() {
+          var code = new URLSearchParams(window.location.search).get("exam") || 
+                     window.currentExamCode || 
+                     window.examCode || 
+                     "TSA_PRACTICE_FULL_01";
+          return String(code).trim().toUpperCase().replace(/_TEACHER_DRAFT/g, "");
+        })();
+        src = "assets/" + folder + "/" + filename;
+      }
+
+      return '<img class="tsa-auto-img" style="width: ' + width + '; max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" src="' + src + '">';
+    });
+
     // Parse Markdown bold **text** or ++text++ -> <strong>text</strong>
     str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     str = str.replace(/\+\+(.*?)\+\+/g, '<strong>$1</strong>');
@@ -391,8 +434,9 @@
           original_question_no: question.question_no,
           group_id: group.group_id,
           group_title: group.title,
-          passage: group.stimulus?.content || "",
-          passage_image_url: group.stimulus?.image_url || "",
+          passage: group.stimulus?.content || group.passage || "",
+          passage_image_url: group.stimulus?.image_url || group.passage_image_url || "",
+          passage_image_width: group.stimulus?.image_width || group.image_width || 100,
           stimulus: group.stimulus || null
         });
       });
@@ -408,9 +452,10 @@
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
 
-    // 5 seconds cache to prevent duplicate requests on same load
+    // R2 is the canonical source. Browser cache prevents repeat downloads.
     const isIndexFile = typeof path === 'string' && path.endsWith('index.json');
-    if (!isIndexFile && cachedData && cachedTime && (now - parseInt(cachedTime)) < 5000) {
+    const cacheTtl = isIndexFile ? 30000 : 30 * 60 * 1000;
+    if (cachedData && cachedTime && (now - parseInt(cachedTime)) < cacheTtl) {
       try {
         console.log(`Loading cached JSON for ${path}`);
         return JSON.parse(cachedData);
@@ -419,8 +464,7 @@
       }
     }
 
-    const separator = path.indexOf('?') !== -1 ? '&' : '?';
-    const response = await fetch(path + separator + 't=' + Date.now());
+    const response = await fetch(path, { cache: 'default' });
     if (!response.ok) throw new Error(`Không tải được ${path}`);
     const data = await response.json();
 
@@ -455,24 +499,15 @@
 
     let examsList = readLocalJson("tma_tsa_exam_index");
 
-    // Tải index từ Supabase Storage trước
+    // Read the published index from Cloudflare R2 only.
     try {
-      const fetchedIndex = await fetchJson(`${supabaseStorageUrl}index.json`);
+      const fetchedIndex = await fetchJson(`${examStorageUrl}index.json`);
       if (Array.isArray(fetchedIndex) && fetchedIndex.length > 0) {
         examsList = fetchedIndex;
         writeLocalJson("tma_tsa_exam_index", fetchedIndex);
       }
     } catch (error) {
-      console.warn("Không tải được index.json từ Supabase Storage, thử tải từ file cục bộ...");
-      try {
-        const fetchedIndex = await fetchJson("data/exams/index.json");
-        if (Array.isArray(fetchedIndex)) {
-          examsList = fetchedIndex;
-          writeLocalJson("tma_tsa_exam_index", fetchedIndex);
-        }
-      } catch (e) {
-        // Fallback sang localStorage nếu chạy offline hoàn toàn
-      }
+      console.warn("Không tải được index.json từ R2, dùng bản cache gần nhất.");
     }
 
     // Ánh xạ mã đề thi đơn lẻ TSAxx sang đề thi ghép TSA_PRACTICE_FULL_xx
@@ -485,26 +520,29 @@
     }
 
     const examMeta = Array.isArray(examsList)
-      ? examsList.find((item) => item.exam_code === targetFetchCode) ||
+      ? examsList.find((item) => item.exam_code === targetFetchCode && item.subject === subject) ||
+        examsList.find((item) => item.exam_code === targetFetchCode) ||
+        examsList.find((item) => item.exam_code === examCode && item.subject === subject) ||
         examsList.find((item) => item.exam_code === examCode) ||
         examsList.find((item) => item.exam_code === "TSA001")
       : null;
 
     let rawExam = null;
 
-    // Tải đề từ Supabase Storage
-    if (examMeta && examMeta.file) {
-      const filename = examMeta.file.split('/').pop();
+    // Prefer the canonical combined exam so a normal load needs one R2 request.
+    try {
+      rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(targetFetchCode)}.json`);
+    } catch (e) {}
+
+    // Some entries point to a split subject file. Preserve its nested R2 path.
+    if (!rawExam && examMeta && examMeta.file) {
+      const relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+      const encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
       try {
-        rawExam = await fetchJson(`${supabaseStorageUrl}${encodeURIComponent(filename)}`);
+        rawExam = await fetchJson(`${examStorageUrl}${encodedPath}`);
       } catch (e) {
-        console.warn("Không tải được đề thi từ Supabase Storage, thử tải cục bộ...");
+        console.warn("Không tải được đề thi từ R2, thử bản cache cục bộ...");
       }
-    } else {
-      // Thử tải trực tiếp theo targetFetchCode.json từ Supabase Storage
-      try {
-        rawExam = await fetchJson(`${supabaseStorageUrl}${encodeURIComponent(targetFetchCode + ".json")}`);
-      } catch (e) {}
     }
 
     // Fallback tải cục bộ hoặc localStorage
@@ -512,7 +550,7 @@
       const cleanCodes = [targetFetchCode, examCode, "TSA001"].map(c => String(c || "").trim().toLowerCase()).filter(Boolean);
       for (const cCode of cleanCodes) {
         try {
-          const folderPath = `data/exams/${cCode}.json/`;
+          const folderPath = `${examStorageUrl}${cCode}.json/`;
           const [mathData, readingData, scienceData] = await Promise.all([
             fetchJson(folderPath + "math.json"),
             fetchJson(folderPath + "reading.json"),
@@ -537,14 +575,9 @@
       }
     }
 
-    if (!rawExam) {
-      try {
-        rawExam = await fetchJson(`data/exams/${encodeURIComponent(targetFetchCode)}.json`);
-      } catch (e) {}
-    }
     if (!rawExam && targetFetchCode !== examCode) {
       try {
-        rawExam = await fetchJson(`data/exams/${encodeURIComponent(examCode)}.json`);
+        rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(examCode)}.json`);
       } catch (e) {}
     }
     if (!rawExam) {
@@ -658,6 +691,33 @@
     const divider = $("#split-divider");
     if (!passagePane) return;
 
+    // Helper to fix image URLs in HTML strings
+    function fixImageUrlsInHtml(html) {
+      if (!html) return html;
+      var isLocalFile = (window.location.protocol === "file:");
+      return html.replace(/<img\s+([^>]*\s+)?src=(["'])([^"'\s]+)\2/gi, function(match, prefix, quote, src) {
+        var newSrc = src;
+        if (src.indexOf("http://") !== 0 && src.indexOf("https://") !== 0 && src.indexOf("data:") !== 0) {
+          if (isLocalFile) {
+            if (src.indexOf("assets/") === 0) {
+              newSrc = src;
+            } else {
+              newSrc = "assets/" + src;
+            }
+          } else {
+            if (src.indexOf("assets/") === 0) {
+              newSrc = "https://assets.tmastudy.io.vn/" + src;
+            } else {
+              newSrc = "https://assets.tmastudy.io.vn/assets/" + src;
+            }
+          }
+        } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+          newSrc = src.replace("https://assets.tmastudy.io.vn/", "");
+        }
+        return '<img ' + (prefix || '') + 'src=' + quote + newSrc + quote;
+      });
+    }
+
     const mobileTabs = $(".mobile-exam-tabs");
     const splitContainer = $(".question-reading-split");
 
@@ -701,13 +761,19 @@
       }
     }
 
+    var fixedImgUrl = question.passage_image_url || "";
+    if (fixedImgUrl && window.location.protocol === "file:" && fixedImgUrl.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+      fixedImgUrl = fixedImgUrl.replace("https://assets.tmastudy.io.vn/", "");
+    }
+
     const group = {
       title: question.group_title || "Ngữ liệu",
       rangeText: rangeText,
       stimulus: {
         type: "text",
-        content: question.passage || "",
-        image_url: question.passage_image_url || ""
+        content: fixImageUrlsInHtml(question.passage || ""),
+        image_url: fixedImgUrl,
+        image_width: question.passage_image_width || 100
       }
     };
 
@@ -761,72 +827,7 @@
       feedbackDiv.innerHTML = `<div style="font-weight:700;font-size:14px;">Chưa chính xác</div><div style="margin-top:6px;"><strong>Đáp án đúng:</strong> ${esc(correctText)}</div>`;
     }
 
-    container.appendChild(feedbackDiv);
-
-    const explanationText = (question.explanation || question.solution_details || question.solution_detail || question.solution || "").trim();
-    if (explanationText) {
-      const solutionContainer = document.createElement("div");
-      solutionContainer.className = "solution-container";
-      solutionContainer.style.cssText = "margin-top:16px; text-align: left;";
-
-      const toggleBtn = document.createElement("button");
-      toggleBtn.type = "button";
-      toggleBtn.className = "btn-toggle-solution";
-      toggleBtn.style.cssText = `
-        background-color: #a91e2c;
-        color: #ffffff;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 18px;
-        font-size: 13.5px;
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: background-color 0.2s;
-        margin-bottom: 12px;
-      `;
-      toggleBtn.innerHTML = `<span>Lời giải</span> <svg class="arrow-icon" viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; transform: rotate(180deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
-
-      const explanationBox = document.createElement("div");
-      explanationBox.className = "explanation-box";
-      explanationBox.style.cssText = `
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 18px;
-        display: block;
-      `;
-
-      explanationBox.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #0284c7; font-weight: 700; font-size: 13.5px;">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-          </svg>
-          <span>Lời giải chi tiết:</span>
-        </div>
-        <div class="explanation-content text-left" style="color: #334155; font-size: 13.5px; line-height: 1.6;">
-          ${sanitizeHtml(explanationText)}
-        </div>
-      `;
-
-      toggleBtn.addEventListener("click", () => {
-        const isHidden = explanationBox.style.display === "none";
-        explanationBox.style.display = isHidden ? "block" : "none";
-        const arrow = toggleBtn.querySelector(".arrow-icon");
-        if (arrow) {
-          arrow.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
-        }
-      });
-
-      solutionContainer.appendChild(toggleBtn);
-      solutionContainer.appendChild(explanationBox);
-      container.appendChild(solutionContainer);
-    }
-
+    // Single solution box is rendered by question-renderers.js
     container.querySelectorAll("input, select").forEach((el) => { el.disabled = true; });
   }
 
@@ -1056,6 +1057,7 @@
       const bookmarkBtn = $('[data-action="bookmark"]');
       if (bookmarkBtn) bookmarkBtn.classList.toggle("is-active", Boolean(flagged[question.question_no]));
       
+      const isViewSolutionMode = isSubmitted || urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution" || isPreviewMode;
       const savedAnswer = answers[question.question_no];
       renderQuestion(question, savedAnswer, (newVal) => {
         if (isSubmitted) return;
@@ -1063,11 +1065,11 @@
         else delete answers[question.question_no];
         saveLocalState();
         updateSidebarStats();
-      });
+      }, { showSolution: isViewSolutionMode });
 
       updateNavigationButtons();
       updateGridSelection();
-      if (isSubmitted) showQuestionFeedback(question);
+      if (isSubmitted || isPreviewMode || urlParams.get("view_solution") === "true") showQuestionFeedback(question);
 
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise().catch(() => {});
@@ -1163,6 +1165,7 @@
           questionTextContent.appendChild(qRow);
 
           // Render options and contents
+          const isViewSolutionMode = isSubmitted || urlParams.get("view_solution") === "true" || urlParams.get("mode") === "solution" || isPreviewMode;
           const savedAnswer = answers[q.question_no];
           renderQuestionTo(q, savedAnswer, (newVal) => {
             if (isSubmitted) return;
@@ -1170,9 +1173,9 @@
             else delete answers[q.question_no];
             saveLocalState();
             updateSidebarStats();
-          }, qBody, qAns, { typeset: false });
+          }, qBody, qAns, { typeset: false, showSolution: isViewSolutionMode });
 
-          if (isSubmitted) {
+          if (isSubmitted || isPreviewMode || urlParams.get("view_solution") === "true") {
             showQuestionFeedback(q, qAns);
           }
         });
@@ -1777,7 +1780,7 @@
       initSplitter();
     } catch (error) {
       console.error(error);
-      showErrorMessage(`Không tải được đề ${examCode}. Hãy kiểm tra data/exams/index.json và data/exams/${examCode}.json, hoặc xuất đề từ teacher.html.`);
+      showErrorMessage(`Không tải được đề ${examCode} từ Cloudflare R2. Hãy kiểm tra data/exams/index.json và data/exams/${examCode}.json.`);
     }
   }
 
@@ -1922,10 +1925,23 @@
           const w = g.stimulus.image_width || 100;
           const imgHtml = `<br><img class="tma-inline-img" src="${g.stimulus.image_url}" style="width:${w}%; max-width:100%; height:auto; display:block; margin:10px auto;">`;
           
-          if (!g.stimulus.content.includes(g.stimulus.image_url)) {
-            g.stimulus.content = (g.stimulus.content || "") + imgHtml;
+          const content = g.stimulus.content || g.passage || "";
+          if (!content.includes(g.stimulus.image_url)) {
+            g.stimulus.content = content + imgHtml;
+            g.passage = content + imgHtml;
+          } else {
+            g.stimulus.content = content;
+            g.passage = content;
           }
-          delete g.stimulus.image_url;
+          // Do not delete g.stimulus.image_url so it remains accessible
+        } else if (g.passage_image_url) {
+          const w = g.image_width || g.stimulus?.image_width || 100;
+          const imgHtml = `<br><img class="tma-inline-img" src="${g.passage_image_url}" style="width:${w}%; max-width:100%; height:auto; display:block; margin:10px auto;">`;
+          const content = g.passage || (g.stimulus ? g.stimulus.content : "") || "";
+          if (!content.includes(g.passage_image_url)) {
+            g.passage = content + imgHtml;
+            if (g.stimulus) g.stimulus.content = content + imgHtml;
+          }
         }
       }
 
@@ -2064,8 +2080,8 @@
 
         try {
           const examFileName = (rawExamData.exam_code || examCode) + ".json";
-          const examJsonStr = JSON.stringify(rawExamData, null, 2);
-          const examBlob = new Blob([examJsonStr], { type: "application/json" });
+          if (!window.TMAExamSecurity) throw new Error("Thiếu bộ lọc bảo mật đề thi.");
+          const publicExamData = window.TMAExamSecurity.createPublicExamCopy(rawExamData);
 
           // Cập nhật đáp án trong bảng exam_answers trên Supabase (nếu có)
           const answersToInsert = [];
@@ -2134,17 +2150,9 @@
             if (answersInsertError) throw answersInsertError;
           }
 
-          // Tải file JSON lên bucket exams
-          const { error: uploadError } = await supabaseClient.storage
-            .from('exams')
-            .upload(examFileName, examBlob, {
-              cacheControl: '3600',
-              upsert: true
-            });
+          await window.TMAR2.putJson("data/exams/" + examFileName, publicExamData);
 
-          if (uploadError) throw uploadError;
-
-          alert("✓ Đồng bộ đề thi lên Supabase Cloud thành công!");
+          alert("✓ Đồng bộ đề thi lên Cloudflare R2 thành công!");
           setModified(false);
         } catch (err) {
           console.error("Lỗi đồng bộ Cloud:", err);

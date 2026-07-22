@@ -26,8 +26,6 @@
               "text": "Sai"
             }
           ],
-          "correct_answer": "A",
-          "explanation": "Trong đoạn [1], tác giả nhắc đến 'khuynh hướng tìm về với quá khứ... xem như là một giải pháp giàu tính khả thi'. Khả thi đồng nghĩa với có tính thực tiễn cao.",
           "points": 1
         },
         {
@@ -53,11 +51,6 @@
               "text": "Kiến trúc truyền thống góp một phần quan trọng trong việc cấu thành kiến trúc hiện đại."
             }
           ],
-          "correct_answer": [
-            "A",
-            "D"
-          ],
-          "explanation": "Đoạn [2] có nêu kiến trúc truyền thống 'đđược xem như là một chứng nhân của lịch sử, là cuốn biên niên sử đđược viết bằng vật liệu xây dựng' (Đáp án A) và 'là một nhân tố quan trọng để cấu thành nên kiến trúc hiện đại' (Đáp án D).",
           "points": 1
         },
         {
@@ -72,10 +65,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "dòng chảy"
-          },
-          "explanation": "Đoạn [2] viết: 'lịch sử và hiện tại như là một dòng chảy không ngừng'.",
           "points": 1
         },
         {
@@ -101,13 +90,6 @@
               "text": "Mỗi kiến trúc sư có quyền tự do chọn lựa phong cách sáng tạo phản ánh cá nhân."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": false,
-            "c": false,
-            "d": true
-          },
-          "explanation": "Phát biểu A đúng theo câu 'Nó đđược cấu thành bởi phương thức và trình độ nhận thức của con người'. Phát biểu B sai vì kiến trúc còn mang bản chất nhân hóa, lưu giữ giá trị chung chứ không chỉ là lựa chọn cá nhân. Phát biểu C sai vì đoạn 3 nhắc tới kiến trúc truyền thống là mật mã di truyền, không phải kiến trúc hiện đại. Phát biểu D đúng theo câu 'mỗi kiến trúc sư đều có quyền lựa chọn cho mình một phong cách riêng'.",
           "points": 1
         },
         {
@@ -159,12 +141,6 @@
               "text": "Đáp ứng các nhu cầu cụ thể trong đời sống con người"
             }
           ],
-          "correct_answer": {
-            "o1": "i2",
-            "o2": "i1",
-            "o3": "i4"
-          },
-          "explanation": "Dựa vào đoạn [4]: Tầng cơ bản là đáp ứng nhu cầu cụ thể (i4). Tầng biểu tượng là hình hài gửi gắm tâm tư, tình cảm người sáng tác (i1). Tầng cao nhất (tượng trưng) là biểu tượng cho tư tưởng, lối sống của cộng đồng (i2).",
           "points": 1
         },
         {
@@ -195,11 +171,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "dấu ấn",
-            "o2": "truyền thống"
-          },
-          "explanation": "Đoạn [4] có viết: 'Truyền thống đã không ngừng khắc dấu ấn của tổ tiên... kiến trúc chỉ là một trong những đối tượng mà truyền thống đã gửi gắm lại dấu ấn của mình. Vậy nên việc phủ nhận truyền thống trong quá trình sáng tác... dường như là việc làm không thể'.",
           "points": 1
         },
         {
@@ -225,13 +196,6 @@
               "text": "Việc phản truyền thống đồng nghĩa với việc loại bỏ truyền thống."
             }
           ],
-          "correct_answer": {
-            "a": false,
-            "b": false,
-            "c": true,
-            "d": false
-          },
-          "explanation": "Trong đoạn [5], tác giả nhấn mạnh 'điều kiện tiên quyết để vượt qua... là chúng ta phải nắm chắc đđược nó' (C đúng). Các ý A, B, D không đđược đề cập hoặc đi ngđược lại quan điểm của tác giả ('chỉ trên cơ sở kế thừa ưu điểm, khắc phục nhđược điểm...').",
           "points": 1
         },
         {
@@ -253,12 +217,6 @@
               "text": "Tất cả các dòng kiến trúc đều cùng tuân theo một quy luật phát triển."
             }
           ],
-          "correct_answer": {
-            "a": false,
-            "b": true,
-            "c": false
-          },
-          "explanation": "Đoạn [6] nêu dòng phát triển sau 'nhìn chung' (không phải 'luôn') cao hơn trước -> A sai. 'Các dòng kiến trúc đều có thời kỳ hưng thịnh và suy vong' -> B đúng. 'Quy luật phát triển ấy không phải là con đường hoàn toàn bằng phẳng' (có quanh co/thụt lùi) -> C sai.",
           "points": 1
         },
         {
@@ -293,12 +251,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "đối lập",
-            "o2": "suy vong",
-            "o3": "văn hóa"
-          },
-          "explanation": "Đoạn [6] có câu: 'hoàn toàn không cần thiết đem truyền thống và hiện đại đối lập nhau'. Đoạn [7] nhắc đến 'sự suy vong rồi lại đđược phát triển' và 'Thế kỷ XXI là thế kỷ của văn hóa'.",
           "points": 1
         },
         {
@@ -324,8 +276,6 @@
               "text": "Hiểu biết sâu sắc về kiến trúc truyền thống là điều kiện cần và quan trọng trong quá trình hiện đại hóa kiến trúc."
             }
           ],
-          "correct_answer": "D",
-          "explanation": "Xuyên suốt bài viết, tác giả khẳng định kiến trúc truyền thống quy định tiến trình hiện đại hóa, không thể tách rời, và hiểu biết sâu sắc về nó là điều kiện tiên quyết để vượt qua, phục hưng và phát triển kiến trúc.",
           "points": 1
         }
       ]
@@ -358,10 +308,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "vượt trội hơn"
-          },
-          "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
           "points": 1
         },
         {
@@ -413,11 +359,6 @@
               "text": "nhận diện"
             }
           ],
-          "correct_answer": {
-            "o1": "i3",
-            "o2": "i5"
-          },
-          "explanation": "Dựa trên nội dung đoạn [2]: AI phân loại chính xác mẫu là ung thư hay không (nhận diện các vùng có nguy cơ ung thư mà mắt thường không thấy).",
           "points": 1
         },
         {
@@ -443,8 +384,6 @@
               "text": "Nêu ra các thử nghiệm chứng minh sự thành công của việc sử dụng trí tuệ nhân tạo trong chẩn đoán bệnh."
             }
           ],
-          "correct_answer": "D",
-          "explanation": "Cả hai đoạn đầu đều đưa ra các trường hợp thử nghiệm thuật toán AI thực tế (DLAD, LYNA năm 2018) và chứng minh tỉ lệ thành công, chính xác cao của chúng.",
           "points": 1
         },
         {
@@ -470,13 +409,6 @@
               "text": "AI trong chăm sóc sức khỏe không ám chỉ việc phỏng đoán nguy cơ mắc bệnh của bệnh nhân trong tương lai."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": true,
-            "c": false,
-            "d": false
-          },
-          "explanation": "Đoạn 3 có nêu AI phân loại và đưa ra chẩn đoán dựa trên dữ liệu lưu giữ trong bộ nhớ (A đúng), giúp chẩn đoán rẻ hơn (B đúng). Không đề cập AI gặp khó khăn vì quá phụ thuộc bác sĩ trong việc tự chẩn đoán dữ liệu hình ảnh (C sai). AI có sử dụng để 'tiên lượng bệnh', tức là đoán trước tiến triển (D sai).",
           "points": 1
         },
         {
@@ -528,11 +460,6 @@
               "text": "phân loại"
             }
           ],
-          "correct_answer": {
-            "o1": "i3",
-            "o2": "i1"
-          },
-          "explanation": "Trong đoạn 4: 'đánh giá nguy cơ đột tử' (nguy cơ tử vong) và 'sự kết hợp của nhiều nguồn dữ liệu' (tổng hợp).",
           "points": 1
         },
         {
@@ -555,10 +482,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "phát triển thuốc"
-          },
-          "explanation": "Cuối đoạn [4] viết: 'tương lai chúng ta kỳ vọng việc phát triển thuốc sẽ vô cùng nhanh và rẻ hơn nhiều'.",
           "points": 1
         },
         {
@@ -589,11 +512,6 @@
             }
           ],
           "items": [],
-          "correct_answer": {
-            "o1": "cấp phép",
-            "o2": "độc quyền"
-          },
-          "explanation": "Đoạn [5]: 'cấp phép cho các công nghệ AI khác vào y học sẽ còn là một con đường dài... liên quan đến sự độc quyền.'",
           "points": 1
         },
         {
@@ -615,12 +533,6 @@
               "text": "Việc sử dụng AI trong mọi bước điều trị là hoàn toàn có thể khi bác sĩ hiểu biết về các thuật toán AI."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": true,
-            "c": false
-          },
-          "explanation": "Đoạn 5 nhắc tới phẫu thuật não cần bác sĩ thay đổi cách tiếp cận ngay lập tức (A đúng). Nhà khoa học AI cần tìm hiểu thêm y học vì họ không phải lúc nào cũng là bác sĩ (B đúng). Cuối bài khẳng định 'không thể thay thế hoàn toàn bác sĩ', nên dùng AI trong 'mọi bước điều trị' là không thể (C sai).",
           "points": 1
         },
         {
@@ -646,8 +558,6 @@
               "text": "Hoài nghi."
             }
           ],
-          "correct_answer": "B",
-          "explanation": "Tác giả chỉ ra nhiều thành công, kỳ vọng sự tiến bộ (thuốc rẻ hơn, chẩn đoán nhanh hơn) nhưng vẫn đánh giá rõ ràng những mặt chưa làm đđược (không thể thay thế bác sĩ). Sự tin tưởng kết hợp với nhận định khách quan thể hiện thái độ rất lạc quan, tích cực hướng tới tương lai.",
           "points": 1
         },
         {
@@ -656,7 +566,6 @@
           "question": "Điền một cụm từ không quá BA tiếng trong bài đọc vào chỗ trống:",
           "image_url": "",
           "image_width": 100,
-          "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
           "points": 1,
           "items": [],
           "body": [
@@ -672,10 +581,7 @@
               "type": "text",
               "content": " kết luận của hầu hết các bác sĩ."
             }
-          ],
-          "correct_answer": {
-            "o1": "vượt trội hơn"
-          }
+          ]
         }
       ]
     }
@@ -703,8 +609,6 @@
             "text": "Sai"
           }
         ],
-        "correct_answer": "A",
-        "explanation": "Trong đoạn [1], tác giả nhắc đến 'khuynh hướng tìm về với quá khứ... xem như là một giải pháp giàu tính khả thi'. Khả thi đồng nghĩa với có tính thực tiễn cao.",
         "points": 1
       },
       {
@@ -730,11 +634,6 @@
             "text": "Kiến trúc truyền thống góp một phần quan trọng trong việc cấu thành kiến trúc hiện đại."
           }
         ],
-        "correct_answer": [
-          "A",
-          "D"
-        ],
-        "explanation": "Đoạn [2] có nêu kiến trúc truyền thống 'đđược xem như là một chứng nhân của lịch sử, là cuốn biên niên sử đđược viết bằng vật liệu xây dựng' (Đáp án A) và 'là một nhân tố quan trọng để cấu thành nên kiến trúc hiện đại' (Đáp án D).",
         "points": 1
       },
       {
@@ -749,10 +648,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "dòng chảy"
-        },
-        "explanation": "Đoạn [2] viết: 'lịch sử và hiện tại như là một dòng chảy không ngừng'.",
         "points": 1
       },
       {
@@ -778,13 +673,6 @@
             "text": "Mỗi kiến trúc sư có quyền tự do chọn lựa phong cách sáng tạo phản ánh cá nhân."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": false,
-          "c": false,
-          "d": true
-        },
-        "explanation": "Phát biểu A đúng theo câu 'Nó đđược cấu thành bởi phương thức và trình độ nhận thức của con người'. Phát biểu B sai vì kiến trúc còn mang bản chất nhân hóa, lưu giữ giá trị chung chứ không chỉ là lựa chọn cá nhân. Phát biểu C sai vì đoạn 3 nhắc tới kiến trúc truyền thống là mật mã di truyền, không phải kiến trúc hiện đại. Phát biểu D đúng theo câu 'mỗi kiến trúc sư đều có quyền lựa chọn cho mình một phong cách riêng'.",
         "points": 1
       },
       {
@@ -836,12 +724,6 @@
             "text": "Đáp ứng các nhu cầu cụ thể trong đời sống con người"
           }
         ],
-        "correct_answer": {
-          "o1": "i2",
-          "o2": "i1",
-          "o3": "i4"
-        },
-        "explanation": "Dựa vào đoạn [4]: Tầng cơ bản là đáp ứng nhu cầu cụ thể (i4). Tầng biểu tượng là hình hài gửi gắm tâm tư, tình cảm người sáng tác (i1). Tầng cao nhất (tượng trưng) là biểu tượng cho tư tưởng, lối sống của cộng đồng (i2).",
         "points": 1
       },
       {
@@ -872,11 +754,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "dấu ấn",
-          "o2": "truyền thống"
-        },
-        "explanation": "Đoạn [4] có viết: 'Truyền thống đã không ngừng khắc dấu ấn của tổ tiên... kiến trúc chỉ là một trong những đối tượng mà truyền thống đã gửi gắm lại dấu ấn của mình. Vậy nên việc phủ nhận truyền thống trong quá trình sáng tác... dường như là việc làm không thể'.",
         "points": 1
       },
       {
@@ -902,13 +779,6 @@
             "text": "Việc phản truyền thống đồng nghĩa với việc loại bỏ truyền thống."
           }
         ],
-        "correct_answer": {
-          "a": false,
-          "b": false,
-          "c": true,
-          "d": false
-        },
-        "explanation": "Trong đoạn [5], tác giả nhấn mạnh 'điều kiện tiên quyết để vượt qua... là chúng ta phải nắm chắc đđược nó' (C đúng). Các ý A, B, D không đđược đề cập hoặc đi ngđược lại quan điểm của tác giả ('chỉ trên cơ sở kế thừa ưu điểm, khắc phục nhđược điểm...').",
         "points": 1
       },
       {
@@ -930,12 +800,6 @@
             "text": "Tất cả các dòng kiến trúc đều cùng tuân theo một quy luật phát triển."
           }
         ],
-        "correct_answer": {
-          "a": false,
-          "b": true,
-          "c": false
-        },
-        "explanation": "Đoạn [6] nêu dòng phát triển sau 'nhìn chung' (không phải 'luôn') cao hơn trước -> A sai. 'Các dòng kiến trúc đều có thời kỳ hưng thịnh và suy vong' -> B đúng. 'Quy luật phát triển ấy không phải là con đường hoàn toàn bằng phẳng' (có quanh co/thụt lùi) -> C sai.",
         "points": 1
       },
       {
@@ -970,12 +834,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "đối lập",
-          "o2": "suy vong",
-          "o3": "văn hóa"
-        },
-        "explanation": "Đoạn [6] có câu: 'hoàn toàn không cần thiết đem truyền thống và hiện đại đối lập nhau'. Đoạn [7] nhắc đến 'sự suy vong rồi lại đđược phát triển' và 'Thế kỷ XXI là thế kỷ của văn hóa'.",
         "points": 1
       },
       {
@@ -1001,8 +859,6 @@
             "text": "Hiểu biết sâu sắc về kiến trúc truyền thống là điều kiện cần và quan trọng trong quá trình hiện đại hóa kiến trúc."
           }
         ],
-        "correct_answer": "D",
-        "explanation": "Xuyên suốt bài viết, tác giả khẳng định kiến trúc truyền thống quy định tiến trình hiện đại hóa, không thể tách rời, và hiểu biết sâu sắc về nó là điều kiện tiên quyết để vượt qua, phục hưng và phát triển kiến trúc.",
         "points": 1
       }
     ]
@@ -1035,10 +891,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "vượt trội hơn"
-        },
-        "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
         "points": 1
       },
       {
@@ -1090,11 +942,6 @@
             "text": "nhận diện"
           }
         ],
-        "correct_answer": {
-          "o1": "i3",
-          "o2": "i5"
-        },
-        "explanation": "Dựa trên nội dung đoạn [2]: AI phân loại chính xác mẫu là ung thư hay không (nhận diện các vùng có nguy cơ ung thư mà mắt thường không thấy).",
         "points": 1
       },
       {
@@ -1120,8 +967,6 @@
             "text": "Nêu ra các thử nghiệm chứng minh sự thành công của việc sử dụng trí tuệ nhân tạo trong chẩn đoán bệnh."
           }
         ],
-        "correct_answer": "D",
-        "explanation": "Cả hai đoạn đầu đều đưa ra các trường hợp thử nghiệm thuật toán AI thực tế (DLAD, LYNA năm 2018) và chứng minh tỉ lệ thành công, chính xác cao của chúng.",
         "points": 1
       },
       {
@@ -1147,13 +992,6 @@
             "text": "AI trong chăm sóc sức khỏe không ám chỉ việc phỏng đoán nguy cơ mắc bệnh của bệnh nhân trong tương lai."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": true,
-          "c": false,
-          "d": false
-        },
-        "explanation": "Đoạn 3 có nêu AI phân loại vđđược đưa ra chẩn đoán dựa trên dữ liệu lưu giữ trong bộ nhớ (A đúng), giúp chẩn đoán rẻ hơn (B đúng). Không đề cập AI gặp khó khăn vì quá phụ thuộc bác sĩ trong việc tự chẩn đoán dữ liệu hình ảnh (C sai). AI có sử dụng để 'tiên lượng bệnh', tức là đoán trước tiến triển (D sai).",
         "points": 1
       },
       {
@@ -1205,11 +1043,6 @@
             "text": "phân loại"
           }
         ],
-        "correct_answer": {
-          "o1": "i3",
-          "o2": "i1"
-        },
-        "explanation": "Trong đoạn 4: 'đánh giá nguy cơ đột tử' (nguy cơ tử vong) và 'sự kết hợp của nhiều nguồn dữ liệu' (tổng hợp).",
         "points": 1
       },
       {
@@ -1232,10 +1065,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "phát triển thuốc"
-        },
-        "explanation": "Cuối đoạn [4] viết: 'tương lai chúng ta kỳ vọng việc phát triển thuốc sẽ vô cùng nhanh và rẻ hơn nhiều'.",
         "points": 1
       },
       {
@@ -1266,11 +1095,6 @@
           }
         ],
         "items": [],
-        "correct_answer": {
-          "o1": "cấp phép",
-          "o2": "độc quyền"
-        },
-        "explanation": "Đoạn [5]: 'cấp phép cho các công nghệ AI khác vào y học sẽ còn là một con đường dài... liên quan đến sự độc quyền.'",
         "points": 1
       },
       {
@@ -1292,12 +1116,6 @@
             "text": "Việc sử dụng AI trong mọi bước điều trị là hoàn toàn có thể khi bác sĩ hiểu biết về các thuật toán AI."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": true,
-          "c": false
-        },
-        "explanation": "Đoạn 5 nhắc tới phẫu thuật não cần bác sĩ thay đổi cách tiếp cận ngay lập tức (A đúng). Nhà khoa học AI cần tìm hiểu thêm y học vì họ không phải lúc nào cũng là bác sĩ (B đúng). Cuối bài khẳng định 'không thể thay thế hoàn toàn bác sĩ', nên dùng AI trong 'mọi bước điều trị' là không thể (C sai).",
         "points": 1
       },
       {
@@ -1323,8 +1141,6 @@
             "text": "Hoài nghi."
           }
         ],
-        "correct_answer": "B",
-        "explanation": "Tác giả chỉ ra nhiều thành công, kỳ vọng sự tiến bộ (thuốc rẻ hơn, chẩn đoán nhanh hơn) nhưng vẫn đánh giá rõ ràng những mặt chưa làm đđược (không thể thay thế bác sĩ). Sự tin tưởng kết hợp với nhận định khách quan thể hiện thái độ rất lạc quan, tích cực hướng tới tương lai.",
         "points": 1
       },
       {
@@ -1333,7 +1149,6 @@
         "question": "Điền một cụm từ không quá BA tiếng trong bài đọc vào chỗ trống:",
         "image_url": "",
         "image_width": 100,
-        "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
         "points": 1,
         "items": [],
         "body": [
@@ -1349,10 +1164,7 @@
             "type": "text",
             "content": " kết luận của hầu hết các bác sĩ."
           }
-        ],
-        "correct_answer": {
-          "o1": "vượt trội hơn"
-        }
+        ]
       }
     ]
   },
@@ -1372,8 +1184,6 @@
           "text": "Sai"
         }
       ],
-      "correct_answer": "A",
-      "explanation": "Trong đoạn [1], tác giả nhắc đến 'khuynh hướng tìm về với quá khứ... xem như là một giải pháp giàu tính khả thi'. Khả thi đồng nghĩa với có tính thực tiễn cao.",
       "points": 1
     },
     {
@@ -1399,11 +1209,6 @@
           "text": "Kiến trúc truyền thống góp một phần quan trọng trong việc cấu thành kiến trúc hiện đại."
         }
       ],
-      "correct_answer": [
-        "A",
-        "D"
-      ],
-      "explanation": "Đoạn [2] có nêu kiến trúc truyền thống 'đđược xem như là một chứng nhân của lịch sử, là cuốn biên niên sử đđược viết bằng vật liệu xây dựng' (Đáp án A) và 'là một nhân tố quan trọng để cấu thành nên kiến trúc hiện đại' (Đáp án D).",
       "points": 1
     },
     {
@@ -1418,10 +1223,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "dòng chảy"
-      },
-      "explanation": "Đoạn [2] viết: 'lịch sử và hiện tại như là một dòng chảy không ngừng'.",
       "points": 1
     },
     {
@@ -1447,13 +1248,6 @@
           "text": "Mỗi kiến trúc sư có quyền tự do chọn lựa phong cách sáng tạo phản ánh cá nhân."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": false,
-        "c": false,
-        "d": true
-      },
-      "explanation": "Phát biểu A đúng theo câu 'Nó đđược cấu thành bởi phương thức và trình độ nhận thức của con người'. Phát biểu B sai vì kiến trúc còn mang bản chất nhân hóa, lưu giữ giá trị chung chứ không chỉ là lựa chọn cá nhân. Phát biểu C sai vì đoạn 3 nhắc tới kiến trúc truyền thống là mật mã di truyền, không phải kiến trúc hiện đại. Phát biểu D đúng theo câu 'mỗi kiến trúc sư đều có quyền lựa chọn cho mình một phong cách riêng'.",
       "points": 1
     },
     {
@@ -1505,12 +1299,6 @@
           "text": "Đáp ứng các nhu cầu cụ thể trong đời sống con người"
         }
       ],
-      "correct_answer": {
-        "o1": "i2",
-        "o2": "i1",
-        "o3": "i4"
-      },
-      "explanation": "Dựa vào đoạn [4]: Tầng cơ bản là đáp ứng nhu cầu cụ thể (i4). Tầng biểu tượng là hình hài gửi gắm tâm tư, tình cảm người sáng tác (i1). Tầng cao nhất (tượng trưng) là biểu tượng cho tư tưởng, lối sống của cộng đồng (i2).",
       "points": 1
     },
     {
@@ -1541,11 +1329,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "dấu ấn",
-        "o2": "truyền thống"
-      },
-      "explanation": "Đoạn [4] có viết: 'Truyền thống đã không ngừng khắc dấu ấn của tổ tiên... kiến trúc chỉ là một trong những đối tượng mà truyền thống đã gửi gắm lại dấu ấn của mình. Vậy nên việc phủ nhận truyền thống trong quá trình sáng tác... dường như là việc làm không thể'.",
       "points": 1
     },
     {
@@ -1571,13 +1354,6 @@
           "text": "Việc phản truyền thống đồng nghĩa với việc loại bỏ truyền thống."
         }
       ],
-      "correct_answer": {
-        "a": false,
-        "b": false,
-        "c": true,
-        "d": false
-      },
-      "explanation": "Trong đoạn [5], tác giả nhấn mạnh 'điều kiện tiên quyết để vượt qua... là chúng ta phải nắm chắc đđược nó' (C đúng). Các ý A, B, D không đđược đề cập hoặc đi ngđược lại quan điểm của tác giả ('chỉ trên cơ sở kế thừa ưu điểm, khắc phục nhđược điểm...').",
       "points": 1
     },
     {
@@ -1599,12 +1375,6 @@
           "text": "Tất cả các dòng kiến trúc đều cùng tuân theo một quy luật phát triển."
         }
       ],
-      "correct_answer": {
-        "a": false,
-        "b": true,
-        "c": false
-      },
-      "explanation": "Đoạn [6] nêu dòng phát triển sau 'nhìn chung' (không phải 'luôn') cao hơn trước -> A sai. 'Các dòng kiến trúc đều có thời kỳ hưng thịnh và suy vong' -> B đúng. 'Quy luật phát triển ấy không phải là con đường hoàn toàn bằng phẳng' (có quanh co/thụt lùi) -> C sai.",
       "points": 1
     },
     {
@@ -1639,12 +1409,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "đối lập",
-        "o2": "suy vong",
-        "o3": "văn hóa"
-      },
-      "explanation": "Đoạn [6] có câu: 'hoàn toàn không cần thiết đem truyền thống và hiện đại đối lập nhau'. Đoạn [7] nhắc đến 'sự suy vong rồi lại đđược phát triển' và 'Thế kỷ XXI là thế kỷ của văn hóa'.",
       "points": 1
     },
     {
@@ -1670,8 +1434,6 @@
           "text": "Hiểu biết sâu sắc về kiến trúc truyền thống là điều kiện cần và quan trọng trong quá trình hiện đại hóa kiến trúc."
         }
       ],
-      "correct_answer": "D",
-      "explanation": "Xuyên suốt bài viết, tác giả khẳng định kiến trúc truyền thống quy định tiến trình hiện đại hóa, không thể tách rời, và hiểu biết sâu sắc về nó là điều kiện tiên quyết để vượt qua, phục hưng và phát triển kiến trúc.",
       "points": 1
     }
   ],
@@ -1696,10 +1458,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "vượt trội hơn"
-      },
-      "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
       "points": 1
     },
     {
@@ -1751,11 +1509,6 @@
           "text": "nhận diện"
         }
       ],
-      "correct_answer": {
-        "o1": "i3",
-        "o2": "i5"
-      },
-      "explanation": "Dựa trên nội dung đoạn [2]: AI phân loại chính xác mẫu là ung thư hay không (nhận diện các vùng có nguy cơ ung thư mà mắt thường không thấy).",
       "points": 1
     },
     {
@@ -1781,8 +1534,6 @@
           "text": "Nêu ra các thử nghiệm chứng minh sự thành công của việc sử dụng trí tuệ nhân tạo trong chẩn đoán bệnh."
         }
       ],
-      "correct_answer": "D",
-      "explanation": "Cả hai đoạn đầu đều đưa ra các trường hợp thử nghiệm thuật toán AI thực tế (DLAD, LYNA năm 2018) và chứng minh tỉ lệ thành công, chính xác cao của chúng.",
       "points": 1
     },
     {
@@ -1808,13 +1559,6 @@
           "text": "AI trong chăm sóc sức khỏe không ám chỉ việc phỏng đoán nguy cơ mắc bệnh của bệnh nhân trong tương lai."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": true,
-        "c": false,
-        "d": false
-      },
-      "explanation": "Đoạn 3 có nêu AI phân loại và đưa ra chẩn đoán dựa trên dữ liệu lưu giữ trong bộ nhớ (A đúng), giúp chẩn đoán rẻ hơn (B đúng). Không đề cập AI gặp khó khăn vì quá phụ thuộc bác sĩ trong việc tự chẩn đoán dữ liệu hình ảnh (C sai). AI có sử dụng để 'tiên lượng bệnh', tức là đoán trước tiến triển (D sai).",
       "points": 1
     },
     {
@@ -1866,11 +1610,6 @@
           "text": "phân loại"
         }
       ],
-      "correct_answer": {
-        "o1": "i3",
-        "o2": "i1"
-      },
-      "explanation": "Trong đoạn 4: 'đánh giá nguy cơ đột tử' (nguy cơ tử vong) và 'sự kết hợp của nhiều nguồn dữ liệu' (tổng hợp).",
       "points": 1
     },
     {
@@ -1893,10 +1632,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "phát triển thuốc"
-      },
-      "explanation": "Cuối đoạn [4] viết: 'tương lai chúng ta kỳ vọng việc phát triển thuốc sẽ vô cùng nhanh và rẻ hơn nhiều'.",
       "points": 1
     },
     {
@@ -1927,11 +1662,6 @@
         }
       ],
       "items": [],
-      "correct_answer": {
-        "o1": "cấp phép",
-        "o2": "độc quyền"
-      },
-      "explanation": "Đoạn [5]: 'cấp phép cho các công nghệ AI khác vào y học sẽ còn là một con đường dài... liên quan đến sự độc quyền.'",
       "points": 1
     },
     {
@@ -1953,12 +1683,6 @@
           "text": "Việc sử dụng AI trong mọi bước điều trị là hoàn toàn có thể khi bác sĩ hiểu biết về các thuật toán AI."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": true,
-        "c": false
-      },
-      "explanation": "Đoạn 5 nhắc tới phẫu thuật não cần bác sĩ thay đổi cách tiếp cận ngay lập tức (A đúng). Nhà khoa học AI cần tìm hiểu thêm y học vì họ không phải lúc nào cũng là bác sĩ (B đúng). Cuối bài khẳng định 'không thể thay thế hoàn toàn bác sĩ', nên dùng AI trong 'mọi bước điều trị' là không thể (C sai).",
       "points": 1
     },
     {
@@ -1984,8 +1708,6 @@
           "text": "Hoài nghi."
         }
       ],
-      "correct_answer": "B",
-      "explanation": "Tác giả chỉ ra nhiều thành công, kỳ vọng sự tiến bộ (thuốc rẻ hơn, chẩn đoán nhanh hơn) nhưng vẫn đánh giá rõ ràng những mặt chưa làm đđược (không thể thay thế bác sĩ). Sự tin tưởng kết hợp với nhận định khách quan thể hiện thái độ rất lạc quan, tích cực hướng tới tương lai.",
       "points": 1
     },
     {
@@ -1994,7 +1716,6 @@
       "question": "Điền một cụm từ không quá BA tiếng trong bài đọc vào chỗ trống:",
       "image_url": "",
       "image_width": 100,
-      "explanation": "Đoạn [1] nêu rõ 'kết luận từ máy tính là vượt trội hơn so với 17/18 các bác sĩ tham gia đọc phim'.",
       "points": 1,
       "items": [],
       "body": [
@@ -2010,10 +1731,7 @@
           "type": "text",
           "content": " kết luận của hầu hết các bác sĩ."
         }
-      ],
-      "correct_answer": {
-        "o1": "vượt trội hơn"
-      }
+      ]
     }
   ]
 }

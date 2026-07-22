@@ -26,8 +26,6 @@
           "text": "Phương pháp học tiếng Anh hiệu quả"
         }
       ],
-      "correct_answer": "C",
-      "explanation": "Toàn bộ văn bản tập trung phân tích sự ảnh hưởng của Trí tuệ nhân tạo tới các công việc tương lai.",
       "points": 1
     },
     {
@@ -52,11 +50,6 @@
           "text": "Nông nghiệp thô sơ"
         }
       ],
-      "correct_answer": [
-        "A",
-        "C"
-      ],
-      "explanation": "Đoạn 3 chỉ rõ dịch vụ tài chính và công nghệ thông tin (lập trình, phân tích dữ liệu) là hai nhóm ngành chịu tác động mạnh nhất.",
       "points": 1
     },
     {
@@ -81,34 +74,19 @@
           "text": "Chính phủ không cần can thiệp vào thị trường lao động trước làn sóng AI."
         }
       ],
-      "correct_answer": {
-        "a": false,
-        "b": true,
-        "c": true,
-        "d": false
-      },
-      "explanation": "Nhận định a và d sai do thái quá và đi ngược lại đề xuất của tác giả. Nhận định b và c đúng theo nội dung đoạn cuối.",
       "points": 1
     },
     {
       "question_no": 4,
       "question_type": "fill_blank",
       "question": "Thuật ngữ viết tắt của Trí tuệ nhân tạo bằng tiếng Anh là gì?",
-      "correct_answer": "AI",
-      "accepted_answers": [
-        "AI",
-        "artificial intelligence"
-      ],
-      "explanation": "Trí tuệ nhân tạo tiếng Anh viết tắt là AI.",
       "points": 1
     },
     {
       "question_no": 5,
       "question_type": "numeric_answer",
       "question": "Theo thống kê trong văn bản, tỷ lệ phần trăm công việc hành chính văn phòng có khả năng bị tự động hóa là bao nhiêu phần trăm? (Nhập số thập phân)",
-      "correct_answer": 0.45,
       "tolerance": 0.05,
-      "explanation": "Văn bản nêu ra tỷ lệ khoảng 45% (tức 0.45). Chấp nhận sai số ±0.05.",
       "points": 1
     },
     {
@@ -151,11 +129,6 @@
           "text": "rào cản"
         }
       ],
-      "correct_answer": {
-        "b1": "i1",
-        "b2": "i2"
-      },
-      "explanation": "Điền 'cơ hội việc làm' vào b1 và 'kỹ năng' vào b2.",
       "points": 1
     }
   ]

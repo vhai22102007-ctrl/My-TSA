@@ -1006,7 +1006,12 @@
                   .maybeSingle();
 
                 if (profileErr) throw profileErr;
-                user = { ...rpcRes.user, ...fullProfile };
+                user = {
+                  ...rpcRes.user,
+                  ...fullProfile,
+                  className: fullProfile?.class_name || rpcRes.user.className || "",
+                  token: rpcRes.user.token
+                };
               } else {
                 studentError.textContent = rpcRes?.message || "Email hoặc mật khẩu không đúng.";
                 return;
@@ -1048,8 +1053,18 @@
 
           localStorage.setItem("studentInfo", JSON.stringify(user));
           const urlParams = new URLSearchParams(window.location.search);
-          const redirect = urlParams.get("redirect") || "select.html";
-          window.location.href = redirect;
+          const requestedRedirect = urlParams.get("redirect");
+          let redirect = new URL("select.html", window.location.href);
+          if (requestedRedirect && !/^\s*(?:javascript|data|vbscript):/i.test(requestedRedirect)) {
+            try {
+              const candidate = new URL(requestedRedirect, window.location.href);
+              const sameHttpOrigin = /^https?:$/.test(candidate.protocol) && candidate.origin === window.location.origin;
+              const currentDirectory = window.location.pathname.slice(0, window.location.pathname.lastIndexOf("/") + 1);
+              const sameFileDirectory = candidate.protocol === "file:" && candidate.pathname.startsWith(currentDirectory);
+              if (sameHttpOrigin || sameFileDirectory) redirect = candidate;
+            } catch (error) {}
+          }
+          window.location.href = redirect.href;
         });
 
         registerForm.addEventListener("submit", async (event) => {

@@ -1,0 +1,17 @@
+name = "tma-upload-gateway"
+main = "src/index.js"
+compatibility_date = "2026-07-22"
+workers_dev = true
+
+[placement]
+region = "gcp:asia-southeast1"
+
+[vars]
+PUBLIC_BASE_URL = "https://assets.tmastudy.io.vn"
+SUPABASE_URL = "https://jlnfnnrboozwywikxtel.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_hVMMz3_-yMQtsF4REDyDoQ_PRLgRGYE"
+GEMINI_MODEL = "gemini-3.5-flash"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "tma-tsa-public"

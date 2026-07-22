@@ -253,16 +253,16 @@ button {
 }
 
 .question-card {
-  background: #fff;
-  border: 1.5px solid #cbd5e1; /* Clear visible border matching image 1 */
-  border-radius: 12px; /* Increased rounded corners matching image 1 */
+  background: #ffffff !important;
+  border: none !important; /* Removed outer border line as requested */
+  border-radius: 12px;
   padding: 32px 24px;
-  height: fit-content; /* Sized to fit content */
-  max-height: 100%; /* Sized to fit content up to maximum */
+  height: fit-content;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Only scrolls if height exceeds maximum */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); /* Soft premium shadow */
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02); /* Soft shadow without border */
 }
 
 .question-layout-row {
@@ -552,6 +552,20 @@ button {
 
 .submit-button:hover {
   background: #991b1b;
+}
+
+/* Compact, left-aligned MathJax math inside explanation body to avoid AI-looking centered blocks */
+.explanation-text-body mjx-container,
+.explanation-text-body .MathJax,
+.explanation-text-body .mjx-chtml {
+  text-align: left !important;
+  margin: 4px 0 !important;
+}
+.explanation-text-body mjx-container[display="true"],
+.explanation-text-body .MathJax[display="true"] {
+  display: block !important;
+  margin: 6px 0 6px 8px !important;
+  text-align: left !important;
 }
 
 /* COLOR LEGEND */

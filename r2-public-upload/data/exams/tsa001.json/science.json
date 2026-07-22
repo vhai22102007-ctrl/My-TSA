@@ -38,8 +38,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Quá trình 1: Bộ phận làm nóng rất nóng truyền nhiệt cho không khí xung quanh bằng bức xạ nhiệt. Quá trình 2: Nhiệt truyền trong chất khí chủ yếu bằng đối lưu. Quá trình 3: Dòng không khí nóng tiếp xúc và truyền nhiệt cho cơ thể người bằng đối lưu.",
           "points": 1
         },
         {
@@ -67,8 +65,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Sự bay hơi của mồ hôi trên da là quá trình thu nhiệt từ cơ thể (da) sang môi trường, giúp hạ nhiệt độ bề mặt da và ngăn cơ thể bị tăng nhiệt độ quá mức.",
           "points": 1
         },
         {
@@ -77,11 +73,6 @@
           "question": "Một phòng tắm hơi có thể tích 34 m³. Không khí trong phòng tắm hơi có độ ẩm tương đối là 3,5%. Khối lượng mol của nước là 18 g/mol. Áp suất hơi nước bão hoà ở nhiệt độ 90 °C là 70 kPa. Khối lượng hơi nước trong phòng tắm hơi là [o1] kg.",
           "image_url": "",
           "image_width": 100,
-          "correct_answer": "0,5",
-          "accepted_answers": [
-            "0,5"
-          ],
-          "explanation": "Áp suất hơi nước: p = f * p_bh = 0,035 * 70000 = 2450 Pa.\nNhiệt độ tuyệt đối: T = 90 + 273,15 = 363,15 K.\nÁp dụng phương trình trạng thái khí lí tưởng: pV = (m/μ)RT => m = (p * V * μ) / (R * T) = (2450 * 34 * 0,018) / (8,31 * 363,15) ≈ 0,5 kg.",
           "points": 1
         },
         {
@@ -134,11 +125,6 @@
               "text": "chậm"
             }
           ],
-          "correct_answer": {
-            "o1": "item2",
-            "o2": "item4"
-          },
-          "explanation": "Dựa vào đồ thị Hình 1, quanh khu vực 90 °C, đường đặc trưng của cảm biến A rất dốc nằm ngang (điện áp U thay đổi chậm theo nhiệt độ), còn cảm biến B có độ dốc đứng lớn (điện áp U tăng nhanh theo nhiệt độ), giúp đo đạc nhạy bén và chính xác hơn.",
           "points": 1
         },
         {
@@ -147,11 +133,6 @@
           "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nBộ phận làm nóng dùng điện trở nhiệt có công suất nhiệt (nhiệt lượng chuyển hoá đđược từ điện năng trong 1 giây) là 32,6 kW, làm tăng nhiệt độ của không khí chứa hơi nước và các đồ vật trong phòng tắm hơi thêm 0,27 °C mỗi giây. Nhiệt dung của các vật (không bao gồm không khí và hơi nước) trong phòng tắm hơi xấp xỉ là [o1] kJ/K.",
           "image_url": "",
           "image_width": 100,
-          "correct_answer": "74",
-          "accepted_answers": [
-            "74"
-          ],
-          "explanation": "Nhiệt lượng cung cấp trong 1 giây: Q = 32,6 kJ.\nTổng nhiệt dung: C_tổng = Q / Δt = 32,6 / 0,27 ≈ 120,74 kJ/K.\nNhiệt dung vật: C_vật = C_tổng - C_không_khí = 120,74 - 47 ≈ 74 kJ/K.",
           "points": 1
         }
       ]
@@ -191,8 +172,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "C",
-          "explanation": "Các chất không tạo được liên kết hydrogen với chính nó gồm: (CH3)3N (amin bậc 3 không có liên kết N-H), CH3–O–CH2CH3 (ether không có liên kết O-H) và H–S–H (H2S không tạo được liên kết hydro do độ âm điện của S nhỏ). Tổng cộng có 3 chất.",
           "points": 1
         },
         {
@@ -220,8 +199,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "Propylamine có công thức CH3CH2CH2-NH2. Chỉ có các nguyên tử H liên kết trực tiếp với nguyên tử có độ âm điện lớn (N) trong nhóm -NH2 mới có khả năng tạo liên kết hydrogen. Do đó có 2 nguyên tử H thỏa mãn.",
           "points": 1
         },
         {
@@ -249,8 +226,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Ethanol có liên kết O-H. Do O có độ âm điện lớn hơn N, liên kết O-H phân cực mạnh hơn liên kết N-H trong các amin, dẫn đến liên kết hydrogen tạo bởi nhóm O-H của ethanol mạnh nhất.",
           "points": 1
         },
         {
@@ -273,12 +248,6 @@
               "text": "Thứ tự tăng dần nhiệt độ sôi từ trái sang phải là CH₄, CH₃–CH₃, CH₃OH."
             }
           ],
-          "correct_answer": {
-            "a": false,
-            "b": true,
-            "c": true
-          },
-          "explanation": "a) Sai, các nguyên tử trong một phân tử ethanol liên kết với nhau bằng liên kết cộng hóa trị. Liên kết hydrogen chỉ hình thành giữa các phân tử ethanol với nhau.\nb) Đúng, CH3OH tạo được liên kết hydrogen liên phân tử nên nhiệt độ sôi cao hơn HCHO.\nc) Đúng, CH4 (-161.5 °C) < C2H6 (-89 °C) < CH3OH (64.7 °C).",
           "points": 1
         },
         {
@@ -287,11 +256,6 @@
           "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nSố kiểu liên kết hydrogen trong dung dịch ethanol là [o1].",
           "image_url": "",
           "image_width": 100,
-          "correct_answer": "4",
-          "accepted_answers": [
-            "4"
-          ],
-          "explanation": "Trong dung dịch ethanol gồm ethanol (EtOH) và nước (H2O) có 4 kiểu liên kết hydrogen liên phân tử:\n1. EtOH...EtOH (H của EtOH liên kết với O của EtOH)\n2. EtOH...H2O (H của EtOH liên kết với O của H2O)\n3. H2O...EtOH (H của H2O liên kết với O của EtOH)\n4. H2O...H2O (H của H2O liên kết với O của H2O)",
           "points": 1
         }
       ]
@@ -330,8 +294,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Dựa vào biểu đồ, số ca mắc ngoài cộng đồng (cột màu vàng) vào ngày 23/01/2022 đạt mức cao nhất (830 ca) so với các ngày được chọn.",
           "points": 1
         },
         {
@@ -358,8 +320,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Các nguyên nhân làm dịch lây lan nhanh bao gồm: không đeo khẩu trang phòng ngừa rộng rãi (1), tụ tập đông người (3), dùng chung đồ vật (4) và làm việc trong không gian kín (5). (2) là biện pháp phòng ngừa.",
           "points": 1
         },
         {
@@ -386,8 +346,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "Ca mắc cộng đồng là nguồn lây chưa được khoanh vùng cách ly, khó xác định nguồn lây và lịch trình tiếp xúc, khiến việc truy vết gặp nhiều khó khăn và tăng nguy cơ lây lan âm thầm.",
           "points": 1
         },
         {
@@ -406,8 +364,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Thuốc kháng sinh chỉ tiêu diệt hoặc ức chế vi khuẩn, hoàn toàn không có tác dụng đối với virus.",
           "points": 1
         },
         {
@@ -415,11 +371,6 @@
           "question_type": "fill_blank",
           "question": "Điền từ/cụm từ thích hợp vào chỗ trống sau đây:\nKháng nguyên là những chất khi xâm nhập vào cơ thể người được hệ thống miễn dịch nhận biết và sinh ra các [o1] tương ứng.",
           "image_url": "",
-          "correct_answer": "kháng thể",
-          "accepted_answers": [
-            "kháng thể"
-          ],
-          "explanation": "Kháng nguyên là chất lạ kích thích cơ thể sinh ra các kháng thể tương ứng để kết hợp đặc hiệu với kháng nguyên đó.",
           "points": 1
         }
       ]
@@ -458,11 +409,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": [
-            "A",
-            "D"
-          ],
-          "explanation": "Dựa vào đồ thị Hình 3, các đường biểu diễn của NH₃ và HCl đi xuống từ trái sang phải, cho thấy độ tan của chúng trong nước giảm khi nhiệt độ tăng.",
           "points": 1
         },
         {
@@ -484,12 +430,6 @@
               "text": "Nước là dung môi phổ biến để hòa tan các chất tan."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": false,
-            "c": true
-          },
-          "explanation": "1) Đúng theo định nghĩa độ tan. 2) Sai, dung dịch quá bão hòa kém bền và dễ bị kết tinh khi có tác động nhỏ. 3) Đúng, nước là dung môi phổ biến nhất trong tự nhiên và đời sống.",
           "points": 1
         },
         {
@@ -545,11 +485,6 @@
               "text": "quá bão hòa"
             }
           ],
-          "correct_answer": {
-            "o1": "item3",
-            "o2": "item2"
-          },
-          "explanation": "Tại 30°C, độ tan của NaNO₃ là 95g/100g nước. Với 250g nước, khối lượng hòa tan tối đa là 95 * 2.5 = 237,5 gam (xấp xỉ 238 gam). Vì 225g < 238g nên thu được dung dịch chưa bão hòa.",
           "points": 1
         },
         {
@@ -557,12 +492,6 @@
           "question_type": "fill_blank",
           "question": "Điền số thích hợp hợp (làm tròn đến chữ số thập phân thứ nhất) vào chỗ trống để hoàn thành nhận xét sau:\nMột mẫu CuSO₄ thực tế nặng 46 gam, trong đó có 80% là CuSO₄ và còn lại là các chất rắn không tan trong nước. Để tách CuSO₄ ra khỏi hỗn hợp, ta tiến hành hòa tan hoàn toàn mẫu chất rắn trên trong 50 ml nước tinh khiết ở nhiệt độ 100°C. Lọc hỗn hợp thu lấy phần dung dịch, sau đó để cho dung dịch nguội dần đến nhiệt độ 20°C thì thấy xuất hiện các tinh thể CuSO₄ ngậm nước CuSO₄.5H₂O. Lọc lấy chất rắn rồi đem sấy ở nhiệt độ 100°C đến khi khối lượng không đổi thì thu được CuSO₄ khan.\nKhối lượng của CuSO₄ khan thu được là [o1] gam.\nCho biết, ở 20°C độ tan của CuSO₄ có giá trị là 32 gam/100 gam H₂O, khối lượng riêng của nước tinh khiết là 1 g/ml. Coi thể tích của nước là không thay đổi và khi sấy ở nhiệt độ 100°C đến khối lượng không đổi, ta chỉ thu được tinh thể CuSO₄ khan.",
           "image_url": "",
-          "correct_answer": "20,8",
-          "accepted_answers": [
-            "20,8",
-            "20.8"
-          ],
-          "explanation": "m(CuSO₄ ban đầu) = 46 * 0.8 = 36.8g. m(H₂O) = 50g. Khối lượng CuSO₄ tan tối đa ở 20°C trong 50g nước: 32 * 50 / 100 = 16g. Khối lượng CuSO₄ kết tinh: 36.8 - 16 = 20.8g. Khi sấy khô thu được 20.8g CuSO₄ khan.",
           "points": 1
         },
         {
@@ -589,8 +518,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "m(phèn tinh khiết) = 42,53 * 80% = 34,024 gam.\nm(KAl(SO₄)₂) = 34,024 * 258 / 474 = 18,52 gam.\nm(nước kết tinh) = 34,024 * 216 / 474 = 15,50 gam.\nTại 50°C: m(KAl(SO₄)₂) / (V + m_nước_kết_tinh) = 36.8 / 100 => V + 15,50 = 18,52 / 0,368 = 50,33 gam => V = 34,83 gam (34,83 ml).",
           "points": 1
         }
       ]
@@ -629,8 +556,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Nguyên tắc 'chìa và khóa' chỉ tính liên kết đặc hiệu giữa glycoprotein kháng nguyên bề mặt virus và thụ thể tương ứng trên màng tế bào chủ.",
           "points": 1
         },
         {
@@ -698,14 +623,6 @@
               "text": "Giải phóng"
             }
           ],
-          "correct_answer": {
-            "o1": "item3",
-            "o2": "item2",
-            "o3": "item1",
-            "o4": "item4",
-            "o5": "item5"
-          },
-          "explanation": "Thứ tự 5 giai đoạn: Hấp phụ (item3) -> Xâm nhập (item2) -> Sinh tổng hợp (item1) -> Lắp ráp (item4) -> Giải phóng (item5).",
           "points": 1
         },
         {
@@ -732,8 +649,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Virus ngoài môi trường (hạt virus/virion) hoàn toàn không trao đổi chất, không sinh trưởng (không lớn lên) và không nhân lên. Nó hoàn toàn trơ.",
           "points": 1
         },
         {
@@ -760,8 +675,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "Ví dụ, virus RNA cần tự mã hóa enzyme RNA polymerase phụ thuộc RNA để nhân bản vật chất di truyền của nó, vì tế bào chủ không có enzyme này.",
           "points": 1
         },
         {
@@ -783,12 +696,6 @@
               "text": "Virus sử dụng nguyên liệu của tế bào chủ trong quá trình nhân lên của mình."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": false,
-            "c": true
-          },
-          "explanation": "1) Đúng. 2) Sai (virus con tạo ra có độc tính tương tự virus mẹ). 3) Đúng (sử dụng nucleotide, axit amin, ribosome, tRNA, ATP... của tế bào chủ).",
           "points": 1
         }
       ]
@@ -864,13 +771,6 @@
               "text": "thuận điện trở nhiệt"
             }
           ],
-          "correct_answer": {
-            "o1": "item3",
-            "o2": "item1",
-            "o3": "item4",
-            "o4": "item2"
-          },
-          "explanation": "Điện trở nhiệt NTC (Negative) có giá trị điện trở giảm khi nhiệt độ tăng, gọi là nghịch điện trở nhiệt. Điện trở nhiệt PTC (Positive) có giá trị điện trở tăng khi nhiệt độ tăng, gọi là thuận điện trở nhiệt.",
           "points": 1
         },
         {
@@ -897,8 +797,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "C",
-          "explanation": "Theo văn bản: 'Điện trở nhiệt được ứng dụng rộng rãi trong kĩ thuật điện tử, làm cảm biến nhiệt'. Do đó lĩnh vực sử dụng chủ yếu là Điện tử.",
           "points": 1
         },
         {
@@ -925,8 +823,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Tại 5°C, R = 121951,2 Ω. Tại 41°C, R = 22522,5 Ω. Khi nhiệt độ tăng từ 5°C đến 41°C, điện trở giảm đi: 121951,2 - 22522,5 = 99428,7 Ω.",
           "points": 1
         },
         {
@@ -953,8 +849,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Sự biến đổi của điện trở theo nhiệt độ (độ dốc của đặc tuyến) giảm dần khi nhiệt độ tăng. Ở khoảng 74°C - 80°C, điện trở giảm ít nhất (chỉ giảm khoảng 201 Ω/°C), tức là biến đổi chậm nhất.",
           "points": 1
         },
         {
@@ -994,11 +888,6 @@
               "text": "NTC"
             }
           ],
-          "correct_answer": {
-            "o1": "item2",
-            "o2": "item1"
-          },
-          "explanation": "Đường màu xanh đi xuống tương ứng với điện trở giảm khi nhiệt độ tăng, đó là đặc trưng của NTC. Đường màu đỏ đi lên tương ứng với điện trở tăng khi nhiệt độ tăng, đó là đặc trưng của PTC.",
           "points": 1
         }
       ]
@@ -1029,8 +918,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "Đúng. Việc thêm H₃PO₄ có tác dụng tạo phức bền màu với Fe³⁺, giúp hạ thế oxi hóa của hệ Fe³⁺/Fe²⁺ xuống, tránh làm diphenylamine chuyển màu xanh trước khi đạt điểm tương đương.",
           "points": 1
         },
         {
@@ -1052,12 +939,6 @@
               "text": "Trong môi trường thích hợp, các muối chromate (màu da cam) và dichromate (màu vàng) chuyển hóa lẫn nhau theo cân bằng: Cr₂O₇²⁻ + H₂O ⇌ 2CrO₄²⁻ + 2H⁺."
             }
           ],
-          "correct_answer": {
-            "a": true,
-            "b": false,
-            "c": false
-          },
-          "explanation": "1) Đúng, K₂Cr₂O₇ dễ tinh chế và rất bền nên dùng làm chất chuẩn gốc. 2) Sai, cần diphenylamine làm chất chỉ thị màu. 3) Sai, chromate màu vàng, dichromate màu cam (phát biểu bị đảo ngược màu sắc).",
           "points": 1
         },
         {
@@ -1065,11 +946,6 @@
           "question_type": "fill_blank",
           "question": "Điền số thích hợp vào chỗ trống (số cần điền là số nguyên):\nThể tích dung dịch K₂Cr₂O₇ 0,05M vừa đủ phản ứng với dung dịch chứa 0,06 mol FeSO₄ trong môi trường H₂SO₄ dư là [o1] mL.",
           "image_url": "",
-          "correct_answer": "200",
-          "accepted_answers": [
-            "200"
-          ],
-          "explanation": "Phản ứng chuẩn độ: Cr₂O₇²⁻ + 6Fe²⁺ + 14H⁺ → 2Cr³⁺ + 6Fe³⁺ + 7H₂O.\nSố mol Fe²⁺ = 0,06 mol => n(Cr₂O₇²⁻) = 0,06 / 6 = 0,01 mol.\nThể tích dung dịch K₂Cr₂O₇ 0,05 M cần dùng: V = 0,01 / 0,05 = 0,2 lít = 200 ml.",
           "points": 1
         },
         {
@@ -1096,8 +972,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "C",
-          "explanation": "Trước khi chuẩn độ, bình nón chứa: dung dịch FeSO₄, dung dịch H₃PO₄, dung dịch HCl và dung dịch chỉ thị diphenylamine (tổng cộng 4 dung dịch).",
           "points": 1
         },
         {
@@ -1161,12 +1035,6 @@
               "text": "H₃PO₄"
             }
           ],
-          "correct_answer": {
-            "o1": "item1",
-            "o2": "item2",
-            "o3": "item5"
-          },
-          "explanation": "Chúng ta chuẩn độ dung dịch FeSO₄ (chất khử) bằng K₂Cr₂O₇ (chất oxi hóa). Điểm tương đương đạt được khi toàn bộ Fe²⁺ đã phản ứng, một giọt dư K₂Cr₂O₇ sẽ làm chỉ thị diphenylamine chuyển sang màu xanh tím.",
           "points": 1
         }
       ]
@@ -1186,11 +1054,6 @@
           "question_type": "fill_blank",
           "question": "Theo lý thuyết hấp dẫn, sự phân tách điện tích trong đám mây xảy ra qua [o1] giai đoạn.",
           "image_url": "",
-          "correct_answer": "3",
-          "accepted_answers": [
-            "3"
-          ],
-          "explanation": "Theo lý thuyết hấp dẫn và Hình 1, quá trình tích điện xảy ra qua 3 giai đoạn: Giai đoạn I (hạt trung hòa), Giai đoạn II (cọ xát khi rơi), Giai đoạn III (phân tách điện tích âm/dương).",
           "points": 1
         },
         {
@@ -1217,8 +1080,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "A",
-          "explanation": "Theo lý thuyết hấp dẫn, các hạt mưa lớn hơn khi rơi xuống đáy đám mây mang theo điện tích âm. Do đó, nồng độ điện tích âm ở chân đám mây lớn nhất khi có nhiều hạt mưa lớn rơi xuống.",
           "points": 1
         },
         {
@@ -1245,8 +1106,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "B",
-          "explanation": "Cả hai lý thuyết đều phân bố điện tích dương ở phần trên (đỉnh đám mây) và điện tích âm ở phần dưới (đáy đám mây). Khi máy bay bay qua phần tâm của đám mây và thấy tích điện âm, cả hai lý thuyết đều thống nhất rằng các điện tích dương nằm ở phía trên vùng này.",
           "points": 1
         },
         {
@@ -1273,8 +1132,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "C",
-          "explanation": "Theo lý thuyết hấp dẫn, các hạt lớn hơn (rơi nhanh hơn do trọng lực) khi cọ xát với các hạt nhỏ hơn sẽ tích điện âm và đi xuống dưới. Ở đây các tinh thể băng lớn hơn rơi nhanh hơn tinh thể băng nhỏ và tích điện âm.",
           "points": 1
         },
         {
@@ -1301,8 +1158,6 @@
             }
           ],
           "options_are_images": false,
-          "correct_answer": "D",
-          "explanation": "Lý thuyết đối lưu chỉ ra điện tích dương tập trung ở đỉnh đám mây và gần mặt đất. Không có vùng tích điện dương lơ lửng của khí quyển ở vị trí tương ứng để tia sét phóng từ chân mây (âm) tới đó.",
           "points": 1
         }
       ]
@@ -1343,8 +1198,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Quá trình 1: Bộ phận làm nóng rất nóng truyền nhiệt cho không khí xung quanh bằng bức xạ nhiệt. Quá trình 2: Nhiệt truyền trong chất khí chủ yếu bằng đối lưu. Quá trình 3: Dòng không khí nóng tiếp xúc và truyền nhiệt cho cơ thể người bằng đối lưu.",
         "points": 1
       },
       {
@@ -1372,8 +1225,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Sự bay hơi của mồ hôi trên da là quá trình thu nhiệt từ cơ thể (da) sang môi trường, giúp hạ nhiệt độ bề mặt da và ngăn cơ thể bị tăng nhiệt độ quá mức.",
         "points": 1
       },
       {
@@ -1382,11 +1233,6 @@
         "question": "Một phòng tắm hơi có thể tích 34 m³. Không khí trong phòng tắm hơi có độ ẩm tương đối là 3,5%. Khối lượng mol của nước là 18 g/mol. Áp suất hơi nước bão hoà ở nhiệt độ 90 °C là 70 kPa. Khối lượng hơi nước trong phòng tắm hơi là [o1] kg.",
         "image_url": "",
         "image_width": 100,
-        "correct_answer": "0,5",
-        "accepted_answers": [
-          "0,5"
-        ],
-        "explanation": "Áp suất hơi nước: p = f * p_bh = 0,035 * 70000 = 2450 Pa.\nNhiệt độ tuyệt đối: T = 90 + 273,15 = 363,15 K.\nÁp dụng phương trình trạng thái khí lí tưởng: pV = (m/μ)RT => m = (p * V * μ) / (R * T) = (2450 * 34 * 0,018) / (8,31 * 363,15) ≈ 0,5 kg.",
         "points": 1
       },
       {
@@ -1439,11 +1285,6 @@
             "text": "chậm"
           }
         ],
-        "correct_answer": {
-          "o1": "item2",
-          "o2": "item4"
-        },
-        "explanation": "Dựa vào đồ thị Hình 1, quanh khu vực 90 °C, đường đặc trưng của cảm biến A rất dốc nằm ngang (điện áp U thay đổi chậm theo nhiệt độ), còn cảm biến B có độ dốc đứng lớn (điện áp U tăng nhanh theo nhiệt độ), giúp đo đạc nhạy bén và chính xác hơn.",
         "points": 1
       },
       {
@@ -1452,11 +1293,6 @@
         "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nBộ phận làm nóng dùng điện trở nhiệt có công suất nhiệt (nhiệt lượng chuyển hoá đđược từ điện năng trong 1 giây) là 32,6 kW, làm tăng nhiệt độ của không khí chứa hơi nước và các đồ vật trong phòng tắm hơi thêm 0,27 °C mỗi giây. Nhiệt dung của các vật (không bao gồm không khí và hơi nước) trong phòng tắm hơi xấp xỉ là [o1] kJ/K.",
         "image_url": "",
         "image_width": 100,
-        "correct_answer": "74",
-        "accepted_answers": [
-          "74"
-        ],
-        "explanation": "Nhiệt lượng cung cấp trong 1 giây: Q = 32,6 kJ.\nTổng nhiệt dung: C_tổng = Q / Δt = 32,6 / 0,27 ≈ 120,74 kJ/K.\nNhiệt dung vật: C_vật = C_tổng - C_không_khí = 120,74 - 47 ≈ 74 kJ/K.",
         "points": 1
       }
     ]
@@ -1487,8 +1323,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Quá trình 1: Bộ phận làm nóng rất nóng truyền nhiệt cho không khí xung quanh bằng bức xạ nhiệt. Quá trình 2: Nhiệt truyền trong chất khí chủ yếu bằng đối lưu. Quá trình 3: Dòng không khí nóng tiếp xúc và truyền nhiệt cho cơ thể người bằng đối lưu.",
       "points": 1
     },
     {
@@ -1516,8 +1350,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Sự bay hơi của mồ hôi trên da là quá trình thu nhiệt từ cơ thể (da) sang môi trường, giúp hạ nhiệt độ bề mặt da và ngăn cơ thể bị tăng nhiệt độ quá mức.",
       "points": 1
     },
     {
@@ -1526,11 +1358,6 @@
       "question": "Một phòng tắm hơi có thể tích 34 m³. Không khí trong phòng tắm hơi có độ ẩm tương đối là 3,5%. Khối lượng mol của nước là 18 g/mol. Áp suất hơi nước bão hoà ở nhiệt độ 90 °C là 70 kPa. Khối lượng hơi nước trong phòng tắm hơi là [o1] kg.",
       "image_url": "",
       "image_width": 100,
-      "correct_answer": "0,5",
-      "accepted_answers": [
-        "0,5"
-      ],
-      "explanation": "Áp suất hơi nước: p = f * p_bh = 0,035 * 70000 = 2450 Pa.\nNhiệt độ tuyệt đối: T = 90 + 273,15 = 363,15 K.\nÁp dụng phương trình trạng thái khí lí tưởng: pV = (m/μ)RT => m = (p * V * μ) / (R * T) = (2450 * 34 * 0,018) / (8,31 * 363,15) ≈ 0,5 kg.",
       "points": 1
     },
     {
@@ -1583,11 +1410,6 @@
           "text": "chậm"
         }
       ],
-      "correct_answer": {
-        "o1": "item2",
-        "o2": "item4"
-      },
-      "explanation": "Dựa vào đồ thị Hình 1, quanh khu vực 90 °C, đường đặc trưng của cảm biến A rất dốc nằm ngang (điện áp U thay đổi chậm theo nhiệt độ), còn cảm biến B có độ dốc đứng lớn (điện áp U tăng nhanh theo nhiệt độ), giúp đo đạc nhạy bén và chính xác hơn.",
       "points": 1
     },
     {
@@ -1596,11 +1418,6 @@
       "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nBộ phận làm nóng dùng điện trở nhiệt có công suất nhiệt (nhiệt lượng chuyển hoá đđược từ điện năng trong 1 giây) là 32,6 kW, làm tăng nhiệt độ của không khí chứa hơi nước và các đồ vật trong phòng tắm hơi thêm 0,27 °C mỗi giây. Nhiệt dung của các vật (không bao gồm không khí và hơi nước) trong phòng tắm hơi xấp xỉ là [o1] kJ/K.",
       "image_url": "",
       "image_width": 100,
-      "correct_answer": "74",
-      "accepted_answers": [
-        "74"
-      ],
-      "explanation": "Nhiệt lượng cung cấp trong 1 giây: Q = 32,6 kJ.\nTổng nhiệt dung: C_tổng = Q / Δt = 32,6 / 0,27 ≈ 120,74 kJ/K.\nNhiệt dung vật: C_vật = C_tổng - C_không_khí = 120,74 - 47 ≈ 74 kJ/K.",
       "points": 1
     }
   ],
@@ -1639,8 +1456,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "C",
-        "explanation": "Các chất không tạo được liên kết hydrogen với chính nó gồm: (CH3)3N (amin bậc 3 không có liên kết N-H), CH3–O–CH2CH3 (ether không có liên kết O-H) và H–S–H (H2S không tạo được liên kết hydro do độ âm điện của S nhỏ). Tổng cộng có 3 chất.",
         "points": 1
       },
       {
@@ -1668,8 +1483,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "Propylamine có công thức CH3CH2CH2-NH2. Chỉ có các nguyên tử H liên kết trực tiếp với nguyên tử có độ âm điện lớn (N) trong nhóm -NH2 mới có khả năng tạo liên kết hydrogen. Do đó có 2 nguyên tử H thỏa mãn.",
         "points": 1
       },
       {
@@ -1697,8 +1510,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Ethanol có liên kết O-H. Do O có độ âm điện lớn hơn N, liên kết O-H phân cực mạnh hơn liên kết N-H trong các amin, dẫn đến liên kết hydrogen tạo bởi nhóm O-H của ethanol mạnh nhất.",
         "points": 1
       },
       {
@@ -1721,12 +1532,6 @@
             "text": "Thứ tự tăng dần nhiệt độ sôi từ trái sang phải là CH₄, CH₃–CH₃, CH₃OH."
           }
         ],
-        "correct_answer": {
-          "a": false,
-          "b": true,
-          "c": true
-        },
-        "explanation": "a) Sai, các nguyên tử trong một phân tử ethanol liên kết với nhau bằng liên kết cộng hóa trị. Liên kết hydrogen chỉ hình thành giữa các phân tử ethanol với nhau.\nb) Đúng, CH3OH tạo được liên kết hydrogen liên phân tử nên nhiệt độ sôi cao hơn HCHO.\nc) Đúng, CH4 (-161.5 °C) < C2H6 (-89 °C) < CH3OH (64.7 °C).",
         "points": 1
       },
       {
@@ -1735,11 +1540,6 @@
         "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nSố kiểu liên kết hydrogen trong dung dịch ethanol là [o1].",
         "image_url": "",
         "image_width": 100,
-        "correct_answer": "4",
-        "accepted_answers": [
-          "4"
-        ],
-        "explanation": "Trong dung dịch ethanol gồm ethanol (EtOH) và nước (H2O) có 4 kiểu liên kết hydrogen liên phân tử:\n1. EtOH...EtOH (H của EtOH liên kết với O của EtOH)\n2. EtOH...H2O (H của EtOH liên kết với O của H2O)\n3. H2O...EtOH (H của H2O liên kết với O của EtOH)\n4. H2O...H2O (H của H2O liên kết với O của H2O)",
         "points": 1
       }
     ]
@@ -1770,8 +1570,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "C",
-      "explanation": "Các chất không tạo được liên kết hydrogen với chính nó gồm: (CH3)3N (amin bậc 3 không có liên kết N-H), CH3–O–CH2CH3 (ether không có liên kết O-H) và H–S–H (H2S không tạo được liên kết hydro do độ âm điện của S nhỏ). Tổng cộng có 3 chất.",
       "points": 1
     },
     {
@@ -1799,8 +1597,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "Propylamine có công thức CH3CH2CH2-NH2. Chỉ có các nguyên tử H liên kết trực tiếp với nguyên tử có độ âm điện lớn (N) trong nhóm -NH2 mới có khả năng tạo liên kết hydrogen. Do đó có 2 nguyên tử H thỏa mãn.",
       "points": 1
     },
     {
@@ -1828,8 +1624,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Ethanol có liên kết O-H. Do O có độ âm điện lớn hơn N, liên kết O-H phân cực mạnh hơn liên kết N-H trong các amin, dẫn đến liên kết hydrogen tạo bởi nhóm O-H của ethanol mạnh nhất.",
       "points": 1
     },
     {
@@ -1852,12 +1646,6 @@
           "text": "Thứ tự tăng dần nhiệt độ sôi từ trái sang phải là CH₄, CH₃–CH₃, CH₃OH."
         }
       ],
-      "correct_answer": {
-        "a": false,
-        "b": true,
-        "c": true
-      },
-      "explanation": "a) Sai, các nguyên tử trong một phân tử ethanol liên kết với nhau bằng liên kết cộng hóa trị. Liên kết hydrogen chỉ hình thành giữa các phân tử ethanol với nhau.\nb) Đúng, CH3OH tạo được liên kết hydrogen liên phân tử nên nhiệt độ sôi cao hơn HCHO.\nc) Đúng, CH4 (-161.5 °C) < C2H6 (-89 °C) < CH3OH (64.7 °C).",
       "points": 1
     },
     {
@@ -1866,11 +1654,6 @@
       "question": "Điền số tự nhiên thích hợp vào chỗ trống:\nSố kiểu liên kết hydrogen trong dung dịch ethanol là [o1].",
       "image_url": "",
       "image_width": 100,
-      "correct_answer": "4",
-      "accepted_answers": [
-        "4"
-      ],
-      "explanation": "Trong dung dịch ethanol gồm ethanol (EtOH) và nước (H2O) có 4 kiểu liên kết hydrogen liên phân tử:\n1. EtOH...EtOH (H của EtOH liên kết với O của EtOH)\n2. EtOH...H2O (H của EtOH liên kết với O của H2O)\n3. H2O...EtOH (H của H2O liên kết với O của EtOH)\n4. H2O...H2O (H của H2O liên kết với O của H2O)",
       "points": 1
     }
   ],
@@ -1908,8 +1691,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Dựa vào biểu đồ, số ca mắc ngoài cộng đồng (cột màu vàng) vào ngày 23/01/2022 đạt mức cao nhất (830 ca) so với các ngày được chọn.",
         "points": 1
       },
       {
@@ -1936,8 +1717,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Các nguyên nhân làm dịch lây lan nhanh bao gồm: không đeo khẩu trang phòng ngừa rộng rãi (1), tụ tập đông người (3), dùng chung đồ vật (4) và làm việc trong không gian kín (5). (2) là biện pháp phòng ngừa.",
         "points": 1
       },
       {
@@ -1964,8 +1743,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "Ca mắc cộng đồng là nguồn lây chưa được khoanh vùng cách ly, khó xác định nguồn lây và lịch trình tiếp xúc, khiến việc truy vết gặp nhiều khó khăn và tăng nguy cơ lây lan âm thầm.",
         "points": 1
       },
       {
@@ -1984,8 +1761,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Thuốc kháng sinh chỉ tiêu diệt hoặc ức chế vi khuẩn, hoàn toàn không có tác dụng đối với virus.",
         "points": 1
       },
       {
@@ -1993,11 +1768,6 @@
         "question_type": "fill_blank",
         "question": "Điền từ/cụm từ thích hợp vào chỗ trống sau đây:\nKháng nguyên là những chất khi xâm nhập vào cơ thể người được hệ thống miễn dịch nhận biết và sinh ra các [o1] tương ứng.",
         "image_url": "",
-        "correct_answer": "kháng thể",
-        "accepted_answers": [
-          "kháng thể"
-        ],
-        "explanation": "Kháng nguyên là chất lạ kích thích cơ thể sinh ra các kháng thể tương ứng để kết hợp đặc hiệu với kháng nguyên đó.",
         "points": 1
       }
     ]
@@ -2027,8 +1797,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Dựa vào biểu đồ, số ca mắc ngoài cộng đồng (cột màu vàng) vào ngày 23/01/2022 đạt mức cao nhất (830 ca) so với các ngày được chọn.",
       "points": 1
     },
     {
@@ -2055,8 +1823,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Các nguyên nhân làm dịch lây lan nhanh bao gồm: không đeo khẩu trang phòng ngừa rộng rãi (1), tụ tập đông người (3), dùng chung đồ vật (4) và làm việc trong không gian kín (5). (2) là biện pháp phòng ngừa.",
       "points": 1
     },
     {
@@ -2083,8 +1849,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "Ca mắc cộng đồng là nguồn lây chưa được khoanh vùng cách ly, khó xác định nguồn lây và lịch trình tiếp xúc, khiến việc truy vết gặp nhiều khó khăn và tăng nguy cơ lây lan âm thầm.",
       "points": 1
     },
     {
@@ -2103,8 +1867,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Thuốc kháng sinh chỉ tiêu diệt hoặc ức chế vi khuẩn, hoàn toàn không có tác dụng đối với virus.",
       "points": 1
     },
     {
@@ -2112,11 +1874,6 @@
       "question_type": "fill_blank",
       "question": "Điền từ/cụm từ thích hợp vào chỗ trống sau đây:\nKháng nguyên là những chất khi xâm nhập vào cơ thể người được hệ thống miễn dịch nhận biết và sinh ra các [o1] tương ứng.",
       "image_url": "",
-      "correct_answer": "kháng thể",
-      "accepted_answers": [
-        "kháng thể"
-      ],
-      "explanation": "Kháng nguyên là chất lạ kích thích cơ thể sinh ra các kháng thể tương ứng để kết hợp đặc hiệu với kháng nguyên đó.",
       "points": 1
     }
   ],
@@ -2154,11 +1911,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": [
-          "A",
-          "D"
-        ],
-        "explanation": "Dựa vào đồ thị Hình 3, các đường biểu diễn của NH₃ và HCl đi xuống từ trái sang phải, cho thấy độ tan của chúng trong nước giảm khi nhiệt độ tăng.",
         "points": 1
       },
       {
@@ -2180,12 +1932,6 @@
             "text": "Nước là dung môi phổ biến để hòa tan các chất tan."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": false,
-          "c": true
-        },
-        "explanation": "1) Đúng theo định nghĩa độ tan. 2) Sai, dung dịch quá bão hòa kém bền và dễ bị kết tinh khi có tác động nhỏ. 3) Đúng, nước là dung môi phổ biến nhất trong tự nhiên và đời sống.",
         "points": 1
       },
       {
@@ -2241,11 +1987,6 @@
             "text": "quá bão hòa"
           }
         ],
-        "correct_answer": {
-          "o1": "item3",
-          "o2": "item2"
-        },
-        "explanation": "Tại 30°C, độ tan của NaNO₃ là 95g/100g nước. Với 250g nước, khối lượng hòa tan tối đa là 95 * 2.5 = 237,5 gam (xấp xỉ 238 gam). Vì 225g < 238g nên thu được dung dịch chưa bão hòa.",
         "points": 1
       },
       {
@@ -2253,12 +1994,6 @@
         "question_type": "fill_blank",
         "question": "Điền số thích hợp hợp (làm tròn đến chữ số thập phân thứ nhất) vào chỗ trống để hoàn thành nhận xét sau:\nMột mẫu CuSO₄ thực tế nặng 46 gam, trong đó có 80% là CuSO₄ và còn lại là các chất rắn không tan trong nước. Để tách CuSO₄ ra khỏi hỗn hợp, ta tiến hành hòa tan hoàn toàn mẫu chất rắn trên trong 50 ml nước tinh khiết ở nhiệt độ 100°C. Lọc hỗn hợp thu lấy phần dung dịch, sau đó để cho dung dịch nguội dần đến nhiệt độ 20°C thì thấy xuất hiện các tinh thể CuSO₄ ngậm nước CuSO₄.5H₂O. Lọc lấy chất rắn rồi đem sấy ở nhiệt độ 100°C đến khi khối lượng không đổi thì thu được CuSO₄ khan.\nKhối lượng của CuSO₄ khan thu được là [o1] gam.\nCho biết, ở 20°C độ tan của CuSO₄ có giá trị là 32 gam/100 gam H₂O, khối lượng riêng của nước tinh khiết là 1 g/ml. Coi thể tích của nước là không thay đổi và khi sấy ở nhiệt độ 100°C đến khối lượng không đổi, ta chỉ thu được tinh thể CuSO₄ khan.",
         "image_url": "",
-        "correct_answer": "20,8",
-        "accepted_answers": [
-          "20,8",
-          "20.8"
-        ],
-        "explanation": "m(CuSO₄ ban đầu) = 46 * 0.8 = 36.8g. m(H₂O) = 50g. Khối lượng CuSO₄ tan tối đa ở 20°C trong 50g nước: 32 * 50 / 100 = 16g. Khối lượng CuSO₄ kết tinh: 36.8 - 16 = 20.8g. Khi sấy khô thu được 20.8g CuSO₄ khan.",
         "points": 1
       },
       {
@@ -2285,8 +2020,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "m(phèn tinh khiết) = 42,53 * 80% = 34,024 gam.\nm(KAl(SO₄)₂) = 34,024 * 258 / 474 = 18,52 gam.\nm(nước kết tinh) = 34,024 * 216 / 474 = 15,50 gam.\nTại 50°C: m(KAl(SO₄)₂) / (V + m_nước_kết_tinh) = 36.8 / 100 => V + 15,50 = 18,52 / 0,368 = 50,33 gam => V = 34,83 gam (34,83 ml).",
         "points": 1
       }
     ]
@@ -2316,11 +2049,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": [
-        "A",
-        "D"
-      ],
-      "explanation": "Dựa vào đồ thị Hình 3, các đường biểu diễn của NH₃ và HCl đi xuống từ trái sang phải, cho thấy độ tan của chúng trong nước giảm khi nhiệt độ tăng.",
       "points": 1
     },
     {
@@ -2342,12 +2070,6 @@
           "text": "Nước là dung môi phổ biến để hòa tan các chất tan."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": false,
-        "c": true
-      },
-      "explanation": "1) Đúng theo định nghĩa độ tan. 2) Sai, dung dịch quá bão hòa kém bền và dễ bị kết tinh khi có tác động nhỏ. 3) Đúng, nước là dung môi phổ biến nhất trong tự nhiên và đời sống.",
       "points": 1
     },
     {
@@ -2403,11 +2125,6 @@
           "text": "quá bão hòa"
         }
       ],
-      "correct_answer": {
-        "o1": "item3",
-        "o2": "item2"
-      },
-      "explanation": "Tại 30°C, độ tan của NaNO₃ là 95g/100g nước. Với 250g nước, khối lượng hòa tan tối đa là 95 * 2.5 = 237,5 gam (xấp xỉ 238 gam). Vì 225g < 238g nên thu được dung dịch chưa bão hòa.",
       "points": 1
     },
     {
@@ -2415,12 +2132,6 @@
       "question_type": "fill_blank",
       "question": "Điền số thích hợp hợp (làm tròn đến chữ số thập phân thứ nhất) vào chỗ trống để hoàn thành nhận xét sau:\nMột mẫu CuSO₄ thực tế nặng 46 gam, trong đó có 80% là CuSO₄ và còn lại là các chất rắn không tan trong nước. Để tách CuSO₄ ra khỏi hỗn hợp, ta tiến hành hòa tan hoàn toàn mẫu chất rắn trên trong 50 ml nước tinh khiết ở nhiệt độ 100°C. Lọc hỗn hợp thu lấy phần dung dịch, sau đó để cho dung dịch nguội dần đến nhiệt độ 20°C thì thấy xuất hiện các tinh thể CuSO₄ ngậm nước CuSO₄.5H₂O. Lọc lấy chất rắn rồi đem sấy ở nhiệt độ 100°C đến khi khối lượng không đổi thì thu được CuSO₄ khan.\nKhối lượng của CuSO₄ khan thu được là [o1] gam.\nCho biết, ở 20°C độ tan của CuSO₄ có giá trị là 32 gam/100 gam H₂O, khối lượng riêng của nước tinh khiết là 1 g/ml. Coi thể tích của nước là không thay đổi và khi sấy ở nhiệt độ 100°C đến khối lượng không đổi, ta chỉ thu được tinh thể CuSO₄ khan.",
       "image_url": "",
-      "correct_answer": "20,8",
-      "accepted_answers": [
-        "20,8",
-        "20.8"
-      ],
-      "explanation": "m(CuSO₄ ban đầu) = 46 * 0.8 = 36.8g. m(H₂O) = 50g. Khối lượng CuSO₄ tan tối đa ở 20°C trong 50g nước: 32 * 50 / 100 = 16g. Khối lượng CuSO₄ kết tinh: 36.8 - 16 = 20.8g. Khi sấy khô thu được 20.8g CuSO₄ khan.",
       "points": 1
     },
     {
@@ -2447,8 +2158,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "m(phèn tinh khiết) = 42,53 * 80% = 34,024 gam.\nm(KAl(SO₄)₂) = 34,024 * 258 / 474 = 18,52 gam.\nm(nước kết tinh) = 34,024 * 216 / 474 = 15,50 gam.\nTại 50°C: m(KAl(SO₄)₂) / (V + m_nước_kết_tinh) = 36.8 / 100 => V + 15,50 = 18,52 / 0,368 = 50,33 gam => V = 34,83 gam (34,83 ml).",
       "points": 1
     }
   ],
@@ -2486,8 +2195,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Nguyên tắc 'chìa và khóa' chỉ tính liên kết đặc hiệu giữa glycoprotein kháng nguyên bề mặt virus và thụ thể tương ứng trên màng tế bào chủ.",
         "points": 1
       },
       {
@@ -2555,14 +2262,6 @@
             "text": "Giải phóng"
           }
         ],
-        "correct_answer": {
-          "o1": "item3",
-          "o2": "item2",
-          "o3": "item1",
-          "o4": "item4",
-          "o5": "item5"
-        },
-        "explanation": "Thứ tự 5 giai đoạn: Hấp phụ (item3) -> Xâm nhập (item2) -> Sinh tổng hợp (item1) -> Lắp ráp (item4) -> Giải phóng (item5).",
         "points": 1
       },
       {
@@ -2589,8 +2288,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Virus ngoài môi trường (hạt virus/virion) hoàn toàn không trao đổi chất, không sinh trưởng (không lớn lên) và không nhân lên. Nó hoàn toàn trơ.",
         "points": 1
       },
       {
@@ -2617,8 +2314,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "Ví dụ, virus RNA cần tự mã hóa enzyme RNA polymerase phụ thuộc RNA để nhân bản vật chất di truyền của nó, vì tế bào chủ không có enzyme này.",
         "points": 1
       },
       {
@@ -2640,12 +2335,6 @@
             "text": "Virus sử dụng nguyên liệu của tế bào chủ trong quá trình nhân lên của mình."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": false,
-          "c": true
-        },
-        "explanation": "1) Đúng. 2) Sai (virus con tạo ra có độc tính tương tự virus mẹ). 3) Đúng (sử dụng nucleotide, axit amin, ribosome, tRNA, ATP... của tế bào chủ).",
         "points": 1
       }
     ]
@@ -2675,8 +2364,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Nguyên tắc 'chìa và khóa' chỉ tính liên kết đặc hiệu giữa glycoprotein kháng nguyên bề mặt virus và thụ thể tương ứng trên màng tế bào chủ.",
       "points": 1
     },
     {
@@ -2744,14 +2431,6 @@
           "text": "Giải phóng"
         }
       ],
-      "correct_answer": {
-        "o1": "item3",
-        "o2": "item2",
-        "o3": "item1",
-        "o4": "item4",
-        "o5": "item5"
-      },
-      "explanation": "Thứ tự 5 giai đoạn: Hấp phụ (item3) -> Xâm nhập (item2) -> Sinh tổng hợp (item1) -> Lắp ráp (item4) -> Giải phóng (item5).",
       "points": 1
     },
     {
@@ -2778,8 +2457,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Virus ngoài môi trường (hạt virus/virion) hoàn toàn không trao đổi chất, không sinh trưởng (không lớn lên) và không nhân lên. Nó hoàn toàn trơ.",
       "points": 1
     },
     {
@@ -2806,8 +2483,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "Ví dụ, virus RNA cần tự mã hóa enzyme RNA polymerase phụ thuộc RNA để nhân bản vật chất di truyền của nó, vì tế bào chủ không có enzyme này.",
       "points": 1
     },
     {
@@ -2829,12 +2504,6 @@
           "text": "Virus sử dụng nguyên liệu của tế bào chủ trong quá trình nhân lên của mình."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": false,
-        "c": true
-      },
-      "explanation": "1) Đúng. 2) Sai (virus con tạo ra có độc tính tương tự virus mẹ). 3) Đúng (sử dụng nucleotide, axit amin, ribosome, tRNA, ATP... của tế bào chủ).",
       "points": 1
     }
   ],
@@ -2909,13 +2578,6 @@
             "text": "thuận điện trở nhiệt"
           }
         ],
-        "correct_answer": {
-          "o1": "item3",
-          "o2": "item1",
-          "o3": "item4",
-          "o4": "item2"
-        },
-        "explanation": "Điện trở nhiệt NTC (Negative) có giá trị điện trở giảm khi nhiệt độ tăng, gọi là nghịch điện trở nhiệt. Điện trở nhiệt PTC (Positive) có giá trị điện trở tăng khi nhiệt độ tăng, gọi là thuận điện trở nhiệt.",
         "points": 1
       },
       {
@@ -2942,8 +2604,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "C",
-        "explanation": "Theo văn bản: 'Điện trở nhiệt được ứng dụng rộng rãi trong kĩ thuật điện tử, làm cảm biến nhiệt'. Do đó lĩnh vực sử dụng chủ yếu là Điện tử.",
         "points": 1
       },
       {
@@ -2970,8 +2630,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Tại 5°C, R = 121951,2 Ω. Tại 41°C, R = 22522,5 Ω. Khi nhiệt độ tăng từ 5°C đến 41°C, điện trở giảm đi: 121951,2 - 22522,5 = 99428,7 Ω.",
         "points": 1
       },
       {
@@ -2998,8 +2656,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Sự biến đổi của điện trở theo nhiệt độ (độ dốc của đặc tuyến) giảm dần khi nhiệt độ tăng. Ở khoảng 74°C - 80°C, điện trở giảm ít nhất (chỉ giảm khoảng 201 Ω/°C), tức là biến đổi chậm nhất.",
         "points": 1
       },
       {
@@ -3039,11 +2695,6 @@
             "text": "NTC"
           }
         ],
-        "correct_answer": {
-          "o1": "item2",
-          "o2": "item1"
-        },
-        "explanation": "Đường màu xanh đi xuống tương ứng với điện trở giảm khi nhiệt độ tăng, đó là đặc trưng của NTC. Đường màu đỏ đi lên tương ứng với điện trở tăng khi nhiệt độ tăng, đó là đặc trưng của PTC.",
         "points": 1
       }
     ]
@@ -3110,13 +2761,6 @@
           "text": "thuận điện trở nhiệt"
         }
       ],
-      "correct_answer": {
-        "o1": "item3",
-        "o2": "item1",
-        "o3": "item4",
-        "o4": "item2"
-      },
-      "explanation": "Điện trở nhiệt NTC (Negative) có giá trị điện trở giảm khi nhiệt độ tăng, gọi là nghịch điện trở nhiệt. Điện trở nhiệt PTC (Positive) có giá trị điện trở tăng khi nhiệt độ tăng, gọi là thuận điện trở nhiệt.",
       "points": 1
     },
     {
@@ -3143,8 +2787,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "C",
-      "explanation": "Theo văn bản: 'Điện trở nhiệt được ứng dụng rộng rãi trong kĩ thuật điện tử, làm cảm biến nhiệt'. Do đó lĩnh vực sử dụng chủ yếu là Điện tử.",
       "points": 1
     },
     {
@@ -3171,8 +2813,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Tại 5°C, R = 121951,2 Ω. Tại 41°C, R = 22522,5 Ω. Khi nhiệt độ tăng từ 5°C đến 41°C, điện trở giảm đi: 121951,2 - 22522,5 = 99428,7 Ω.",
       "points": 1
     },
     {
@@ -3199,8 +2839,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Sự biến đổi của điện trở theo nhiệt độ (độ dốc của đặc tuyến) giảm dần khi nhiệt độ tăng. Ở khoảng 74°C - 80°C, điện trở giảm ít nhất (chỉ giảm khoảng 201 Ω/°C), tức là biến đổi chậm nhất.",
       "points": 1
     },
     {
@@ -3240,11 +2878,6 @@
           "text": "NTC"
         }
       ],
-      "correct_answer": {
-        "o1": "item2",
-        "o2": "item1"
-      },
-      "explanation": "Đường màu xanh đi xuống tương ứng với điện trở giảm khi nhiệt độ tăng, đó là đặc trưng của NTC. Đường màu đỏ đi lên tương ứng với điện trở tăng khi nhiệt độ tăng, đó là đặc trưng của PTC.",
       "points": 1
     }
   ],
@@ -3274,8 +2907,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "Đúng. Việc thêm H₃PO₄ có tác dụng tạo phức bền màu với Fe³⁺, giúp hạ thế oxi hóa của hệ Fe³⁺/Fe²⁺ xuống, tránh làm diphenylamine chuyển màu xanh trước khi đạt điểm tương đương.",
         "points": 1
       },
       {
@@ -3297,12 +2928,6 @@
             "text": "Trong môi trường thích hợp, các muối chromate (màu da cam) và dichromate (màu vàng) chuyển hóa lẫn nhau theo cân bằng: Cr₂O₇²⁻ + H₂O ⇌ 2CrO₄²⁻ + 2H⁺."
           }
         ],
-        "correct_answer": {
-          "a": true,
-          "b": false,
-          "c": false
-        },
-        "explanation": "1) Đúng, K₂Cr₂O₇ dễ tinh chế và rất bền nên dùng làm chất chuẩn gốc. 2) Sai, cần diphenylamine làm chất chỉ thị màu. 3) Sai, chromate màu vàng, dichromate màu cam (phát biểu bị đảo ngược màu sắc).",
         "points": 1
       },
       {
@@ -3310,11 +2935,6 @@
         "question_type": "fill_blank",
         "question": "Điền số thích hợp vào chỗ trống (số cần điền là số nguyên):\nThể tích dung dịch K₂Cr₂O₇ 0,05M vừa đủ phản ứng với dung dịch chứa 0,06 mol FeSO₄ trong môi trường H₂SO₄ dư là [o1] mL.",
         "image_url": "",
-        "correct_answer": "200",
-        "accepted_answers": [
-          "200"
-        ],
-        "explanation": "Phản ứng chuẩn độ: Cr₂O₇²⁻ + 6Fe²⁺ + 14H⁺ → 2Cr³⁺ + 6Fe³⁺ + 7H₂O.\nSố mol Fe²⁺ = 0,06 mol => n(Cr₂O₇²⁻) = 0,06 / 6 = 0,01 mol.\nThể tích dung dịch K₂Cr₂O₇ 0,05 M cần dùng: V = 0,01 / 0,05 = 0,2 lít = 200 ml.",
         "points": 1
       },
       {
@@ -3341,8 +2961,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "C",
-        "explanation": "Trước khi chuẩn độ, bình nón chứa: dung dịch FeSO₄, dung dịch H₃PO₄, dung dịch HCl và dung dịch chỉ thị diphenylamine (tổng cộng 4 dung dịch).",
         "points": 1
       },
       {
@@ -3406,12 +3024,6 @@
             "text": "H₃PO₄"
           }
         ],
-        "correct_answer": {
-          "o1": "item1",
-          "o2": "item2",
-          "o3": "item5"
-        },
-        "explanation": "Chúng ta chuẩn độ dung dịch FeSO₄ (chất khử) bằng K₂Cr₂O₇ (chất oxi hóa). Điểm tương đương đạt được khi toàn bộ Fe²⁺ đã phản ứng, một giọt dư K₂Cr₂O₇ sẽ làm chỉ thị diphenylamine chuyển sang màu xanh tím.",
         "points": 1
       }
     ]
@@ -3433,8 +3045,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "Đúng. Việc thêm H₃PO₄ có tác dụng tạo phức bền màu với Fe³⁺, giúp hạ thế oxi hóa của hệ Fe³⁺/Fe²⁺ xuống, tránh làm diphenylamine chuyển màu xanh trước khi đạt điểm tương đương.",
       "points": 1
     },
     {
@@ -3456,12 +3066,6 @@
           "text": "Trong môi trường thích hợp, các muối chromate (màu da cam) và dichromate (màu vàng) chuyển hóa lẫn nhau theo cân bằng: Cr₂O₇²⁻ + H₂O ⇌ 2CrO₄²⁻ + 2H⁺."
         }
       ],
-      "correct_answer": {
-        "a": true,
-        "b": false,
-        "c": false
-      },
-      "explanation": "1) Đúng, K₂Cr₂O₇ dễ tinh chế và rất bền nên dùng làm chất chuẩn gốc. 2) Sai, cần diphenylamine làm chất chỉ thị màu. 3) Sai, chromate màu vàng, dichromate màu cam (phát biểu bị đảo ngược màu sắc).",
       "points": 1
     },
     {
@@ -3469,11 +3073,6 @@
       "question_type": "fill_blank",
       "question": "Điền số thích hợp vào chỗ trống (số cần điền là số nguyên):\nThể tích dung dịch K₂Cr₂O₇ 0,05M vừa đủ phản ứng với dung dịch chứa 0,06 mol FeSO₄ trong môi trường H₂SO₄ dư là [o1] mL.",
       "image_url": "",
-      "correct_answer": "200",
-      "accepted_answers": [
-        "200"
-      ],
-      "explanation": "Phản ứng chuẩn độ: Cr₂O₇²⁻ + 6Fe²⁺ + 14H⁺ → 2Cr³⁺ + 6Fe³⁺ + 7H₂O.\nSố mol Fe²⁺ = 0,06 mol => n(Cr₂O₇²⁻) = 0,06 / 6 = 0,01 mol.\nThể tích dung dịch K₂Cr₂O₇ 0,05 M cần dùng: V = 0,01 / 0,05 = 0,2 lít = 200 ml.",
       "points": 1
     },
     {
@@ -3500,8 +3099,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "C",
-      "explanation": "Trước khi chuẩn độ, bình nón chứa: dung dịch FeSO₄, dung dịch H₃PO₄, dung dịch HCl và dung dịch chỉ thị diphenylamine (tổng cộng 4 dung dịch).",
       "points": 1
     },
     {
@@ -3565,12 +3162,6 @@
           "text": "H₃PO₄"
         }
       ],
-      "correct_answer": {
-        "o1": "item1",
-        "o2": "item2",
-        "o3": "item5"
-      },
-      "explanation": "Chúng ta chuẩn độ dung dịch FeSO₄ (chất khử) bằng K₂Cr₂O₇ (chất oxi hóa). Điểm tương đương đạt được khi toàn bộ Fe²⁺ đã phản ứng, một giọt dư K₂Cr₂O₇ sẽ làm chỉ thị diphenylamine chuyển sang màu xanh tím.",
       "points": 1
     }
   ],
@@ -3589,11 +3180,6 @@
         "question_type": "fill_blank",
         "question": "Theo lý thuyết hấp dẫn, sự phân tách điện tích trong đám mây xảy ra qua [o1] giai đoạn.",
         "image_url": "",
-        "correct_answer": "3",
-        "accepted_answers": [
-          "3"
-        ],
-        "explanation": "Theo lý thuyết hấp dẫn và Hình 1, quá trình tích điện xảy ra qua 3 giai đoạn: Giai đoạn I (hạt trung hòa), Giai đoạn II (cọ xát khi rơi), Giai đoạn III (phân tách điện tích âm/dương).",
         "points": 1
       },
       {
@@ -3620,8 +3206,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "A",
-        "explanation": "Theo lý thuyết hấp dẫn, các hạt mưa lớn hơn khi rơi xuống đáy đám mây mang theo điện tích âm. Do đó, nồng độ điện tích âm ở chân đám mây lớn nhất khi có nhiều hạt mưa lớn rơi xuống.",
         "points": 1
       },
       {
@@ -3648,8 +3232,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "B",
-        "explanation": "Cả hai lý thuyết đều phân bố điện tích dương ở phần trên (đỉnh đám mây) và điện tích âm ở phần dưới (đáy đám mây). Khi máy bay bay qua phần tâm của đám mây và thấy tích điện âm, cả hai lý thuyết đều thống nhất rằng các điện tích dương nằm ở phía trên vùng này.",
         "points": 1
       },
       {
@@ -3676,8 +3258,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "C",
-        "explanation": "Theo lý thuyết hấp dẫn, các hạt lớn hơn (rơi nhanh hơn do trọng lực) khi cọ xát với các hạt nhỏ hơn sẽ tích điện âm và đi xuống dưới. Ở đây các tinh thể băng lớn hơn rơi nhanh hơn tinh thể băng nhỏ và tích điện âm.",
         "points": 1
       },
       {
@@ -3704,8 +3284,6 @@
           }
         ],
         "options_are_images": false,
-        "correct_answer": "D",
-        "explanation": "Lý thuyết đối lưu chỉ ra điện tích dương tập trung ở đỉnh đám mây và gần mặt đất. Không có vùng tích điện dương lơ lửng của khí quyển ở vị trí tương ứng để tia sét phóng từ chân mây (âm) tới đó.",
         "points": 1
       }
     ]
@@ -3716,11 +3294,6 @@
       "question_type": "fill_blank",
       "question": "Theo lý thuyết hấp dẫn, sự phân tách điện tích trong đám mây xảy ra qua [o1] giai đoạn.",
       "image_url": "",
-      "correct_answer": "3",
-      "accepted_answers": [
-        "3"
-      ],
-      "explanation": "Theo lý thuyết hấp dẫn và Hình 1, quá trình tích điện xảy ra qua 3 giai đoạn: Giai đoạn I (hạt trung hòa), Giai đoạn II (cọ xát khi rơi), Giai đoạn III (phân tách điện tích âm/dương).",
       "points": 1
     },
     {
@@ -3747,8 +3320,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "A",
-      "explanation": "Theo lý thuyết hấp dẫn, các hạt mưa lớn hơn khi rơi xuống đáy đám mây mang theo điện tích âm. Do đó, nồng độ điện tích âm ở chân đám mây lớn nhất khi có nhiều hạt mưa lớn rơi xuống.",
       "points": 1
     },
     {
@@ -3775,8 +3346,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "B",
-      "explanation": "Cả hai lý thuyết đều phân bố điện tích dương ở phần trên (đỉnh đám mây) và điện tích âm ở phần dưới (đáy đám mây). Khi máy bay bay qua phần tâm của đám mây và thấy tích điện âm, cả hai lý thuyết đều thống nhất rằng các điện tích dương nằm ở phía trên vùng này.",
       "points": 1
     },
     {
@@ -3803,8 +3372,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "C",
-      "explanation": "Theo lý thuyết hấp dẫn, các hạt lớn hơn (rơi nhanh hơn do trọng lực) khi cọ xát với các hạt nhỏ hơn sẽ tích điện âm và đi xuống dưới. Ở đây các tinh thể băng lớn hơn rơi nhanh hơn tinh thể băng nhỏ và tích điện âm.",
       "points": 1
     },
     {
@@ -3831,8 +3398,6 @@
         }
       ],
       "options_are_images": false,
-      "correct_answer": "D",
-      "explanation": "Lý thuyết đối lưu chỉ ra điện tích dương tập trung ở đỉnh đám mây và gần mặt đất. Không có vùng tích điện dương lơ lửng của khí quyển ở vị trí tương ứng để tia sét phóng từ chân mây (âm) tới đó.",
       "points": 1
     }
   ]

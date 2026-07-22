@@ -411,7 +411,7 @@
       // Khởi tạo Supabase Client từ cấu hình dùng chung
       let supabaseClient = null;
       let supabaseUrl = '';
-      let supabaseStorageUrl = '';
+      const examStorageUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
       if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
         supabaseUrl = window.SUPABASE_CONFIG.url;
         supabaseClient = supabase.createClient(supabaseUrl, window.SUPABASE_CONFIG.anonKey, {
@@ -423,7 +423,6 @@
           }
         });
         window.supabaseClient = supabaseClient;
-        supabaseStorageUrl = 'https://jlnfnnrboozwywikxtel.supabase.co/storage/v1/object/public/exams/';
       }
 
       /* Giữ giống logic cũ: chưa đăng nhập thì quay về login.html */
@@ -803,30 +802,20 @@
         const gender = studentInfo?.gender || "Nam";
         const avatarFileName = gender === "Nữ" ? "nu.png" : "nam.png";
         const avatarUrl = `https://assets.tmastudy.io.vn/assets/${avatarFileName}`;
-        const localAvatarUrl = `../assets/${avatarFileName}`;
 
         const sidebarAvatarImg = document.getElementById("sidebar-avatar-img");
         if (sidebarAvatarImg) {
           sidebarAvatarImg.src = avatarUrl;
-          sidebarAvatarImg.onerror = () => {
-            sidebarAvatarImg.src = localAvatarUrl;
-          };
         }
 
         const topbarAvatarImg = document.getElementById("topbar-avatar-img");
         if (topbarAvatarImg) {
           topbarAvatarImg.src = avatarUrl;
-          topbarAvatarImg.onerror = () => {
-            topbarAvatarImg.src = localAvatarUrl;
-          };
         }
 
         const logoutAvatarImg = document.getElementById("logout-avatar-img");
         if (logoutAvatarImg) {
           logoutAvatarImg.src = avatarUrl;
-          logoutAvatarImg.onerror = () => {
-            logoutAvatarImg.src = localAvatarUrl;
-          };
         }
 
         // Dashboard date update
@@ -1619,10 +1608,10 @@
               <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 8px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: none; background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
               <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
-              <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
+              <div style="font-size: 15px; font-weight: 600; color: #64748b;">Không tìm thấy khóa học nào</div>
               <p style="font-size: 12px; margin: 4px 0 0; color: var(--muted);">Các khóa học đang được cập nhật.</p>
             `;
           }
@@ -1760,10 +1749,10 @@
               <div style="font-size: 15px; font-weight: 600; color: #64748b;">Bạn chưa tham gia khóa học nào</div>
             `;
           } else {
-            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: 1px solid var(--border); border-radius: 8px; background: #ffffff; color: var(--muted); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
+            emptyCard.style.cssText = "grid-column: 1 / -1; text-align: center; min-height: 55vh; border: none; background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;";
             emptyCard.innerHTML = `
               <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Không tìm thấy khóa học nào" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
-              <div style="font-size: 15px; font-weight: 600; color: var(--text);">Không tìm thấy khóa học nào</div>
+              <div style="font-size: 15px; font-weight: 600; color: #64748b;">Không tìm thấy khóa học nào</div>
               <p style="font-size: 12px; margin: 4px 0 0; color: var(--muted);">Các khóa học đang được cập nhật.</p>
             `;
           }
@@ -3272,21 +3261,35 @@
         return cachedProvinces;
       }
 
+      function normalizeAdministrativeName(value) {
+        return String(value || "")
+          .normalize("NFC")
+          .trim()
+          .toLowerCase()
+          .replace(/^(?:thành phố|tỉnh|quận|huyện|phường|xã|thị xã|thị trấn|tp\.?)[\s.-]+/i, "")
+          .replace(/\s+/g, " ");
+      }
+
+      function isSameAdministrativeName(left, right) {
+        return normalizeAdministrativeName(left) === normalizeAdministrativeName(right);
+      }
+
       function useStaticFallback(provinceName, selectedDistrict, selectedWard) {
         const districtWrap = document.getElementById("edit-district-wrap");
         const wardWrap = document.getElementById("edit-ward-wrap");
         
-        if (MAJOR_DISTRICTS[provinceName]) {
+        const districtKey = Object.keys(MAJOR_DISTRICTS).find((key) => isSameAdministrativeName(key, provinceName));
+        if (districtKey) {
           const select = document.createElement("select");
           select.id = "edit-district";
           select.className = "form-select";
           select.required = true;
           select.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
-          MAJOR_DISTRICTS[provinceName].forEach((d) => {
+          MAJOR_DISTRICTS[districtKey].forEach((d) => {
             const opt = document.createElement("option");
             opt.value = d;
             opt.textContent = d;
-            if (d === selectedDistrict) opt.selected = true;
+            if (isSameAdministrativeName(d, selectedDistrict)) opt.selected = true;
             select.appendChild(opt);
           });
           districtWrap.innerHTML = "";
@@ -3397,7 +3400,7 @@
         document.getElementById("edit-phone").value = studentInfo.phone || "";
         document.getElementById("edit-email").value = studentInfo.email || "";
         document.getElementById("edit-school").value = studentInfo.school || "";
-        document.getElementById("edit-class").value = studentInfo.className || "";
+        document.getElementById("edit-class").value = studentInfo.className || studentInfo.class_name || "";
         document.getElementById("edit-street").value = studentInfo.street || "";
         
         editError.textContent = "";
@@ -3426,7 +3429,7 @@
             const val = `${p.code}|${p.name}`;
             opt.value = val;
             opt.textContent = p.name;
-            if (p.name === userProvinceName) {
+            if (isSameAdministrativeName(p.name, userProvinceName)) {
               opt.selected = true;
               selectedProvValue = val;
               selectedProvCode = String(p.code);
@@ -3451,7 +3454,7 @@
                 const val = `${d.code}|${d.name}`;
                 opt.value = val;
                 opt.textContent = d.name;
-                if (d.name === userDistrictName) {
+                if (isSameAdministrativeName(d.name, userDistrictName)) {
                   opt.selected = true;
                   selectedDistValue = val;
                   selectedDistCode = String(d.code);
@@ -3507,7 +3510,7 @@
                     const opt = document.createElement("option");
                     opt.value = w.name;
                     opt.textContent = w.name;
-                    if (w.name === userWardName) {
+                    if (isSameAdministrativeName(w.name, userWardName)) {
                       opt.selected = true;
                     }
                     wardSelect.appendChild(opt);
@@ -3543,7 +3546,7 @@
             const opt = document.createElement("option");
             opt.value = p;
             opt.textContent = p;
-            if (p === userProvinceName) opt.selected = true;
+            if (isSameAdministrativeName(p, userProvinceName)) opt.selected = true;
             provinceSelect.appendChild(opt);
           });
           useStaticFallback(userProvinceName, userDistrictName, userWardName);
@@ -3560,7 +3563,7 @@
       document.getElementById("edit-profile-backdrop").addEventListener("click", closeEditModalFunc);
 
       // Submit edit form
-      editForm.addEventListener("submit", (e) => {
+      editForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
         const rawProv = document.getElementById("edit-province").value;
@@ -3594,9 +3597,42 @@
           return;
         }
 
-        // Sync with tmaTsaUsers
-        if (studentInfo.username !== "test") {
-          try {
+        const editSubmitButton = editForm.querySelector('button[type="submit"]');
+        const originalEditText = editSubmitButton ? editSubmitButton.textContent : "";
+        if (editSubmitButton) {
+          editSubmitButton.disabled = true;
+          editSubmitButton.textContent = "Đang lưu...";
+        }
+        editError.textContent = "";
+
+        try {
+          if (supabaseClient && studentInfo.email && studentInfo.token) {
+            const { data: savedProfile, error: saveProfileError } = await supabaseClient
+              .from('students')
+              .update({
+                name: updated.name,
+                dob: updated.dob,
+                gender: updated.gender,
+                cccd: updated.cccd,
+                phone: updated.phone,
+                school: updated.school,
+                class_name: updated.className,
+                province: updated.province,
+                district: updated.district,
+                ward: updated.ward,
+                street: updated.street
+              })
+              .eq('email', String(studentInfo.email).toLowerCase())
+              .select('email')
+              .maybeSingle();
+
+            if (saveProfileError || !savedProfile) {
+              throw new Error(saveProfileError?.message || "Máy chủ không xác nhận thay đổi hồ sơ.");
+            }
+          }
+
+          // Keep the offline account cache in sync when it exists.
+          if (studentInfo.username !== "test") {
             const users = JSON.parse(localStorage.getItem("tmaTsaUsers") || "[]");
             const index = users.findIndex(u => String(u.email || u.username).toLowerCase() === String(studentInfo.email).toLowerCase());
             if (index !== -1) {
@@ -3616,16 +3652,21 @@
               };
               localStorage.setItem("tmaTsaUsers", JSON.stringify(users));
             }
-          } catch (err) {
-            console.error("Failed to sync updated profile to users list", err);
+          }
+
+          studentInfo = { ...updated, class_name: updated.className };
+          localStorage.setItem("studentInfo", JSON.stringify(studentInfo));
+          updateAccountUI();
+          closeEditModalFunc();
+        } catch (err) {
+          console.error("Failed to save profile", err);
+          editError.textContent = "Không thể lưu hồ sơ lên máy chủ. Vui lòng thử lại.";
+        } finally {
+          if (editSubmitButton) {
+            editSubmitButton.disabled = false;
+            editSubmitButton.textContent = originalEditText;
           }
         }
-
-        // Save studentInfo
-        studentInfo = updated;
-        localStorage.setItem("studentInfo", JSON.stringify(studentInfo));
-        updateAccountUI();
-        closeEditModalFunc();
       });
 
       // CHANGE PASSWORD MODALS HANDLERS
@@ -3694,6 +3735,51 @@
         }
 
         try {
+          const oldHash = await hashPassword(oldPwd);
+          const newHash = await hashPassword(newPwd);
+
+          if (supabaseClient && studentInfo.email && studentInfo.token) {
+            if (oldHash !== studentInfo.token) {
+              pwdError.textContent = "Mật khẩu cũ không chính xác.";
+              return;
+            }
+
+            const pwdSubmitButton = pwdForm.querySelector('button[type="submit"]');
+            const originalPwdText = pwdSubmitButton ? pwdSubmitButton.textContent : "";
+            if (pwdSubmitButton) {
+              pwdSubmitButton.disabled = true;
+              pwdSubmitButton.textContent = "Đang cập nhật...";
+            }
+
+            try {
+              const { data: changedAccount, error: changePasswordError } = await supabaseClient
+                .from('students')
+                .update({ password_hash: newHash })
+                .eq('email', String(studentInfo.email).toLowerCase())
+                .select('email')
+                .maybeSingle();
+
+              if (changePasswordError || !changedAccount) {
+                throw new Error(changePasswordError?.message || "Máy chủ không xác nhận mật khẩu mới.");
+              }
+
+              studentInfo = { ...studentInfo, token: newHash };
+              localStorage.setItem("studentInfo", JSON.stringify(studentInfo));
+              supabaseClient = supabase.createClient(supabaseUrl, window.SUPABASE_CONFIG.anonKey, {
+                global: { headers: { 'x-student-email': studentInfo.email, 'x-student-password-hash': newHash } }
+              });
+              window.supabaseClient = supabaseClient;
+              alert("Đổi mật khẩu thành công!");
+              closePwdModalFunc();
+              return;
+            } finally {
+              if (pwdSubmitButton) {
+                pwdSubmitButton.disabled = false;
+                pwdSubmitButton.textContent = originalPwdText;
+              }
+            }
+          }
+
           const users = JSON.parse(localStorage.getItem("tmaTsaUsers") || "[]");
           const index = users.findIndex(u => String(u.email || u.username).toLowerCase() === String(studentInfo.email).toLowerCase());
           if (index === -1) {
@@ -3702,15 +3788,13 @@
           }
 
           const user = users[index];
-          const oldHash = await hashPassword(oldPwd);
-          
           if (user.passwordHash !== oldHash && user.password !== oldPwd) {
             pwdError.textContent = "Mật khẩu cũ không chính xác.";
             return;
           }
 
           // Update password
-          user.passwordHash = await hashPassword(newPwd);
+          user.passwordHash = newHash;
           if (user.password) delete user.password;
           users[index] = user;
           
@@ -3840,6 +3924,11 @@
       window.EXAMS_LIST = [];
       let fetchError = false;
 
+      function keepUsableExamEntries(data) {
+        if (!Array.isArray(data)) return [];
+        return data.filter((item) => item && item.status !== "draft" && Number(item.question_count) !== 0);
+      }
+
       // Ưu tiên đọc localStorage (chạy được file:///) — fallback sang fetch JSON tĩnh
       (function loadExamsList() {
         const now = Date.now();
@@ -3848,16 +3937,16 @@
         shouldFetchIndex = true;
 
         if (shouldFetchIndex) {
-          // Tải danh sách đề từ Supabase Storage trước
-          fetch(`${supabaseStorageUrl}index.json?t=${Date.now()}`)
+          // Cloudflare R2 is the only published exam source.
+          fetch(`${examStorageUrl}index.json`, { cache: "default" })
             .then(res => {
-              if (!res.ok) throw new Error("Failed to fetch from Supabase");
+              if (!res.ok) throw new Error("Failed to fetch from R2");
               return res.json();
             })
             .then(data => {
-              window.EXAMS_LIST = data;
+              window.EXAMS_LIST = keepUsableExamEntries(data);
               try {
-                localStorage.setItem('tma_tsa_exam_index', JSON.stringify(data));
+                localStorage.setItem('tma_tsa_exam_index', JSON.stringify(window.EXAMS_LIST));
                 localStorage.setItem('tma_tsa_index_cache_time', now.toString());
               } catch (e) {}
               const activePanel = document.querySelector(".tab-panel.active");
@@ -3870,31 +3959,15 @@
               }
             })
             .catch(err => {
-              console.warn("Không tải được danh sách đề từ Supabase Storage, thử tải offline/local...");
-              fetch("data/exams/index.json")
-                .then(res => {
-                  if (!res.ok) throw new Error("Failed to fetch local index");
-                  return res.json();
-                })
-                .then(data => {
-                  window.EXAMS_LIST = data;
-                  try {
-                    localStorage.setItem('tma_tsa_exam_index', JSON.stringify(data));
-                    localStorage.setItem('tma_tsa_index_cache_time', now.toString());
-                  } catch (e) {}
-                  const activePanel = document.querySelector(".tab-panel.active");
-                  if (activePanel && activePanel.id === "tab-practice") {
-                    renderPracticeRoom();
-                  }
-                })
-                .catch(localErr => {
-                  console.error("Error loading exams index:", localErr);
-                  fetchError = window.EXAMS_LIST.length === 0;
-                  const activePanel = document.querySelector(".tab-panel.active");
-                  if (activePanel && activePanel.id === "tab-practice") {
-                    renderPracticeRoom();
-                  }
-                });
+              console.warn("Không tải được danh sách đề từ R2, dùng bản cache gần nhất.", err);
+              try {
+                window.EXAMS_LIST = keepUsableExamEntries(JSON.parse(localStorage.getItem('tma_tsa_exam_index') || '[]'));
+              } catch (error) {
+                window.EXAMS_LIST = [];
+              }
+              fetchError = window.EXAMS_LIST.length === 0;
+              const activePanel = document.querySelector(".tab-panel.active");
+              if (activePanel && activePanel.id === "tab-practice") renderPracticeRoom();
             });
         }
 
@@ -4582,151 +4655,259 @@
             });
           }
 
-           // Generate dynamic count of exams for selected TSA subtab
-           let maxPracticeIndex = 10;
+           // Build the list of exams to render for premium package
+           var practiceIndexList = [];
            try {
-             const lsData = localStorage.getItem('tma_tsa_exam_index');
-             if (lsData) {
-               const parsed = JSON.parse(lsData);
-               if (Array.isArray(parsed)) {
-                 parsed.forEach(e => {
-                   if (e.exam_code && e.exam_code.startsWith("TSA_PRACTICE_FULL_")) {
-                     const parts = e.exam_code.split("_");
-                     const num = parseInt(parts[parts.length - 1], 10);
-                     if (num > maxPracticeIndex) maxPracticeIndex = num;
-                   }
+             var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+             if (rawIdx) practiceIndexList = JSON.parse(rawIdx) || [];
+           } catch(e) {}
+           
+           // Filter out deleted exams
+           var deletedExamsList = [];
+           try {
+             deletedExamsList = JSON.parse(localStorage.getItem("tma_tsa_deleted_exams") || "[]");
+           } catch(e) {}
+           
+           let openStatus = {};
+           try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
+           var examsToRender = [];
+           practiceIndexList.forEach(function(e) {
+             var ec = String(e.exam_code || "").toUpperCase();
+             
+             // Exclude TMA001 from Premium tong-hop list
+             if (ec === "TMA001" && currentTsaPracticeSubtab === "tong-hop") return;
+
+             var isFullExam = ec.startsWith("TMA") || ec.startsWith("TSA_PRACTICE_FULL_");
+             var matchesCategory = false;
+             if (isFullExam) {
+               matchesCategory = (currentTsaPracticeSubtab === "tong-hop");
+             } else {
+               var cat = "tong-hop";
+               if (ec.includes("_MATH_")) cat = "math";
+               else if (ec.includes("_READING_")) cat = "reading";
+               else if (ec.includes("_SCIENCE_")) cat = "science";
+               matchesCategory = (cat === currentTsaPracticeSubtab);
+             }
+
+             if (matchesCategory) {
+               examsToRender.push({
+                 exam_code: e.exam_code,
+                 title: e.title,
+                 is_open: e.is_open === true || openStatus[e.exam_code] === true,
+                 hasExam: true
+               });
+             }
+           });
+
+           // Add default slots for TSA premium subtabs
+           function normalizeCode(code) {
+             return String(code || "").trim().toUpperCase().replace(/_TEACHER_DRAFT/g, "");
+           }
+           
+           if (currentTsaPracticeSubtab === "tong-hop") {
+             // TMA002 to TMA010
+             for (let i = 2; i <= 10; i++) {
+               var numStr3 = String(i).padStart(3, "0");
+               var numStr2 = String(i).padStart(2, "0");
+               var defaultCode = "TMA" + numStr3;
+               var defaultTitle = `Đề tổng hợp số ${numStr2}`;
+               
+               var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
+               if (!alreadyIn) {
+                 examsToRender.push({
+                   exam_code: defaultCode,
+                   title: defaultTitle,
+                   is_open: openStatus[defaultCode] === true,
+                   hasExam: false
                  });
                }
              }
-           } catch(e) {}
+           } else {
+             // math, reading, science: TSA_PRACTICE_MATH_01 to 09, etc.
+             var subPrefix = currentTsaPracticeSubtab.toUpperCase();
+             for (let i = 1; i <= 9; i++) {
+               var numStr2 = String(i).padStart(2, "0");
+               var defaultCode = `TSA_PRACTICE_${subPrefix}_${numStr2}`;
+               var defaultTitle = "";
+               if (currentTsaPracticeSubtab === "math") defaultTitle = `Đề TSA số ${numStr2} - Tư duy Toán học`;
+               else if (currentTsaPracticeSubtab === "reading") defaultTitle = `Đề TSA số ${numStr2} - Đọc hiểu`;
+               else if (currentTsaPracticeSubtab === "science") defaultTitle = `Đề TSA số ${numStr2} - Khoa học`;
 
-          for (let i = 1; i <= maxPracticeIndex; i++) {
-            const numStr3 = String(i).padStart(3, "0");
-            const numStr2 = String(i).padStart(2, "0");
-            const numStr = numStr2;
-            let examCodeToCheck = "TSA" + numStr3;
-             if (category === "TSA") {
-               const hasTma = (window.EXAMS_LIST || []).some(e => e.exam_code === "TMA" + numStr3);
-               examCodeToCheck = hasTma ? ("TMA" + numStr3) : ("TSA_PRACTICE_FULL_" + numStr2);
+               var alreadyIn = examsToRender.some(e => normalizeCode(e.exam_code) === normalizeCode(defaultCode));
+               if (!alreadyIn) {
+                 examsToRender.push({
+                   exam_code: defaultCode,
+                   title: defaultTitle,
+                   is_open: openStatus[defaultCode] === true,
+                   hasExam: false
+                 });
+               }
              }
-            let openStatus = {};
-            try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+           }
 
-            const hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck);
-            const hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
-            const isUploaded = (i === 1) || hasExamInList || hasLocalDraft;
+           // Filter out deleted
+           examsToRender = examsToRender.filter(function(item) {
+             var cleanCode = normalizeCode(item.exam_code);
+             return !deletedExamsList.some(d => normalizeCode(d) === cleanCode);
+           });
 
-            let examTitle = "";
-            let subjectText = "";
-            let redirectUrl = "";
-            let duration = (function() {
-              if (currentTsaPracticeSubtab === "math") return "60 phút";
-              if (currentTsaPracticeSubtab === "reading") return "30 phút";
-              if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") return "60 phút";
-              if (currentTsaPracticeSubtab === "tong-hop") return "140 phút";
-              return "45 phút";
-            })();
-            let qCount = (function() {
-              if (currentTsaPracticeSubtab === "math") return "40 câu";
-              if (currentTsaPracticeSubtab === "reading") return "20 câu";
-              if (currentTsaPracticeSubtab === "science") return "40 câu";
-              if (currentTsaPracticeSubtab === "tong-hop") return "100 câu";
-              return "40 câu";
-            })();
+           // Sort examsToRender
+           examsToRender.sort(function(a, b) {
+             if (a.hasExam !== b.hasExam) {
+               return b.hasExam ? -1 : 1;
+             }
+             return a.exam_code.localeCompare(b.exam_code);
+           });
 
-            const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck);
-            if (matchingExam) {
-              if (matchingExam.duration_minutes) duration = matchingExam.duration_minutes + " phút";
-              if (matchingExam.question_count) qCount = matchingExam.question_count + " câu";
-            }
+           // Now loop through examsToRender and render them!
+           examsToRender.forEach(function(item) {
+             var examCodeToCheck = item.exam_code;
+             var examTitle = item.title;
+             
+             var latexInfo = (function(code) {
+               var cleanCode = normalizeCode(code);
+               var raw = localStorage.getItem("tma_tsa_teacher_draft_" + cleanCode) ||
+                         localStorage.getItem("tma_tsa_exam_" + cleanCode) ||
+                         localStorage.getItem("tma_tsa_teacher_draft_" + code) ||
+                         localStorage.getItem("tma_tsa_exam_" + code);
+               var examObj = null;
+               if (raw) { try { examObj = JSON.parse(raw); } catch(e) {} }
+               var filledCount = 0;
+               if (examObj) {
+                 var checkQ = function(q) {
+                   if (!q) return false;
+                   var txt = String(q.question || q.content || "").trim();
+                   return txt.length > 0;
+                 };
+                 if (Array.isArray(examObj.questions)) {
+                   examObj.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
+                 } else if (Array.isArray(examObj.sections)) {
+                   examObj.sections.forEach(function(s) {
+                     if (Array.isArray(s.questions)) {
+                       s.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
+                     }
+                     if (Array.isArray(s.groups)) {
+                       s.groups.forEach(function(g) {
+                         if (Array.isArray(g.questions)) {
+                           g.questions.forEach(function(q) { if (checkQ(q)) filledCount++; });
+                         }
+                       });
+                     }
+                   });
+                 }
+               }
+               return { hasLatex: filledCount > 0, count: filledCount };
+             })(examCodeToCheck);
 
-            if (hasLocalDraft) {
-              try {
-                const parsed = JSON.parse(hasLocalDraft);
-                if (parsed.duration_minutes) duration = parsed.duration_minutes + " phút";
-                if (parsed.sections) {
-                  const sect = parsed.sections.find(s => s.section_id === currentTsaPracticeSubtab);
-                  if (sect && sect.questions) qCount = sect.questions.length + " câu";
-                } else if (parsed.questions) {
-                  qCount = parsed.questions.length + " câu";
-                }
-              } catch (e) {}
-            }
+             var hasExamInList = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck);
+             var hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
+             var isUploaded = hasExamInList || hasLocalDraft || latexInfo.hasLatex || (examCodeToCheck === "TMA001");
+             const isOpen = isUploaded && (item.is_open === true || openStatus[examCodeToCheck] === true);
 
-            const isOpen = (matchingExam && matchingExam.is_open !== false && openStatus[examCodeToCheck] !== false) || (!matchingExam && openStatus[examCodeToCheck] !== false);
+             let subjectText = "";
+             let redirectUrl = "";
+             let duration = (function() {
+               if (currentTsaPracticeSubtab === "math") return "60 phút";
+               if (currentTsaPracticeSubtab === "reading") return "30 phút";
+               if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") return "60 phút";
+               if (currentTsaPracticeSubtab === "tong-hop") return "140 phút";
+               return "45 phút";
+             })();
+             let qCount = (function() {
+               if (currentTsaPracticeSubtab === "math") return "40 câu";
+               if (currentTsaPracticeSubtab === "reading") return "20 câu";
+               if (currentTsaPracticeSubtab === "science") return "40 câu";
+               if (currentTsaPracticeSubtab === "tong-hop") return "100 câu";
+               return "40 câu";
+             })();
 
-            if (currentTsaPracticeSubtab === "tong-hop") {
-              examTitle = `Đề tổng hợp số ${numStr}`;
-              subjectText = "Toán học, Đọc hiểu, Khoa học";
-              redirectUrl = "waiting.html?exam=" + examCodeToCheck;
-            } else if (currentTsaPracticeSubtab === "math") {
-              examTitle = `Đề TSA số ${numStr} - Tư duy Toán học`;
-              subjectText = "Tư duy Toán học";
-              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=math&single=true`;
-            } else if (currentTsaPracticeSubtab === "reading") {
-              examTitle = `Đề TSA số ${numStr} - Đọc hiểu`;
-              subjectText = "Đọc hiểu";
-              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=reading&single=true`;
-            } else if (currentTsaPracticeSubtab === "science" || currentTsaPracticeSubtab === "don-mon") {
-              // fallback or science
-              examTitle = `Đề TSA số ${numStr} - Khoa học`;
-              subjectText = "Khoa học";
-              redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=science&single=true`;
-            }
+             const matchingExam = (window.EXAMS_LIST || []).find(e => e.exam_code === examCodeToCheck);
+             if (matchingExam) {
+               if (matchingExam.duration_minutes) duration = matchingExam.duration_minutes + " phút";
+               if (matchingExam.question_count) qCount = matchingExam.question_count + " câu";
+             }
 
-            const card = document.createElement("div");
-            card.className = "exam-card";
+             if (hasLocalDraft) {
+               try {
+                 const parsed = JSON.parse(hasLocalDraft);
+                 if (parsed.duration_minutes) duration = parsed.duration_minutes + " phút";
+                 if (parsed.sections) {
+                   const sect = parsed.sections.find(s => s.section_id === currentTsaPracticeSubtab);
+                   if (sect && sect.questions) qCount = sect.questions.length + " câu";
+                 } else if (parsed.questions) {
+                   qCount = parsed.questions.length + " câu";
+                 }
+               } catch (e) {}
+             }
 
-            const hasCompleted = completedExams.has(examCodeToCheck);
-            const xemKetQuaHtml = hasCompleted 
-              ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
-              : `<span></span>`;
+             if (currentTsaPracticeSubtab === "tong-hop") {
+               subjectText = "Toán học, Đọc hiểu, Khoa học";
+               redirectUrl = "waiting.html?exam=" + examCodeToCheck;
+             } else if (currentTsaPracticeSubtab === "math") {
+               subjectText = "Tư duy Toán học";
+               redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=math&single=true`;
+             } else if (currentTsaPracticeSubtab === "reading") {
+               subjectText = "Đọc hiểu";
+               redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=reading&single=true`;
+             } else if (currentTsaPracticeSubtab === "science") {
+               subjectText = "Khoa học";
+               redirectUrl = `confirm.html?exam=${examCodeToCheck}&subject=science&single=true`;
+             }
 
-            let actionBtnHtml = "";
-            if (isUploaded && isOpen) {
-              actionBtnHtml = `
-                <footer class="exam-card-footer">
-                  ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background: #c2272d; border-color: #c2272d; color: #ffffff; font-weight: 600; padding: 8px 24px; border-radius: 6px; border: 1px solid #c2272d; cursor: pointer; transition: opacity 0.15s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
-                </footer>
-              `;
-            } else {
-              actionBtnHtml = `
-                <footer class="exam-card-footer">
-                  ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
-                </footer>
-              `;
-            }
+             const card = document.createElement("div");
+             card.className = "exam-card";
 
-            card.innerHTML = `
-              <header class="exam-card-header">
-                <h3 style="text-transform: none;">${examTitle}</h3>
-              </header>
-              <div class="exam-card-body">
-                <div class="exam-info-row">
-                  <span class="info-label">Hình thức thi:</span>
-                  <span class="badge-green">Thi trực tuyến</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Thời gian đăng ký:</span>
-                  <span class="info-value">Hằng ngày</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Lệ phí:</span>
-                  <span class="info-value font-bold">Miễn phí</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Thời gian thi:</span>
-                  <span class="info-value">Hằng ngày</span>
-                </div>
-              </div>
-              ${actionBtnHtml}
-            `;
-            grid.appendChild(card);
-          }
-          return;
-        }
+             const hasCompleted = completedExams.has(examCodeToCheck);
+             const xemKetQuaHtml = hasCompleted 
+               ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+               : `<span></span>`;
+
+             let actionBtnHtml = "";
+             if (isUploaded && isOpen) {
+               actionBtnHtml = `
+                 <footer class="exam-card-footer">
+                   ${xemKetQuaHtml}
+                   <button class="btn btn-sm" style="background: #c2272d; border-color: #c2272d; color: #ffffff; font-weight: 600; padding: 8px 24px; border-radius: 6px; border: 1px solid #c2272d; cursor: pointer; transition: opacity 0.15s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
+                 </footer>
+               `;
+             } else {
+               actionBtnHtml = `
+                 <footer class="exam-card-footer">
+                   ${xemKetQuaHtml}
+                   <button class="btn btn-sm" style="background: #e2e8f0; border-color: #e2e8f0; color: #94a3b8; font-weight: 800; padding: 6px 16px; border-radius: 8px; border: 1px solid #e2e8f0; cursor: not-allowed;" disabled>Bắt đầu</button>
+                 </footer>
+               `;
+             }
+
+             card.innerHTML = `
+               <header class="exam-card-header">
+                 <h3 style="text-transform: none;">${examTitle}</h3>
+               </header>
+               <div class="exam-card-body">
+                 <div class="exam-info-row">
+                   <span class="info-label">Hình thức thi:</span>
+                   <span class="badge-green">Thi trực tuyến</span>
+                 </div>
+                 <div class="exam-info-row">
+                   <span class="info-label">Thời gian đăng ký:</span>
+                   <span class="info-value">Hằng ngày</span>
+                 </div>
+                 <div class="exam-info-row">
+                   <span class="info-label">Lệ phí:</span>
+                   <span class="info-value font-bold">Miễn phí</span>
+                 </div>
+                 <div class="exam-info-row">
+                   <span class="info-label">Thời gian thi:</span>
+                   <span class="info-value">Hằng ngày</span>
+                 </div>
+               </div>
+               ${actionBtnHtml}
+             `;
+             grid.appendChild(card);
+           });
+         }
+         return;
 
         // Hide TSA Subtabs Segment Controller for other categories
         if (subtabsContainer) {
@@ -7487,7 +7668,7 @@
             imgEl.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
             imgLinkEl.href = doc.url;
           } else {
-            imgEl.src = "assets/pdf-fallback.png";
+            imgEl.src = "https://assets.tmastudy.io.vn/assets/core.png";
             imgLinkEl.href = doc.url;
           }
         }

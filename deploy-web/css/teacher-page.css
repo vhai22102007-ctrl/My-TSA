@@ -47,6 +47,59 @@
       display: grid;
       grid-template-columns: var(--sidebar) minmax(0, 1fr);
       min-height: 100vh;
+      transition: grid-template-columns 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .teacher-shell.hide-sidebar,
+    .teacher-shell.hide-sidebar.sidebar-collapsed {
+      grid-template-columns: 1fr !important;
+    }
+    .teacher-shell.hide-sidebar .sidebar {
+      display: none !important;
+    }
+    .teacher-shell.hide-sidebar .btn-topbar-toggle {
+      display: none !important;
+    }
+    .teacher-shell.sidebar-collapsed:not(.hide-sidebar) {
+      grid-template-columns: 64px minmax(0, 1fr) !important;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar {
+      padding: 14px 6px !important;
+    }
+    body.single-qb-mode .teacher-shell {
+      grid-template-columns: 1fr !important;
+    }
+    body.single-qb-mode .sidebar {
+      display: none !important;
+    }
+    .teacher-shell.sidebar-collapsed .sidebar {
+      padding: 18px 6px !important;
+      align-items: center !important;
+    }
+    .teacher-shell.sidebar-collapsed .brand span,
+    .teacher-shell.sidebar-collapsed .nav-label,
+    .teacher-shell.sidebar-collapsed .nav-button > span:not(.menu-icon),
+    .teacher-shell.sidebar-collapsed .editor-step > span:not(.step-icon-wrap),
+    .teacher-shell.sidebar-collapsed .group-header > span:not(.menu-icon),
+    .teacher-shell.sidebar-collapsed .group-arrow,
+    .teacher-shell.sidebar-collapsed .submenu-wrapper,
+    .teacher-shell.sidebar-collapsed .sidebar-bottom div p {
+      display: none !important;
+    }
+    .teacher-shell.sidebar-collapsed .brand img {
+      max-width: 36px !important;
+      max-height: 32px !important;
+    }
+    .teacher-shell.sidebar-collapsed .nav-button,
+    .teacher-shell.sidebar-collapsed .editor-step,
+    .teacher-shell.sidebar-collapsed .group-header {
+      justify-content: center !important;
+      padding: 0 !important;
+      width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      margin: 0 auto 4px !important;
+      border-radius: 10px !important;
     }
 
     .sidebar {
@@ -512,9 +565,13 @@
 
     .field { display: grid; gap: 7px; }
     .field.full { grid-column: 1 / -1; }
-    label {
-      color: #374151;
-      font-size: 12px;
+    label,
+    .eyebrow,
+    .passage-group-card h3,
+    .field label,
+    .form-grid label {
+      color: #c2272d !important;
+      font-size: 12.5px;
       font-weight: 750;
     }
 
@@ -911,7 +968,8 @@
     .teacher-shell {
       transition: grid-template-columns 0.3s ease;
     }
-    .teacher-shell.hide-sidebar {
+    .teacher-shell.hide-sidebar,
+    .teacher-shell.hide-sidebar.sidebar-collapsed {
       grid-template-columns: 1fr !important;
     }
     .teacher-shell.hide-sidebar .sidebar {
@@ -920,7 +978,7 @@
     .teacher-shell.hide-sidebar .btn-topbar-toggle {
       display: none !important;
     }
-    .teacher-shell.sidebar-collapsed {
+    .teacher-shell.sidebar-collapsed:not(.hide-sidebar) {
       grid-template-columns: 64px minmax(0, 1fr) !important;
     }
     .teacher-shell.sidebar-collapsed .sidebar {

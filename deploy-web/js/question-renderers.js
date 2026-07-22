@@ -6,23 +6,77 @@
 (function (global) {
   "use strict";
 
+  // Global auto-fallback for broken relative images (redirect to CDN)
+  window.addEventListener('error', function(e) {
+    if (e.target && e.target.tagName === 'IMG') {
+      var img = e.target;
+      if (img.dataset.failedOnce) return;
+      img.dataset.failedOnce = 'true';
+      var src = img.getAttribute('src') || '';
+      if (src && src.indexOf('http://') !== 0 && src.indexOf('https://') !== 0 && src.indexOf('data:') !== 0) {
+        if (src.indexOf('assets/') === 0) {
+          img.src = 'https://assets.tmastudy.io.vn/' + src;
+        } else {
+          img.src = 'https://assets.tmastudy.io.vn/assets/' + src;
+        }
+      }
+    }
+  }, true);
+
   function preprocessMathContent(text) {
     if (!text) return "";
     var str = String(text);
-    // Parse Markdown bold **text** or ++text++ -> <strong>text</strong>
+
+    // Parse short image tag: [IMG: filename] or [IMG: filename | width]
+    str = str.replace(/\[IMG:\s*([^\]\|]+)(?:\|\s*([^\]]+))?\]/gi, function(match, file, width) {
+      file = file.trim();
+      width = (width || "48%").trim();
+      
+      // If no file extension, default to .png
+      var filename = file;
+      if (!filename.includes(".") && !filename.startsWith("data:")) {
+        filename += ".png";
+      }
+
+      var src = filename;
+      if (!src.startsWith("http://") && !src.startsWith("https://") && !src.startsWith("data:") && !src.startsWith("assets/")) {
+        var folder = (function() {
+          var code = new URLSearchParams(window.location.search).get("exam") || 
+                     window.currentExamCode || 
+                     window.examCode || 
+                     "TSA_PRACTICE_FULL_01";
+          return String(code).trim().toUpperCase().replace(/_TEACHER_DRAFT/g, "");
+        })();
+        src = "assets/" + folder + "/" + filename;
+      }
+
+      return '<img class="tsa-auto-img" style="width: ' + width + '; max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" src="' + src + '">';
+    });
+
+    // Strip Markdown bold **text** or ++text++ -> <strong>text</strong>
     str = str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     str = str.replace(/\+\+(.*?)\+\+/g, '<strong>$1</strong>');
-    // Replace standalone bullet points
-    str = str.replace(/(^|\n)[\s]*[\*\-]\s+(.*?)(?=\n|$)/g, '$1&bull; $2');
 
-    return str
-      .replace(/\\\(/g, '\\(\\displaystyle ')
-      .replace(/\$(?!\$)/g, '$\\displaystyle ')
-      .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
-      .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
-      .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
-      .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
-      .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+    // Clean up double escaped backslashes
+    str = str.replace(/\\\\/g, '\\');
+    
+    // Auto-prepend \displaystyle and auto-append \limits to operators for spacious display
+    str = str.replace(/\\\(/g, '\\(\\displaystyle ')
+             .replace(/\$(?!\$)/g, '$\\displaystyle ')
+             .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
+             .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
+             .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
+             .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
+             .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+
+    // Replace asterisks * or bullets • used in text with a clean bullet on a new line
+    str = str.replace(/([^\n])\s*[\*•]\s+/g, '$1<br>&bull; ');
+    str = str.replace(/(^|\n)\s*[\*•]\s+/g, '$1&bull; ');
+
+    // Force clean line break before numbered steps like " 2. ", " 3. ", " 4. "
+    str = str.replace(/([^\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
+
+    return str;
   }
 
   function sanitizeHTML(html) {
@@ -758,9 +812,8 @@
       }
     }
 
-    // Check if in student preview mode
-    var isUrlPreview = new URLSearchParams(window.location.search).get("preview") === "true";
-    if (isUrlPreview && answerEl) {
+    // Check if answer container is provided and solution should be shown (ONLY when options.showSolution is true)
+    if (answerEl && options && (options.showSolution === true || options.showAnswers === true || options.isTeacherPreview === true)) {
       var previewControls = document.createElement("div");
       previewControls.className = "preview-answer-drawer-container";
       previewControls.style.cssText = "margin-top: 20px; border-top: 1.5px dashed #cbd5e1; padding-top: 16px; width: 100%; font-family: inherit;";
@@ -769,7 +822,7 @@
       var answerStr = "";
       var corr = question.correct_answer;
       if (corr !== undefined && corr !== null) {
-        if (type === "single_choice" || type === "multiple_choice") {
+        if (type === "single_choice" || type === "multiple_choice" || type === "single_choice_2") {
           if (Array.isArray(corr)) {
             answerStr = corr.join(", ");
           } else {
@@ -783,6 +836,18 @@
           } else {
             answerStr = String(corr);
           }
+        } else if (type === "drag_drop") {
+          if (typeof corr === "object") {
+            var items = question.items || [];
+            answerStr = Object.keys(corr).map(function(k) {
+              var valId = corr[k];
+              var foundItem = items.find(function(it) { return it.id === valId || it.text === valId; });
+              var displayText = foundItem ? foundItem.text : valId;
+              return "[" + k + "] = " + displayText;
+            }).join(" | ");
+          } else {
+            answerStr = String(corr);
+          }
         } else {
           answerStr = String(corr);
         }
@@ -790,47 +855,46 @@
         answerStr = "Chưa có đáp án cấu hình.";
       }
       
-      var explanationStr = (question.explanation || question.solution_details || question.solution_detail || question.solution || "").trim() || "Chưa có lời giải chi tiết.";
+      var rawExp = (question.explanation || question.solution_details || question.solution_detail || question.solution || "").trim() || "Chưa có lời giải chi tiết.";
+      var safeExplanation = sanitizeHTML(rawExp);
       
+      if (window.isAnswerDrawerOpen === undefined) {
+        window.isAnswerDrawerOpen = true; // Open by default so teacher sees answer and solution live while editing
+      }
+      var isDrawerOpen = window.isAnswerDrawerOpen;
+      var displayStyle = isDrawerOpen ? "block" : "none";
+      var btnLabel = isDrawerOpen ? "Lời giải ▾" : "Lời giải ▾";
+
       previewControls.innerHTML = `
-        <button type="button" class="btn" style="background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;" onclick="window.togglePreviewAnswerDrawer(this)">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          Xem đáp án &amp; Lời giải (Preview)
+        <button type="button" class="btn" style="background: #a81c21; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 7px 14px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; margin-bottom: 8px;" onmouseover="this.style.background='#881317';" onmouseout="this.style.background='#a81c21';" onclick="window.togglePreviewAnswerDrawer(this)">
+          ${btnLabel}
         </button>
-        <div class="preview-answer-content" style="display: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 12px; font-family: inherit;">
-          <div style="margin-bottom: 10px; font-size: 14px;">
-            <span style="font-weight: 800; color: #1e293b;">🎯 Đáp án đúng:</span> 
-            <span class="badge" style="background: #dcfce7; color: #166534; font-weight: 800; padding: 4px 8px; border-radius: 6px; font-size: 13.5px; border: 1px solid #bbf7d0; margin-left: 6px;">${answerStr}</span>
+        <div class="preview-answer-content" style="display: ${displayStyle}; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 4px; font-family: inherit;">
+          <div style="margin-bottom: 10px; font-size: 13.5px;">
+            <strong style="color: #0f172a; font-weight: 700;">Đáp án đúng:</strong> 
+            <span class="badge" style="background: #ecfdf5; color: #065f46; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-size: 13px; border: 1px solid #a7f3d0; margin-left: 6px;">${answerStr}</span>
           </div>
-          <div>
-            <span style="font-weight: 800; color: #1e293b; display: block; margin-bottom: 6px;">💡 Lời giải chi tiết:</span>
-            <div style="font-size: 13.5px; color: #334155; line-height: 1.6; word-break: break-word;">${explanationStr}</div>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px;">
+            <div style="font-weight: 700; color: #0f172a; font-size: 13.5px; margin-bottom: 8px;">Lời giải chi tiết:</div>
+            <div class="explanation-text-body" style="font-size: 13.5px; color: #334155; line-height: 1.75; text-align: left; word-break: break-word;">${safeExplanation}</div>
           </div>
         </div>
       `;
       answerEl.appendChild(previewControls);
       
-      if (!window.togglePreviewAnswerDrawer) {
-        window.togglePreviewAnswerDrawer = function(btn) {
-          var content = btn.nextElementSibling;
-          if (content.style.display === "none") {
-            content.style.display = "block";
-            btn.innerHTML = `
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-              Ẩn đáp án &amp; Lời giải
-            `;
-            if (window.MathJax && window.MathJax.typesetPromise) {
-              window.MathJax.typesetPromise([content]).catch(function() {});
-            }
-          } else {
-            content.style.display = "none";
-            btn.innerHTML = `
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              Xem đáp án &amp; Lời giải (Preview)
-            `;
-          }
-        };
-      }
+      window.togglePreviewAnswerDrawer = function(btn) {
+        var content = btn.nextElementSibling;
+        if (content.style.display === "none") {
+          content.style.display = "block";
+          window.isAnswerDrawerOpen = true;
+          btn.innerHTML = `Lời giải ▴`;
+          typesetMath([content]);
+        } else {
+          content.style.display = "none";
+          window.isAnswerDrawerOpen = false;
+          btn.innerHTML = `Lời giải ▾`;
+        }
+      };
     }
 
     if (options.typeset !== false) {
