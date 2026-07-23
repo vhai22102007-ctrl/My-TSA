@@ -10743,8 +10743,7 @@ function triggerChoiceImageUpload(btn) {
         var repairedJson = repairTruncatedJson(clean);
 
         // Chuẩn hóa và sửa lỗi gạch chéo ngược LaTeX trong chuỗi JSON
-        var repaired = repairedJson.replace(/(?<!\\)\\\\(?!\\)/g, "\\\\\\\\")
-                                   .replace(/(?<!\\)\\([a-zA-Z]+)/g, function(match, word) {
+        var repaired = repairedJson.replace(/(?<!\\)\\([a-zA-Z]+)/g, function(match, word) {
           if ((word === "n" || word === "r" || word === "t" || word === "b" || word === "f") && word.length === match.length - 1) {
             return match;
           }
