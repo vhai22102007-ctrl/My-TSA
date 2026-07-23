@@ -11496,9 +11496,33 @@ function triggerChoiceImageUpload(btn) {
 
                 var addedCount = 0;
                 list.forEach(function(newQ) {
-                  newQ.question_no = mathSec.questions.length + 1;
-                  mathSec.questions.push(newQ);
-                  addedCount++;
+                  var qNo = Number(newQ.question_no);
+                  if (Number.isInteger(qNo) && qNo >= 1 && qNo <= 100) {
+                    while (mathSec.questions.length < qNo) {
+                      mathSec.questions.push({
+                        question_no: mathSec.questions.length + 1,
+                        question_type: "single_choice",
+                        question: "",
+                        options: [
+                          { key: "A", text: "" },
+                          { key: "B", text: "" },
+                          { key: "C", text: "" },
+                          { key: "D", text: "" }
+                        ],
+                        correct_answer: "A",
+                        explanation: "",
+                        points: 1
+                      });
+                    }
+                    newQ.question_no = qNo;
+                    mathSec.questions[qNo - 1] = newQ;
+                    addedCount++;
+                  } else {
+                    var fallbackIdx = activeMathQuestionNo >= 1 ? (activeMathQuestionNo - 1) : mathSec.questions.length;
+                    newQ.question_no = fallbackIdx + 1;
+                    mathSec.questions[fallbackIdx] = newQ;
+                    addedCount++;
+                  }
                 });
                 localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
                 localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
@@ -11827,9 +11851,33 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
 
               var addedCount = 0;
               list.forEach(function(newQ) {
-                newQ.question_no = mathSec.questions.length + 1;
-                mathSec.questions.push(newQ);
-                addedCount++;
+                var qNo = Number(newQ.question_no);
+                if (Number.isInteger(qNo) && qNo >= 1 && qNo <= 100) {
+                  while (mathSec.questions.length < qNo) {
+                    mathSec.questions.push({
+                      question_no: mathSec.questions.length + 1,
+                      question_type: "single_choice",
+                      question: "",
+                      options: [
+                        { key: "A", text: "" },
+                        { key: "B", text: "" },
+                        { key: "C", text: "" },
+                        { key: "D", text: "" }
+                      ],
+                      correct_answer: "A",
+                      explanation: "",
+                      points: 1
+                    });
+                  }
+                  newQ.question_no = qNo;
+                  mathSec.questions[qNo - 1] = newQ;
+                  addedCount++;
+                } else {
+                  var fallbackIdx = activeMathQuestionNo >= 1 ? (activeMathQuestionNo - 1) : mathSec.questions.length;
+                  newQ.question_no = fallbackIdx + 1;
+                  mathSec.questions[fallbackIdx] = newQ;
+                  addedCount++;
+                }
               });
               localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
               localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
