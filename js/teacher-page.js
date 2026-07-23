@@ -10741,34 +10741,28 @@ function triggerChoiceImageUpload(btn) {
         // Vá JSON nếu bị cắt cụt/thiếu ngoặc
         var repairedJson = repairTruncatedJson(clean);
 
-        try {
-          return JSON.parse(repairedJson);
-        } catch (e1) {
-          console.warn("Direct JSON.parse failed, running automated LaTeX backslash repair:", e1.message);
-        }
-
-        var repaired = repairedJson.replace(/\\([a-zA-Z]+)/g, function(match, word) {
-          if ((match === "\\n" || match === "\\r" || match === "\\t" || match === "\\b" || match === "\\f") &&
-              !/^(frac|dfrac|tfrac|text|tan|theta|times|tau|begin|bar|beta|binom|bbox|cdot|sqrt|left|right|limits|sum|int|log|lim|sin|cos|cot|vec|alpha|gamma|delta|omega|phi|pi|sigma|le|ge|neq)/i.test(word)) {
+        // Chuẩn hóa và sửa lỗi gạch chéo ngược LaTeX trong chuỗi JSON
+        var repaired = repairedJson.replace(/(?<!\\)\\([a-zA-Z]+)/g, function(match, word) {
+          if ((word === "n" || word === "r" || word === "t" || word === "b" || word === "f") && word.length === match.length - 1) {
             return match;
           }
           return "\\\\" + word;
-        }).replace(/\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})/g, "\\\\");
+        });
 
         try {
           return JSON.parse(repaired);
-        } catch (e2) {
-          console.warn("Second repair attempt failed, trying aggressive backslash escaping:", e2.message);
+        } catch (e1) {
+          console.warn("Direct JSON.parse with LaTeX repair failed, trying aggressive backslash escaping:", e1.message);
           try {
             var aggressive = repairedJson.replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
             return JSON.parse(aggressive);
-          } catch (e3) {
+          } catch (e2) {
             var match = repairedJson.match(/\{[\s\S]*\}/);
             if (match) {
               var extracted = match[0].replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
               try {
                 return JSON.parse(extracted);
-              } catch(e4) {}
+              } catch(e3) {}
             }
             throw new Error("Không thể xử lý định dạng công thức từ AI. Chi tiết: " + e1.message);
           }
