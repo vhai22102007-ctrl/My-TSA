@@ -11429,7 +11429,9 @@ function triggerChoiceImageUpload(btn) {
           return;
         }
 
-        var cleanInput = rawText.trim();
+        var cleanInput = rawText.trim()
+          .replace(/\\*text(slash|backslash)/gi, "\\\\")
+          .replace(/extbackslash/gi, "\\\\");
         var isDirectJson = false;
         var directParsed = null;
         if (cleanInput.startsWith("{") && cleanInput.endsWith("}")) {
@@ -11776,6 +11778,10 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
         })
         .then(function(resData) {
           var jsonText = resData.candidates[0].content.parts[0].text;
+          if (jsonText) {
+            jsonText = jsonText.replace(/\\*text(slash|backslash)/gi, "\\\\")
+                               .replace(/extbackslash/gi, "\\\\");
+          }
           var result = safeParseGeminiJson(jsonText);
           var targetCode = (exam && exam.exam_code) ? exam.exam_code : "TMA_RANDOM_001";
           var isRandom = (targetCode === "TMA_RANDOM_001");
