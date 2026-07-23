@@ -759,7 +759,7 @@
 
         <div class="info-row">
           <span class="info-label">Trạng thái tài khoản:</span>
-          <span class="badge-premium">Premium</span>
+          <span class="badge-premium" id="candidate-status">Đã xác thực</span>
         </div>
       </div>
 
@@ -819,16 +819,28 @@
       btnSubmitSession: document.getElementById("btn-submit-session")
     };
 
-    function renderLobbyData() {
-      const storedTitle = sessionStorage.getItem("currentExamTitle");
-      let studentInfo = null;
-      try {
-        studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
-      } catch (e) {}
+      function renderLobbyData() {
+        const storedTitle = sessionStorage.getItem("currentExamTitle");
+        let studentInfo = null;
+        let mockSession = null;
+        try {
+          studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
+        } catch (e) {}
+        try {
+          mockSession = JSON.parse(sessionStorage.getItem("tmaMockExamSession") || "null");
+        } catch (e) {}
 
-      elements.lobbyTitle.textContent = storedTitle || session.exam.title;
-      elements.studentName.textContent = studentInfo ? (studentInfo.name || studentInfo.username || studentInfo.email) : session.student.name;
-      elements.candidateId.textContent = studentInfo ? (studentInfo.cccd || studentInfo.email || studentInfo.username) : session.student.code;
+        if (mockSession && mockSession.candidate) {
+          studentInfo = {
+            name: mockSession.candidate.name,
+            phone: mockSession.candidate.code,
+            code: mockSession.candidate.code
+          };
+        }
+
+        elements.lobbyTitle.textContent = storedTitle || session.exam.title;
+        elements.studentName.textContent = studentInfo ? (studentInfo.name || studentInfo.username || studentInfo.email) : session.student.name;
+        elements.candidateId.textContent = studentInfo ? (studentInfo.code || studentInfo.phone || studentInfo.cccd || studentInfo.email || studentInfo.username) : session.student.code;
 
       let completed = {};
 

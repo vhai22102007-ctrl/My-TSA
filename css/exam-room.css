@@ -1808,7 +1808,7 @@ body[data-subject="science"] .true-false-answer-shell {
   font-size: 15px !important;
   font-weight: 500 !important;
   color: #000000 !important; /* Black text when filled */
-  width: 140px !important;
+  width: 100px !important;
   text-align: center !important;
   padding: 0px 6px 1px 6px !important; /* Zero top/bottom padding to bring text closer to border */
   height: 20px !important;
@@ -1893,8 +1893,9 @@ input[type=number] {
 }
 
 .split-question-row .answer-area {
-  width: 100%;
+  width: auto;
   margin-top: 16px;
+  margin-left: 56px;
 }
 
 /* Ensure choices container takes full width and lays out correctly */

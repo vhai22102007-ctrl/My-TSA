@@ -367,7 +367,6 @@
               completedExams.add(finishedExamCode);
               if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
               if (typeof updateExamRoomUI === "function") updateExamRoomUI();
-              if (typeof renderExams === "function") renderExams();
             }
 
             // Ẩn lớp phủ loading mượt mà sau 1.2 giây
@@ -497,7 +496,6 @@
       loadCompletedExams().then(() => {
         if (typeof updatePracticeRoomUI === "function") updatePracticeRoomUI();
         if (typeof updateExamRoomUI === "function") updateExamRoomUI();
-        if (typeof renderExams === "function") renderExams();
       });
 
       const VIETNAM_PROVINCES = [
@@ -3886,8 +3884,10 @@
       let currentSubtab = "my"; // 'my', 'all'
       let currentPracticeCategory = "tsa"; // 'tsa', 'hsa', 'thpt'
       let currentTsaPracticeSubtab = "tong-hop"; // 'tong-hop', 'don-mon'
-      let currentExamTypeCategory = "tsa"; // 'tsa', 'hsa', 'thpt'
       let currentMaterialCategory = "tsa"; // 'tsa', 'hsa', 'thpt'
+      const removedExamTabs = new Set([
+        "exams", "tsa-exam", "tsa-exams", "hsa-exams", "vact-exams", "qda-exams", "thpt-exams"
+      ]);
 
       const menuItems = document.querySelectorAll(".tsa-menu a[data-tab], a.sidebar-profile[data-tab]");
       const tabPanels = document.querySelectorAll(".tab-panel");
@@ -3953,8 +3953,6 @@
               if (activePanel) {
                 if (activePanel.id === "tab-practice") {
                   renderPracticeRoom();
-                } else if (activePanel.id === "tab-tsa-exam") {
-                  renderExams();
                 }
               }
             })
@@ -5096,159 +5094,6 @@
         renderPracticeRoom();
       }
 
-      function renderExams() {
-        const grid = document.getElementById("exams-list-grid");
-        const titleEl = document.getElementById("exam-tab-title");
-        const descEl = document.getElementById("exam-tab-desc");
-        if (!grid) return;
-        grid.innerHTML = "";
-
-        // ── TSA: hiển thị 10 đề thi thử riêng biệt với key TSA_EXAM_XX ──
-        if (currentExamTypeCategory === "tsa") {
-          if (titleEl) titleEl.textContent = "Bài thi Đánh giá tư duy - TSA";
-          if (descEl) descEl.textContent = "Các kỳ thi thử TSA được tổ chức theo cấu trúc Đại học Bách Khoa Hà Nội.";
-
-          // Đọc trạng thái mở/đóng đề từ localStorage (do giáo viên điều khiển)
-          let openStatus = {};
-          try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
-
-          for (let i = 1; i <= 1; i++) {
-            const numStr = String(i).padStart(2, "0");
-            const examCode = "TSA_EXAM_" + numStr;
-            const examTitle = "Đề thi thử TSA";
-
-            // Chỉ bật nếu đề có trong EXAMS_LIST VÀ giáo viên đã Mở đề
-            const inList = (window.EXAMS_LIST || []).find(e => e.exam_code === examCode);
-            const isOpen = inList && (inList.is_open === true || openStatus[examCode] === true);
-
-            const redirectUrl = `waiting.html?exam=${examCode}`;
-
-            const card = document.createElement("div");
-            card.className = "exam-card";
-
-            const hasCompleted = completedExams.has(examCode);
-            const xemKetQuaHtml = hasCompleted 
-              ? `<a href="#" onclick="window.showHustResultModal('${examCode}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
-              : `<span></span>`;
-
-            let actionBtnHtml = "";
-            if (isOpen) {
-              actionBtnHtml = `
-                <footer class="exam-card-footer">
-                  ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background:#c2272d;border-color:#c2272d;color:#fff;font-weight:600;padding:8px 24px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;font-size:13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
-                </footer>
-              `;
-            } else {
-              actionBtnHtml = `
-                <footer class="exam-card-footer">
-                  ${xemKetQuaHtml}
-                  <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
-                </footer>
-              `;
-            }
-
-            card.innerHTML = `
-              <header class="exam-card-header">
-                <h3 style="text-transform:none;">${examTitle}</h3>
-              </header>
-              <div class="exam-card-body">
-                <div class="exam-info-row">
-                  <span class="info-label">Hình thức thi:</span>
-                  <span class="badge-green">Thi trực tuyến</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Thời gian thi:</span>
-                  <span class="info-value">${inList && inList.duration_minutes ? inList.duration_minutes + " phút" : "150 phút"}</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Lệ phí:</span>
-                  <span class="info-value font-bold">Miễn phí</span>
-                </div>
-                <div class="exam-info-row">
-                  <span class="info-label">Trạng thái:</span>
-                  <span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">${isOpen ? "Đang mở" : "Chưa mở"}</span>
-                </div>
-              </div>
-              ${actionBtnHtml}
-            `;
-            grid.appendChild(card);
-          }
-          return;
-        }
-
-        if (titleEl) {
-          titleEl.textContent = {
-            hsa: "Bài thi Đánh giá năng lực - HSA",
-            thpt: "Thi tốt nghiệp THPTQG",
-            vact: "Bài thi Đánh giá năng lực - VACT",
-            qda: "Bài thi Đánh giá năng lực - QDA"
-          }[currentExamTypeCategory] || "Thi thử";
-        }
-
-          
-
-        const categoryPrefix = currentExamTypeCategory.toUpperCase(); // "HSA", "THPT", "VACT", "QDA"
-        const filtered = (window.EXAMS_LIST || []).filter(e => {
-          return e.exam_code && e.exam_code.toUpperCase().startsWith(categoryPrefix);
-        });
-
-        if (filtered.length === 0) {
-          const emptyState = document.createElement("div");
-          emptyState.style.cssText = "grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55vh; text-align: center; width: 100%; box-sizing: border-box;";
-          emptyState.innerHTML = `
-            <img src="https://assets.tmastudy.io.vn/assets/core.png" alt="Chưa cập nhật đề" style="max-width: 180px; width: 100%; height: auto; display: block; margin: 0 auto 16px; opacity: 0.95;" />
-            <div style="font-size: 15px; font-weight: 600; color: #64748b;">Giáo viên chưa cập nhật đề</div>
-          `;
-          grid.appendChild(emptyState);
-          return;
-        }
-
-        filtered.forEach(exam => {
-          const card = document.createElement("div");
-          card.className = "exam-card";
-          
-          let isOpen = exam.is_open === true;
-          let redirectUrl = "waiting.html?exam=" + exam.exam_code;
-          let actionBtnHtml = "";
-          
-          const hasCompleted = completedExams.has(exam.exam_code);
-          const xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${exam.exam_code}', \`${exam.title}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
-            : `<span></span>`;
-
-          if (isOpen) {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                ${xemKetQuaHtml}
-                <button class="btn btn-sm" style="background:#c2272d;border-color:#c2272d;color:#fff;font-weight:600;padding:8px 24px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;font-size:13.5px;" onclick="window.startExamDirectly(\`${exam.title}\`, '${redirectUrl}')">Bắt đầu</button>
-              </footer>
-            `;
-          } else {
-            actionBtnHtml = `
-              <footer class="exam-card-footer">
-                ${xemKetQuaHtml}
-                <button class="btn btn-sm" style="background:#e2e8f0;border-color:#e2e8f0;color:#94a3b8;font-weight:800;padding:6px 16px;border-radius:8px;cursor:not-allowed;" disabled>Chưa mở đề</button>
-              </footer>
-            `;
-          }
-
-          card.innerHTML = `
-            <header class="exam-card-header"><h3 style="text-transform: none;">${exam.title}</h3></header>
-            <div class="exam-card-body">
-              <div class="exam-info-row"><span class="info-label">Hình thức thi:</span><span class="badge-green">Thi trực tuyến</span></div>
-              <div class="exam-info-row"><span class="info-label">Thời gian thi:</span><span class="info-value">${exam.duration_minutes ? exam.duration_minutes + " phút" : "150 phút"}</span></div>
-              <div class="exam-info-row"><span class="info-label">Lệ phí:</span><span class="info-value font-bold">Miễn phí</span></div>
-              <div class="exam-info-row"><span class="info-label">Trạng thái:</span><span class="${isOpen ? 'badge-green' : ''}" style="${!isOpen ? 'color:#94a3b8;font-size:12px;font-weight:600;' : ''}">${isOpen ? "Đang mở" : "Chưa mở"}</span></div>
-            </div>
-            ${actionBtnHtml}
-          `;
-          grid.appendChild(card);
-        });
-      }
-
-
-
       // LIBRARY DOCUMENTS INTEGRATION
             window.LIBRARY_DOCS = [
         {
@@ -5742,6 +5587,9 @@
         if (typeof window.closeLibraryDetailView === "function") {
           window.closeLibraryDetailView();
         }
+        if (removedExamTabs.has(tabId)) {
+          tabId = "overview";
+        }
         // Normalize legacy documents tab IDs
         if (["tsa-documents", "hsa-documents", "thpt-documents"].includes(tabId)) {
           tabId = "documents";
@@ -5759,10 +5607,9 @@
             shellContainer.classList.remove("hide-sidebar");
           }
 
-          const isTsa = tabId.startsWith("tsa") || 
+          const isTsa = tabId.startsWith("tsa") ||
                         (tabId === "practice" && currentPracticeCategory === "tsa") ||
-                        (tabId === "courses" && currentExamCategory === "tsa") ||
-                        (tabId === "tsa-exam" && currentExamTypeCategory === "tsa");
+                        (tabId === "courses" && currentExamCategory === "tsa");
           if (isTsa) {
             shellContainer.classList.add("is-tsa");
           } else {
@@ -5795,8 +5642,6 @@
           tabId = currentExamCategory + "-courses";
         } else if (tabId === "practice") {
           tabId = currentPracticeCategory + "-practice";
-        } else if (tabId === "tsa-exam") {
-          tabId = currentExamTypeCategory + "-exams";
         }
 
         // Categorize tabId prefixes and set categories
@@ -5804,14 +5649,11 @@
           currentExamCategory = tabId.split("-")[0];
         } else if (["tsa-practice", "hsa-practice", "thpt-practice", "vact-practice", "qda-practice"].includes(tabId)) {
           currentPracticeCategory = tabId.split("-")[0];
-        } else if (["tsa-exams", "hsa-exams", "thpt-exams", "vact-exams", "qda-exams"].includes(tabId)) {
-          currentExamTypeCategory = tabId.split("-")[0];
         }
 
         // Determine active categories and panels
         const isExamRoom = ["tsa-courses", "hsa-courses", "thpt-courses"].includes(tabId);
         const isPracticeRoom = ["tsa-practice", "hsa-practice", "thpt-practice", "vact-practice", "qda-practice"].includes(tabId);
-        const isExamList = ["tsa-exams", "hsa-exams", "thpt-exams", "vact-exams", "qda-exams"].includes(tabId);
         const isDocumentsRoom = tabId === "documents";
 
         // Toggle Active Menu Item
@@ -5854,11 +5696,9 @@
             panel.classList.add("active");
           } else if (isPracticeRoom && panel.id === "tab-practice") {
             panel.classList.add("active");
-          } else if (isExamList && panel.id === "tab-tsa-exam") {
-            panel.classList.add("active");
           } else if (isDocumentsRoom && panel.id === "tab-documents") {
             panel.classList.add("active");
-          } else if (!isExamRoom && !isPracticeRoom && !isExamList && !isDocumentsRoom && panel.id === `tab-${tabId}`) {
+          } else if (!isExamRoom && !isPracticeRoom && !isDocumentsRoom && panel.id === `tab-${tabId}`) {
             panel.classList.add("active");
           } else {
             panel.classList.remove("active");
@@ -5871,7 +5711,6 @@
           syncEnrollmentsFromDatabase();
         }
         if (isPracticeRoom) updatePracticeRoomUI();
-        if (isExamList) renderExams();
         if (isDocumentsRoom) updateDocumentsUI();
         if (tabId === 'history') renderExamHistory();
 
@@ -5891,9 +5730,6 @@
           if (btn) btn.classList.add('active');
         } else if (isDocumentsRoom || tabId.includes('documents')) {
           const btn = document.getElementById('topbar-btn-documents');
-          if (btn) btn.classList.add('active');
-        } else if (isExamList || tabId === 'history') {
-          const btn = document.getElementById('topbar-btn-exams');
           if (btn) btn.classList.add('active');
         }
 

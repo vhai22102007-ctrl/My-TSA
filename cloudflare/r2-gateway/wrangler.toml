@@ -10,8 +10,13 @@ region = "gcp:asia-southeast1"
 PUBLIC_BASE_URL = "https://assets.tmastudy.io.vn"
 SUPABASE_URL = "https://jlnfnnrboozwywikxtel.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_hVMMz3_-yMQtsF4REDyDoQ_PRLgRGYE"
-GEMINI_MODEL = "gemini-3.5-flash"
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "tma-tsa-public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tma-mock-exams"
+database_id = "f7140a69-e308-4566-a100-1e9c9518f9c9"

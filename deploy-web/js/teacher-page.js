@@ -549,13 +549,6 @@
     window.selectCategoryTab = selectCategoryTab;
 
     window.selectExamCategoryLobby = function(category) {
-      if (category === 'tsa') {
-        if (typeof window.startEditingExam === 'function') {
-          window.startEditingExam('Đề thi thử TSA', 'TSA_EXAM_01');
-          return;
-        }
-      }
-
       currentExamCategory = category;
       
       // Update heading title based on category
@@ -584,8 +577,10 @@
     window.backToExamsLobby = function() {
       var lobbyView = document.getElementById("exams-lobby-view");
       var managementView = document.getElementById("exams-management-view");
+      var operationsView = document.getElementById("mock-operations-view");
       if (lobbyView) lobbyView.style.display = "block";
       if (managementView) managementView.style.display = "none";
+      if (operationsView) operationsView.hidden = true;
       
       // Clear sidebar active subtabs (since we went back to lobby)
       document.querySelectorAll(".submenu-item").forEach(function(item) {
@@ -1989,6 +1984,9 @@
               <button class="btn btn-sm btn-primary" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="startEditingExam('${examTitleStr}', '${examCode}')">
                 Chỉnh sửa
               </button>
+              <button class="btn btn-sm btn-outline" style="font-weight: 800; padding: 6px 12px; font-size: 12px;" onclick="openMockOperations('${examCode}', '${examTitleStr}')">
+                Vận hành kỳ thi
+              </button>
               ${isOpen ? `
                 <button class="btn btn-sm btn-danger" style="font-weight: 800; padding: 6px 12px; font-size: 12px; background: #ef4444; border-color: #ef4444; color: #fff;" onclick="toggleExamOpen('${examCode}', false)">
                   Đóng đề
@@ -2044,11 +2042,13 @@
           </div>
           <footer class="exam-card-footer">
             <button class="btn btn-sm btn-primary" style="font-weight: 800;" onclick="startEditingExam('${examItem.title}', '${examItem.code}')">Chỉnh sửa</button>
+            <button class="btn btn-sm btn-outline" style="font-weight: 800;" onclick="openMockOperations('${examItem.code}', '${examItem.title}')">Vận hành kỳ thi</button>
           </footer>
         `;
         grid.appendChild(card);
       });
     }
+    window.renderExamsList = renderExamsList;
 
     window.switchSystemSubtab = function(subtabId) {
       // Toggle sub-panels visibility
@@ -3422,6 +3422,16 @@
               var blankId = parts[0].trim();
               var matchText = parts[1].trim();
               var foundItem = items.find(function (it) { return it.text === matchText; });
+              if (!foundItem) {
+                var matchIndex = -1;
+                var numMatch = matchText.match(/^(?:i|item)?(\d+)$/i);
+                if (numMatch) {
+                  matchIndex = parseInt(numMatch[1], 10) - 1;
+                }
+                if (matchIndex >= 0 && matchIndex < items.length) {
+                  foundItem = items[matchIndex];
+                }
+              }
               correct_answer[blankId] = foundItem ? foundItem.id : matchText;
             }
           });
@@ -3432,6 +3442,9 @@
 
       function saveQuestion(sectionId) {
         var base = collectBaseQuestion(sectionId, true);
+        if (typeof window.cleanTmaQuestionData === "function") {
+          window.cleanTmaQuestionData(base);
+        }
         ensureSchema();
         var targetSection = getSection(sectionId);
         var qList = sectionId === "math" ? targetSection.questions : (getActiveGroup(sectionId)?.questions || []);
@@ -3664,6 +3677,132 @@
       }
       window.clearAllQuestions = clearAllQuestions;
 
+      function isMockExamClearContext() {
+        return normalizeCode(exam && exam.exam_code) === "TSA_EXAM_01";
+      }
+
+      function updateMockExamClearButtonsVisibility() {
+        var isAllowed = isMockExamClearContext();
+        ["math", "reading", "science"].forEach(function (sectionId) {
+          var button = document.getElementById("clear-" + sectionId + "-questions-button");
+          if (!button) return;
+          button.hidden = !isAllowed;
+          button.disabled = !isAllowed;
+          button.style.display = isAllowed ? "inline-flex" : "none";
+        });
+      }
+
+      async function clearAllSectionQuestions(sectionId) {
+        if (!isMockExamClearContext()) {
+          updateMockExamClearButtonsVisibility();
+          await showCustomAlert("Nút Xóa toàn bộ chỉ được phép dùng cho đề TSA_EXAM_01 trong mục Thi thử.");
+          return;
+        }
+
+        ensureSchema();
+        var labels = { math: "Toán", reading: "Đọc hiểu", science: "Khoa học" };
+        var label = labels[sectionId] || "phần thi";
+        var targetSection = getSection(sectionId);
+        if (!targetSection) return;
+
+        function hasEnteredQuestionContent(question) {
+          if (!question || typeof question !== "object") return false;
+          if (String(question.question || question.content || "").trim()) return true;
+          if (String(question.image_url || question.explanation || "").trim()) return true;
+          if ((question.options || []).some(function (option) {
+            return String((option && (option.text || option.image_url)) || "").trim();
+          })) return true;
+          if ((question.statements || []).some(function (statement) {
+            return String((statement && statement.text) || "").trim();
+          })) return true;
+          if ((question.body || []).some(function (part) {
+            return part && (part.type === "blank" || String(part.content || "").trim());
+          })) return true;
+          return (question.items || []).some(function (item) {
+            return String((item && item.text) || "").trim();
+          });
+        }
+
+        function createBlankQuestion(questionNo) {
+          return {
+            question_no: questionNo,
+            question_type: "single_choice",
+            question: "",
+            image_url: "",
+            options: [
+              { key: "A", text: "" },
+              { key: "B", text: "" },
+              { key: "C", text: "" },
+              { key: "D", text: "" }
+            ],
+            correct_answer: "",
+            explanation: "",
+            points: 1
+          };
+        }
+
+        var questionCount = 0;
+        if (sectionId === "math") {
+          questionCount = (targetSection.questions || []).filter(hasEnteredQuestionContent).length;
+        } else {
+          (targetSection.groups || []).forEach(function (group) {
+            questionCount += (group.questions || []).filter(hasEnteredQuestionContent).length;
+          });
+        }
+
+        if (!questionCount) {
+          await showCustomAlert("Phần " + label + " hiện chưa có câu hỏi để xóa.");
+          return;
+        }
+
+        var keepStimulusNotice = sectionId === "math"
+          ? ""
+          : " Các ngữ liệu và đoạn văn vẫn được giữ nguyên.";
+        var confirmed = await showCustomConfirm(
+          "Xóa toàn bộ " + questionCount + " câu hỏi của phần " + label + "?" +
+          keepStimulusNotice + " Hành động này không thể hoàn tác.",
+          "Xóa toàn bộ câu hỏi"
+        );
+        if (!confirmed) return;
+
+        try {
+          localStorage.setItem("tma_tsa_before_clear_" + normalizeCode(exam.exam_code), JSON.stringify(exam));
+        } catch (backupError) {
+          console.warn("Không thể tạo bản sao trước khi xóa câu hỏi:", backupError);
+        }
+
+        if (sectionId === "math") {
+          targetSection.questions = [];
+          activeMathQuestionNo = 1;
+        } else {
+          (targetSection.groups || []).forEach(function (group) {
+            group.questions = [];
+          });
+        }
+
+        // Recreate the fixed TSA slots, then make every slot genuinely empty.
+        // This keeps the 40-20-40 exam layout without retaining hidden answers.
+        ensureSchema();
+        targetSection = getSection(sectionId);
+        if (sectionId === "math") {
+          targetSection.questions = (targetSection.questions || []).map(function (question, index) {
+            return createBlankQuestion(Number(question.question_no) || index + 1);
+          });
+        } else {
+          (targetSection.groups || []).forEach(function (group) {
+            group.questions = (group.questions || []).map(function (question, index) {
+              return createBlankQuestion(Number(question.question_no) || index + 1);
+            });
+          });
+        }
+
+        editingQuestion[sectionId] = null;
+        saveDraft();
+        renderAll();
+        await showCustomAlert("Đã xóa toàn bộ " + questionCount + " câu hỏi của phần " + label + "." + keepStimulusNotice);
+      }
+      window.clearAllSectionQuestions = clearAllSectionQuestions;
+
       async function clearSectionContent(sectionId) {
         var label = sectionId === "math" ? "Toán" : (sectionId === "reading" ? "Đọc hiểu" : "Khoa học");
         if (!await showCustomConfirm("Bạn có chắc chắn muốn xóa SẠCH TOÀN BỘ nội dung (bao gồm đề bài, đoạn văn ngữ liệu, tất cả câu hỏi và đáp án) của phần " + label + " không? Hành động này sẽ đưa phần " + label + " về trạng thái trống ban đầu và không thể hoàn tác!")) {
@@ -3781,6 +3920,7 @@
       }
 
       function renderAll() {
+        updateMockExamClearButtonsVisibility();
         renderSummary();
         if (activeEditorTab === "reading") {
           updateReadingTabsUI();
@@ -4595,6 +4735,19 @@
           }
         }
 
+        if (window.TMAMockAdmin && /(_EXAM_|_MOCK$)/i.test(examCode)) {
+          try {
+            await window.TMAMockAdmin.upsertExam({
+              examCode: examCode,
+              title: examMeta && examMeta.title ? examMeta.title : examCode,
+              category: String(examCode).split("_")[0],
+              isOpen: open === true
+            });
+          } catch (err) {
+            console.warn("Failed to sync mock exam state to D1:", err);
+          }
+        }
+
         if (examCode.startsWith("TSA_PRACTICE_") || examCode.startsWith("TSA_PRACTICE_FULL_")) {
           renderPracticeRoom();
         } else {
@@ -4812,8 +4965,8 @@
       window.archiveMockToPractice = archiveMockToPractice;
 
       async function saveToR2Cloud() {
-        if (!supabaseClient || !window.TMAR2) {
-          window.alert("Database hoặc Cloudflare R2 chưa sẵn sàng.");
+        if (!window.TMAR2) {
+          window.alert("Cloudflare R2 chưa sẵn sàng.");
           return;
         }
 
@@ -4840,6 +4993,7 @@
                       question_type: q.question_type || q.type || "single_choice",
                       correct_answer: JSON.stringify(q.correct_answer),
                       accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
+                      tolerance: q.tolerance,
                       points: q.points || 1,
                       solution_details: q.explanation || ""
                     });
@@ -4860,6 +5014,7 @@
                           question_type: q.question_type || q.type || "single_choice",
                           correct_answer: JSON.stringify(q.correct_answer),
                           accepted_answers: q.accepted_answers ? JSON.stringify(q.accepted_answers) : null,
+                          tolerance: q.tolerance,
                           points: q.points || 1,
                           solution_details: q.explanation || ""
                         });
@@ -4873,7 +5028,33 @@
             });
           }
 
-          if (answersToInsert.length > 0) {
+          var isManagedMock = /(_EXAM_|_MOCK$)/i.test(newExamCode);
+          if (answersToInsert.length > 0 && window.TMAMockAdmin) {
+            var currentIndex = getIndexListWithCurrent();
+            var currentMeta = currentIndex.find(function(item) { return item.exam_code === newExamCode; });
+            await window.TMAMockAdmin.upsertExam({
+              examCode: newExamCode,
+              title: examCopy.title,
+              category: ((String(newExamCode).match(/^(TSA|HSA|VACT|QDA|THPT)/i) || [])[1] || "TSA").toUpperCase(),
+              isOpen: Boolean(currentMeta && currentMeta.is_open)
+            });
+            await window.TMAMockAdmin.saveAnswerKeys(newExamCode, answersToInsert.map(function(row) {
+              var correctAnswer = row.correct_answer;
+              var acceptedAnswers = row.accepted_answers;
+              try { correctAnswer = JSON.parse(correctAnswer); } catch (error) {}
+              try { acceptedAnswers = acceptedAnswers ? JSON.parse(acceptedAnswers) : null; } catch (error) {}
+              return {
+                subject: row.subject,
+                questionNo: row.question_no,
+                questionType: row.question_type,
+                correctAnswer: correctAnswer,
+                acceptedAnswers: acceptedAnswers,
+                tolerance: row.tolerance,
+                points: row.points
+              };
+            }));
+          }
+          if (answersToInsert.length > 0 && !isManagedMock && supabaseClient) {
             // Xóa đáp án cũ trước để tránh trùng lặp (unique constraint)
             await supabaseClient.from('exam_answers').delete().eq('exam_code', newExamCode);
 
@@ -5106,8 +5287,12 @@
         syncMetadataToForm();
         saveDraft();
 
-        // API key is kept in the Cloudflare Worker, never in the browser.
-        try { localStorage.removeItem("tma_gemini_api_key"); } catch (e) {}
+        // Set initial value for direct browser API key input if present
+        try {
+          var localKey = localStorage.getItem("tma_gemini_api_key") || "";
+          var keyInput = document.getElementById("browser-api-key");
+          if (keyInput) keyInput.value = localKey;
+        } catch (e) {}
 
         var defaultStartTab = "setup";
         if (window.currentEditingSubject === "math") defaultStartTab = "math";
@@ -5135,9 +5320,25 @@
         try {
           var fetchedData = null;
           var fetched = false;
+
+          // Prefer the last locally published copy over the editable draft.
+          // This gives teachers a recovery path after an accidental draft edit.
+          try {
+            var publishedLocalRaw = localStorage.getItem("tma_tsa_exam_" + cleanCode);
+            if (publishedLocalRaw) {
+              var publishedLocalExam = JSON.parse(publishedLocalRaw);
+              if (publishedLocalExam && Array.isArray(publishedLocalExam.sections)) {
+                fetchedData = publishedLocalExam;
+                fetched = true;
+                console.log("Recovered exam from the locally published copy:", cleanCode);
+              }
+            }
+          } catch (localRecoveryError) {
+            console.warn("Không thể đọc bản đề đã xuất bản trong máy:", localRecoveryError);
+          }
           
           // 0a. If running via file:// protocol, prioritize pre-embedded fallback data
-          if (window.location.protocol === "file:" && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
+          if (!fetched && window.location.protocol === "file:" && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
             fetchedData = JSON.parse(JSON.stringify(window.TSA001_FALLBACK_DATA));
             fetched = true;
             console.log("Loaded exam from pre-embedded fallback script (file:// protocol).");
@@ -5629,6 +5830,123 @@
         setupSectionImportExport('math', 'sidebar-download-math-button', 'sidebar-import-math-button', 'Tư duy Toán học');
         setupSectionImportExport('reading', 'sidebar-download-reading-button', 'sidebar-import-reading-button', 'Đọc hiểu');
         setupSectionImportExport('science', 'sidebar-download-science-button', 'sidebar-import-science-button', 'Khoa học');
+
+      window.cleanTmaQuestionData = function(question) {
+        if (!question || typeof question !== "object") return;
+        if (question.hasOwnProperty("question_no")) {
+          question.question_no = Number(question.question_no);
+        }
+        // Parse string correct_answer to object for true_false and drag_drop
+        if (question.question_type === "true_false" && typeof question.correct_answer === "string") {
+          var tfAns = {};
+          question.correct_answer.split("|").forEach(function(pair) {
+            var parts = pair.split("=");
+            if (parts.length === 2) {
+              var stId = parts[0].trim().toLowerCase();
+              var val = parts[1].trim().toLowerCase();
+              tfAns[stId] = (val === "t" || val === "true" || val === "đúng" || val === "dung");
+            }
+          });
+          question.correct_answer = tfAns;
+        }
+        if (question.question_type === "drag_drop" && typeof question.correct_answer === "string") {
+          var ddAns = {};
+          question.correct_answer.split("|").forEach(function(pair) {
+            var parts = pair.split("=");
+            if (parts.length === 2) {
+              ddAns[parts[0].trim()] = parts[1].trim();
+            }
+          });
+          question.correct_answer = ddAns;
+        }
+        if (typeof question.question === "string") {
+          question.question = question.question.replace(/\\n/g, "\n");
+          question.question = question.question.replace(/\\vec{/g, "\\overrightarrow{");
+          question.question = question.question.replace(/^[ \t]*\d+[\)\.]\s*/gm, "- ");
+        }
+        if (typeof question.prompt === "string") {
+          question.prompt = question.prompt.replace(/\\n/g, "\n");
+          question.prompt = question.prompt.replace(/\\vec{/g, "\\overrightarrow{");
+          question.prompt = question.prompt.replace(/^[ \t]*\d+[\)\.]\s*/gm, "- ");
+        }
+        if (Array.isArray(question.options)) {
+          question.options.forEach(function (opt) {
+            if (opt.text && typeof opt.text === "string") {
+              opt.text = opt.text.replace(/\\n/g, "\n").trim();
+              if (/^\d+\/\d+$/.test(opt.text)) {
+                opt.text = opt.text.replace(/^(\d+)\/(\d+)$/, "\\(\\dfrac{$1}{$2}\\)");
+              }
+              opt.text = opt.text.replace(/\\vec{/g, "\\overrightarrow{");
+              if ((opt.text.includes("\\") || opt.text.includes("^") || opt.text.includes("_") || opt.text.includes("{") || opt.text.includes("}")) && !opt.text.includes("\\(")) {
+                opt.text = "\\(" + opt.text + "\\)";
+              }
+            }
+          });
+        }
+        if (Array.isArray(question.items)) {
+          question.items.forEach(function (item) {
+            if (item.text && typeof item.text === "string") {
+              item.text = item.text.replace(/\\n/g, "\n").trim();
+              if (/^\d+\/\d+$/.test(item.text)) {
+                item.text = item.text.replace(/^(\d+)\/(\d+)$/, "\\(\\dfrac{$1}{$2}\\)");
+              }
+              item.text = item.text.replace(/\\vec{/g, "\\overrightarrow{");
+              if ((item.text.includes("\\") || item.text.includes("^") || item.text.includes("_") || item.text.includes("{") || item.text.includes("}")) && !item.text.includes("\\(")) {
+                item.text = "\\(" + item.text + "\\)";
+              }
+            }
+          });
+        }
+        if (Array.isArray(question.body)) {
+          question.body.forEach(function (part) {
+            if (part.content && typeof part.content === "string") {
+              part.content = part.content.replace(/\\n/g, "\n");
+              part.content = part.content.replace(/\\vec{/g, "\\overrightarrow{");
+              part.content = part.content.replace(/^[ \t]*\d+[\)\.]\s*/gm, "- ");
+            }
+          });
+        }
+        if (Array.isArray(question.statements)) {
+          question.statements.forEach(function (st) {
+            if (st.text && typeof st.text === "string") {
+              st.text = st.text.replace(/\\n/g, "\n").trim();
+              st.text = st.text.replace(/\\vec{/g, "\\overrightarrow{");
+              if ((st.text.includes("\\") || st.text.includes("^") || st.text.includes("_") || st.text.includes("{") || st.text.includes("}")) && !st.text.includes("\\(")) {
+                st.text = "\\(" + st.text + "\\)";
+              }
+            }
+          });
+        }
+      };
+
+        function sanitizeAiImportedQuestions(importedExam) {
+          if (!importedExam || !Array.isArray(importedExam.sections)) return importedExam;
+
+          function cleanQuestion(question) {
+            if (!question || typeof question !== "object") return;
+            if (typeof window.cleanTmaQuestionData === "function") {
+              window.cleanTmaQuestionData(question);
+            }
+            // Bảo toàn lời giải chi tiết
+            if (!question.explanation) {
+              question.explanation = question.solution_details || question.solution_detail || question.solution || question.answer_explanation || "";
+            }
+            delete question.solution;
+            delete question.solution_detail;
+            delete question.solution_details;
+            delete question.answer_explanation;
+            delete question.reasoning;
+          }
+
+          importedExam.sections.forEach(function (section) {
+            (section.questions || []).forEach(cleanQuestion);
+            (section.groups || []).forEach(function (group) {
+              (group.questions || []).forEach(cleanQuestion);
+            });
+          });
+          return importedExam;
+        }
+
         var aiRunBtn = $("#ai-run-button");
         if (aiRunBtn) {
           aiRunBtn.addEventListener("click", async function () {
@@ -5645,9 +5963,9 @@
               return;
             }
 
-            var originalText = aiRunBtn.textContent;
+            var originalHtml = aiRunBtn.innerHTML;
             aiRunBtn.disabled = true;
-            aiRunBtn.textContent = "AI đang phân tích & tách câu hỏi... (5-10s)";
+            aiRunBtn.innerHTML = "<span>AI đang tách và nhập câu hỏi...</span>";
 
             try {
               var jsonStructureText = "";
@@ -5761,8 +6079,7 @@ CÁC DẠNG CÂU HỎI HỖ TRỢ:
     { "key": "C", "text": "Phương án C" },
     { "key": "D", "text": "Phương án D" }
   ],
-  "correct_answer": "B", // Phím đáp án đúng (A, B, C hoặc D)
-  "explanation": "Giải thích...",
+  "correct_answer": "", // Chỉ chép phím đáp án khi nguồn ghi rõ
   "points": 1
 }
 
@@ -5776,8 +6093,7 @@ CÁC DẠNG CÂU HỎI HỖ TRỢ:
     { "key": "A", "text": "Phương án A" },
     { "key": "B", "text": "Phương án B" }
   ],
-  "correct_answer": ["A", "B"], // Mảng các đáp án đúng
-  "explanation": "Giải thích...",
+  "correct_answer": [], // Chỉ chép các đáp án khi nguồn ghi rõ
   "points": 1
 }
 
@@ -5791,16 +6107,12 @@ CÁC DẠNG CÂU HỎI HỖ TRỢ:
     { "id": "a", "text": "Mệnh đề a..." },
     { "id": "b", "text": "Mệnh đề b..." }
   ],
-  "correct_answer": {
-    "a": true, // Đúng
-    "b": false // Sai
-  },
-  "explanation": "Giải thích...",
+  "correct_answer": "a=T | b=F", // Chỉ ghi Đúng (T) hoặc Sai (F) của các ý dạng chuỗi: "a=T | b=F" hoặc "a=Đúng | b=Sai"
   "points": 1
 }
 
 4. Câu hỏi kéo thả / điền chỗ trống (drag_drop):
-Dùng dạng này khi đề thi yêu cầu điền vào các ô trống trong đoạn văn.
+Dùng dạng này khi đề thi có yêu cầu điền vào các ô trống, chỗ trống "...", hoặc các ô trống trong bảng dữ liệu. BẮT BUỘC phải phân tách phần văn bản/bảng biểu thành mảng "body" gồm các phần tử "text" (chứa phần văn bản hoặc mã HTML bảng xen kẽ) và các phần tử "blank" (có id là "o1", "o2"... tại đúng vị trí ô trống cần điền). Các từ khóa hoặc số đáp án để kéo thả phải được đưa vào mảng "items" với id là "i1", "i2"...
 {
   "question_no": 4,
   "question_type": "drag_drop",
@@ -5817,11 +6129,7 @@ Dùng dạng này khi đề thi yêu cầu điền vào các ô trống trong đ
     { "id": "i2", "text": "đáp án đúng 2" },
     { "id": "i3", "text": "đáp án gây nhiễu" }
   ],
-  "correct_answer": {
-    "o1": "i1",
-    "o2": "i2"
-  },
-  "explanation": "Giải thích...",
+  "correct_answer": "o1=i1 | o2=i2", // Ghép cặp ô trống và nhãn đáp án dạng chuỗi: "o1=i1 | o2=i2"
   "points": 1
 }
 
@@ -5831,68 +6139,779 @@ Dùng dạng này khi đề thi yêu cầu điền vào các ô trống trong đ
   "question_type": "numeric_answer",
   "question": "Nội dung câu hỏi...",
   "image_url": "",
-  "correct_answer": 12.5, // Số thực hoặc số nguyên đáp án đúng
+  "correct_answer": null, // Chỉ chép giá trị khi nguồn ghi rõ
   "tolerance": 0,
-  "explanation": "Giải thích...",
   "points": 1
 }
 
 YÊU CẦU QUAN TRỌNG:
+- CHỈ NHẬP CÂU HỎI: Chỉ chép và chuẩn hóa ngữ liệu, nội dung câu hỏi, phương án lựa chọn và đáp án chấm đã có sẵn trong văn bản nguồn.
+- TUYỆT ĐỐI KHÔNG GIẢI BÀI, không tạo lời giải và không trả về các trường "explanation", "solution", "solution_detail" hoặc "solution_details".
+- Chỉ điền "correct_answer" khi văn bản nguồn ghi rõ đáp án. Nếu nguồn không có đáp án, để trống đúng kiểu dữ liệu; không tự suy luận hoặc giải để tìm đáp án.
 - Trả về cấu trúc JSON hợp lệ hoàn toàn dựa theo cấu trúc trên.
 - Sử dụng chuẩn toán học LaTeX với ký hiệu \\( ... \\) cho công thức nội dòng (inline) và \\[ ... \\] cho công thức khối (display math). Ví dụ: \\(f(x) = x^2\\). Hãy chắc chắn escape đúng các ký tự chéo ngược \\ thành \\\\ trong chuỗi JSON.
 - ĐỂ CÔNG THỨC TOÁN HIỂN THỊ TO RÕ ĐẸP MẮT: BẮT BUỘC sử dụng lệnh \\dfrac thay vì \\frac cho tất cả các phân số. Đối với các ký hiệu tổng hoặc tích, sử dụng thêm \\limits (ví dụ: \\sum\\limits_{k=1}^{n} hoặc \\prod\\limits_{i=1}^{2026}) để giới hạn hiển thị ngay ngắn phía trên và phía dưới ký hiệu và có kích thước to rõ như sách giáo khoa.
 - BẮT BUỘC GIỮ NGUYÊN các đoạn mã vẽ hình vector <svg>...</svg> hoặc bảng dữ liệu <table>...</table> có sẵn trong văn bản đề thi thô. Hãy lồng trực tiếp các đoạn mã này vào nội dung câu hỏi "question" hoặc phần ngữ liệu của nhóm mà không được tự ý xóa bỏ hay lược dịch thành chữ.
 - Nếu câu hỏi có liên quan đến hình ảnh tải lên từ máy tính, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
+- HÃY GHÉP CÁC DÒNG của cùng một câu văn lại với nhau. Nếu trong văn bản gốc bị xuống dòng giữa chừng do hết dòng trang giấy, hãy nối chúng lại thành một câu dài liên mạch. Chỉ xuống dòng khi bắt đầu đoạn văn mới hoặc danh sách gạch đầu dòng.
+- Giữ nguyên các chữ cái đứng cạnh dấu chấm (ví dụ: "điểm M." hoặc "A(1; 2; -4).") trên cùng một dòng, tuyệt đối không tự ý xuống dòng sau dấu chấm của câu văn hoặc ký hiệu thông thường.
+- KHÔNG ngắt câu bừa bãi tại các số thứ tự. Ví dụ: "khác 1. Xét tính đúng sai..." là câu liền mạch, không được ngắt dòng tại "1.".
 `;
 
+              // Xây dựng Response Schema động để tối ưu hóa token và ép cấu trúc JSON chuẩn
+              var activeSchema;
+              var mathSchema = {
+                type: "OBJECT",
+                properties: {
+                  exam_code: { type: "STRING" },
+                  title: { type: "STRING" },
+                  duration_minutes: { type: "INTEGER" },
+                  status: { type: "STRING" },
+                  sections: {
+                    type: "ARRAY",
+                    items: {
+                      type: "OBJECT",
+                      properties: {
+                        section_id: { type: "STRING", enum: ["math"] },
+                        section_label: { type: "STRING" },
+                        layout: { type: "STRING", enum: ["single"] },
+                        questions: {
+                          type: "ARRAY",
+                          items: {
+                            type: "OBJECT",
+                            properties: {
+                              question_no: { type: "INTEGER" },
+
+                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+
+                              question: { type: "STRING" },
+
+                              image_url: { type: "STRING" },
+
+                              options: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    key: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["key", "text"]
+
+                                }
+
+                              },
+
+                              statements: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    id: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["id", "text"]
+
+                                }
+
+                              },
+
+                              body: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    type: { type: "STRING", enum: ["text", "blank"] },
+
+                                    content: { type: "STRING" },
+
+                                    id: { type: "STRING" }
+
+                                  },
+
+                                  required: ["type"]
+
+                                }
+
+                              },
+
+                              items: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    id: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["id", "text"]
+
+                                }
+
+                              },
+
+                              correct_answer: { type: "STRING" },
+
+                              points: { type: "NUMBER" }
+                            },
+                            required: ["question_no", "question_type", "question"]
+                          }
+                        }
+                      },
+                      required: ["section_id", "section_label", "layout", "questions"]
+                    }
+                  }
+                },
+                required: ["sections"]
+              };
+              var splitSchema = {
+                type: "OBJECT",
+                properties: {
+                  exam_code: { type: "STRING" },
+                  title: { type: "STRING" },
+                  duration_minutes: { type: "INTEGER" },
+                  status: { type: "STRING" },
+                  sections: {
+                    type: "ARRAY",
+                    items: {
+                      type: "OBJECT",
+                      properties: {
+                        section_id: { type: "STRING", enum: [selectedSection] },
+                        section_label: { type: "STRING" },
+                        layout: { type: "STRING", enum: ["split"] },
+                        groups: {
+                          type: "ARRAY",
+                          items: {
+                            type: "OBJECT",
+                            properties: {
+                              group_id: { type: "STRING" },
+                              title: { type: "STRING" },
+                              stimulus: {
+                                type: "OBJECT",
+                                properties: {
+                                  type: { type: "STRING", enum: ["text", "html"] },
+                                  content: { type: "STRING" }
+                                },
+                                required: ["type", "content"]
+                              },
+                              questions: {
+                                type: "ARRAY",
+                                items: {
+                                  type: "OBJECT",
+                                  properties: {
+                                    question_no: { type: "INTEGER" },
+
+                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+
+                                    question: { type: "STRING" },
+
+                                    image_url: { type: "STRING" },
+
+                                    options: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          key: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["key", "text"]
+
+                                      }
+
+                                    },
+
+                                    statements: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          id: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["id", "text"]
+
+                                      }
+
+                                    },
+
+                                    body: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          type: { type: "STRING", enum: ["text", "blank"] },
+
+                                          content: { type: "STRING" },
+
+                                          id: { type: "STRING" }
+
+                                        },
+
+                                        required: ["type"]
+
+                                      }
+
+                                    },
+
+                                    items: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          id: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["id", "text"]
+
+                                      }
+
+                                    },
+
+                                    correct_answer: { type: "STRING" },
+
+                                    points: { type: "NUMBER" }
+                                  },
+                                  required: ["question_no", "question_type", "question"]
+                                }
+                              }
+                            },
+                            required: ["group_id", "title", "stimulus", "questions"]
+                          }
+                        }
+                      },
+                      required: ["section_id", "section_label", "layout", "groups"]
+                    }
+                  }
+                },
+                required: ["sections"]
+              };
+              var autoSchema = {
+                type: "OBJECT",
+                properties: {
+                  exam_code: { type: "STRING" },
+                  title: { type: "STRING" },
+                  duration_minutes: { type: "INTEGER" },
+                  status: { type: "STRING" },
+                  sections: {
+                    type: "ARRAY",
+                    items: {
+                      type: "OBJECT",
+                      properties: {
+                        section_id: { type: "STRING", enum: ["math", "reading", "science"] },
+                        section_label: { type: "STRING" },
+                        layout: { type: "STRING", enum: ["single", "split"] },
+                        questions: {
+                          type: "ARRAY",
+                          items: {
+                            type: "OBJECT",
+                            properties: {
+                              question_no: { type: "INTEGER" },
+
+                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+
+                              question: { type: "STRING" },
+
+                              image_url: { type: "STRING" },
+
+                              options: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    key: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["key", "text"]
+
+                                }
+
+                              },
+
+                              statements: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    id: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["id", "text"]
+
+                                }
+
+                              },
+
+                              body: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    type: { type: "STRING", enum: ["text", "blank"] },
+
+                                    content: { type: "STRING" },
+
+                                    id: { type: "STRING" }
+
+                                  },
+
+                                  required: ["type"]
+
+                                }
+
+                              },
+
+                              items: {
+
+                                type: "ARRAY",
+
+                                items: {
+
+                                  type: "OBJECT",
+
+                                  properties: {
+
+                                    id: { type: "STRING" },
+
+                                    text: { type: "STRING" }
+
+                                  },
+
+                                  required: ["id", "text"]
+
+                                }
+
+                              },
+
+                              correct_answer: { type: "STRING" },
+
+                              points: { type: "NUMBER" }
+                            },
+                            required: ["question_no", "question_type", "question"]
+                          }
+                        },
+                        groups: {
+                          type: "ARRAY",
+                          items: {
+                            type: "OBJECT",
+                            properties: {
+                              group_id: { type: "STRING" },
+                              title: { type: "STRING" },
+                              stimulus: {
+                                type: "OBJECT",
+                                properties: {
+                                  type: { type: "STRING", enum: ["text", "html"] },
+                                  content: { type: "STRING" }
+                                },
+                                required: ["type", "content"]
+                              },
+                              questions: {
+                                type: "ARRAY",
+                                items: {
+                                  type: "OBJECT",
+                                  properties: {
+                                    question_no: { type: "INTEGER" },
+
+                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+
+                                    question: { type: "STRING" },
+
+                                    image_url: { type: "STRING" },
+
+                                    options: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          key: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["key", "text"]
+
+                                      }
+
+                                    },
+
+                                    statements: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          id: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["id", "text"]
+
+                                      }
+
+                                    },
+
+                                    body: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          type: { type: "STRING", enum: ["text", "blank"] },
+
+                                          content: { type: "STRING" },
+
+                                          id: { type: "STRING" }
+
+                                        },
+
+                                        required: ["type"]
+
+                                      }
+
+                                    },
+
+                                    items: {
+
+                                      type: "ARRAY",
+
+                                      items: {
+
+                                        type: "OBJECT",
+
+                                        properties: {
+
+                                          id: { type: "STRING" },
+
+                                          text: { type: "STRING" }
+
+                                        },
+
+                                        required: ["id", "text"]
+
+                                      }
+
+                                    },
+
+                                    correct_answer: { type: "STRING" },
+
+                                    points: { type: "NUMBER" }
+                                  },
+                                  required: ["question_no", "question_type", "question"]
+                                }
+                              }
+                            },
+                            required: ["group_id", "title", "stimulus", "questions"]
+                          }
+                        }
+                      },
+                      required: ["section_id", "section_label", "layout"]
+                    }
+                  }
+                },
+                required: ["sections"]
+              };
+              if (selectedSection === "math") {
+                activeSchema = mathSchema;
+              } else if (selectedSection === "reading" || selectedSection === "science") {
+                activeSchema = splitSchema;
+              } else {
+                activeSchema = autoSchema;
+              }
+
+              function extractExpectedQuestionNumbers(text) {
+                var seen = {};
+                var numbers = [];
+                var match;
+                var questionPattern = /(?:^|\r?\n)\s*Câu\s+(\d+)\b/gi;
+
+                while ((match = questionPattern.exec(text)) !== null) {
+                  var questionNo = parseInt(match[1], 10);
+                  if (!seen[questionNo]) {
+                    seen[questionNo] = true;
+                    numbers.push(questionNo);
+                  }
+                }
+
+                return numbers.sort(function (a, b) { return a - b; });
+              }
+
+              function collectImportedQuestions(importedExam) {
+                var questions = [];
+                ((importedExam && importedExam.sections) || []).forEach(function (section) {
+                  (section.questions || []).forEach(function (question) {
+                    questions.push(question);
+                  });
+                  (section.groups || []).forEach(function (group) {
+                    (group.questions || []).forEach(function (question) {
+                      questions.push(question);
+                    });
+                  });
+                });
+                return questions;
+              }
+
+              function isImportedQuestionComplete(question) {
+                if (!question || !String(question.question || "").trim()) return false;
+
+                if (question.question_type === "single_choice" || question.question_type === "multiple_choice") {
+                  var validOptions = (question.options || []).filter(function (option) {
+                    return option && String(option.text || "").trim();
+                  });
+                  return validOptions.length >= 2;
+                }
+
+                if (question.question_type === "true_false") {
+                  var validStatements = (question.statements || []).filter(function (statement) {
+                    return statement && String(statement.text || "").trim();
+                  });
+                  return validStatements.length >= 2;
+                }
+
+                return true;
+              }
+
+              function validateImportedQuestions(importedExam, expectedNumbers) {
+                if (!importedExam || !Array.isArray(importedExam.sections)) {
+                  return { valid: false, missing: expectedNumbers.slice(), duplicates: [] };
+                }
+
+                var counts = {};
+                var complete = {};
+                collectImportedQuestions(importedExam).forEach(function (question) {
+                  var questionNo = Number(question && question.question_no);
+                  if (!Number.isInteger(questionNo) || questionNo <= 0) return;
+                  counts[questionNo] = (counts[questionNo] || 0) + 1;
+                  if (isImportedQuestionComplete(question)) complete[questionNo] = true;
+                });
+
+                var missing = expectedNumbers.filter(function (questionNo) {
+                  return !complete[questionNo];
+                });
+                var duplicates = Object.keys(counts).filter(function (questionNo) {
+                  return counts[questionNo] > 1;
+                }).map(Number).sort(function (a, b) { return a - b; });
+
+                return {
+                  valid: importedExam.sections.length > 0 &&
+                    (expectedNumbers.length === 0 ? collectImportedQuestions(importedExam).length > 0 : missing.length === 0) &&
+                    duplicates.length === 0,
+                  missing: missing,
+                  duplicates: duplicates
+                };
+              }
+
+              var expectedQuestionNumbers = extractExpectedQuestionNumbers(rawText);
+              var expectedQuestionInstruction = expectedQuestionNumbers.length
+                ? "\n\nKIỂM SOÁT TÍNH TOÀN VẸN BẮT BUỘC:\n" +
+                  "- Văn bản nguồn có đúng " + expectedQuestionNumbers.length + " câu, mang số: " + expectedQuestionNumbers.join(", ") + ".\n" +
+                  "- Phải trả về đầy đủ từng câu trong danh sách trên trong MỘT phản hồi JSON duy nhất.\n" +
+                  "- Không được bỏ câu, gộp câu, đổi số câu hoặc tạo câu chỉ có số nhưng thiếu nội dung/phương án.\n" +
+                  "- Trước khi kết thúc phản hồi, tự đối chiếu lại đủ " + expectedQuestionNumbers.length + " số câu."
+                : "\n\nPhải trả về toàn bộ câu hỏi trong văn bản nguồn trong MỘT phản hồi JSON duy nhất; không được bỏ hoặc tạo câu trống.";
               var payload = {
                 contents: [
                   {
                     role: "user",
                     parts: [
                       {
-                        text: systemInstruction + "\n\nNỘI DUNG ĐỀ THI CẦN PHÂN TÍCH:\n" + rawText
+                        text: systemInstruction + expectedQuestionInstruction +
+                          "\n\nNỘI DUNG CẦN TÁCH VÀ NHẬP CÂU HỎI:\n" + rawText
                       }
                     ]
                   }
                 ],
                 generationConfig: {
-                  responseMimeType: "application/json"
+                  responseMimeType: "application/json",
+                  responseSchema: activeSchema,
+                  maxOutputTokens: 65536
                 }
               };
-              var response = await callGemini(payload);
+              var imported = null;
 
-              if (!response.ok) {
-                var errBody = await response.text();
-                var errMsg = "Lỗi kết nối API Gemini.";
-                try {
-                  var errObj = JSON.parse(errBody);
-                  if (errObj && errObj.error) {
-                    var status = errObj.error.status || "";
-                    var rawMsg = errObj.error.message || "";
-                    if (status === "RESOURCE_EXHAUSTED") {
-                      if (rawMsg.toLowerCase().includes("limit: 20") || rawMsg.toLowerCase().includes("daily")) {
-                        errMsg = "Hạn mức miễn phí hàng ngày (20 yêu cầu) của API Key này đã hết. Hãy tạo và sử dụng API Key mới hoặc nâng cấp hạn mức.";
-                      } else {
-                        errMsg = "Quá giới hạn tần suất gửi yêu cầu của gói miễn phí. Vui lòng chờ 15-30 giây rồi thử lại.";
-                      }
-                    } else {
-                      errMsg = rawMsg || errObj.error.message || errMsg;
-                    }
+              var runButton = document.getElementById("ai-run-button");
+              var originalBtnHtml = runButton.innerHTML;
+              runButton.disabled = true;
+
+              try {
+                var maxAttempts = 3;
+                var lastError = null;
+
+                for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+                  if (attempt > 1) {
+                    var waitMs = attempt === 2 ? 1500 : 3000;
+                    runButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"></span> AI trả thiếu câu, đang thử lại lần ${attempt}/${maxAttempts}...`;
+                    await new Promise(function (resolve) { setTimeout(resolve, waitMs); });
                   }
-                } catch(e) {}
-                throw new Error(errMsg);
-              }
 
-              var resData = await response.json();
-              var jsonText = resData.candidates[0].content.parts[0].text;
-              var imported = safeParseGeminiJson(jsonText);
+                  runButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"></span> Đang nhập toàn bộ ${expectedQuestionNumbers.length || ""} câu hỏi...`;
+
+                  try {
+                    var response = await callGemini(payload, { timeoutMs: 180000 });
+                    if (!response.ok) {
+                      var errBody = await response.text();
+                      var errMsg = "Lỗi kết nối API Gemini.";
+                      try {
+                        var errObj = JSON.parse(errBody);
+                        if (errObj && errObj.error) {
+                          errMsg = errObj.error.message || errMsg;
+                        }
+                      } catch (e) {}
+                      var responseError = new Error(errMsg);
+                      responseError.retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+                      throw responseError;
+                    }
+
+                    var resData = await response.json();
+                    var candidate = resData && resData.candidates && resData.candidates[0];
+                    var responsePart = candidate && candidate.content && (candidate.content.parts || []).find(function (part) {
+                      return part && typeof part.text === "string";
+                    });
+                    if (!candidate || !responsePart) {
+                      throw new Error("AI không trả về nội dung đề thi.");
+                    }
+                    if (candidate.finishReason === "MAX_TOKENS") {
+                      throw new Error("Phản hồi AI bị cắt do vượt giới hạn đầu ra.");
+                    }
+
+                    var jsonText = responsePart.text;
+                    window.TMA_AI_DEBUG_LOGS = window.TMA_AI_DEBUG_LOGS || [];
+                    window.TMA_AI_DEBUG_LOGS.push({
+                      attempt: attempt,
+                      finish_reason: candidate.finishReason || "",
+                      raw_response: jsonText
+                    });
+                    console.log("AI full exam response, attempt " + attempt + ":", jsonText);
+
+                    var attemptImported = safeParseGeminiJson(jsonText);
+                    sanitizeAiImportedQuestions(attemptImported);
+                    var integrity = validateImportedQuestions(attemptImported, expectedQuestionNumbers);
+                    if (!integrity.valid) {
+                      var integrityMessage = "AI trả về đề chưa đầy đủ.";
+                      if (integrity.missing.length) {
+                        integrityMessage += " Thiếu hoặc trống câu: " + integrity.missing.join(", ") + ".";
+                      }
+                      if (integrity.duplicates.length) {
+                        integrityMessage += " Trùng số câu: " + integrity.duplicates.join(", ") + ".";
+                      }
+                      throw new Error(integrityMessage);
+                    }
+
+                    imported = attemptImported;
+                    break;
+                  } catch (attemptError) {
+                    lastError = attemptError;
+                    if (attemptError && attemptError.retryable === false) throw attemptError;
+                    if (attempt === maxAttempts) throw attemptError;
+                  }
+                }
+
+                if (!imported) {
+                  throw lastError || new Error("AI chưa trả về đề thi đầy đủ.");
+                }
+              } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = originalBtnHtml;
+              }
 
               if (!imported || !imported.sections) {
                 throw new Error("Không thể trích xuất cấu trúc đề thi hợp lệ từ AI!");
               }
 
-              if (window.confirm("✓ AI đã phân tích đề thành công! Bạn có chắc chắn muốn nạp toàn bộ câu hỏi này vào phần cấu trúc đề hiện tại không?")) {
+              if (window.confirm("✓ AI đã tách câu hỏi thành công! Bạn có chắc chắn muốn nạp toàn bộ câu hỏi này vào phần cấu trúc đề hiện tại không?")) {
                 if (!exam.sections) exam.sections = [];
                 
                 imported.sections.forEach(function (newSec) {
@@ -5902,7 +6921,7 @@ YÊU CẦU QUAN TRỌNG:
                     if (newSec.section_id === "math") {
                       existSec.questions = existSec.questions || [];
                       (newSec.questions || []).forEach(function (newQ) {
-                        var existQIdx = existSec.questions.findIndex(function (q) { return q.question_no === newQ.question_no; });
+                        var existQIdx = existSec.questions.findIndex(function (q) { return Number(q.question_no) === Number(newQ.question_no); });
                         if (existQIdx !== -1) {
                           existSec.questions[existQIdx] = newQ;
                         } else {
@@ -5926,7 +6945,7 @@ YÊU CẦU QUAN TRỌNG:
                           }
                           existG.questions = existG.questions || [];
                           (newG.questions || []).forEach(function (newQ) {
-                            var existQIdx = existG.questions.findIndex(function (q) { return q.question_no === newQ.question_no; });
+                            var existQIdx = existG.questions.findIndex(function (q) { return Number(q.question_no) === Number(newQ.question_no); });
                             if (existQIdx !== -1) {
                               existG.questions[existQIdx] = newQ;
                             } else {
@@ -5951,10 +6970,10 @@ YÊU CẦU QUAN TRỌNG:
               }
             } catch (err) {
               console.error(err);
-              window.alert("Có lỗi xảy ra khi gọi AI phân tích đề:\n" + err.message);
+              window.alert("Có lỗi xảy ra khi gọi AI tách câu hỏi:\n" + err.message);
             } finally {
               aiRunBtn.disabled = false;
-              aiRunBtn.textContent = originalText;
+              aiRunBtn.innerHTML = originalHtml;
             }
           });
         }
@@ -9198,18 +10217,74 @@ function triggerChoiceImageUpload(btn) {
         }
       };
 
+      function repairTruncatedJson(str) {
+        if (!str) return "";
+        var clean = str.trim();
+        var firstBrace = clean.indexOf("{");
+        if (firstBrace === -1) return clean;
+        
+        var jsonPart = clean.slice(firstBrace);
+        var inString = false;
+        var escape = false;
+        var stack = [];
+        var repaired = "";
+        
+        for (var i = 0; i < jsonPart.length; i++) {
+          var char = jsonPart[i];
+          repaired += char;
+          
+          if (escape) {
+            escape = false;
+            continue;
+          }
+          if (char === "\\") {
+            escape = true;
+            continue;
+          }
+          if (char === '"') {
+            inString = !inString;
+            continue;
+          }
+          if (!inString) {
+            if (char === "{") {
+              stack.push("}");
+            } else if (char === "[") {
+              stack.push("]");
+            } else if (char === "}" || char === "]") {
+              if (stack.length > 0 && stack[stack.length - 1] === char) {
+                stack.pop();
+              }
+            }
+          }
+        }
+        
+        if (inString) {
+          repaired += '"';
+        }
+        
+        while (stack.length > 0) {
+          var closing = stack.pop();
+          repaired = repaired.trim().replace(/,$/, "") + closing;
+        }
+        
+        return repaired;
+      }
+
       function safeParseGeminiJson(rawText) {
         if (!rawText || typeof rawText !== "string") return {};
         var clean = rawText.trim();
         clean = clean.replace(/^```(?:json)?\s*/gi, "").replace(/\s*```$/gi, "").trim();
 
+        // Vá JSON nếu bị cắt cụt/thiếu ngoặc
+        var repairedJson = repairTruncatedJson(clean);
+
         try {
-          return JSON.parse(clean);
+          return JSON.parse(repairedJson);
         } catch (e1) {
           console.warn("Direct JSON.parse failed, running automated LaTeX backslash repair:", e1.message);
         }
 
-        var repaired = clean.replace(/\\([a-zA-Z]+)/g, function(match, word) {
+        var repaired = repairedJson.replace(/\\([a-zA-Z]+)/g, function(match, word) {
           if ((match === "\\n" || match === "\\r" || match === "\\t" || match === "\\b" || match === "\\f") &&
               !/^(frac|dfrac|tfrac|text|tan|theta|times|tau|begin|bar|beta|binom|bbox|cdot|sqrt|left|right|limits|sum|int|log|lim|sin|cos|cot|vec|alpha|gamma|delta|omega|phi|pi|sigma|le|ge|neq)/i.test(word)) {
             return match;
@@ -9222,10 +10297,10 @@ function triggerChoiceImageUpload(btn) {
         } catch (e2) {
           console.warn("Second repair attempt failed, trying aggressive backslash escaping:", e2.message);
           try {
-            var aggressive = clean.replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
+            var aggressive = repairedJson.replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
             return JSON.parse(aggressive);
           } catch (e3) {
-            var match = clean.match(/\{[\s\S]*\}/);
+            var match = repairedJson.match(/\{[\s\S]*\}/);
             if (match) {
               var extracted = match[0].replace(/\\/g, "\\\\").replace(/\\\\\\\\/g, "\\\\");
               try {
@@ -9239,11 +10314,11 @@ function triggerChoiceImageUpload(btn) {
       window.safeParseGeminiJson = safeParseGeminiJson;
 
 
-      async function callGemini(payload) {
+      async function callGemini(payload, options) {
         if (!window.TMA_AI || typeof window.TMA_AI.generate !== "function") {
           throw new Error("Dịch vụ AI chưa được tải. Hãy tải lại trang.");
         }
-        return window.TMA_AI.generate(payload);
+        return window.TMA_AI.generate(payload, options);
       }
       window.callGemini = callGemini;
 
@@ -10048,6 +11123,79 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
   }
 }`;
 
+        var smartExtractSchema = {
+          type: "OBJECT",
+          properties: {
+            section_id: { type: "STRING", enum: ["math", "reading", "science"] },
+            data: {
+              type: "OBJECT",
+              properties: {
+                questions: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      question_no: { type: "INTEGER" },
+                      question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                      question: { type: "STRING" },
+                      options: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            key: { type: "STRING" },
+                            text: { type: "STRING" }
+                          },
+                          required: ["key", "text"]
+                        }
+                      },
+                      correct_answer: { type: "STRING" },
+                      difficulty: { type: "INTEGER", enum: [1, 2, 3] },
+                      topic: { type: "STRING" },
+                      explanation: { type: "STRING" }
+                    },
+                    required: ["question_no", "question_type", "question", "difficulty", "topic", "explanation"]
+                  }
+                },
+                group: {
+                  type: "OBJECT",
+                  properties: {
+                    title: { type: "STRING" },
+                    passage: { type: "STRING" },
+                    questions: {
+                      type: "ARRAY",
+                      items: {
+                        type: "OBJECT",
+                        properties: {
+                          question_no: { type: "INTEGER" },
+                          question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                          question: { type: "STRING" },
+                          options: {
+                            type: "ARRAY",
+                            items: {
+                              type: "OBJECT",
+                              properties: {
+                                key: { type: "STRING" },
+                                text: { type: "STRING" }
+                              },
+                              required: ["key", "text"]
+                            }
+                          },
+                          correct_answer: { type: "STRING" },
+                          explanation: { type: "STRING" }
+                        },
+                        required: ["question_no", "question_type", "question", "explanation"]
+                      }
+                    }
+                  },
+                  required: ["title", "passage", "questions"]
+                }
+              }
+            }
+          },
+          required: ["section_id", "data"]
+        };
+
         var promptText = systemInstruction + "\n\nNỘI DUNG VĂN BẢN CẦN PHÂN TÍCH:\n" + rawText;
         var payload = {
           contents: [
@@ -10059,7 +11207,8 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
             }
           ],
           generationConfig: {
-            responseMimeType: "application/json"
+            responseMimeType: "application/json",
+            responseSchema: smartExtractSchema
           }
         };
 

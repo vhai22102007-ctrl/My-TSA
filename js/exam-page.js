@@ -1,84 +1,68 @@
-(() => {
-  const elements = {
+(function () {
+  "use strict";
+
+  var elements = {
     lobbyUi: document.getElementById("lobby-ui"),
     loadingUi: document.getElementById("loading-ui"),
     codeForm: document.getElementById("code-form"),
     codeInput: document.getElementById("code-input"),
     submitBtn: document.getElementById("submit-btn"),
     errorMsg: document.getElementById("error-msg"),
-    profileFooter: document.getElementById("profile-footer"),
-    studentName: document.getElementById("student-name"),
-    logoutBtn: document.getElementById("logout-btn"),
-    iframe: document.getElementById("portal-iframe")
+    iframe: document.getElementById("portal-iframe"),
+    phoneEntryPanel: document.getElementById("phone-entry-panel"),
+    examSelectPanel: document.getElementById("exam-select-panel"),
+    examOptionList: document.getElementById("exam-option-list"),
+    examSelectBack: document.getElementById("exam-select-back")
   };
 
-  // Fullscreen state tracking variables
-  let examShellActive = false;
-  let examShellWasFullscreen = false;
+  var examShellActive = false;
+  var examShellWasFullscreen = false;
+  var pendingPhone = "";
 
-  // Check login
-  let studentInfo = null;
-  try {
-    studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
-  } catch (e) {}
-
-  if (!studentInfo) {
-    elements.errorMsg.textContent = "Bạn chưa đăng nhập. Đang chuyển hướng sang trang đăng nhập...";
-    elements.submitBtn.disabled = true;
-    setTimeout(() => {
-      window.location.href = "login.html?redirect=exam.html";
-    }, 2000);
-    return;
+  function normalizePhone(value) {
+    var digits = String(value || "").replace(/\D/g, "");
+    if (digits.indexOf("0084") === 0) digits = "0" + digits.slice(4);
+    else if (digits.indexOf("84") === 0 && digits.length >= 11) digits = "0" + digits.slice(2);
+    return digits.slice(0, 15);
   }
 
-  // Display user profile info
-  if (elements.studentName) {
-    elements.studentName.textContent = studentInfo.name || studentInfo.email || studentInfo.username || "Học sinh";
-  }
-  if (elements.profileFooter) elements.profileFooter.style.display = "flex";
-
-  // Logout handler
-  if (elements.logoutBtn) {
-    elements.logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("studentInfo");
-      window.location.reload();
-    });
+  function validPhone(phone) {
+    return /^0\d{8,10}$/.test(phone);
   }
 
-  // Keep long room codes intact; only remove unsupported characters.
-  elements.codeInput.addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^A-Za-z0-9_-]/g, "").toUpperCase().slice(0, 64);
+  function setBusy(busy, text) {
+    elements.submitBtn.disabled = busy;
+    elements.submitBtn.textContent = text || (busy ? "Đang kiểm tra..." : "Tiếp theo");
+  }
+
+  function showError(message) {
+    elements.errorMsg.textContent = message || "";
+  }
+
+  elements.codeInput.addEventListener("input", function (event) {
+    var digits = normalizePhone(event.target.value);
+    event.target.value = digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+    showError("");
   });
 
   function isFullscreenActive() {
-    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    return Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
   }
 
   function showExamFullscreenWarning() {
-    let overlay = document.getElementById("exam-shell-fullscreen-warning");
+    var overlay = document.getElementById("exam-shell-fullscreen-warning");
     if (!overlay) {
       overlay = document.createElement("div");
       overlay.id = "exam-shell-fullscreen-warning";
       overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,.96);display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,-apple-system,sans-serif;";
-      overlay.innerHTML = `
-        <div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #135c97;border-radius:16px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);">
-          <h2 style="margin:0 0 12px;color:#135c97;font-size:20px;font-weight:800;font-family:Inter,sans-serif;">YÊU CẦU TOÀN MÀN HÌNH</h2>
-          <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;font-family:Inter,sans-serif;">Bài thi đang diễn ra trong chế độ toàn màn hình. Vui lòng bấm nút bên dưới để tiếp tục làm bài.</p>
-          <button id="exam-shell-fullscreen-btn" type="button" style="width:100%;height:48px;border:0;border-radius:10px;background:#135c97;color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:Inter,sans-serif;">Tiếp tục toàn màn hình</button>
-        </div>
-      `;
+      overlay.innerHTML = '<div style="width:min(480px,100%);background:#fff;color:#0f172a;border:2px solid #135c97;border-radius:12px;padding:32px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);"><h2 style="margin:0 0 12px;color:#135c97;font-size:20px;font-weight:800;">Yêu cầu toàn màn hình</h2><p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.6;">Bài thi đang diễn ra trong chế độ toàn màn hình. Bấm nút bên dưới để tiếp tục làm bài.</p><button id="exam-shell-fullscreen-btn" type="button" style="width:100%;height:48px;border:0;border-radius:8px;background:#135c97;color:#fff;font-size:16px;font-weight:800;cursor:pointer;">Tiếp tục toàn màn hình</button></div>';
       document.body.appendChild(overlay);
-
-      document.getElementById("exam-shell-fullscreen-btn").addEventListener("click", async () => {
+      document.getElementById("exam-shell-fullscreen-btn").addEventListener("click", async function () {
         try {
-          const el = document.documentElement;
-          if (el.requestFullscreen) {
-            await el.requestFullscreen();
-          } else if (el.webkitRequestFullscreen) {
-            await el.webkitRequestFullscreen();
-          } else if (el.msRequestFullscreen) {
-            await el.msRequestFullscreen();
-          }
+          var root = document.documentElement;
+          if (root.requestFullscreen) await root.requestFullscreen();
+          else if (root.webkitRequestFullscreen) await root.webkitRequestFullscreen();
+          else if (root.msRequestFullscreen) await root.msRequestFullscreen();
           sessionStorage.setItem("tsaFullscreenStarted", "1");
           enforceExamShellFullscreen();
         } catch (error) {
@@ -90,16 +74,13 @@
   }
 
   function enforceExamShellFullscreen() {
-    const warning = document.getElementById("exam-shell-fullscreen-warning");
-    
-    // Check if the exam iframe is loaded and currently visible
+    var warning = document.getElementById("exam-shell-fullscreen-warning");
     if (!examShellActive || !elements.iframe || elements.iframe.style.display === "none") {
       examShellActive = false;
       examShellWasFullscreen = false;
       if (warning) warning.style.display = "none";
       return;
     }
-
     if (isFullscreenActive()) {
       examShellWasFullscreen = true;
       sessionStorage.setItem("tsaFullscreenStarted", "1");
@@ -109,141 +90,147 @@
     }
   }
 
-  // Listen to fullscreen changes globally on the document
-  ["fullscreenchange", "webkitfullscreenchange", "MSFullscreenChange"].forEach((eventName) => {
+  ["fullscreenchange", "webkitfullscreenchange", "MSFullscreenChange"].forEach(function (eventName) {
     document.addEventListener(eventName, enforceExamShellFullscreen);
   });
 
-  // Verify and enter room
-  elements.codeForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const rawCode = elements.codeInput.value.replace(/-/g, "").trim();
-    if (!rawCode) {
-      elements.errorMsg.textContent = "Vui lòng nhập mã phòng thi.";
-      return;
-    }
+  function resetLocalAttempt(examCode) {
+    ["math", "reading", "science"].forEach(function (subject) {
+      localStorage.removeItem("exam_answers_" + examCode + "_" + subject);
+      localStorage.removeItem("exam_flagged_" + examCode + "_" + subject);
+      localStorage.removeItem("exam_submitted_" + examCode + "_" + subject);
+    });
+    localStorage.removeItem("tsaCompletedSubjects");
+  }
 
-    if (!/^[A-Za-z0-9_]{4,64}$/.test(rawCode)) {
-      elements.errorMsg.textContent = "Mã phòng thi chỉ gồm chữ, số hoặc dấu gạch dưới.";
-      return;
-    }
+  async function launchExamSession(result) {
+    var examCode = result.exam.examCode;
+    resetLocalAttempt(examCode);
+    sessionStorage.setItem("tmaMockExamSession", JSON.stringify({
+      token: result.token,
+      candidate: result.candidate,
+      exam: result.exam,
+      createdAt: new Date().toISOString()
+    }));
+    sessionStorage.setItem("currentExamTitle", result.exam.title);
+    sessionStorage.setItem("tsaShouldFullscreen", "1");
 
-    elements.errorMsg.textContent = "";
-    elements.submitBtn.disabled = true;
-    elements.submitBtn.textContent = "Đang kiểm tra...";
-
-    const examCode = rawCode.toUpperCase();
-
-    // Validate the room against the R2 index to avoid a Database request.
-    let isValid = false;
-    let examTitle = "Đề thi thử TSA";
-
-    // Exact match only. Never accept a room-code prefix.
-    {
-      const indexSources = [window.TMA_STORAGE_CONFIG.examsBaseUrl + "index.json"];
-      for (const source of indexSources) {
-        try {
-          const response = await fetch(source, { cache: "default" });
-          if (!response.ok) continue;
-          const index = await response.json();
-          const match = Array.isArray(index) ? index.find((item) => String(item.exam_code || "").toUpperCase() === examCode) : null;
-          if (match && match.status !== "draft" && match.is_open === true && Number(match.question_count || 1) > 0) {
-            isValid = true;
-            examTitle = match.title || examTitle;
-            break;
-          }
-        } catch (error) {
-          console.warn("Không tải được nguồn mã phòng thi:", source, error);
-        }
-      }
-    }
-
-    if (!isValid) {
-      elements.errorMsg.textContent = "Mã phòng thi không chính xác hoặc đã đóng.";
-      elements.submitBtn.disabled = false;
-      elements.submitBtn.textContent = "Tiếp theo";
-      return;
-    }
-
-    // Mark the exam session as active
     examShellActive = true;
-    examShellWasFullscreen = true;
-
-    // 1. Trigger Fullscreen on the parent document (locks fullscreen mode)
     try {
-      const el = document.documentElement;
-      if (el.requestFullscreen) {
-        await el.requestFullscreen();
-      } else if (el.webkitRequestFullscreen) {
-        await el.webkitRequestFullscreen();
-      } else if (el.msRequestFullscreen) {
-        await el.msRequestFullscreen();
-      }
-      sessionStorage.setItem("tsaShouldFullscreen", "1");
+      var root = document.documentElement;
+      if (root.requestFullscreen) await root.requestFullscreen();
+      else if (root.webkitRequestFullscreen) await root.webkitRequestFullscreen();
+      else if (root.msRequestFullscreen) await root.msRequestFullscreen();
       sessionStorage.setItem("tsaFullscreenStarted", "1");
-    } catch (fsErr) {
-      console.warn("Fullscreen request blocked or failed:", fsErr);
+      examShellWasFullscreen = true;
+    } catch (error) {
+      examShellWasFullscreen = false;
+      console.warn("Fullscreen request blocked:", error);
     }
 
-    // Set exam metadata
-    sessionStorage.setItem("currentExamTitle", examTitle);
-
-    // 2. Load the waiting lobby inside the iframe (keeps fullscreen locked during redirect)
-    if (elements.iframe) {
-      elements.iframe.src = `waiting.html?exam=${examCode}&from_portal=true`;
-    }
-
-    // 3. Show premium loading screen overlay
+    var category = String(result.exam.category || examCode.split("_")[0] || "TSA").toUpperCase();
+    elements.iframe.src = category === "TSA"
+      ? "waiting.html?exam=" + encodeURIComponent(examCode) + "&from_portal=true&mock=true"
+      : "confirm.html?exam=" + encodeURIComponent(examCode) + "&subject=math&single=true&from_portal=true&mock=true";
     elements.lobbyUi.style.display = "none";
     elements.loadingUi.style.display = "flex";
-
-    // 4. Transition to show the iframe after loading animation completes
-    setTimeout(() => {
+    setTimeout(function () {
       elements.loadingUi.style.display = "none";
-      if (elements.iframe) {
-        elements.iframe.style.display = "block";
-      }
-    }, 1800);
+      elements.iframe.style.display = "block";
+    }, 1200);
+  }
+
+  async function verifyCandidate(phone, examCode) {
+    if (!window.TMAMockExam) throw new Error("Dịch vụ thi thử chưa sẵn sàng.");
+    var result = await window.TMAMockExam.checkIn(phone, examCode || "");
+    if (result.selectionRequired) {
+      showExamSelection(result.exams || []);
+      return;
+    }
+    await launchExamSession(result);
+  }
+
+  function showExamSelection(exams) {
+    elements.phoneEntryPanel.hidden = true;
+    elements.examSelectPanel.hidden = false;
+    elements.examOptionList.innerHTML = "";
+    exams.forEach(function (exam) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "exam-option";
+      button.innerHTML = '<span class="exam-option-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span><span><span class="exam-option-title"></span><span class="exam-option-code"></span></span><svg class="exam-option-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+      button.querySelector(".exam-option-title").textContent = exam.title;
+      button.querySelector(".exam-option-code").textContent = exam.examCode;
+      button.addEventListener("click", async function () {
+        button.disabled = true;
+        try {
+          await verifyCandidate(pendingPhone, exam.examCode);
+        } catch (error) {
+          elements.examSelectPanel.hidden = true;
+          elements.phoneEntryPanel.hidden = false;
+          showError(error.message);
+        } finally {
+          button.disabled = false;
+        }
+      });
+      elements.examOptionList.appendChild(button);
+    });
+  }
+
+  elements.examSelectBack.addEventListener("click", function () {
+    elements.examSelectPanel.hidden = true;
+    elements.phoneEntryPanel.hidden = false;
+    elements.codeInput.focus();
   });
 
-  // Listen to exit signals from the iframe
-  window.addEventListener("message", (event) => {
-    if (event && event.data) {
-      if (event.data.type === "tsa-exam-finished" || event.data.type === "tsa-exam-exit") {
-        // Reset state so fullscreen check is bypassed
-        examShellActive = false;
-        examShellWasFullscreen = false;
-
-        const warning = document.getElementById("exam-shell-fullscreen-warning");
-        if (warning) warning.style.display = "none";
-
-        // Exit fullscreen mode on parent window
-        try {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-        } catch (fsErr) {
-          console.warn("Exit fullscreen failed:", fsErr);
-        }
-
-        // Hide iframe and clear its source to release memory
-        if (elements.iframe) {
-          elements.iframe.style.display = "none";
-          elements.iframe.src = "";
-        }
-
-        // Reset and display lobby card
-        elements.lobbyUi.style.display = "block";
-        elements.loadingUi.style.display = "none";
-        
-        elements.submitBtn.disabled = false;
-        elements.submitBtn.textContent = "Tiếp theo";
-        elements.codeInput.value = "";
-      }
+  elements.codeForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    pendingPhone = normalizePhone(elements.codeInput.value);
+    if (!validPhone(pendingPhone)) {
+      showError("Vui lòng nhập số điện thoại hợp lệ đã dùng để đăng ký.");
+      return;
     }
+    showError("");
+    setBusy(true);
+    try {
+      await verifyCandidate(pendingPhone, "");
+    } catch (error) {
+      showError(error.message || "Không thể xác thực mã dự thi.");
+      setBusy(false);
+    }
+  });
+
+  window.addEventListener("message", function (event) {
+    if (!event || !event.data || (event.data.type !== "tsa-exam-finished" && event.data.type !== "tsa-exam-exit" && event.data.type !== "tsa-exam-submitted-loading")) return;
+    if (event.data.type === "tsa-exam-submitted-loading") {
+      try {
+        var completedSession = JSON.parse(sessionStorage.getItem("tmaMockExamSession") || "null");
+        sessionStorage.setItem("tmaResultAutoLookup", JSON.stringify({
+          phone: completedSession && completedSession.candidate ? completedSession.candidate.code : "",
+          examCode: event.data.examCode || (completedSession && completedSession.exam ? completedSession.exam.examCode : "")
+        }));
+      } catch (error) {}
+      sessionStorage.removeItem("tmaMockExamSession");
+      window.location.replace("result.html");
+      return;
+    }
+    examShellActive = false;
+    examShellWasFullscreen = false;
+    var warning = document.getElementById("exam-shell-fullscreen-warning");
+    if (warning) warning.style.display = "none";
+    try {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    } catch (error) {}
+    elements.iframe.style.display = "none";
+    elements.iframe.src = "";
+    elements.loadingUi.style.display = "none";
+    elements.lobbyUi.style.display = "block";
+    elements.examSelectPanel.hidden = true;
+    elements.phoneEntryPanel.hidden = false;
+    sessionStorage.removeItem("tmaMockExamSession");
+    setBusy(false);
+    elements.codeInput.value = "";
   });
 })();

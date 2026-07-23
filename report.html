@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phiếu kết quả thi thử | TMA Study</title>
+  <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/report-page.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+  <header class="report-toolbar no-print">
+    <a href="result.html">Tra cứu số khác</a>
+    <strong>Phiếu kết quả thi thử</strong>
+  </header>
+
+  <main class="report-viewer">
+    <article class="report-paper" id="report-paper" aria-label="Phiếu kết quả thi thử TMA Study">
+      <div class="report-watermark">TMA</div>
+
+      <header class="paper-header">
+        <img class="paper-brand-logo" src="assets/logo1.png" alt="TMA">
+        <div class="paper-brand-copy">
+          <span>TRUNG TÂM TMA STUDY</span>
+          <small>TMA STUDY CENTER</small>
+          <strong>HỘI ĐỒNG THI TMA STUDY</strong>
+          <i>TMA STUDY MOCK EXAM BOARD</i>
+        </div>
+      </header>
+
+      <div class="report-title-band">GIẤY CHỨNG NHẬN KẾT QUẢ THI THỬ</div>
+      <p class="report-subtitle">MOCK EXAM TEST REPORT</p>
+
+      <section class="candidate-block">
+        <div class="candidate-fields">
+          <div class="candidate-row"><span>Người dự thi - <i>Candidate name</i></span><strong id="report-name">--</strong></div>
+          <div class="candidate-row"><span>Ngày sinh - <i>Date of birth</i></span><strong id="report-dob">--</strong></div>
+          <div class="candidate-row"><span>Giới tính - <i>Gender</i></span><strong id="report-gender">--</strong></div>
+          <div class="candidate-row"><span>Số CCCD - <i>ID number</i></span><strong id="report-id-number">--</strong></div>
+          <div class="candidate-row"><span>Ngày thi - <i>Test date</i></span><strong id="report-test-date">--</strong></div>
+          <div class="candidate-row"><span>Số báo danh - <i>Candidate ID</i></span><strong id="report-candidate-id">--</strong></div>
+        </div>
+        <img class="candidate-avatar" id="report-avatar" src="https://assets.tmastudy.io.vn/assets/nam.png" alt="Ảnh đại diện thí sinh">
+      </section>
+
+      <section class="score-block">
+        <div class="overall-score">
+          <span>Điểm bài thi</span>
+          <i>Overall score</i>
+          <div class="overall-score-line"><strong id="report-score">--</strong><span id="report-max-score">/ --</span></div>
+          <small id="report-exam-title">--</small>
+        </div>
+        <div class="section-summary">
+          <h2>Số câu đúng - <i>Correct answers</i></h2>
+          <div id="report-sections"></div>
+        </div>
+      </section>
+
+      <section class="verification-block">
+        <div class="qr-column">
+          <div id="report-qr" aria-label="Mã QR phiếu kết quả"></div>
+          <span>Giấy chứng nhận số:</span>
+          <i>Report No.</i>
+          <strong id="report-number">--</strong>
+        </div>
+        <div class="verification-copy">
+          <p>Hà Nội, ngày <strong id="report-issue-date">--</strong></p>
+          <p class="issue-date-en">Hanoi, <span id="report-issue-date-en">--</span></p>
+          <p class="verification-title">HỘI ĐỒNG CHUYÊN MÔN TRUNG TÂM</p>
+          <p class="verification-en">ACADEMIC BOARD OF TMA STUDY CENTER</p>
+          <div class="seal-signature-wrap">
+            <div class="center-seal" aria-label="Dấu Trung tâm TMA Study">
+              <svg viewBox="0 0 260 260" role="img" aria-hidden="true">
+                <defs>
+                  <path id="tma-seal-top" d="M 35 128 A 95 95 0 0 1 225 128"></path>
+                </defs>
+                <circle class="seal-outer" cx="130" cy="130" r="116"></circle>
+                <circle class="seal-inner" cx="130" cy="130" r="92"></circle>
+                <text class="seal-arc"><textPath href="#tma-seal-top" startOffset="50%" text-anchor="middle">TRUNG TÂM TMA STUDY</textPath></text>
+                <text class="seal-star seal-star-left" x="28" y="142">★</text>
+                <text class="seal-star seal-star-right" x="220" y="142">★</text>
+                <text class="seal-brand" x="130" y="116" text-anchor="middle">TMA</text>
+                <text class="seal-brand-small" x="130" y="140" text-anchor="middle">STUDY</text>
+                <line class="seal-rule" x1="67" y1="151" x2="193" y2="151"></line>
+                <text class="seal-copy" x="130" y="174" text-anchor="middle">KẾT QUẢ THI THỬ</text>
+                <text class="seal-verified" x="130" y="198" text-anchor="middle">ĐÃ XÁC THỰC</text>
+                <text class="seal-bottom-star" x="130" y="226" text-anchor="middle">★</text>
+              </svg>
+            </div>
+            <svg class="center-signature" viewBox="0 0 330 150" aria-label="Xác thực điện tử TMA Study">
+              <path class="signature-stroke" d="M96 113 C116 79 132 124 151 100 C169 77 182 111 203 91 C230 66 260 55 315 27"></path>
+              <text x="232" y="39">TMA</text>
+            </svg>
+          </div>
+          <p class="center-role">GIÁM ĐỐC - <i>CENTER DIRECTOR</i></p>
+          <p class="center-name">TRUNG TÂM TMA STUDY</p>
+          <p class="verification-note">Phiếu do hệ thống TMA Study phát hành cho kỳ thi thử và không thay thế chứng chỉ chính thức của bất kỳ cơ sở giáo dục nào.</p>
+        </div>
+      </section>
+
+      <footer class="paper-footer">
+        <span>Phiếu kết quả thi thử được lưu tra cứu trong 2 năm kể từ ngày cấp</span>
+        <i>The mock-exam report remains available for verification for 2 years</i>
+      </footer>
+    </article>
+  </main>
+
+  <script src="js/report-page.js"></script>
+</body>
+</html>

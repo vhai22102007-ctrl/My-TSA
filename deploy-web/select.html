@@ -196,72 +196,7 @@
           </div>
         </div>
 
-        <!-- 3. Thi thử collapsible group -->
-        <div class="menu-group" data-group="exams">
-          <a class="menu-item group-header" id="thi-thu-toggle" href="javascript:void(0)">
-            <span class="menu-icon">
-              <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                <path d="m9 12 2 2 4-4"></path>
-              </svg>
-            </span>
-            <span class="group-title">Thi thử</span>
-            <span class="group-arrow">
-              <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </a>
-          <div class="submenu-wrapper" id="thi-thu-submenu">
-            <div class="submenu-inner">
-                            <a class="menu-item submenu-item" href="#tsa-exams" data-tab="tsa-exams">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 18h6m-5 3h4m-7-9a5 5 0 1 1 10 0c0 2.5-2 3.5-3 5H10c-1-1.5-3-2.5-3-5z"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá tư duy - TSA</span>
-              </a>
-                            <a class="menu-item submenu-item" href="#hsa-exams" data-tab="hsa-exams">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="7"></circle>
-                    <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - HSA</span>
-              </a>
-                            <a class="menu-item submenu-item" href="#vact-exams" data-tab="vact-exams">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - VACT</span>
-              </a>
-                            <a class="menu-item submenu-item" href="#qda-exams" data-tab="qda-exams">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 20V10M12 20V4M6 20v-6"></path>
-                  </svg>
-                </span>
-                <span>Đánh giá năng lực - QDA</span>
-              </a>
-                            <a class="menu-item submenu-item" href="#thpt-exams" data-tab="thpt-exams">
-                <span class="menu-icon sub-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                  </svg>
-                </span>
-                <span>THPTQG</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Kho tài liệu collapsible group -->
-        <!-- 4. Kho tài liệu single link -->
+        <!-- 3. Kho tài liệu single link -->
         <a class="menu-item" href="#documents" data-tab="documents">
           <span class="menu-icon">
             <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -372,13 +307,6 @@
             <line x1="16" y1="17" x2="8" y2="17"></line>
           </svg>
         </button>
-        <button class="topbar-nav-btn" id="topbar-btn-exams" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('exams');" title="Thi thử">
-          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-            <path d="m9 12 2 2 4-4"></path>
-          </svg>
-        </button>
-
       </div>
 
       <div class="topbar-account">
@@ -857,21 +785,7 @@
           </div>
         </div>
 
-        <!-- TAB 4: THI THỬ -->
-        <div id="tab-tsa-exam" class="tab-panel">
-          <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-            <div>
-              <h2 class="tab-header-title" id="exam-tab-title">Bài thi Đánh giá tư duy - TSA</h2>
-            </div>
-            <button class="btn btn-outline btn-sm" style="color: var(--brand-red); border-color: var(--border);">Xem tất cả kỳ thi</button>
-          </div>
-
-          <div class="exam-grid" id="exams-list-grid">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
-
-                <!-- TAB 5: TÀI LIỆU -->
+                <!-- TAB 4: TÀI LIỆU -->
         <div id="tab-documents" class="tab-panel">
           <div id="library-list-view">
             <!-- Breadcrumb & Top Section -->

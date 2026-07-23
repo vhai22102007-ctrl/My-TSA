@@ -151,11 +151,22 @@
       function renderExamInformation() {
         const storedTitle = sessionStorage.getItem("currentExamTitle");
         let studentInfo = null;
+        let mockSession = null;
         try {
           studentInfo = JSON.parse(localStorage.getItem("studentInfo") || "null");
         } catch (e) {}
+        try {
+          mockSession = JSON.parse(sessionStorage.getItem("tmaMockExamSession") || "null");
+        } catch (e) {}
+        if (mockSession && mockSession.candidate) {
+          studentInfo = {
+            name: mockSession.candidate.name,
+            phone: mockSession.candidate.code,
+            code: mockSession.candidate.code
+          };
+        }
         elements.studentName.textContent = studentInfo ? (studentInfo.name || studentInfo.username || studentInfo.email) : session.student.name;
-        elements.candidateId.textContent = studentInfo ? (studentInfo.cccd || studentInfo.email || studentInfo.username) : session.student.code;
+        elements.candidateId.textContent = studentInfo ? (studentInfo.code || studentInfo.phone || studentInfo.cccd || studentInfo.email || studentInfo.username) : session.student.code;
         elements.examTitle.textContent = storedTitle || session.exam.title;
         elements.sectionTitle.textContent = selectedSubject.name;
         elements.examDuration.textContent = `${selectedSubject.duration} phút`;
@@ -262,8 +273,8 @@
         const examCode = params.get("exam") || "";
         const isSingle = params.get("single") === "true";
         const fromPortal = params.get("from_portal") === "true";
-        if (examCode.startsWith("TSA_PRACTICE_FULL_") && !isSingle) {
-          window.location.href = `waiting.html?exam=${examCode}${fromPortal ? '&from_portal=true' : ''}`;
+        if ((examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingle) {
+          window.location.href = `waiting.html?exam=${examCode}${fromPortal ? '&from_portal=true&mock=true' : ''}`;
         } else {
           window.location.href = fromPortal ? "exam.html" : "select.html";
         }

@@ -174,6 +174,49 @@
 
   async function request(action, data, options) {
     var opts = options || {};
+    if (action === "generate") {
+      var localKey = localStorage.getItem("tma_gemini_api_key");
+      if (localKey && localKey.trim()) {
+        var modelName = localStorage.getItem("tma_gemini_model") || "gemini-3.5-flash-lite";
+        var url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + localKey.trim();
+        var googlePayload = data.payload || {};
+        var directController = new AbortController();
+        var directTimeoutId = window.setTimeout(function () {
+          directController.abort();
+        }, opts.timeoutMs || REQUEST_TIMEOUT_MS);
+        try {
+          var response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(googlePayload),
+            signal: directController.signal
+          });
+          if (response.ok) {
+            return response;
+          }
+          // Try v1 endpoint if v1beta fails with 404
+          if (response.status === 404) {
+            var v1Url = url.replace("/v1beta/", "/v1/");
+            var v1Response = await fetch(v1Url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(googlePayload),
+              signal: directController.signal
+            });
+            if (v1Response.ok) {
+              return v1Response;
+            }
+          }
+          console.warn("Direct API call failed with status " + response.status + ", falling back to Cloudflare Worker...");
+        } catch (err) {
+          console.warn("Direct API call failed with error: " + err.message + ", falling back to Cloudflare Worker...");
+        } finally {
+          window.clearTimeout(directTimeoutId);
+        }
+      }
+    }
     var token = await getTeacherToken();
     if (!token) throw new Error("Phiên giáo viên đã hết hạn. Vui lòng đăng nhập lại.");
 

@@ -41,6 +41,19 @@
     science: "Khoa học"
   };
 
+  let mockExamSession = null;
+  try {
+    mockExamSession = JSON.parse(sessionStorage.getItem("tmaMockExamSession") || "null");
+  } catch (e) {
+    mockExamSession = null;
+  }
+  const hasMockSession = !!(
+    mockExamSession &&
+    mockExamSession.token &&
+    mockExamSession.exam &&
+    String(mockExamSession.exam.examCode || "").toUpperCase() === examCode.toUpperCase()
+  );
+
   const studentInfo = {
     name: "Nguyễn Văn Hải",
     code: "TMA507905"
@@ -58,6 +71,14 @@
     console.warn("Lỗi đọc studentInfo từ localStorage:", e);
   }
 
+  if (hasMockSession && mockExamSession.candidate) {
+    studentInfo.name = mockExamSession.candidate.name || "Thí sinh";
+    studentInfo.code = mockExamSession.candidate.code || "";
+    studentInfo.phone = mockExamSession.candidate.code || "";
+    studentInfo.email = "";
+    studentInfo.token = "";
+  }
+
   const isPreviewMode = urlParams.get("preview") === "true";
   let teacherPreviewInfo = null;
   try {
@@ -69,8 +90,8 @@
   const hasStudentSession = !!(studentInfo.email && studentInfo.token);
   const hasTeacherPreviewSession = !!(isPreviewMode && teacherPreviewInfo && teacherPreviewInfo.role === "teacher" && teacherPreviewInfo.token);
 
-  if (!hasStudentSession && !hasTeacherPreviewSession) {
-    window.location.replace("login.html");
+  if (!hasStudentSession && !hasTeacherPreviewSession && !hasMockSession) {
+    window.location.replace("login.html?redirect=exam.html");
     return;
   }
 
@@ -87,7 +108,7 @@
   const examStorageUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
   let studentEmail = studentInfo ? studentInfo.email : '';
   let studentToken = studentInfo ? studentInfo.token : '';
-  if (typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
+  if (!hasMockSession && typeof supabase !== 'undefined' && supabase.createClient && window.SUPABASE_CONFIG) {
     supabaseUrl = window.SUPABASE_CONFIG.url;
     supabaseClient = supabase.createClient(supabaseUrl, window.SUPABASE_CONFIG.anonKey, {
       global: {
@@ -97,7 +118,7 @@
         }
       }
     });
-  } else {
+  } else if (!hasMockSession) {
     console.error("Supabase config or library not loaded!");
   }
 
@@ -833,6 +854,7 @@
 
   function showResultsPanel() {
     if (!examData) return;
+    if (hasMockSession) return;
 
     let correctCount = 0;
     let totalPoints = 0;
@@ -953,6 +975,26 @@
       console.error(`Lỗi chấm điểm môn ${targetSubject}:`, err);
       return { success: false, message: err.message || err };
     }
+  }
+
+  async function submitMockAttempt(sectionAnswers) {
+    if (!hasMockSession || !window.TMAMockExam) {
+      throw new Error("Phiên thi thử không hợp lệ.");
+    }
+    const result = await window.TMAMockExam.submit(mockExamSession.token, sectionAnswers || {});
+    if (!result || result.success !== true) {
+      throw new Error((result && result.message) || "Không thể ghi nhận bài thi.");
+    }
+    return result;
+  }
+
+  function showMockSubmissionError(error) {
+    const statusEl = document.getElementById("supabase-save-status");
+    if (statusEl) {
+      statusEl.style.color = "#b91c1c";
+      statusEl.textContent = "Chưa thể gửi bài. Vui lòng kiểm tra kết nối và bấm nộp lại.";
+    }
+    console.error("Không thể gửi bài thi thử:", error);
   }
 
   async function saveResultToSupabase(correctCount, totalPoints, scoredPoints) {
@@ -1243,6 +1285,14 @@
   // Nếu mở trực tiếp file (không có trang cha), điều hướng về select.html.
   function leaveExamRoomWithLoading() {
     clearFullscreenRequirement();
+    if (hasMockSession) {
+      try {
+        sessionStorage.setItem("tmaResultAutoLookup", JSON.stringify({
+          phone: mockExamSession.candidate ? mockExamSession.candidate.code : "",
+          examCode: mockExamSession.exam ? mockExamSession.exam.examCode : examCode
+        }));
+      } catch (error) {}
+    }
     const inIframe = window.parent && window.parent !== window;
     if (inIframe) {
       try {
@@ -1258,6 +1308,10 @@
       } catch (error) {
         // Fallback
       }
+    }
+    if (hasMockSession) {
+      window.location.replace("result.html");
+      return;
     }
     const urlParams = new URLSearchParams(window.location.search);
     const fromPortal = urlParams.get("from_portal") === "true";
@@ -1363,6 +1417,19 @@
           }
         });
 
+        if (hasMockSession) {
+          try {
+            await submitMockAttempt({ math: mathAnswers, reading: readingAnswers, science: scienceAnswers });
+            localStorage.removeItem("tsaCompletedSubjects");
+            leaveExamRoomWithLoading();
+          } catch (error) {
+            isSubmitted = false;
+            saveLocalState();
+            showMockSubmissionError(error);
+          }
+          return;
+        }
+
         await showCustomAlert(`Hết giờ làm bài phần Khoa học!\nTổng điểm cả kíp thi (Toán, Đọc hiểu, Khoa học):\n- Số câu đúng: ${totalCorrect}/${totalQuestionsCount}\n- Điểm số: ${totalScoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
         await saveResultToSupabase(totalCorrect, totalPoints, totalScoredPoints);
         try {
@@ -1384,6 +1451,18 @@
           scoredPoints += pts;
         }
       });
+
+      if (hasMockSession) {
+        try {
+          await submitMockAttempt({ [subject]: answers });
+          leaveExamRoomWithLoading();
+        } catch (error) {
+          isSubmitted = false;
+          saveLocalState();
+          showMockSubmissionError(error);
+        }
+        return;
+      }
 
       await showCustomAlert(`Hết giờ làm bài! Bài thi đã tự động được nộp.\n- Số câu đúng: ${correctCount}/${examData.questions.length}\n- Điểm số: ${scoredPoints.toFixed(1)}/${totalPoints.toFixed(1)}\n\nNhấn OK để quay về trang chủ.`);
       saveResultToSupabase(correctCount, totalPoints, scoredPoints);
@@ -1499,6 +1578,20 @@
         totalPoints = mathPoints + readingPoints + sciencePoints;
         totalScoredPoints = mathScore + readingScore + scienceScore;
 
+        if (hasMockSession && urlParams.get("preview") !== "true") {
+          try {
+            await submitMockAttempt({ math: mathAnswers, reading: readingAnswers, science: scienceAnswers });
+            try { localStorage.removeItem("tsaCompletedSubjects"); } catch (error) {}
+            leaveExamRoomWithLoading();
+          } catch (error) {
+            isSubmitting = false;
+            isSubmitted = false;
+            saveLocalState();
+            showMockSubmissionError(error);
+          }
+          return;
+        }
+
         let onlineSuccess = false;
         if (supabaseClient && urlParams.get("preview") !== "true") {
           try {
@@ -1589,6 +1682,19 @@
           scoredPoints += pts;
         }
       });
+
+      if (hasMockSession && urlParams.get("preview") !== "true") {
+        try {
+          await submitMockAttempt({ [subject]: answers });
+          leaveExamRoomWithLoading();
+        } catch (error) {
+          isSubmitting = false;
+          isSubmitted = false;
+          saveLocalState();
+          showMockSubmissionError(error);
+        }
+        return;
+      }
 
       let onlineSuccess = false;
       if (supabaseClient && urlParams.get("preview") !== "true") {

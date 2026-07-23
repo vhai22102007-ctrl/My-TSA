@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tra cứu kết quả thi thử | TMA Study</title>
+  <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/result-page.css">
+  <script src="js/supabase-config.js"></script>
+  <script src="js/mock-exam-api.js"></script>
+</head>
+<body>
+  <main class="result-shell">
+    <section class="result-card" aria-label="Tra cứu kết quả thi thử">
+      <div class="result-card-inner">
+        <header class="result-header">
+          <a class="result-brand" href="exam.html" aria-label="Về cổng thi">
+            <img src="https://assets.tmastudy.io.vn/assets/tma-tsa.png" alt="TMA TSA">
+          </a>
+        </header>
+
+        <div id="lookup-view">
+          <form id="result-form" novalidate>
+            <label for="result-phone">Số báo danh / Mã dự thi</label>
+            <div class="result-input-wrap">
+              <input id="result-phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" placeholder="NHẬP SỐ BÁO DANH">
+            </div>
+            <p class="result-error" id="result-error" role="alert"></p>
+            <button class="result-primary" id="result-submit" type="submit">Tra cứu kết quả</button>
+          </form>
+
+          <div class="result-links">
+            <span>Điểm chỉ hiển thị sau khi giáo viên công bố</span>
+          </div>
+        </div>
+
+        <div id="exam-choice-view" hidden>
+          <p class="result-eyebrow">Chọn kỳ thi</p>
+          <h2>Các kỳ thi của bạn</h2>
+          <p class="result-intro">Số báo danh này có trong nhiều kỳ thi. Chọn kỳ thi cần tra cứu.</p>
+          <div class="result-exam-list" id="result-exam-list"></div>
+          <button class="result-text-button" id="choice-back" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Nhập số báo danh khác
+          </button>
+        </div>
+
+        <div id="result-view" hidden aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <script src="js/result-page.js"></script>
+</body>
+</html>

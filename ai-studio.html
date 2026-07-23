@@ -121,7 +121,7 @@
           <div class="test-grid">
             <div class="test-inputs">
               <label class="field">
-                <span>Văn bản hoặc yêu cầu</span>
+                <span id="test-input-label">Văn bản hoặc yêu cầu</span>
                 <textarea id="test-input" rows="9" placeholder="Dán đề thô hoặc yêu cầu AI chuyển công thức sang LaTeX..."></textarea>
               </label>
               <label class="file-picker" for="test-file">
@@ -132,7 +132,7 @@
             </div>
             <div class="test-output">
               <div class="output-tabs" role="tablist" aria-label="Kết quả AI">
-                <button class="output-tab active" type="button" data-output-tab="json">JSON</button>
+                <button class="output-tab active" type="button" data-output-tab="json">JSON kỹ thuật</button>
                 <button class="output-tab" type="button" data-output-tab="preview">Xem LaTeX</button>
               </div>
               <pre id="test-json-output" class="output-panel active">Kết quả có cấu trúc sẽ xuất hiện ở đây.</pre>
@@ -155,7 +155,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/ai-service.js?v=1.0.0"></script>
-  <script src="js/ai-studio.js?v=1.0.0"></script>
+  <script src="js/ai-studio.js?v=1.0.1"></script>
 </body>
 </html>
 

@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="css/exam-room.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+  <script src="js/mock-exam-api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <title>TMA TSA | Quản trị & Bộ soạn đề giáo viên</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -705,6 +707,116 @@
               <!-- Rendered dynamically -->
             </div>
           </div>
+
+          <div id="mock-operations-view" class="mock-ops-view" hidden>
+            <header class="mock-ops-header">
+              <div class="mock-ops-title-row">
+                <button class="icon-button mock-ops-back" id="mock-ops-back" type="button" title="Quay lại danh sách đề">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <div>
+                  <p class="mock-ops-eyebrow">Vận hành kỳ thi</p>
+                  <h1 id="mock-ops-title">Đề thi thử TSA</h1>
+                  <div class="mock-ops-code" id="mock-ops-code">TSA_EXAM_01</div>
+                </div>
+              </div>
+              <div class="mock-ops-header-actions">
+                <a class="btn btn-outline btn-sm" href="exam.html" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7"></path><path d="M10 14L21 3"></path><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path></svg>
+                  Cổng thi
+                </a>
+                <button class="icon-button" id="mock-ops-refresh" type="button" title="Làm mới dữ liệu">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                </button>
+              </div>
+            </header>
+
+            <section class="mock-control-band">
+              <div class="mock-control-group">
+                <span class="mock-control-label">Phòng thi</span>
+                <div class="mock-control-line">
+                  <span class="mock-state-badge" id="mock-room-status">Đang đóng</span>
+                  <button class="btn btn-outline btn-sm" id="mock-toggle-room" type="button">Mở phòng thi</button>
+                </div>
+              </div>
+              <div class="mock-control-group mock-release-control">
+                <label class="mock-control-label" for="mock-release-at">Thời điểm công bố</label>
+                <div class="mock-control-line">
+                  <input type="datetime-local" id="mock-release-at" class="mock-datetime-input">
+                  <button class="btn btn-outline btn-sm" id="mock-schedule-release" type="button">Đặt lịch</button>
+                  <button class="btn btn-primary btn-sm" id="mock-publish-now" type="button">Công bố ngay</button>
+                  <button class="btn btn-outline btn-sm" id="mock-hide-results" type="button">Ẩn điểm</button>
+                </div>
+              </div>
+              <div class="mock-release-state" id="mock-release-state">Chưa công bố</div>
+            </section>
+
+            <section class="mock-stats-grid" aria-label="Thống kê kỳ thi">
+              <article class="mock-stat-card stat-blue"><span>Đăng ký</span><strong id="mock-stat-registered">0</strong></article>
+              <article class="mock-stat-card stat-green"><span>Đã nộp</span><strong id="mock-stat-submitted">0</strong></article>
+              <article class="mock-stat-card stat-amber"><span>Chưa nộp</span><strong id="mock-stat-pending">0</strong></article>
+              <article class="mock-stat-card stat-cyan"><span>Trung bình</span><strong id="mock-stat-average">0</strong></article>
+              <article class="mock-stat-card stat-violet"><span>Trung vị</span><strong id="mock-stat-median">0</strong></article>
+              <article class="mock-stat-card stat-red"><span>Thủ khoa</span><strong id="mock-stat-highest">0</strong><small id="mock-stat-top-name">Chưa có</small></article>
+              <article class="mock-stat-card stat-slate"><span>Thấp nhất</span><strong id="mock-stat-lowest">0</strong></article>
+            </section>
+
+            <section class="mock-ops-section mock-import-section">
+              <div class="mock-section-heading">
+                <div>
+                  <p class="mock-ops-eyebrow">Danh sách dự thi</p>
+                  <h2>Nhập thí sinh từ Excel</h2>
+                </div>
+                <div class="mock-section-actions">
+                  <button class="btn btn-outline btn-sm" id="mock-download-template" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    File mẫu
+                  </button>
+                  <button class="btn btn-outline btn-sm" id="mock-choose-file" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Chọn Excel
+                  </button>
+                  <input id="mock-candidate-file" type="file" accept=".xlsx,.xls,.csv" hidden>
+                  <button class="btn btn-primary btn-sm" id="mock-import-candidates" type="button" disabled>Nhập danh sách</button>
+                </div>
+              </div>
+              <div class="mock-import-status" id="mock-import-status">Chưa chọn tệp</div>
+              <div class="mock-import-preview" id="mock-import-preview" hidden></div>
+            </section>
+
+            <section class="mock-ops-section">
+              <div class="mock-section-heading">
+                <div>
+                  <p class="mock-ops-eyebrow">Phân bố kết quả</p>
+                  <h2>Phổ điểm</h2>
+                </div>
+              </div>
+              <div class="mock-distribution" id="mock-distribution"></div>
+            </section>
+
+            <section class="mock-ops-section">
+              <div class="mock-section-heading">
+                <div>
+                  <p class="mock-ops-eyebrow">Dữ liệu kỳ thi</p>
+                  <h2>Thí sinh và kết quả</h2>
+                </div>
+                <div class="mock-section-actions">
+                  <div class="mock-search-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input id="mock-candidate-search" type="search" placeholder="Tìm tên hoặc số điện thoại">
+                  </div>
+                  <button class="btn btn-outline btn-sm" id="mock-export-csv" type="button">Xuất CSV</button>
+                  <button class="btn btn-outline btn-sm" id="mock-sync-sheet" type="button">Google Sheets</button>
+                </div>
+              </div>
+              <div class="mock-table-wrap">
+                <table class="mock-results-table">
+                  <thead><tr><th>Thí sinh</th><th>Số điện thoại</th><th>Trường / Lớp</th><th>Trạng thái</th><th>Điểm</th><th>Nộp lúc</th></tr></thead>
+                  <tbody id="mock-results-body"><tr><td colspan="6" class="mock-empty-cell">Chưa có dữ liệu</td></tr></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
         </div>
         <!-- 4. TAB: QUẢN LÝ HỌC SINH -->
         <!-- 4. TAB: QUẢN LÝ HỌC SINH -->
@@ -1370,8 +1482,12 @@
                   </div>
                 </div>
 
-                <!-- Right: Role Switcher -->
+                <!-- Right: Question tools + Role Switcher -->
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                  <button type="button" class="clear-section-questions-btn" id="clear-math-questions-button" onclick="clearSectionContent('math')" title="Xóa toàn bộ câu hỏi Toán trong đề thi thử" hidden>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
+                    <span>Xóa toàn bộ</span>
+                  </button>
                   <!-- Role Switcher (Underline Tab Style) -->
                   <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding: 0; display: flex; gap: 10px; align-items: center; background: transparent; border: none; flex-shrink: 0;">
                     <button type="button" class="editor-role-tab-btn active" id="global-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')" style="height: 26px; display: inline-flex; align-items: center; padding: 2px 0; font-size: 12px; font-weight: 700; color: #c2272d; background: transparent; border: none; border-bottom: 2.5px solid #c2272d; border-radius: 0; white-space: nowrap; cursor: pointer;">
@@ -1409,6 +1525,12 @@
             <input type="hidden" id="exam-duration" value="150">
             <input type="hidden" id="exam-status" value="published">
 
+            <!-- API Key input for direct browser call -->
+            <div style="display: flex; gap: 12px; align-items: center; background: #f8fafc; padding: 10px 16px; border-radius: 8px; border: 1px dashed #cbd5e1; margin-bottom: 4px; flex-shrink: 0;">
+              <span style="font-size: 13px; font-weight: 700; color: #475569;">Sử dụng API Key trực tiếp trên trình duyệt (Tránh quá tải):</span>
+              <input type="text" id="browser-api-key" placeholder="Nhập API Key mới của bạn vào đây để gọi trực tiếp từ trình duyệt..." style="flex: 1; height: 32px; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0 10px; font-size: 13px; outline: none;" oninput="localStorage.setItem('tma_gemini_api_key', this.value.trim())">
+            </div>
+
             <div class="field" style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; width: 100%;">
               <label for="ai-exam-text" style="font-weight: 700; font-size: 13.5px; color: #0f172a; display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                 <span style="width: 6px; height: 14px; background: #c2272d; border-radius: 3px; display: inline-block;"></span>
@@ -1433,7 +1555,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
             <div style="display: flex; justify-content: flex-end; margin-top: 4px; flex-shrink: 0;">
               <button class="btn btn-primary" id="ai-run-button" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); border: none; font-weight: 700; font-size: 14px; padding: 12px 36px; border-radius: 10px; color: #ffffff; cursor: pointer; box-shadow: 0 4px 14px rgba(194, 39, 45, 0.35); transition: all 0.2s; font-family: inherit; display: inline-flex; align-items: center; gap: 8px;" type="button" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 18px rgba(194, 39, 45, 0.45)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(194, 39, 45, 0.35)';">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-                <span>Phân tích đề bằng AI</span>
+                <span>AI nhập câu hỏi vào đề</span>
               </button>
             </div>
           </div>
@@ -1493,6 +1615,10 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
               </button>
             </div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; align-self: center; margin-bottom: 8px;">
+              <button type="button" class="clear-section-questions-btn" id="clear-reading-questions-button" onclick="clearSectionContent('reading')" title="Xóa toàn bộ câu hỏi Đọc hiểu trong đề thi thử" hidden>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
+                <span>Xóa toàn bộ</span>
+              </button>
               <!-- Role Switcher (Giáo viên / Học sinh) -->
               <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding: 0; display: flex; gap: 14px; align-items: center; background: transparent; border: none; flex-shrink: 0;">
                 <button type="button" class="editor-role-tab-btn active" id="reading-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')" style="height: 28px; display: inline-flex; align-items: center; padding: 2px 0; font-size: 13px; font-weight: 700; color: #c2272d; background: transparent; border: none; border-bottom: 2.5px solid #c2272d; border-radius: 0; white-space: nowrap; cursor: pointer;">
@@ -1571,6 +1697,10 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
               <button class="science-tab-btn" id="science-tab-btn-g8" type="button" onclick="switchScienceGroupTab('g8')">Ngữ liệu 8</button>
             </div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; align-self: center;">
+              <button type="button" class="clear-section-questions-btn" id="clear-science-questions-button" onclick="clearSectionContent('science')" title="Xóa toàn bộ câu hỏi Khoa học trong đề thi thử" hidden>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
+                <span>Xóa toàn bộ</span>
+              </button>
               <!-- Role Switcher (Giáo viên / Học sinh) -->
               <div class="editor-role-tabs-nav" style="border-bottom: none; margin-bottom: 0; padding: 0; display: flex; gap: 14px; align-items: center; background: transparent; border: none; flex-shrink: 0;">
                 <button type="button" class="editor-role-tab-btn active" id="science-role-tab-teacher" onclick="setGlobalEditorRoleView('teacher')" style="height: 28px; display: inline-flex; align-items: center; padding: 2px 0; font-size: 13px; font-weight: 700; color: #c2272d; background: transparent; border: none; border-bottom: 2.5px solid #c2272d; border-radius: 0; white-space: nowrap; cursor: pointer;">
@@ -1879,7 +2009,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
           </div>
           <div>
             <span style="font-weight: 800; color: #166534; font-size: 13px; display: block; margin-bottom: 6px;">💡 LỜI GIẢI CHI TIẾT (AI GENERATED):</span>
-            <div id="preview-q-explanation-content" style="font-size: 13.5px; color: #14532d; line-height: 1.7; font-family: inherit;">
+            <div id="preview-q-explanation-content" style="font-size: 13.5px; color: #14532d; line-height: 1.7; font-family: inherit; white-space: pre-wrap;">
               <!-- Explanations with LaTeX -->
             </div>
           </div>
@@ -2087,6 +2217,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
 
   <script src="js/exam-security.js?v=1.0.0"></script>
   <script src="js/ai-service.js?v=1.0.0"></script>
+  <script src="js/mock-exam-admin.js?v=1.0.0"></script>
   <script src="js/teacher-page.js?v=1.0.6"></script>
 
   

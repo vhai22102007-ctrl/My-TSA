@@ -3,6 +3,7 @@
 
   var selectedProfileId = "";
   var toastTimer = null;
+  var lastCompletedInput = "";
 
   function byId(id) { return document.getElementById(id); }
 
@@ -221,6 +222,39 @@
     try { return JSON.parse(clean); } catch (error) { return { raw: clean }; }
   }
 
+  function restoreEscapedParagraphs(value) {
+    return String(value || "")
+      .replace(/(?:\\n){2,}/g, function (match) { return "\n".repeat(match.length / 2); })
+      .replace(/\\n(?=(?:Câu|Bài|Phần|[0-9]+\.)\s)/g, "\n");
+  }
+
+  function normalizeLatexEscapes(value) {
+    var normalized = restoreEscapedParagraphs(value);
+    var previous = "";
+    while (normalized !== previous) {
+      previous = normalized;
+      normalized = normalized.replace(/\\\\(?=[()[\]{}A-Za-z])/g, "\\");
+    }
+    return normalized.replace(/\\{3,}(?=\s*(?:\n|$))/g, "\\\\");
+  }
+
+  function normalizeTestResult(parsed) {
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || parsed.raw !== undefined) {
+      throw new Error("AI trả về JSON không hoàn chỉnh. PDF có thể quá dài; hãy tách thành tệp ngắn hơn rồi thử lại.");
+    }
+
+    var originalLatex = String(parsed.latex || "");
+    var normalized = {
+      clean_text: restoreEscapedParagraphs(parsed.clean_text || ""),
+      latex: normalizeLatexEscapes(originalLatex),
+      notes: Array.isArray(parsed.notes) ? parsed.notes.map(restoreEscapedParagraphs) : []
+    };
+    if (!normalized.clean_text && !normalized.latex) {
+      throw new Error("AI không đọc được nội dung trong tệp. Hãy dùng PDF rõ hơn hoặc tách từng phần nhỏ.");
+    }
+    return normalized;
+  }
+
   function setTestStatus(message, state) {
     var element = byId("test-status");
     element.textContent = message || "";
@@ -244,28 +278,49 @@
 
     try {
       var testProfile = saveSelectedProfile(true);
+      var sourceInstruction = file
+        ? "NGUỒN DUY NHẤT CẦN OCR LÀ TỆP ĐÍNH KÈM. Phần chữ bên dưới chỉ là yêu cầu bổ sung, tuyệt đối không chép nó vào clean_text hoặc latex. Đọc theo đúng thứ tự trang và giữ nguyên số câu, phương án, bảng, dữ kiện.\n\nYÊU CẦU BỔ SUNG:\n" + (input || "Đọc toàn bộ tệp.")
+        : "NGUỒN VĂN BẢN CẦN OCR VÀ CHUẨN HÓA:\n" + input;
       var parts = [{
-        text: "Hãy đọc chính xác nội dung đề dưới đây, sửa lỗi OCR và chuyển công thức toán sang LaTeX. Trả về duy nhất JSON hợp lệ có cấu trúc: {\"clean_text\":\"nội dung đã làm sạch\",\"latex\":\"nội dung có LaTeX\",\"notes\":[\"điểm cần giáo viên kiểm tra\"]}. Không tự giải hoặc tự thêm đáp án nếu yêu cầu không nói rõ.\n\nYÊU CẦU/VĂN BẢN:\n" + (input || "Đọc nội dung trong tệp đính kèm.")
+        text: "Hãy đọc chính xác nội dung nguồn, sửa lỗi OCR và chuyển công thức toán sang LaTeX. Không giải bài, không tự thêm đáp án, không bỏ câu. Sau khi JSON được parse, mỗi lệnh LaTeX chỉ được có đúng một dấu gạch chéo; không tạo thêm lớp escape. Trả về đúng ba trường clean_text, latex và notes.\n\n" + sourceInstruction
       }];
       var inlinePart = await fileToInlinePart(file);
       if (inlinePart) parts.push(inlinePart);
 
       var response = await window.TMA_AI.generate({
         contents: [{ role: "user", parts: parts }],
-        generationConfig: { responseMimeType: "application/json", temperature: Number(byId("profile-temperature").value) }
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              clean_text: { type: "STRING", description: "Toàn bộ văn bản nguồn đã sửa OCR, không chứa yêu cầu bổ sung." },
+              latex: { type: "STRING", description: "Toàn bộ nội dung với công thức MathJax dùng \\( \\) và \\[ \\]." },
+              notes: { type: "ARRAY", items: { type: "STRING" }, description: "Các vị trí chưa chắc chắn cần giáo viên kiểm tra." }
+            },
+            required: ["clean_text", "latex", "notes"]
+          },
+          temperature: Number(byId("profile-temperature").value)
+        }
       }, { profile: testProfile });
       var data = await response.json().catch(function () { return {}; });
       if (!response.ok) {
         throw new Error(data && data.error && data.error.message ? data.error.message : "AI trả về lỗi " + response.status + ".");
       }
 
-      var parsed = parseLooseJson(parseGeminiText(data));
+      var candidate = data && data.candidates && data.candidates[0];
+      if (candidate && candidate.finishReason && candidate.finishReason !== "STOP") {
+        throw new Error("AI dừng sớm khi đọc PDF (" + candidate.finishReason + "). Hãy tách PDF thành phần nhỏ hơn rồi chạy lại.");
+      }
+      var parsed = normalizeTestResult(parseLooseJson(parseGeminiText(data)));
       byId("test-json-output").textContent = JSON.stringify(parsed, null, 2);
       byId("test-preview-output").textContent = parsed.latex || parsed.clean_text || parsed.raw || "Không có nội dung xem trước.";
       if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
         await window.MathJax.typesetPromise([byId("test-preview-output")]);
       }
-      setTestStatus("Hoàn tất. Hãy kiểm tra các ghi chú trước khi dùng trong đề thật.", "success");
+      lastCompletedInput = input;
+      switchOutputTab(document.querySelector('[data-output-tab="preview"]'));
+      setTestStatus(parsed.notes.length ? "Hoàn tất. Có " + parsed.notes.length + " ghi chú cần kiểm tra." : "Hoàn tất. Không phát hiện vị trí OCR chưa chắc chắn.", "success");
     } catch (error) {
       setTestStatus(error.message || "Không thể chạy thử AI.", "error");
     } finally {
@@ -337,6 +392,15 @@
     byId("test-file").addEventListener("change", function () {
       var file = byId("test-file").files[0];
       byId("file-label").textContent = file ? file.name : "Đính kèm ảnh hoặc PDF";
+      byId("test-input-label").textContent = file ? "Yêu cầu bổ sung cho tệp (không bắt buộc)" : "Văn bản hoặc yêu cầu";
+      byId("test-input").placeholder = file ? "Ví dụ: Chỉ đọc trang 1-3, giữ nguyên số câu và phương án..." : "Dán đề thô hoặc yêu cầu AI chuyển công thức sang LaTeX...";
+      if (file && lastCompletedInput && byId("test-input").value.trim() === lastCompletedInput) {
+        byId("test-input").value = "";
+        showToast("Đã bỏ văn bản kiểm thử cũ; AI sẽ chỉ đọc tệp mới.");
+      }
+      setTestStatus("", "");
+      byId("test-json-output").textContent = "Kết quả có cấu trúc sẽ xuất hiện ở đây.";
+      byId("test-preview-output").textContent = "Công thức LaTeX sẽ được dựng ở đây.";
     });
     document.querySelectorAll(".output-tab").forEach(function (button) { button.addEventListener("click", function () { switchOutputTab(button); }); });
     ["profile-system", "profile-latex", "profile-output", "profile-examples", "profile-temperature"].forEach(function (id) {

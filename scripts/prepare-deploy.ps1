@@ -20,6 +20,8 @@ $files = @(
   "confirm.html",
   "waiting.html",
   "exam.html",
+  "result.html",
+  "report.html",
   "exam-math.html",
   "exam-reading.html",
   "exam-science.html",

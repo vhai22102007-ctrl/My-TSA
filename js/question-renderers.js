@@ -74,7 +74,7 @@
     str = str.replace(/(^|\n)\s*[\*•]\s+/g, '$1&bull; ');
 
     // Force clean line break before numbered steps like " 2. ", " 3. ", " 4. "
-    str = str.replace(/([^\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
+    str = str.replace(/([^0-9,\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
 
     return str;
   }
@@ -164,6 +164,25 @@
     return holder;
   }
 
+  function extractMultipleChoiceInstruction(question, rawText) {
+    var type = (question && (question.question_type || question.type)) || "";
+    var instruction = "";
+    
+    var regex = /(?:\(?(?:Chọn\s+(?:nhiều|hai|ba|bốn|các|hai|ba|bốn|HAI|BA|BỐN|\d+)\s+đáp\s+án(?:\s+đúng)?)\)?\.?)\s*$/i;
+    var match = rawText.match(regex);
+    if (match) {
+      instruction = match[0].trim();
+      rawText = rawText.replace(regex, "").trim();
+    } else if (type === "multiple_choice") {
+      instruction = "Chọn nhiều đáp án.";
+    }
+    
+    return {
+      cleanText: rawText,
+      instruction: instruction
+    };
+  }
+
   function renderQuestionText(question, bodyEl) {
     if (!bodyEl) return;
     clear(bodyEl);
@@ -173,10 +192,11 @@
     
     var rawText = (question && (question.question || question.prompt)) || "";
     
+    var res = extractMultipleChoiceInstruction(question, rawText);
+    rawText = res.cleanText;
+    
     // Auto bold instruction headers/titles
     var phrasesToBold = [
-      "\\(Chọn nhiều đáp án\\)",
-      "Chọn nhiều đáp án",
       "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
       "Kéo thả từ/cụm từ phù hợp vào chỗ trống:",
       "Điền số nguyên thích hợp vào chỗ trống:",
@@ -196,6 +216,14 @@
 
     lead.innerHTML = sanitizeHTML(rawText);
     bodyEl.appendChild(lead);
+
+    if (res.instruction) {
+      var instDiv = document.createElement("div");
+      instDiv.className = "question-instruction";
+      instDiv.style.cssText = "font-size: 15px; font-weight: normal; color: inherit; margin-top: 14px; margin-bottom: 2px; padding-left: 2px;";
+      instDiv.innerHTML = sanitizeHTML(res.instruction);
+      bodyEl.appendChild(instDiv);
+    }
 
     if (question && question.image_url) {
       bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || ""), question.image_width));
@@ -484,7 +512,7 @@
           input.value = current[part.id] || "";
           input.placeholder = "";
 
-          input.style.width = "180px";
+          input.style.width = "120px";
 
           input.addEventListener("input", function () {
             current[part.id] = input.value;
@@ -526,7 +554,11 @@
     ensureArray(question.items).forEach(function (item) {
       var chip = document.createElement("div");
       chip.className = "drag-chip";
-      chip.textContent = item.text;
+      var displayText = item.text || "";
+      if (typeof displayText === "string" && /^\d+\/\d+$/.test(displayText.trim())) {
+        displayText = "\\(\\dfrac{" + displayText.split("/")[0].trim() + "}{" + displayText.split("/")[1].trim() + "}\\)";
+      }
+      chip.innerHTML = sanitizeHTML(displayText);
       chip.setAttribute("draggable", "true");
       chip.dataset.id = item.id;
 
@@ -767,7 +799,7 @@
             input.className = "inline-blank-input";
             input.value = currentAnswers[bId] || "";
             input.placeholder = "";
-            input.style.width = "180px";
+            input.style.width = "120px";
 
             input.addEventListener("input", function () {
               if (isMultiBlank) {
@@ -839,12 +871,21 @@
         } else if (type === "drag_drop") {
           if (typeof corr === "object") {
             var items = question.items || [];
-            answerStr = Object.keys(corr).map(function(k) {
+            var htmlParts = Object.keys(corr).map(function(k) {
               var valId = corr[k];
-              var foundItem = items.find(function(it) { return it.id === valId || it.text === valId; });
+              var foundItem = items.find(function(it) { 
+                return it.id === valId || it.text === valId ||
+                       (valId && it.id.replace("item", "i") === valId.toLowerCase());
+              });
               var displayText = foundItem ? foundItem.text : valId;
-              return "[" + k + "] = " + displayText;
-            }).join(" | ");
+              if (typeof displayText === "string" && /^\d+\/\d+$/.test(displayText.trim())) {
+                displayText = "\\(\\dfrac{" + displayText.split("/")[0].trim() + "}{" + displayText.split("/")[1].trim() + "}\\)";
+              }
+              var label = k.replace(/^o(\d+)/i, "Ô $1");
+              return `<span style="font-weight: 600; color: #475569; margin-right: 4px;">${label}:</span>` +
+                     `<span class="drag-chip" style="background: #ecfdf5; border: 1.5px solid #059669; color: #065f46; cursor: default; margin: 0 8px 0 0; padding: 4px 12px; font-size: 13px; font-weight: 700; border-radius: 6px; box-shadow: none; display: inline-block; vertical-align: middle;">${displayText}</span>`;
+            });
+            answerStr = `<div style="display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-left: 6px; vertical-align: middle;">${htmlParts.join("")}</div>`;
           } else {
             answerStr = String(corr);
           }
@@ -872,11 +913,17 @@
         <div class="preview-answer-content" style="display: ${displayStyle}; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 4px; font-family: inherit;">
           <div style="margin-bottom: 10px; font-size: 13.5px;">
             <strong style="color: #0f172a; font-weight: 700;">Đáp án đúng:</strong> 
-            <span class="badge" style="background: #ecfdf5; color: #065f46; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-size: 13px; border: 1px solid #a7f3d0; margin-left: 6px;">${answerStr}</span>
+            ${(function() {
+              if (type === "drag_drop") {
+                return answerStr;
+              } else {
+                return `<span class="badge" style="background: #ecfdf5; color: #065f46; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-size: 13px; border: 1px solid #a7f3d0; margin-left: 6px;">${answerStr}</span>`;
+              }
+            })()}
           </div>
           <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px;">
             <div style="font-weight: 700; color: #0f172a; font-size: 13.5px; margin-bottom: 8px;">Lời giải chi tiết:</div>
-            <div class="explanation-text-body" style="font-size: 13.5px; color: #334155; line-height: 1.75; text-align: left; word-break: break-word;">${safeExplanation}</div>
+            <div class="explanation-text-body" style="font-size: 13.5px; color: #334155; line-height: 1.75; text-align: left; word-break: break-word; white-space: pre-wrap;">${safeExplanation}</div>
           </div>
         </div>
       `;
