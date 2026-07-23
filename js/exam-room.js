@@ -259,7 +259,7 @@
 
     return str
       .replace(/\\\(/g, '\\(\\displaystyle ')
-      .replace(/\$(?!\$)/g, '$\\displaystyle ')
+      .replace(/\$([^$]+)\$/g, '$\\displaystyle $1$')
       .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
       .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
       .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
