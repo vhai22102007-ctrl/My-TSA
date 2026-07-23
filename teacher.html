@@ -101,12 +101,14 @@
     body:not(.single-qb-mode) #topbar-type-separator {
       display: none !important;
     }
-    body.single-qb-mode #math-exam-header-controls,
     body.single-qb-mode #math-wizard-navigation {
       display: none !important;
     }
-    body.single-qb-mode #math-single-qb-header-controls {
-      display: flex !important;
+    body.single-qb-mode #math-single-qb-back-btn {
+      display: inline-flex !important;
+    }
+    body.single-qb-mode #math-single-qb-divider {
+      display: block !important;
     }
 
     /* Full height setup tab and textarea ONLY when active */
@@ -1460,26 +1462,20 @@
                 </div>
               </div>
 
-              <!-- Math Horizontal Controls (All 40 Circles across Topbar) -->
+              <!-- Math Horizontal Controls (All Circles across Topbar) -->
               <div id="topbar-math-controls" style="display: none; align-items: center; justify-content: space-between; gap: 10px; flex: 1; min-width: 0; font-family: inherit;">
-                <!-- Left: All 40 Small Circles (for Exam Mode) -->
-                <div id="math-exam-header-controls" style="display: flex; align-items: center; min-width: 0; flex: 1;">
-                  <div id="math-wizard-grid" style="display: flex; flex-wrap: nowrap; gap: 3px; overflow-x: auto; scrollbar-width: none; align-items: center; padding: 4px 2px; flex: 1;"></div>
-                </div>
-
-                <!-- Left: Back Button & Type Tabs for Single QB Mode -->
-                <div id="math-single-qb-header-controls" style="display: none; align-items: center; gap: 20px; flex: 1; min-width: 0;">
-                  <button type="button" onclick="window.exitEditingMode()" style="height: 28px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 13.5px; font-weight: 700; color: #c2272d; background: transparent; border: none; border-bottom: 2.5px solid #c2272d; border-radius: 0; white-space: nowrap; cursor: pointer; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.color='#a81d22'; this.style.borderBottomColor='#a81d22';" onmouseout="this.style.color='#c2272d'; this.style.borderBottomColor='#c2272d';">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                  <!-- Left: Back Button (visible only in Single QB Mode) -->
+                  <button type="button" id="math-single-qb-back-btn" onclick="window.exitEditingMode()" style="display: none; height: 28px; align-items: center; gap: 6px; padding: 2px 0; font-size: 13.5px; font-weight: 700; color: #c2272d; background: transparent; border: none; border-bottom: 2.5px solid #c2272d; border-radius: 0; white-space: nowrap; cursor: pointer; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.color='#a81d22'; this.style.borderBottomColor='#a81d22';" onmouseout="this.style.color='#c2272d'; this.style.borderBottomColor='#c2272d';">
                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     Quay lại
                   </button>
                   
-                  <!-- Divider -->
-                  <div style="width: 1px; height: 18px; background: #e2e8f0; flex-shrink: 0;"></div>
+                  <!-- Divider (visible only in Single QB Mode) -->
+                  <div id="math-single-qb-divider" style="display: none; width: 1px; height: 18px; background: #e2e8f0; flex-shrink: 0;"></div>
                   
-                  <!-- Question Type Tabs Container -->
-                  <div id="math-single-qb-type-tabs-container" class="q-type-tabs-nav" style="display: flex; gap: 20px; align-items: center; border-bottom: none; margin-bottom: 0; padding-left: 0; width: auto; flex-wrap: nowrap;">
-                  </div>
+                  <!-- Center: All Small Circles (visible in both modes) -->
+                  <div id="math-wizard-grid" style="display: flex; flex-wrap: nowrap; gap: 3.5px; overflow-x: auto; scrollbar-width: none; align-items: center; padding: 4px 2px; flex: 1;"></div>
                 </div>
 
                 <!-- Right: Question tools + Role Switcher -->

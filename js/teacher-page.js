@@ -3603,7 +3603,7 @@
       }
 
       function renderMathWizardNav() {
-        var grid = $("#math-wizard-grid-tabs");
+        var grid = $("#math-wizard-grid");
         if (!grid) return;
         grid.innerHTML = "";
         
@@ -3694,12 +3694,25 @@
         if (editingQuestion["math"] && editingQuestion["math"].question) {
           var currentVal = collectBaseQuestion("math", false);
           currentVal.question_no = activeMathQuestionNo; // always keep question_no correct
-          ensureSchema();
-          var mathSec2 = getSection("math");
-          if (mathSec2 && Array.isArray(mathSec2.questions)) {
-            mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+          
+          if (window.isEditingStagedQuestion) {
+            var stagedMath = [];
+            try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+            stagedMath[activeMathQuestionNo - 1] = currentVal;
+            localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
+            
+            var mathSec2 = getSection("math");
+            if (mathSec2 && Array.isArray(mathSec2.questions)) {
+              mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+            }
+          } else {
+            ensureSchema();
+            var mathSec2 = getSection("math");
+            if (mathSec2 && Array.isArray(mathSec2.questions)) {
+              mathSec2.questions[activeMathQuestionNo - 1] = currentVal;
+            }
+            saveDraft();
           }
-          saveDraft();
         }
         
         activeMathQuestionNo = qNo;
@@ -10968,11 +10981,24 @@ function triggerChoiceImageUpload(btn) {
         if (isStaged) {
           var stagedMath = [];
           try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+          
+          // Load staged questions into active math section in memory so nav grid can render
+          var mathSec = getSection("math");
+          if (mathSec) {
+            mathSec.questions = stagedMath.map(function(q, idx) {
+              var qCopy = clone(q);
+              qCopy.question_no = idx + 1;
+              return qCopy;
+            });
+          }
+          
           var q = stagedMath[index];
           if (q) {
             editingQuestion["math"] = { index: index, question: clone(q) };
+            activeMathQuestionNo = index + 1;
             renderQuestionForm("math");
             updatePreview("math");
+            renderMathWizardNav();
           }
         } else {
           if (typeof window.selectMathWizardQuestion === "function") {
