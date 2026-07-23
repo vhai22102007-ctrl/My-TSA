@@ -74,7 +74,7 @@
     str = str.replace(/(^|\n)\s*[\*•]\s+/g, '$1&bull; ');
 
     // Force clean line break before numbered steps like " 2. ", " 3. ", " 4. "
-    str = str.replace(/([^0-9,\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
+    str = str.replace(/([^0-9,\n])\s*([1-9]\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
 
     return str;
   }
