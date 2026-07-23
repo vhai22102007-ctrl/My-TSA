@@ -11448,7 +11448,8 @@ function triggerChoiceImageUpload(btn) {
 
         if (isDirectJson && directParsed) {
           try {
-            var targetCode = "TMA_RANDOM_001";
+            var targetCode = (exam && exam.exam_code) ? exam.exam_code : "TMA_RANDOM_001";
+            var isRandom = (targetCode === "TMA_RANDOM_001");
             var examObj = null;
             var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
             if (stored) {
@@ -11457,7 +11458,7 @@ function triggerChoiceImageUpload(btn) {
             if (!examObj || !Array.isArray(examObj.sections)) {
               examObj = {
                 exam_code: targetCode,
-                title: "Ngân hàng câu hỏi Luyện đề ngẫu nhiên",
+                title: isRandom ? "Ngân hàng câu hỏi Luyện đề ngẫu nhiên" : (exam ? exam.title : "Đề thi thử"),
                 duration_minutes: 150,
                 status: "published",
                 sections: [
@@ -11474,25 +11475,45 @@ function triggerChoiceImageUpload(btn) {
               if (directParsed.data && Array.isArray(directParsed.data.questions)) {
                 list = directParsed.data.questions;
               }
-              var stagedMath = [];
-              try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
-              var addedCount = 0;
-              list.forEach(function(newQ) {
-                stagedMath.push(newQ);
-                addedCount++;
-              });
-              localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
+              if (isRandom) {
+                var stagedMath = [];
+                try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+                var addedCount = 0;
+                list.forEach(function(newQ) {
+                  stagedMath.push(newQ);
+                  addedCount++;
+                });
+                localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
 
-              if (statusEl) {
-                statusEl.style.display = "block";
-                statusEl.style.color = "#166534";
-                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
+                if (statusEl) {
+                  statusEl.style.display = "block";
+                  statusEl.style.color = "#166534";
+                  statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
+                }
+              } else {
+                var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+                if (!mathSec) {
+                  mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
+                  examObj.sections.push(mathSec);
+                }
+                if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+
+                var addedCount = 0;
+                list.forEach(function(newQ) {
+                  newQ.question_no = mathSec.questions.length + 1;
+                  mathSec.questions.push(newQ);
+                  addedCount++;
+                });
+                localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+                if (statusEl) {
+                  statusEl.style.display = "block";
+                  statusEl.style.color = "#166534";
+                  statusEl.textContent = "✅ Đã nạp trực tiếp " + addedCount + " câu hỏi Toán vào đề thi chính thức!";
+                }
               }
             } else if (sectionId === "reading" || sectionId === "science") {
-              var stagedGroups = [];
-              try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
-
-              var addedGroups = 0;
               var sourceGroups = [];
               if (Array.isArray(directParsed.groups)) {
                 sourceGroups = directParsed.groups;
@@ -11502,47 +11523,101 @@ function triggerChoiceImageUpload(btn) {
                 sourceGroups = [directParsed.group];
               }
 
-              sourceGroups.forEach(function(g) {
-                var newGroup = {
-                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
-                  title: g.title || "Tiêu đề bài đọc",
-                  passage: g.passage || (g.stimulus ? g.stimulus.content : "") || "",
-                  questions: g.questions || []
-                };
-                if (g.stimulus) {
-                  newGroup.stimulus = Object.assign({}, g.stimulus);
-                } else {
-                  newGroup.stimulus = {
-                    type: "text",
-                    content: newGroup.passage,
-                    image_url: g.image_url || g.passage_image_url || "",
-                    image_width: g.image_width || 100
+              if (isRandom) {
+                var stagedGroups = [];
+                try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
+                var addedGroups = 0;
+                sourceGroups.forEach(function(g) {
+                  var newGroup = {
+                    group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
+                    title: g.title || "Tiêu đề bài đọc",
+                    passage: g.passage || (g.stimulus ? g.stimulus.content : "") || "",
+                    questions: g.questions || []
                   };
-                }
-                if (g.passage_image_url) {
-                  newGroup.passage_image_url = g.passage_image_url;
-                } else if (newGroup.stimulus.image_url) {
-                  newGroup.passage_image_url = newGroup.stimulus.image_url;
-                }
-                stagedGroups.push(newGroup);
-                addedGroups++;
-              });
-              localStorage.setItem("tma_tsa_staged_" + sectionId, JSON.stringify(stagedGroups));
+                  if (g.stimulus) {
+                    newGroup.stimulus = Object.assign({}, g.stimulus);
+                  } else {
+                    newGroup.stimulus = {
+                      type: "text",
+                      content: newGroup.passage,
+                      image_url: g.image_url || g.passage_image_url || "",
+                      image_width: g.image_width || 100
+                    };
+                  }
+                  if (g.passage_image_url) {
+                    newGroup.passage_image_url = g.passage_image_url;
+                  } else if (newGroup.stimulus.image_url) {
+                    newGroup.passage_image_url = newGroup.stimulus.image_url;
+                  }
+                  stagedGroups.push(newGroup);
+                  addedGroups++;
+                });
+                localStorage.setItem("tma_tsa_staged_" + sectionId, JSON.stringify(stagedGroups));
 
-              if (statusEl) {
-                statusEl.style.display = "block";
-                statusEl.style.color = "#166534";
-                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedGroups + " ngữ liệu!";
+                if (statusEl) {
+                  statusEl.style.display = "block";
+                  statusEl.style.color = "#166534";
+                  statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedGroups + " ngữ liệu!";
+                }
+              } else {
+                var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+                if (!sec) {
+                  sec = { section_id: sectionId, section_label: sectionId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
+                  examObj.sections.push(sec);
+                }
+                if (!Array.isArray(sec.groups)) sec.groups = [];
+
+                var addedGroups = 0;
+                sourceGroups.forEach(function(g) {
+                  var newGroup = {
+                    group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
+                    title: g.title || "Tiêu đề bài đọc",
+                    passage: g.passage || (g.stimulus ? g.stimulus.content : "") || "",
+                    questions: g.questions || []
+                  };
+                  if (g.stimulus) {
+                    newGroup.stimulus = Object.assign({}, g.stimulus);
+                  } else {
+                    newGroup.stimulus = {
+                      type: "text",
+                      content: newGroup.passage,
+                      image_url: g.image_url || g.passage_image_url || "",
+                      image_width: g.image_width || 100
+                    };
+                  }
+                  if (g.passage_image_url) {
+                    newGroup.passage_image_url = g.passage_image_url;
+                  } else if (newGroup.stimulus.image_url) {
+                    newGroup.passage_image_url = newGroup.stimulus.image_url;
+                  }
+                  sec.groups.push(newGroup);
+                  addedGroups++;
+                });
+
+                localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+                if (statusEl) {
+                  statusEl.style.display = "block";
+                  statusEl.style.color = "#166534";
+                  statusEl.textContent = "✅ Đã nạp trực tiếp " + addedGroups + " ngữ liệu vào đề thi chính thức!";
+                }
               }
             } else {
               throw new Error("Không xác định được môn thi (section_id).");
             }
 
             document.getElementById("qb-ai-raw-text").value = "";
-            window.currentQbViewMode = "staged"; // Automatically switch to Staged tab!
-            setTimeout(function() {
-              if (typeof renderPracticeRoom === "function") renderPracticeRoom();
-            }, 800);
+            if (isRandom) {
+              window.currentQbViewMode = "staged";
+              setTimeout(function() {
+                if (typeof renderPracticeRoom === "function") renderPracticeRoom();
+              }, 800);
+            } else {
+              setTimeout(function() {
+                window.startEditingExam(examObj.title, targetCode, sectionId);
+              }, 800);
+            }
 
             return;
           } catch(err) {
@@ -11702,50 +11777,139 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
         .then(function(resData) {
           var jsonText = resData.candidates[0].content.parts[0].text;
           var result = safeParseGeminiJson(jsonText);
-          
+          var targetCode = (exam && exam.exam_code) ? exam.exam_code : "TMA_RANDOM_001";
+          var isRandom = (targetCode === "TMA_RANDOM_001");
+          var examObj = null;
+          var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (stored) {
+            try { examObj = JSON.parse(stored); } catch(e) {}
+          }
+          if (!examObj || !Array.isArray(examObj.sections)) {
+            examObj = {
+              exam_code: targetCode,
+              title: isRandom ? "Ngân hàng câu hỏi Luyện đề ngẫu nhiên" : (exam ? exam.title : "Đề thi thử"),
+              duration_minutes: 150,
+              status: "published",
+              sections: [
+                { section_id: "math", section_label: "Tư duy Toán học", questions: [] },
+                { section_id: "reading", section_label: "Tư duy Đọc hiểu", groups: [] },
+                { section_id: "science", section_label: "Tư duy Khoa học", groups: [] }
+              ]
+            };
+          }
+
           if (result.section_id === "math") {
-            var stagedMath = [];
-            try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
-            var addedCount = 0;
+            var list = [];
             if (result.data && Array.isArray(result.data.questions)) {
-              result.data.questions.forEach(function(newQ) {
+              list = result.data.questions;
+            }
+            if (isRandom) {
+              var stagedMath = [];
+              try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+              var addedCount = 0;
+              list.forEach(function(newQ) {
                 stagedMath.push(newQ);
                 addedCount++;
               });
-            }
-            localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
-            
-            if (statusEl) {
-              statusEl.style.color = "#166534";
-              statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
+              localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
+
+              if (statusEl) {
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
+              }
+            } else {
+              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+              if (!mathSec) {
+                mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
+                examObj.sections.push(mathSec);
+              }
+              if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+
+              var addedCount = 0;
+              list.forEach(function(newQ) {
+                newQ.question_no = mathSec.questions.length + 1;
+                mathSec.questions.push(newQ);
+                addedCount++;
+              });
+              localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+              localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+              if (statusEl) {
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp trực tiếp " + addedCount + " câu hỏi Toán vào đề thi chính thức!";
+              }
             }
           } else if (result.section_id === "reading" || result.section_id === "science") {
             var secId = result.section_id;
-            var stagedGroups = [];
-            try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + secId) || "[]"); } catch(e) {}
-
+            var sourceGroups = [];
             if (result.data && result.data.group) {
-              var newGroup = result.data.group;
-              newGroup.group_id = "g_" + Date.now();
-              stagedGroups.push(newGroup);
+              sourceGroups = [result.data.group];
+            } else if (result.data && Array.isArray(result.data.groups)) {
+              sourceGroups = result.data.groups;
+            }
+
+            if (isRandom) {
+              var stagedGroups = [];
+              try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + secId) || "[]"); } catch(e) {}
+              var addedGroups = 0;
+              sourceGroups.forEach(function(g) {
+                var newGroup = {
+                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
+                  title: g.title || "Tiêu đề bài đọc",
+                  passage: g.passage || "",
+                  questions: g.questions || []
+                };
+                stagedGroups.push(newGroup);
+                addedGroups++;
+              });
               localStorage.setItem("tma_tsa_staged_" + secId, JSON.stringify(stagedGroups));
-              
+
               if (statusEl) {
                 statusEl.style.color = "#166534";
                 statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt Ngữ liệu nền kèm câu hỏi!";
               }
             } else {
-              throw new Error("Dữ liệu ngữ liệu từ AI không đúng cấu trúc.");
+              var sec = examObj.sections.find(function(s) { return s.section_id === secId; });
+              if (!sec) {
+                sec = { section_id: secId, section_label: secId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
+                examObj.sections.push(sec);
+              }
+              if (!Array.isArray(sec.groups)) sec.groups = [];
+
+              var addedGroups = 0;
+              sourceGroups.forEach(function(g) {
+                var newGroup = {
+                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
+                  title: g.title || "Tiêu đề bài đọc",
+                  passage: g.passage || "",
+                  questions: g.questions || []
+                };
+                sec.groups.push(newGroup);
+                addedGroups++;
+              });
+              localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+              localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+
+              if (statusEl) {
+                statusEl.style.color = "#166534";
+                statusEl.textContent = "✅ Đã nạp trực tiếp Ngữ liệu nền kèm câu hỏi vào đề thi chính thức!";
+              }
             }
           } else {
             throw new Error("Không xác định được môn thi (section_id).");
           }
 
           document.getElementById("qb-ai-raw-text").value = "";
-          window.currentQbViewMode = "staged"; // Automatically switch to Staged tab!
-          setTimeout(function() {
-            if (typeof renderPracticeRoom === "function") renderPracticeRoom();
-          }, 800);
+          if (isRandom) {
+            window.currentQbViewMode = "staged";
+            setTimeout(function() {
+              if (typeof renderPracticeRoom === "function") renderPracticeRoom();
+            }, 800);
+          } else {
+            setTimeout(function() {
+              window.startEditingExam(examObj.title, targetCode, result.section_id);
+            }, 800);
+          }
 
         })
         .catch(function(error) {
