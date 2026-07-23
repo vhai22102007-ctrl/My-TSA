@@ -889,6 +889,14 @@
           } else {
             answerStr = String(corr);
           }
+        } else if (type === "fill_blank") {
+          if (corr && typeof corr === "object") {
+            answerStr = Object.keys(corr).map(function(k) {
+              return k.replace(/^o(\d+)/i, "Ô $1") + ": " + corr[k];
+            }).join(" | ");
+          } else {
+            answerStr = String(corr);
+          }
         } else {
           answerStr = String(corr);
         }
