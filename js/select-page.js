@@ -887,12 +887,19 @@
         const displayProfEmail = document.getElementById("account-profile-display-email");
         if (displayProfEmail) displayProfEmail.textContent = studentInfo.email || "";
 
-        const firstChar = displayName ? displayName.trim().charAt(0).toUpperCase() : "Y";
         const avatarPlaceholder = document.getElementById("account-avatar-placeholder");
-        if (avatarPlaceholder) avatarPlaceholder.textContent = firstChar;
+        if (avatarPlaceholder) {
+          avatarPlaceholder.innerHTML = `<img id="account-avatar-img" src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
 
         const infoAvatarPlaceholder = document.getElementById("account-info-avatar-placeholder");
-        if (infoAvatarPlaceholder) infoAvatarPlaceholder.textContent = firstChar;
+        if (infoAvatarPlaceholder) {
+          infoAvatarPlaceholder.innerHTML = `<img id="account-info-avatar-img" src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
+
+        if (typeof window.renderAccountRegisteredCourses === "function") {
+          window.renderAccountRegisteredCourses();
+        }
       }
 
       window.switchAccountSubTab = function(subTabId) {
@@ -915,6 +922,11 @@
             panel.classList.remove("active");
           }
         });
+
+        // Dynamic rendering when switching tabs
+        if (subTabId === "my-courses" && typeof window.renderAccountRegisteredCourses === "function") {
+          window.renderAccountRegisteredCourses();
+        }
       };
 
       // KHO TÀI LIỆU INTEGRATION
@@ -7326,6 +7338,85 @@
           
           container.appendChild(item);
         });
+      };
+
+      window.renderAccountRegisteredCourses = function() {
+        const container = document.getElementById("account-sub-my-courses");
+        if (!container) return;
+
+        // Clear existing empty state or previous lists (but keep the title!)
+        container.innerHTML = `<h2 class="account-sub-title">Khóa học của tôi</h2>`;
+
+        // Get registered course IDs
+        const registeredIds = typeof getRegisteredCourseIds === "function" ? getRegisteredCourseIds() : [];
+        
+        // Filter COURSES_DATA to find enrolled ones
+        const registeredCourses = (COURSES_DATA || []).filter(course => registeredIds.includes(course.id));
+
+        if (registeredCourses.length === 0) {
+          container.innerHTML += `
+            <div class="account-empty-state">
+              <svg viewBox="0 0 24 24" width="80" height="80" stroke="#cbd5e1" fill="none" stroke-width="1.5" class="empty-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+              <p class="empty-text">Bạn chưa đăng ký khóa học nào</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Render the courses list!
+        const grid = document.createElement("div");
+        grid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 16px; font-family: 'Inter', sans-serif;";
+
+        registeredCourses.forEach(course => {
+          let heroImage = "https://assets.tmastudy.io.vn/assets/thpt.png";
+          const titleLower = course.title.toLowerCase();
+          if (titleLower.includes("tsa")) {
+            heroImage = "https://assets.tmastudy.io.vn/assets/anhnen.png";
+          } else if (titleLower.includes("lý") || titleLower.includes("physics")) {
+            heroImage = "https://assets.tmastudy.io.vn/assets/ly.png";
+          }
+
+          const card = document.createElement("div");
+          card.style.cssText = "background: #ffffff; border: 1.5px solid #f1f5f9; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; cursor: pointer; transition: all 0.2s ease;";
+          card.className = "registered-course-card";
+          
+          card.innerHTML = `
+            <div style="position: relative; width: 100%; height: 165px; overflow: hidden;">
+              <img src="${heroImage}" alt="${course.title}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 12px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+              <h3 style="margin: 0 0 10px; font-size: 13.5px; font-weight: 700; color: #1e293b; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">${course.title}</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f8fafc; padding-top: 8px; font-size: 11.5px;">
+                <span style="font-weight: 700; color: #0f5a9e;">Vào lớp học →</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 20px; font-weight: 700; font-size: 10px; white-space: nowrap;">✓ Đã đăng ký</span>
+                  <span style="color: #94a3b8; font-weight: 600; white-space: nowrap;">${course.lessons ? course.lessons.length : 0} bài</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          card.onmouseover = function() {
+            card.style.transform = "translateY(-4px)";
+            card.style.borderColor = "#bfdbfe";
+            card.style.boxShadow = "0 10px 15px -3px rgba(0,0,0,0.1)";
+          };
+          card.onmouseout = function() {
+            card.style.transform = "none";
+            card.style.borderColor = "#f1f5f9";
+            card.style.boxShadow = "0 4px 6px -1px rgba(0,0,0,0.05)";
+          };
+
+          card.addEventListener("click", () => {
+            if (typeof openClassroomModal === 'function') {
+              openClassroomModal(course.id);
+            }
+          });
+
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
       };
 
     

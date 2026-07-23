@@ -1422,36 +1422,107 @@
             try { examObj = JSON.parse(raw); } catch(e) {}
           }
 
-          var tableCard = document.createElement("div");
-          tableCard.style.cssText = "background: white; border-radius: 12px; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;";
-          
-          var tableHeaderHtml = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-              <div>
-                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">Ngân hàng câu hỏi Luyện đề ngẫu nhiên</h3>
-              </div>
-              <button class="btn" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; font-size: 13.5px; font-weight: 700; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit; transition: all 0.2s;" onclick="window.openQuestionBankModal()">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Nạp Ngân hàng câu hỏi (AI)
+          var stagedMath = [];
+          var stagedReading = [];
+          var stagedScience = [];
+          try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+          try { stagedReading = JSON.parse(localStorage.getItem("tma_tsa_staged_reading") || "[]"); } catch(e) {}
+          try { stagedScience = JSON.parse(localStorage.getItem("tma_tsa_staged_science") || "[]"); } catch(e) {}
+
+          var currentSectionStagedCount = 0;
+          if (window.currentRandomPracticeSubtab === "math") currentSectionStagedCount = stagedMath.length;
+          else if (window.currentRandomPracticeSubtab === "reading") currentSectionStagedCount = stagedReading.length;
+          else if (window.currentRandomPracticeSubtab === "science") currentSectionStagedCount = stagedScience.length;
+
+          var officialCount = 0;
+          if (window.currentRandomPracticeSubtab === "math") {
+            var mathSec = examObj && examObj.sections ? examObj.sections.find(s => s.section_id === "math") : null;
+            officialCount = mathSec && mathSec.questions ? mathSec.questions.length : 0;
+          } else {
+            var secObj = examObj && examObj.sections ? examObj.sections.find(s => s.section_id === window.currentRandomPracticeSubtab) : null;
+            officialCount = secObj && secObj.groups ? secObj.groups.length : 0;
+          }
+
+          window.currentQbViewMode = window.currentQbViewMode || "official";
+          var isStagedMode = window.currentQbViewMode === "staged";
+
+          var deleteBtnHtml = "";
+          if (!isStagedMode) {
+            if (officialCount > 0) {
+              deleteBtnHtml = `
+                <button type="button" class="btn" style="border: 1.5px solid #ff3b30; color: #ff3b30; background: #fff0f0; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: all 0.2s;" onclick="window.clearAllQbOfficialQuestions('${window.currentRandomPracticeSubtab}')">
+                  🗑️ Xóa toàn bộ ngân hàng
+                </button>
+              `;
+            }
+          } else {
+            if (currentSectionStagedCount > 0) {
+              deleteBtnHtml = `
+                <button type="button" class="btn" style="border: 1.5px solid #ff9500; color: #ff9500; background: #fff9f0; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: all 0.2s;" onclick="window.clearAllQbStagedQuestions('${window.currentRandomPracticeSubtab}')">
+                  🗑️ Xóa sạch hàng chờ duyệt
+                </button>
+              `;
+            }
+          }
+
+          var tabOfficialActive = !isStagedMode ? "background: #c2272d; color: white; box-shadow: 0 4px 12px rgba(194,39,45,0.2);" : "background: #f1f5f9; color: #475569;";
+          var tabStagedActive = isStagedMode ? "background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.2);" : "background: #f1f5f9; color: #475569;";
+
+          var viewTabsHtml = `
+            <div style="display: flex; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px; font-family: 'Inter', sans-serif;">
+              <button type="button" class="btn" onclick="window.switchQbViewMode('official')" style="${tabOfficialActive} border: none; font-weight: 700; padding: 8px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+                📂 Ngân hàng chính thức (${officialCount})
+              </button>
+              <button type="button" class="btn" onclick="window.switchQbViewMode('staged')" style="${tabStagedActive} border: none; font-weight: 700; padding: 8px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+                ⚡ Câu hỏi mới nhập AI (Chờ duyệt) (${currentSectionStagedCount})
               </button>
             </div>
           `;
 
+          var tableCard = document.createElement("div");
+          tableCard.style.cssText = "background: white; border-radius: 12px; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; width: 100%; box-sizing: border-box; font-family: 'Inter', sans-serif;";
+          
+          var tableHeaderHtml = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; font-family: 'Inter', sans-serif;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">Ngân hàng câu hỏi Luyện đề ngẫu nhiên</h3>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                ${deleteBtnHtml}
+                <button class="btn" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; font-size: 13.5px; font-weight: 700; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit; transition: all 0.2s;" onclick="window.openQuestionBankModal()">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Nạp Ngân hàng câu hỏi (AI)
+                </button>
+              </div>
+            </div>
+            ${viewTabsHtml}
+          `;
+
           if (window.currentRandomPracticeSubtab === "math") {
             var qList = [];
-            if (examObj && Array.isArray(examObj.sections)) {
-              var mathSec = examObj.sections.find(s => s.section_id === "math");
-              if (mathSec && Array.isArray(mathSec.questions)) {
-                qList = mathSec.questions;
+            if (isStagedMode) {
+              qList = stagedMath;
+            } else {
+              if (examObj && Array.isArray(examObj.sections)) {
+                var mathSec = examObj.sections.find(s => s.section_id === "math");
+                if (mathSec && Array.isArray(mathSec.questions)) {
+                  qList = mathSec.questions;
+                }
               }
             }
 
             if (qList.length === 0) {
+              var emptyMsg = isStagedMode 
+                ? "Danh sách câu hỏi Toán chờ duyệt đang trống!"
+                : "Chưa có câu hỏi Toán học nào!";
+              var emptyDesc = isStagedMode
+                ? "Dữ liệu nạp từ file/AI sẽ hiển thị ở đây trước khi được duyệt lưu."
+                : "Nhấn nút \"Nạp Ngân hàng câu hỏi (AI)\" ở trên để bắt đầu nạp câu hỏi Toán học.";
               tableCard.innerHTML = tableHeaderHtml + `
                 <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
                   <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                  <div style="font-weight: 600; color: #334155; font-size: 15px;">Chưa có câu hỏi Toán học nào!</div>
-                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp câu hỏi Toán học.</div>
+                  <div style="font-weight: 600; color: #334155; font-size: 15px;">${emptyMsg}</div>
+                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">${emptyDesc}</div>
                 </div>
               `;
             } else {
@@ -1488,16 +1559,19 @@
                   }
                 }
 
+                var qPrefix = isStagedMode ? "STG-m" : "TMA-m";
+                var editLabel = isStagedMode ? "✏️ Duyệt & Sửa" : "✏️ Chỉnh sửa";
+
                 rowsHtml += `
                   <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
-                    <td style="padding: 12px 10px;"><span style="background: #fff5f6; color: #c2272d; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid #ffe4e6; white-space: nowrap;">TMAm${String(idx + 1).padStart(3, '0')}</span></td>
+                    <td style="padding: 12px 10px;"><span style="background: #fff5f6; color: #c2272d; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; border: 1px solid #ffe4e6; white-space: nowrap;">${qPrefix}${String(idx + 1).padStart(3, '0')}</span></td>
                     <td style="padding: 12px 10px;">${diffBadge}</td>
                     <td style="padding: 12px 10px;">${topicBadge}</td>
                     <td style="padding: 12px 10px; color: #1e293b; font-weight: 500;">${previewText}</td>
                     <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${ansText}</span></td>
                     <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
-                      <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbQuestion(${idx})">✏️ Chỉnh sửa</button>
-                      <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbQuestion(${idx})">Xóa</button>
+                      <button type="button" class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbQuestion(${idx}, ${isStagedMode})">${editLabel}</button>
+                      <button type="button" class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbQuestion(${idx}, ${isStagedMode})">Xóa</button>
                     </td>
                   </tr>
                 `;
@@ -1524,24 +1598,33 @@
               `;
             }
           } else {
-            // Reading or Science passage groups
             var groupsList = [];
             var sectionId = window.currentRandomPracticeSubtab;
-            if (examObj && Array.isArray(examObj.sections)) {
-              var sec = examObj.sections.find(s => s.section_id === sectionId);
-              if (sec && Array.isArray(sec.groups)) {
-                groupsList = sec.groups;
+            if (isStagedMode) {
+              groupsList = sectionId === "reading" ? stagedReading : stagedScience;
+            } else {
+              if (examObj && Array.isArray(examObj.sections)) {
+                var sec = examObj.sections.find(s => s.section_id === sectionId);
+                if (sec && Array.isArray(sec.groups)) {
+                  groupsList = sec.groups;
+                }
               }
             }
 
             var sectionLabel = sectionId === "reading" ? "Đọc hiểu" : "Khoa học";
 
             if (groupsList.length === 0) {
+              var emptyMsg = isStagedMode 
+                ? "Danh sách ngữ liệu " + sectionLabel + " chờ duyệt đang trống!"
+                : "Chưa có ngữ liệu " + sectionLabel + " nào!";
+              var emptyDesc = isStagedMode
+                ? "Dữ liệu nạp từ file/AI sẽ hiển thị ở đây trước khi được duyệt lưu."
+                : "Nhấn nút \"Nạp Ngân hàng câu hỏi (AI)\" ở trên để bắt đầu nạp ngữ liệu.";
               tableCard.innerHTML = tableHeaderHtml + `
                 <div style="text-align: center; padding: 50px 20px; background: #fafafa; border-radius: 8px; border: 1.5px dashed #e2e8f0; color: #64748b; font-size: 14px; margin-top: 10px;">
                   <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                  <div style="font-weight: 600; color: #334155; font-size: 15px;">Chưa có ngữ liệu ${sectionLabel} nào!</div>
-                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Nhấn nút <strong>"Nạp Ngân hàng câu hỏi (AI)"</strong> ở trên để bắt đầu nạp ngữ liệu.</div>
+                  <div style="font-weight: 600; color: #334155; font-size: 15px;">${emptyMsg}</div>
+                  <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">${emptyDesc}</div>
                 </div>
               `;
             } else {
@@ -1552,10 +1635,11 @@
                 var previewText = rawTxt.length > 70 ? (rawTxt.substring(0, 70) + "...") : rawTxt;
                 var titleText = g.title || "Chưa có tiêu đề";
 
-                var prefix = sectionId === "reading" ? "TMAr" : "TMAs";
+                var prefix = sectionId === "reading" ? (isStagedMode ? "STG-r" : "TMA-r") : (isStagedMode ? "STG-s" : "TMA-s");
                 var idBg = sectionId === "reading" ? "#eff6ff" : "#f0fdf4";
                 var idText = sectionId === "reading" ? "#1e40af" : "#166534";
                 var idBorder = sectionId === "reading" ? "#bfdbfe" : "#bbf7d0";
+                var editLabel = isStagedMode ? "✏️ Duyệt & Sửa" : "✏️ Chỉnh sửa";
 
                 rowsHtml += `
                   <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.15s;">
@@ -1564,8 +1648,8 @@
                     <td style="padding: 12px 10px; text-align: center;"><span style="background: #f1f5f9; color: #334155; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">${qCount} câu hỏi</span></td>
                     <td style="padding: 12px 10px; color: #475569; font-weight: 500;">${previewText}</td>
                     <td style="padding: 12px 10px; text-align: right; white-space: nowrap;">
-                      <button class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbGroup('${g.group_id}', '${sectionId}')">✏️ Chỉnh sửa</button>
-                      <button class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbGroup('${g.group_id}', '${sectionId}')">Xóa</button>
+                      <button type="button" class="btn btn-sm" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-right: 4px;" onclick="window.editQbGroup('${g.group_id}', '${sectionId}', 0, ${isStagedMode})">${editLabel}</button>
+                      <button type="button" class="btn btn-sm" style="background: #fff5f6; color: #c2272d; border: 1px solid #ffe4e6; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" onclick="window.deleteQbGroup('${g.group_id}', '${sectionId}', ${isStagedMode})">Xóa</button>
                     </td>
                   </tr>
                 `;
@@ -2413,23 +2497,26 @@
         }
         
         // Populate up to 40 questions for math section
-        while (mathSec.questions.length < 40) {
-          var nextNo = mathSec.questions.length + 1;
-          mathSec.questions.push({
-            question_no: nextNo,
-            question_type: "single_choice",
-            question: "",
-            image_url: "",
-            options: [
-              { "key": "A", "text": "" },
-              { "key": "B", "text": "" },
-              { "key": "C", "text": "" },
-              { "key": "D", "text": "" }
-            ],
-            correct_answer: "A",
-            explanation: "",
-            points: 1
-          });
+        var isRandomPracticeExam = (exam && exam.exam_code === "TMA_RANDOM_001");
+        if (!isRandomPracticeExam) {
+          while (mathSec.questions.length < 40) {
+            var nextNo = mathSec.questions.length + 1;
+            mathSec.questions.push({
+              question_no: nextNo,
+              question_type: "single_choice",
+              question: "",
+              image_url: "",
+              options: [
+                { "key": "A", "text": "" },
+                { "key": "B", "text": "" },
+                { "key": "C", "text": "" },
+                { "key": "D", "text": "" }
+              ],
+              correct_answer: "A",
+              explanation: "",
+              points: 1
+            });
+          }
         }
 
         // Clean placeholders from existing questions and option values
@@ -2495,13 +2582,6 @@
         if (readingSec) {
           if (!Array.isArray(readingSec.groups)) readingSec.groups = [];
           
-          if (!isRandomPractice) {
-            // Keep only g1 and g2
-            readingSec.groups = readingSec.groups.filter(function(g) {
-              return g.group_id === "g1" || g.group_id === "g2";
-            });
-          }
-
           // Ensure stimulus/passage synchronization and structure for all reading groups
           readingSec.groups.forEach(function(g) {
             if (!g.stimulus) {
@@ -2528,169 +2608,33 @@
             }
           });
           
-          // Check/Create Group 1 (g1)
-          var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
-          if (!g1) {
-            g1 = {
-              group_id: "g1",
-              title: "",
-              stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
-              questions: []
-            };
-            readingSec.groups.push(g1);
-          }
-          if (!Array.isArray(g1.questions)) g1.questions = [];
-          if (g1.questions.length > 10 && !isRandomPractice) {
-            g1.questions = g1.questions.slice(0, 10);
-          }
-          // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
           if (!isRandomPractice) {
-            if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
-            if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
-          }
-          while (g1.questions.length < 10) {
-            var nextNo = g1.questions.length + 1;
-            g1.questions.push({
-              question_no: nextNo,
-              question_type: "single_choice",
-              question: "",
-              image_url: "",
-              options: [
-                { key: "A", text: "" },
-                { key: "B", text: "" },
-                { key: "C", text: "" },
-                { key: "D", text: "" }
-              ],
-              correct_answer: "A",
-              explanation: "",
-              points: 1
+            // Keep only g1 and g2
+            readingSec.groups = readingSec.groups.filter(function(g) {
+              return g.group_id === "g1" || g.group_id === "g2";
             });
-          }
-          // Sort and assign question numbers 1 to 10
-          g1.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
-          for (var i = 0; i < g1.questions.length; i++) {
-            g1.questions[i].question_no = i + 1;
-          }
 
-          // Check/Create Group 2 (g2)
-          var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
-          if (!g2) {
-            g2 = {
-              group_id: "g2",
-              title: "",
-              stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
-              questions: []
-            };
-            readingSec.groups.push(g2);
-          }
-          if (!Array.isArray(g2.questions)) g2.questions = [];
-          if (g2.questions.length > 10 && !isRandomPractice) {
-            g2.questions = g2.questions.slice(0, 10);
-          }
-          // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
-          if (!isRandomPractice) {
-            if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
-            if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
-          }
-          while (g2.questions.length < 10) {
-            var nextNo = g2.questions.length + 11; // 11 to 20
-            g2.questions.push({
-              question_no: nextNo,
-              question_type: "single_choice",
-              question: "",
-              image_url: "",
-              options: [
-                { key: "A", text: "" },
-                { key: "B", text: "" },
-                { key: "C", text: "" },
-                { key: "D", text: "" }
-              ],
-              correct_answer: "A",
-              explanation: "",
-              points: 1
-            });
-          }
-          // Sort and assign question numbers 11 to 20
-          g2.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
-          for (var i = 0; i < g2.questions.length; i++) {
-            g2.questions[i].question_no = i + 11;
-          }
-          
-          readingSec.g1 = g1;
-          readingSec.g2 = g2;
-          readingSec.g1_questions = g1.questions;
-          readingSec.g2_questions = g2.questions;
-          
-          if (!activeGroupIds["reading"]) {
-            activeGroupIds["reading"] = "g1";
-          }
-        }
-
-        // Enforce Science Section Schema (exactly 8 groups, 5 questions each)
-        var scienceSec = getSection("science");
-        if (scienceSec) {
-          if (!Array.isArray(scienceSec.groups)) scienceSec.groups = [];
-          
-          var allowedScienceGroups = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8"];
-          if (!isRandomPractice) {
-            // Keep only g1 to g8
-            scienceSec.groups = scienceSec.groups.filter(function(g) {
-              return allowedScienceGroups.indexOf(g.group_id) !== -1;
-            });
-          }
-
-          // Ensure stimulus/passage synchronization and structure for all science groups
-          scienceSec.groups.forEach(function(g) {
-            if (!g.stimulus) {
-              g.stimulus = { type: "text", content: "", image_url: "", image_width: 100 };
-            }
-            if (g.passage && !g.stimulus.content) {
-              g.stimulus.content = g.passage;
-            }
-            if (g.stimulus.content && !g.passage) {
-              g.passage = g.stimulus.content;
-            }
-            // Fix image URLs
-            if (g.stimulus.content) g.stimulus.content = fixImageUrlsInHtml(g.stimulus.content);
-            if (g.passage) g.passage = fixImageUrlsInHtml(g.passage);
-            if (g.stimulus.image_url) {
-              var src = g.stimulus.image_url;
-              if (src.indexOf("http://") !== 0 && src.indexOf("https://") !== 0 && src.indexOf("data:") !== 0) {
-                if (src.indexOf("assets/") === 0) {
-                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/" + src;
-                } else {
-                  g.stimulus.image_url = "https://assets.tmastudy.io.vn/assets/" + src;
-                }
-              }
-            }
-          });
-          
-          for (var gIdx = 1; gIdx <= 8; gIdx++) {
-            var gId = "g" + gIdx;
-            var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
-            if (!group) {
-              group = {
-                group_id: gId,
+            // Check/Create Group 1 (g1)
+            var g1 = readingSec.groups.find(function(g) { return g.group_id === "g1"; });
+            if (!g1) {
+              g1 = {
+                group_id: "g1",
                 title: "",
                 stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
                 questions: []
               };
-              scienceSec.groups.push(group);
+              readingSec.groups.push(g1);
             }
-            if (!Array.isArray(group.questions)) group.questions = [];
-            if (group.questions.length > 5 && !isRandomPractice) {
-              group.questions = group.questions.slice(0, 5);
+            if (!Array.isArray(g1.questions)) g1.questions = [];
+            if (g1.questions.length > 10) {
+              g1.questions = g1.questions.slice(0, 10);
             }
             // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
-            if (!isRandomPractice) {
-              if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
-              if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
-            }
-            
-            var startNo = (gIdx - 1) * 5 + 1;
-            while (group.questions.length < 5) {
-              var nextNo = startNo + group.questions.length;
-              group.questions.push({
+            if (g1.title === "Ngữ liệu Đọc hiểu số 01") g1.title = "";
+            if (g1.stimulus && g1.stimulus.content === "Nhập nội dung ngữ liệu 1 ở đây...") g1.stimulus.content = "";
+            while (g1.questions.length < 10) {
+              var nextNo = g1.questions.length + 1;
+              g1.questions.push({
                 question_no: nextNo,
                 question_type: "single_choice",
                 question: "",
@@ -2706,23 +2650,141 @@
                 points: 1
               });
             }
-            // Sort and assign question numbers
-            group.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
-            for (var i = 0; i < group.questions.length; i++) {
-              group.questions[i].question_no = startNo + i;
+            // Sort and assign question numbers 1 to 10
+            g1.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+            for (var i = 0; i < g1.questions.length; i++) {
+              g1.questions[i].question_no = i + 1;
+            }
+
+            // Check/Create Group 2 (g2)
+            var g2 = readingSec.groups.find(function(g) { return g.group_id === "g2"; });
+            if (!g2) {
+              g2 = {
+                group_id: "g2",
+                title: "",
+                stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
+                questions: []
+              };
+              readingSec.groups.push(g2);
+            }
+            if (!Array.isArray(g2.questions)) g2.questions = [];
+            if (g2.questions.length > 10) {
+              g2.questions = g2.questions.slice(0, 10);
+            }
+            // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
+            if (g2.title === "Ngữ liệu Đọc hiểu số 02") g2.title = "";
+            if (g2.stimulus && g2.stimulus.content === "Nhập nội dung ngữ liệu 2 ở đây...") g2.stimulus.content = "";
+            while (g2.questions.length < 10) {
+              var nextNo = g2.questions.length + 11; // 11 to 20
+              g2.questions.push({
+                question_no: nextNo,
+                question_type: "single_choice",
+                question: "",
+                image_url: "",
+                options: [
+                  { key: "A", text: "" },
+                  { key: "B", text: "" },
+                  { key: "C", text: "" },
+                  { key: "D", text: "" }
+                ],
+                correct_answer: "A",
+                explanation: "",
+                points: 1
+              });
+            }
+            // Sort and assign question numbers 11 to 20
+            g2.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+            for (var i = 0; i < g2.questions.length; i++) {
+              g2.questions[i].question_no = i + 11;
             }
             
-            scienceSec[gId] = group;
-            scienceSec[gId + "_questions"] = group.questions;
+            readingSec.g1 = g1;
+            readingSec.g2 = g2;
+            readingSec.g1_questions = g1.questions;
+            readingSec.g2_questions = g2.questions;
+            
+            if (!activeGroupIds["reading"]) {
+              activeGroupIds["reading"] = "g1";
+            }
+          } else {
+            if (!activeGroupIds["reading"] && readingSec.groups.length > 0) {
+              activeGroupIds["reading"] = readingSec.groups[0].group_id;
+            }
           }
+        }
+
+        // Enforce Science Section Schema (exactly 8 groups, 5 questions each)
+        var scienceSec = getSection("science");
+        if (scienceSec) {
+          if (!Array.isArray(scienceSec.groups)) scienceSec.groups = [];
           
-          // Keep groups ordered from g1 to g8 in scienceSec.groups array
-          scienceSec.groups.sort(function(a, b) {
-            return allowedScienceGroups.indexOf(a.group_id) - allowedScienceGroups.indexOf(b.group_id);
-          });
-          
-          if (!activeGroupIds["science"]) {
-            activeGroupIds["science"] = "g1";
+          if (!isRandomPractice) {
+            var allowedScienceGroups = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8"];
+            scienceSec.groups = scienceSec.groups.filter(function(g) {
+              return allowedScienceGroups.indexOf(g.group_id) !== -1;
+            });
+
+            for (var gIdx = 1; gIdx <= 8; gIdx++) {
+              var gId = "g" + gIdx;
+              var group = scienceSec.groups.find(function(g) { return g.group_id === gId; });
+              if (!group) {
+                group = {
+                  group_id: gId,
+                  title: "",
+                  stimulus: { type: "text", content: "", image_url: "", image_width: 100 },
+                  questions: []
+                };
+                scienceSec.groups.push(group);
+              }
+              if (!Array.isArray(group.questions)) group.questions = [];
+              if (group.questions.length > 5) {
+                group.questions = group.questions.slice(0, 5);
+              }
+              // Strip legacy demo placeholder text if still present (Only for regular mock exams!)
+              if (group.title === "Ngữ liệu Khoa học số 0" + gIdx) group.title = "";
+              if (group.stimulus && group.stimulus.content === "Nhập nội dung ngữ liệu khoa học " + gIdx + " ở đây...") group.stimulus.content = "";
+              
+              var startNo = (gIdx - 1) * 5 + 1;
+              while (group.questions.length < 5) {
+                var nextNo = startNo + group.questions.length;
+                group.questions.push({
+                  question_no: nextNo,
+                  question_type: "single_choice",
+                  question: "",
+                  image_url: "",
+                  options: [
+                    { key: "A", text: "" },
+                    { key: "B", text: "" },
+                    { key: "C", text: "" },
+                    { key: "D", text: "" }
+                  ],
+                  correct_answer: "A",
+                  explanation: "",
+                  points: 1
+                });
+              }
+              // Sort and assign question numbers
+              group.questions.sort(function(a, b) { return (Number(a.question_no) || 0) - (Number(b.question_no) || 0); });
+              for (var i = 0; i < group.questions.length; i++) {
+                group.questions[i].question_no = startNo + i;
+              }
+              
+              scienceSec[gId] = group;
+              scienceSec[gId + "_questions"] = group.questions;
+            }
+            
+            // Keep groups ordered from g1 to g8 in scienceSec.groups array
+            scienceSec.groups.sort(function(a, b) {
+              return allowedScienceGroups.indexOf(a.group_id) - allowedScienceGroups.indexOf(b.group_id);
+            });
+            
+            if (!activeGroupIds["science"]) {
+              activeGroupIds["science"] = "g1";
+            }
+          } else {
+            if (!activeGroupIds["science"] && scienceSec.groups.length > 0) {
+              activeGroupIds["science"] = scienceSec.groups[0].group_id;
+            }
           }
         }
       }
@@ -3103,9 +3165,51 @@
         if (sectionId === "math") {
           inputSelectors += ", #math-pane-sidebar select, #vach1-question-type-tabs button";
         }
+      function updateFillBlankFieldsRealtime(sectionId) {
+        var qTextEl = $("#" + sectionId + "-q-text");
+        var qTypeEl = $("#" + sectionId + "-q-type") || document.getElementById(sectionId + "-q-type");
+        var currentType = qTypeEl ? qTypeEl.value : "";
+        if (!qTextEl || currentType !== "fill_blank") return;
+
+        var text = qTextEl.value || "";
+        var isMulti = /\[(o\d+|blank)\]/.test(text);
+
+        var correctField = document.querySelector("#" + sectionId + "-type-fields #fill-correct");
+        var acceptedField = document.querySelector("#" + sectionId + "-type-fields #fill-accepted");
+        
+        if (correctField) {
+          var labelEl = correctField.closest(".field")?.querySelector("label");
+          if (isMulti) {
+            if (labelEl) labelEl.textContent = "Đáp án đúng từng ô (Dạng: o1=đáp_án_1 | o2=đáp_án_2)";
+            correctField.placeholder = "Ví dụ: o1=đáp_án_1 | o2=đáp_án_2";
+            if (acceptedField) {
+              var accFieldBlock = acceptedField.closest(".field");
+              if (accFieldBlock) accFieldBlock.style.display = "none";
+            }
+          } else {
+            if (labelEl) labelEl.textContent = "Đáp án chính xác";
+            correctField.placeholder = "Đáp án viết thường hoặc hoa đều chấp nhận";
+            if (acceptedField) {
+              var accFieldBlock = acceptedField.closest(".field");
+              if (accFieldBlock) accFieldBlock.style.display = "block";
+            }
+          }
+        }
+      }
+
         $all(inputSelectors).forEach(function (input) {
-          input.addEventListener("input", function () { updatePreview(sectionId); });
-          input.addEventListener("change", function () { updatePreview(sectionId); });
+          input.addEventListener("input", function () {
+            updatePreview(sectionId);
+            if (input.id === sectionId + "-q-text") {
+              updateFillBlankFieldsRealtime(sectionId);
+            }
+          });
+          input.addEventListener("change", function () {
+            updatePreview(sectionId);
+            if (input.id === sectionId + "-q-text") {
+              updateFillBlankFieldsRealtime(sectionId);
+            }
+          });
         });
 
         var saveBtn = document.querySelector('button[data-save-question="' + sectionId + '"]');
@@ -3141,7 +3245,12 @@
           q.correct_answer = q.correct_answer && typeof q.correct_answer === "object" && !Array.isArray(q.correct_answer) ? q.correct_answer : { a: true, b: false, c: true, d: false };
         }
         if (q.question_type === "fill_blank") {
-          q.correct_answer = typeof q.correct_answer === "string" ? q.correct_answer : "";
+          var isMulti = /\[(o\d+|blank)\]/.test(q.question || "");
+          if (isMulti) {
+            q.correct_answer = q.correct_answer && typeof q.correct_answer === "object" && !Array.isArray(q.correct_answer) ? q.correct_answer : {};
+          } else {
+            q.correct_answer = typeof q.correct_answer === "string" ? q.correct_answer : "";
+          }
           q.accepted_answers = Array.isArray(q.accepted_answers) ? q.accepted_answers : [];
         }
         if (q.question_type === "numeric_answer") {
@@ -3312,9 +3421,18 @@
 
       function renderShortAnswerForm(q) {
         var accepts = Array.isArray(q.accepted_answers) ? q.accepted_answers.join(" | ") : "";
+        var isMulti = /\[(o\d+|blank)\]/.test(q.question || "");
+        var corrVal = "";
+        if (q.correct_answer && typeof q.correct_answer === "object") {
+          corrVal = Object.keys(q.correct_answer).map(function (k) { return k + "=" + q.correct_answer[k]; }).join(" | ");
+        } else {
+          corrVal = q.correct_answer || "";
+        }
+        var placeholder = isMulti ? "Ví dụ: o1=đáp_án_1 | o2=đáp_án_2" : "Đáp án viết thường hoặc hoa đều chấp nhận";
+        var label = isMulti ? "Đáp án đúng từng ô (Dạng: o1=đáp_án_1 | o2=đáp_án_2)" : "Đáp án chính xác";
         return '<div class="form-grid">' +
-          '<div class="field"><label>Đáp án chính xác</label><input class="input" id="fill-correct" value="' + attr(q.correct_answer || "") + '" placeholder="Đáp án viết thường hoặc hoa đều chấp nhận"></div>' +
-          '<div class="field"><label>Các đáp án đồng nghĩa khác (Ngăn cách bởi dấu |)</label><input class="input" id="fill-accepted" value="' + attr(accepts) + '" placeholder="ví dụ: 0.5 | 1/2"></div>' +
+          '<div class="field"><label>' + label + '</label><input class="input" id="fill-correct" value="' + attr(corrVal) + '" placeholder="' + placeholder + '"></div>' +
+          (!isMulti ? '<div class="field"><label>Các đáp án đồng nghĩa khác (Ngăn cách bởi dấu |)</label><input class="input" id="fill-accepted" value="' + attr(accepts) + '" placeholder="ví dụ: 0.5 | 1/2"></div>' : '') +
           '</div>';
       }
 
@@ -3388,9 +3506,24 @@
           base.statements = statements;
           base.correct_answer = correct_answer;
         } else if (type === "fill_blank") {
-          base.correct_answer = ($("#fill-correct")?.value || "").trim();
-          var accs = ($("#fill-accepted")?.value || "").split("|").map(function (s) { return s.trim(); }).filter(Boolean);
-          base.accepted_answers = accs;
+          var corrStr = ($("#fill-correct")?.value || "").trim();
+          var isMulti = /\[(o\d+|blank)\]/.test(base.question || "");
+          if (isMulti) {
+            var correct_answer = {};
+            corrStr.split("|").forEach(function (pair) {
+              var parts = pair.split("=");
+              if (parts.length === 2) {
+                correct_answer[parts[0].trim()] = parts[1].trim();
+              }
+            });
+            base.correct_answer = correct_answer;
+            base.accepted_answers = [];
+          } else {
+            base.correct_answer = corrStr;
+            var accs = ($("#fill-accepted")?.value || "").split("|").map(function (s) { return s.trim(); }).filter(Boolean);
+            base.accepted_answers = accs;
+          }
+          base.items = [];
         } else if (type === "numeric_answer") {
           base.correct_answer = Number($("#num-answer")?.value) || 0;
           base.tolerance = Number($("#num-tolerance")?.value) || 0;
@@ -3470,7 +3603,7 @@
       }
 
       function renderMathWizardNav() {
-        var grid = $("#math-wizard-grid");
+        var grid = $("#math-wizard-grid-tabs");
         if (!grid) return;
         grid.innerHTML = "";
         
@@ -3478,8 +3611,11 @@
         var mathSec = getSection("math");
         var questions = mathSec.questions || [];
         
+        var isRandom = (exam && exam.exam_code === "TMA_RANDOM_001");
+        var maxQs = isRandom ? questions.length : 40;
+        
         var editedCount = 0;
-        for (var i = 1; i <= 40; i++) {
+        for (var i = 1; i <= maxQs; i++) {
           var q = questions.find(function(item) { return (Number(item.question_no) || 0) === i; });
           var isFilled = false;
           if (q) {
@@ -3524,7 +3660,7 @@
         
         var progressEl = $("#math-wizard-progress");
         if (progressEl) {
-          progressEl.textContent = "Tiến độ: " + editedCount + "/40 câu";
+          progressEl.textContent = "Tiến độ: " + editedCount + "/" + maxQs + " câu";
         }
         
         var prevBtn = $("#math-wizard-prev");
@@ -3549,7 +3685,10 @@
       window.editQuestion = editQuestion;
 
       function selectMathWizardQuestion(qNo) {
-        if (qNo < 1 || qNo > 40) return;
+        var isRandom = (exam && exam.exam_code === "TMA_RANDOM_001");
+        var mathSecLimit = getSection("math");
+        var maxQs = isRandom ? (mathSecLimit ? mathSecLimit.questions.length : 40) : 40;
+        if (qNo < 1 || qNo > maxQs) return;
         
         // Auto-save current draft before switching
         if (editingQuestion["math"] && editingQuestion["math"].question) {
@@ -3592,7 +3731,10 @@
 
       function navigateMathWizard(dir) {
         var targetQNo = activeMathQuestionNo + dir;
-        if (targetQNo >= 1 && targetQNo <= 40) {
+        var isRandom = (exam && exam.exam_code === "TMA_RANDOM_001");
+        var mathSecLimit = getSection("math");
+        var maxQs = isRandom ? (mathSecLimit ? mathSecLimit.questions.length : 40) : 40;
+        if (targetQNo >= 1 && targetQNo <= maxQs) {
           selectMathWizardQuestion(targetQNo);
         }
       }
@@ -3775,9 +3917,8 @@
           targetSection.questions = [];
           activeMathQuestionNo = 1;
         } else {
-          (targetSection.groups || []).forEach(function (group) {
-            group.questions = [];
-          });
+          targetSection.groups = [];
+          activeGroupIds[sectionId] = "";
         }
 
         // Recreate the fixed TSA slots, then make every slot genuinely empty.
@@ -5456,6 +5597,7 @@
 
       function exitEditingMode() {
         window.isEditingSingleQbQuestion = false;
+        window.isEditingStagedQuestion = false;
         if (typeof window.toggleSingleQuestionEditMode === "function") {
           window.toggleSingleQuestionEditMode(false);
         }
@@ -5851,13 +5993,46 @@
         }
         if (question.question_type === "drag_drop" && typeof question.correct_answer === "string") {
           var ddAns = {};
-          question.correct_answer.split("|").forEach(function(pair) {
-            var parts = pair.split("=");
-            if (parts.length === 2) {
-              ddAns[parts[0].trim()] = parts[1].trim();
+          var rawAns = question.correct_answer.trim();
+          var separator = rawAns.includes("|") ? "|" : (rawAns.includes(";") ? ";" : ",");
+          var pairs = rawAns.split(separator);
+          pairs.forEach(function(pair, idx) {
+            pair = pair.trim();
+            if (!pair) return;
+            var eqSign = pair.includes("=") ? "=" : (pair.includes(":") ? ":" : null);
+            if (eqSign) {
+              var parts = pair.split(eqSign);
+              if (parts.length === 2) {
+                ddAns[parts[0].trim()] = parts[1].trim();
+              }
+            } else {
+              ddAns["o" + (idx + 1)] = pair;
             }
           });
           question.correct_answer = ddAns;
+        }
+        if (question.question_type === "fill_blank" && typeof question.correct_answer === "string") {
+          var fbAns = {};
+          var rawAns = question.correct_answer.trim();
+          var isMulti = /\[(o\d+|blank)\]/.test(question.question || question.prompt || "");
+          if (isMulti || rawAns.includes("=") || rawAns.includes(":")) {
+            var separator = rawAns.includes("|") ? "|" : (rawAns.includes(";") ? ";" : ",");
+            var pairs = rawAns.split(separator);
+            pairs.forEach(function(pair, idx) {
+              pair = pair.trim();
+              if (!pair) return;
+              var eqSign = pair.includes("=") ? "=" : (pair.includes(":") ? ":" : null);
+              if (eqSign) {
+                var parts = pair.split(eqSign);
+                if (parts.length === 2) {
+                  fbAns[parts[0].trim()] = parts[1].trim();
+                }
+              } else {
+                fbAns["o" + (idx + 1)] = pair;
+              }
+            });
+            question.correct_answer = fbAns;
+          }
         }
         if (typeof question.question === "string") {
           question.question = question.question.replace(/\\n/g, "\n");
@@ -6111,8 +6286,8 @@ CÁC DẠNG CÂU HỎI HỖ TRỢ:
   "points": 1
 }
 
-4. Câu hỏi kéo thả / điền chỗ trống (drag_drop):
-Dùng dạng này khi đề thi có yêu cầu điền vào các ô trống, chỗ trống "...", hoặc các ô trống trong bảng dữ liệu. BẮT BUỘC phải phân tách phần văn bản/bảng biểu thành mảng "body" gồm các phần tử "text" (chứa phần văn bản hoặc mã HTML bảng xen kẽ) và các phần tử "blank" (có id là "o1", "o2"... tại đúng vị trí ô trống cần điền). Các từ khóa hoặc số đáp án để kéo thả phải được đưa vào mảng "items" với id là "i1", "i2"...
+4. Câu hỏi kéo thả (drag_drop):
+Chỉ dùng dạng này khi đề bài cung cấp sẵn danh sách/hộp các từ lựa chọn để học sinh kéo thả vào ô trống. BẮT BUỘC phải phân tách phần văn bản/bảng biểu thành mảng "body" gồm các phần tử "text" và các phần tử "blank" (id là "o1", "o2"...). Các từ khóa hoặc số đáp án để kéo thả phải được đưa vào mảng "items" với id là "i1", "i2"... và "correct_answer" dạng "o1=i1 | o2=i2". Bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách từ lựa chọn kéo thả khỏi trường "question".
 {
   "question_no": 4,
   "question_type": "drag_drop",
@@ -6124,12 +6299,22 @@ Dùng dạng này khi đề thi có yêu cầu điền vào các ô trống, ch�
     { "type": "text", "content": " văn bản trước ô trống thứ hai " },
     { "type": "blank", "id": "o2" }
   ],
-  "items": [ // Các thẻ từ để kéo thả (nếu có) hoặc các từ khóa đáp án
+  "items": [
     { "id": "i1", "text": "đáp án đúng 1" },
-    { "id": "i2", "text": "đáp án đúng 2" },
-    { "id": "i3", "text": "đáp án gây nhiễu" }
+    { "id": "i2", "text": "đáp án đúng 2" }
   ],
-  "correct_answer": "o1=i1 | o2=i2", // Ghép cặp ô trống và nhãn đáp án dạng chuỗi: "o1=i1 | o2=i2"
+  "correct_answer": "o1=i1 | o2=i2",
+  "points": 1
+}
+
+5. Câu hỏi điền khuyết / điền chữ tự do (fill_blank):
+Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong câu (học sinh tự gõ chữ, KHÔNG có thẻ từ để kéo thả). Trường "question" sẽ chứa chuỗi câu hỏi có các ô trống ký hiệu là [o1], [o2]... và trường "correct_answer" sẽ là dạng chuỗi ghép: "o1=đáp_án_1 | o2=đáp_án_2" hoặc dạng chuỗi đáp án đơn "đáp_án" nếu chỉ có 1 ô trống.
+{
+  "question_no": 5,
+  "question_type": "fill_blank",
+  "question": "Khi kể lại câu chuyện, Thanh tự nhận thấy hành động mình đã làm rất [o1] và trả phu xe [o2] xu.",
+  "image_url": "",
+  "correct_answer": "o1=nhỏ nhen | o2=bốn",
   "points": 1
 }
 
@@ -6151,7 +6336,10 @@ YÊU CẦU QUAN TRỌNG:
 - Trả về cấu trúc JSON hợp lệ hoàn toàn dựa theo cấu trúc trên.
 - Sử dụng chuẩn toán học LaTeX với ký hiệu \\( ... \\) cho công thức nội dòng (inline) và \\[ ... \\] cho công thức khối (display math). Ví dụ: \\(f(x) = x^2\\). Hãy chắc chắn escape đúng các ký tự chéo ngược \\ thành \\\\ trong chuỗi JSON.
 - ĐỂ CÔNG THỨC TOÁN HIỂN THỊ TO RÕ ĐẸP MẮT: BẮT BUỘC sử dụng lệnh \\dfrac thay vì \\frac cho tất cả các phân số. Đối với các ký hiệu tổng hoặc tích, sử dụng thêm \\limits (ví dụ: \\sum\\limits_{k=1}^{n} hoặc \\prod\\limits_{i=1}^{2026}) để giới hạn hiển thị ngay ngắn phía trên và phía dưới ký hiệu và có kích thước to rõ như sách giáo khoa.
-- BẮT BUỘC GIỮ NGUYÊN các đoạn mã vẽ hình vector <svg>...</svg> hoặc bảng dữ liệu <table>...</table> có sẵn trong văn bản đề thi thô. Hãy lồng trực tiếp các đoạn mã này vào nội dung câu hỏi "question" hoặc phần ngữ liệu của nhóm mà không được tự ý xóa bỏ hay lược dịch thành chữ.
+- BẮT BUỘC GIỮ NGUYÊN các đoạn mã vẽ hình vector <svg>...</svg> hoặc bảng dữ liệu <table>...</table> có sẵn trong văn bản đề thi thô. Hãy lồng trực tiếp các đoạn mã này vào nội dung câu hỏi "question" hoặc phần ngữ liệu của nhóm mà không được tự ý xóa bỏ hay lược dịch thành chữ. Tuy nhiên, nếu bảng (table) hoặc danh sách đó chỉ dùng để liệt kê các phương án lựa chọn kéo thả của câu hỏi drag_drop, bạn BẮT BUỘC phải lược bỏ nó ra khỏi trường "question".
+- TUYỆT ĐỐI KHÔNG loại bỏ các ký hiệu đánh dấu số đoạn văn dạng [0], [1], [2], [3]... ở đầu các đoạn văn trong ngữ liệu nền (stimulus/passage). Bạn BẮT BUỘC phải giữ nguyên chúng và bôi đậm chúng bằng thẻ <strong>[0]</strong>, <strong>[1]</strong>, <strong>[2]</strong>...
+- Giữa các đoạn văn trong ngữ liệu nền (passage), bạn BẮT BUỘC phải xuống dòng bằng hai ký tự xuống dòng liên tiếp (\n\n) để tạo một dòng trống phân tách rõ ràng các đoạn. để học sinh dễ dàng đối chiếu khi làm bài.
+- Giữa các đoạn văn trong ngữ liệu (stimulus/passage), bạn BẮT BUỘC phải xuống dòng bằng hai ký tự xuống dòng liên tiếp (\n\n) để tạo một dòng trống phân tách rõ ràng các đoạn, tuyệt đối không viết liền tù tì thành một khối duy nhất.
 - Nếu câu hỏi có liên quan đến hình ảnh tải lên từ máy tính, hãy để trống trường "image_url": "". Giáo viên sẽ tự tải ảnh lên sau.
 - HÃY GHÉP CÁC DÒNG của cùng một câu văn lại với nhau. Nếu trong văn bản gốc bị xuống dòng giữa chừng do hết dòng trang giấy, hãy nối chúng lại thành một câu dài liên mạch. Chỉ xuống dòng khi bắt đầu đoạn văn mới hoặc danh sách gạch đầu dòng.
 - Giữ nguyên các chữ cái đứng cạnh dấu chấm (ví dụ: "điểm M." hoặc "A(1; 2; -4).") trên cùng một dòng, tuyệt đối không tự ý xuống dòng sau dấu chấm của câu văn hoặc ký hiệu thông thường.
@@ -6182,7 +6370,7 @@ YÊU CẦU QUAN TRỌNG:
                             properties: {
                               question_no: { type: "INTEGER" },
 
-                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
 
                               question: { type: "STRING" },
 
@@ -6329,7 +6517,7 @@ YÊU CẦU QUAN TRỌNG:
                                   properties: {
                                     question_no: { type: "INTEGER" },
 
-                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
 
                                     question: { type: "STRING" },
 
@@ -6465,7 +6653,7 @@ YÊU CẦU QUAN TRỌNG:
                             properties: {
                               question_no: { type: "INTEGER" },
 
-                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                              question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
 
                               question: { type: "STRING" },
 
@@ -6590,7 +6778,7 @@ YÊU CẦU QUAN TRỌNG:
                                   properties: {
                                     question_no: { type: "INTEGER" },
 
-                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                                    question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
 
                                     question: { type: "STRING" },
 
@@ -9776,17 +9964,52 @@ function triggerChoiceImageUpload(btn) {
         renderPracticeRoom();
       };
 
-      window.deleteQbQuestion = function(index) {
-        if (!confirm("Bạn có chắc chắn muốn xóa câu hỏi này khỏi Ngân hàng câu hỏi?")) return;
+      window.deleteQbQuestion = function(index, isStaged) {
+        var msg = isStaged ? "Bạn có chắc chắn muốn xóa câu hỏi chờ duyệt này?" : "Bạn có chắc chắn muốn xóa câu hỏi này khỏi Ngân hàng câu hỏi?";
+        if (!confirm(msg)) return;
+        
+        if (isStaged) {
+          var stagedMath = [];
+          try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+          stagedMath.splice(index, 1);
+          localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
+        } else {
+          var targetCode = "TMA_RANDOM_001";
+          var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (raw) {
+            try {
+              var examObj = JSON.parse(raw);
+              if (examObj && Array.isArray(examObj.sections)) {
+                var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+                if (mathSec && Array.isArray(mathSec.questions)) {
+                  mathSec.questions.splice(index, 1);
+                  localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                  localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+                }
+              }
+            } catch(e) {}
+          }
+        }
+        renderPracticeRoom();
+      };
+
+      window.clearAllQbOfficialQuestions = function(sectionId) {
+        var label = sectionId === "math" ? "Toán" : (sectionId === "reading" ? "Đọc hiểu" : "Khoa học");
+        if (!confirm("⚠️ Bạn có chắc chắn muốn XÓA TOÀN BỘ ngân hàng chính thức của môn " + label + "?\nHành động này không thể hoàn tác!")) return;
+        
         var targetCode = "TMA_RANDOM_001";
         var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
         if (raw) {
           try {
             var examObj = JSON.parse(raw);
             if (examObj && Array.isArray(examObj.sections)) {
-              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
-              if (mathSec && Array.isArray(mathSec.questions)) {
-                mathSec.questions.splice(index, 1);
+              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+              if (sec) {
+                if (sectionId === "math") {
+                  sec.questions = [];
+                } else {
+                  sec.groups = [];
+                }
                 localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
                 localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
               }
@@ -9796,43 +10019,52 @@ function triggerChoiceImageUpload(btn) {
         renderPracticeRoom();
       };
 
-      window.clearAllQbQuestions = function() {
-        if (!confirm("Bạn có chắc chắn muốn xóa TẤT CẢ câu hỏi trong Ngân hàng câu hỏi Luyện đề ngẫu nhiên? Hành động này không thể hoàn tác!")) return;
-        var targetCode = "TMA_RANDOM_001";
-        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
-        if (raw) {
-          try {
-            var examObj = JSON.parse(raw);
-            if (examObj && Array.isArray(examObj.sections)) {
-              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
-              if (mathSec) {
-                mathSec.questions = [];
-                localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
-                localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
-              }
-            }
-          } catch(e) {}
-        }
+      window.clearAllQbStagedQuestions = function(sectionId) {
+        var label = sectionId === "math" ? "Toán" : (sectionId === "reading" ? "Đọc hiểu" : "Khoa học");
+        if (!confirm("⚠️ Bạn có chắc chắn muốn XÓA SẠCH danh sách câu hỏi chờ duyệt của môn " + label + "?")) return;
+        localStorage.removeItem("tma_tsa_staged_" + sectionId);
+        if (sectionId === "math") localStorage.removeItem("tma_tsa_staged_math");
         renderPracticeRoom();
       };
 
-      window.editQbGroup = function(groupId, sectionId, targetQIdx) {
+      window.switchQbViewMode = function(mode) {
+        window.currentQbViewMode = mode;
+        renderPracticeRoom();
+      };
+
+      window.editQbGroup = function(groupId, sectionId, targetQIdx, isStaged) {
         var startQIdx = (targetQIdx !== undefined && targetQIdx >= 0) ? targetQIdx : 0;
         window.isEditingSingleQbQuestion = false;
+        window.isEditingStagedQuestion = !!isStaged;
+        window.stagedGroupId = groupId;
         window.currentEditingSubject = sectionId;
         window.startEditingExam("Ngân hàng câu hỏi Luyện đề ngẫu nhiên", "TMA_RANDOM_001", sectionId);
         
-        // Set active group ID for the section
         activeGroupIds[sectionId] = groupId;
-        
-        // Ensure the editor tab is selected
         if (typeof switchEditorTab === "function") {
           switchEditorTab(sectionId);
         }
         
-        // Load the targeted question for this group
-        var sec = getSection(sectionId);
-        var group = sec ? sec.groups.find(function(g) { return g.group_id === groupId; }) : null;
+        var group = null;
+        if (isStaged) {
+          var stagedGroups = [];
+          try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
+          group = stagedGroups.find(function(g) { return g.group_id === groupId; });
+          
+          if (group) {
+            var sec = getSection(sectionId);
+            if (sec) {
+              var exists = sec.groups.some(function(g) { return g.group_id === groupId; });
+              if (!exists) {
+                sec.groups.push(clone(group));
+              }
+            }
+          }
+        } else {
+          var sec = getSection(sectionId);
+          group = sec ? sec.groups.find(function(g) { return g.group_id === groupId; }) : null;
+        }
+        
         if (group) {
           var targetQ = group.questions && group.questions[startQIdx] ? clone(group.questions[startQIdx]) : defaultQuestion(sectionId);
           editingQuestion[sectionId] = { index: startQIdx, question: targetQ };
@@ -9842,27 +10074,136 @@ function triggerChoiceImageUpload(btn) {
         renderAll();
       };
 
-      window.deleteQbGroup = function(groupId, sectionId) {
-        if (!confirm("Bạn có chắc chắn muốn xóa ngữ liệu này và toàn bộ câu hỏi liên quan?")) return;
-        var targetCode = "TMA_RANDOM_001";
-        var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
-        if (raw) {
-          try {
-            var examObj = JSON.parse(raw);
-            if (examObj && Array.isArray(examObj.sections)) {
-              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
-              if (sec && Array.isArray(sec.groups)) {
-                var idx = sec.groups.findIndex(function(g) { return g.group_id === groupId; });
-                if (idx !== -1) {
-                  sec.groups.splice(idx, 1);
-                  localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
-                  localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+      window.deleteQbGroup = function(groupId, sectionId, isStaged) {
+        var msg = isStaged ? "Bạn có chắc chắn muốn xóa ngữ liệu chờ duyệt này?" : "Bạn có chắc chắn muốn xóa ngữ liệu này và toàn bộ câu hỏi liên quan?";
+        if (!confirm(msg)) return;
+        
+        if (isStaged) {
+          var stagedGroups = [];
+          try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
+          var idx = stagedGroups.findIndex(function(g) { return g.group_id === groupId; });
+          if (idx !== -1) {
+            stagedGroups.splice(idx, 1);
+            localStorage.setItem("tma_tsa_staged_" + sectionId, JSON.stringify(stagedGroups));
+          }
+        } else {
+          var targetCode = "TMA_RANDOM_001";
+          var raw = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+          if (raw) {
+            try {
+              var examObj = JSON.parse(raw);
+              if (examObj && Array.isArray(examObj.sections)) {
+                var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+                if (sec && Array.isArray(sec.groups)) {
+                  var idx = sec.groups.findIndex(function(g) { return g.group_id === groupId; });
+                  if (idx !== -1) {
+                    sec.groups.splice(idx, 1);
+                    localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+                    localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+                  }
                 }
               }
-            }
-          } catch(e) {}
+            } catch(e) {}
+          }
         }
         renderPracticeRoom();
+      };
+
+      window.saveStagedQuestionToBank = function() {
+        var base = collectBaseQuestion("math", false);
+        var targetCode = "TMA_RANDOM_001";
+        var examObj = null;
+        var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        if (stored) {
+          try { examObj = JSON.parse(stored); } catch(e) {}
+        }
+        if (!examObj) {
+          examObj = {
+            exam_code: targetCode,
+            title: "Ngân hàng câu hỏi Luyện đề ngẫu nhiên",
+            duration_minutes: 150,
+            status: "published",
+            sections: [
+              { section_id: "math", section_label: "Tư duy Toán học", questions: [] },
+              { section_id: "reading", section_label: "Tư duy Đọc hiểu", groups: [] },
+              { section_id: "science", section_label: "Tư duy Khoa học", groups: [] }
+            ]
+          };
+        }
+        
+        var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
+        if (!mathSec) {
+          mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
+          examObj.sections.push(mathSec);
+        }
+        if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
+        
+        base.question_no = mathSec.questions.length + 1;
+        mathSec.questions.push(base);
+        
+        localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+        localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+        
+        var stagedMath = [];
+        try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+        stagedMath.splice(window.stagedQuestionIndex, 1);
+        localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
+        
+        alert("✓ Đã lưu câu hỏi thành công vào Ngân hàng chính thức!");
+        window.isEditingSingleQbQuestion = false;
+        window.isEditingStagedQuestion = false;
+        exitEditingMode();
+      };
+
+      window.saveStagedGroupToBank = function(sectionId) {
+        if (editingQuestion[sectionId]) {
+          var base = collectBaseQuestion(sectionId, false);
+          var sec = getSection(sectionId);
+          var group = sec ? sec.groups.find(function(g) { return g.group_id === activeGroupIds[sectionId]; }) : null;
+          if (group && Array.isArray(group.questions)) {
+            group.questions[editingQuestion[sectionId].index] = base;
+          }
+        }
+        
+        var targetCode = "TMA_RANDOM_001";
+        var raw = localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
+        var examObj = null;
+        if (raw) {
+          try { examObj = JSON.parse(raw); } catch(e) {}
+        }
+        if (!examObj) return;
+        
+        var secObj = examObj.sections.find(function(s) { return s.section_id === sectionId; });
+        if (secObj) {
+          if (!Array.isArray(secObj.groups)) secObj.groups = [];
+          
+          var memorySec = getSection(sectionId);
+          var memoryGroup = memorySec ? memorySec.groups.find(function(g) { return g.group_id === activeGroupIds[sectionId]; }) : null;
+          if (memoryGroup) {
+            var existIdx = secObj.groups.findIndex(function(g) { return g.group_id === memoryGroup.group_id; });
+            if (existIdx !== -1) {
+              secObj.groups[existIdx] = memoryGroup;
+            } else {
+              secObj.groups.push(memoryGroup);
+            }
+          }
+        }
+        
+        localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
+        localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
+        
+        var stagedGroups = [];
+        try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
+        var stgIdx = stagedGroups.findIndex(function(g) { return g.group_id === activeGroupIds[sectionId]; });
+        if (stgIdx !== -1) {
+          stagedGroups.splice(stgIdx, 1);
+          localStorage.setItem("tma_tsa_staged_" + sectionId, JSON.stringify(stagedGroups));
+        }
+        
+        alert("✓ Đã lưu ngữ liệu thành công vào Ngân hàng chính thức!");
+        window.isEditingSingleQbQuestion = false;
+        window.isEditingStagedQuestion = false;
+        exitEditingMode();
       };
 
       window.deleteQbGroupQuestion = function(groupId, sectionId, qIdx) {
@@ -9889,7 +10230,8 @@ function triggerChoiceImageUpload(btn) {
       };
 
       window.generateAiExplanation = function(sectionId) {
-        var qText = document.getElementById(sectionId + "-q-text")?.value || "";
+        var baseQ = collectBaseQuestion(sectionId, false);
+        var qText = baseQ.question || "";
         if (!qText.trim()) {
           alert("Vui lòng nhập nội dung câu hỏi trước khi nhờ AI viết lời giải.");
           return;
@@ -9904,14 +10246,69 @@ function triggerChoiceImageUpload(btn) {
         }
 
         var optionsText = "";
-        var qType = document.getElementById(sectionId + "-q-type")?.value || "single_choice";
-        if (qType === "single_choice" || qType === "multiple_choice") {
-          for (var charCode = 65; charCode <= 68; charCode++) {
-            var key = String.fromCharCode(charCode);
-            var optEl = document.getElementById(sectionId + "-opt-" + key.toLowerCase());
-            if (optEl && optEl.value.trim()) {
-              optionsText += key + ". " + optEl.value.trim() + "\n";
-            }
+        var correctValText = "";
+        var qType = baseQ.question_type || "single_choice";
+
+        if (qType === "single_choice" || qType === "multiple_choice" || qType === "single_choice_2") {
+          if (Array.isArray(baseQ.options)) {
+            baseQ.options.forEach(function(opt) {
+              if (opt.text && opt.text.trim()) {
+                optionsText += opt.key + ". " + opt.text.trim() + "\n";
+              }
+            });
+          }
+          if (Array.isArray(baseQ.correct_answer)) {
+            correctValText = baseQ.correct_answer.join(", ");
+          } else if (baseQ.correct_answer) {
+            correctValText = String(baseQ.correct_answer);
+          }
+        } else if (qType === "true_false") {
+          optionsText = "CÁC PHÁT BIỂU ĐÚNG/SAI VÀ MỆNH ĐỀ:\n";
+          if (Array.isArray(baseQ.statements)) {
+            baseQ.statements.forEach(function(stmt) {
+              if (stmt.text && stmt.text.trim()) {
+                optionsText += "- Mệnh đề " + stmt.id.toUpperCase() + ": " + stmt.text.trim() + "\n";
+              }
+            });
+          }
+          if (baseQ.correct_answer && typeof baseQ.correct_answer === "object") {
+            var correctPairs = [];
+            Object.keys(baseQ.correct_answer).forEach(function(id) {
+              correctPairs.push("Mệnh đề " + id.toUpperCase() + ": " + (baseQ.correct_answer[id] ? "Đúng" : "Sai"));
+            });
+            correctValText = correctPairs.join(", ");
+          }
+        } else if (qType === "fill_blank") {
+          if (baseQ.correct_answer) {
+            correctValText = String(baseQ.correct_answer);
+          }
+        } else if (qType === "numeric_answer") {
+          if (baseQ.correct_answer !== undefined && baseQ.correct_answer !== null) {
+            correctValText = String(baseQ.correct_answer);
+          }
+        } else if (qType === "drag_drop") {
+          var dragItemsStr = "";
+          if (Array.isArray(baseQ.items)) {
+            dragItemsStr = baseQ.items.map(function(item) { return item.text; }).join(" | ");
+          }
+          var dragBodyStr = "";
+          if (Array.isArray(baseQ.body)) {
+            dragBodyStr = baseQ.body.map(function(part) {
+              if (part.type === "text") return part.content;
+              return "[" + part.id + "]";
+            }).join("");
+          }
+          optionsText = "Đoạn văn điền khuyết: " + dragBodyStr + "\nCác nhãn kéo thả có sẵn: " + dragItemsStr + "\n";
+
+          if (baseQ.correct_answer && typeof baseQ.correct_answer === "object") {
+            var correctPairs = [];
+            Object.keys(baseQ.correct_answer).forEach(function(blankId) {
+              var valId = baseQ.correct_answer[blankId];
+              var matchedItem = (baseQ.items || []).find(function(it) { return it.id === valId; });
+              var itemText = matchedItem ? matchedItem.text : valId;
+              correctPairs.push(blankId + "=" + itemText);
+            });
+            correctValText = correctPairs.join(" | ");
           }
         }
 
@@ -9922,18 +10319,48 @@ function triggerChoiceImageUpload(btn) {
           btn.textContent = "⏳ Đang giải...";
         }
 
-        var promptText = "Bạn là một chuyên gia khảo thí tuyển sinh đại học Bách Khoa. Hãy viết phần LỜI GIẢI CHI TIẾT (bằng tiếng Việt, sử dụng định dạng LaTeX cho công thức toán) cho câu hỏi sau đây.\n" +
-          "Yêu cầu:\n" +
-          "- Trả về duy nhất lời giải chi tiết, không kèm theo bất kỳ văn bản dẫn hay chào hỏi nào.\n" +
-          "- Dùng ký hiệu \\( ... \\) cho công thức toán nội dòng và \\[ ... \\] cho công thức khối.\n" +
-          "- Phải viết lời giải logic từng bước rõ ràng.\n\n";
+        var promptText = "Bạn là chuyên gia thẩm định và viết lời giải chi tiết cho kỳ thi đánh giá tư duy TSA Bách Khoa Việt Nam.\n" +
+          "Nhiệm vụ của bạn là viết một phần LỜI GIẢI CHI TIẾT cực kỳ chất lượng, chuẩn mực sư phạm và mạch lạc cho câu hỏi dưới đây.\n\n" +
+          "Yêu cầu chung:\n" +
+          "- Trả về duy nhất lời giải chi tiết, không kèm theo bất kỳ lời chào hỏi, dẫn dắt hay kết luận dư thừa.\n" +
+          "- Trình bày lời giải khoa học, chia thành các bước rõ ràng. Mỗi bước lớn nên xuống dòng bằng cách sử dụng ký tự xuống dòng kép (hai lần Enter / '\\n\\n') để giao diện hiển thị thông thoáng, không viết gộp nguyên một đoạn văn dài.\n" +
+          "- TUYỆT ĐỐI KHÔNG sử dụng các ký hiệu markdown như dấu sao đôi `**` hay dấu sao đơn `*` để bôi đậm hoặc làm danh sách. Thay vào đó, hãy viết chữ thường 'Bước 1: ...', 'Bước 2: ...' hoặc dùng thẻ HTML <strong>Bước 1: ...</strong> để bôi đậm.\n" +
+          "- Sử dụng ký hiệu \\( ... \\) cho công thức toán nội dòng (inline) và \\[ ... \\] cho công thức khối (display math). Bắt buộc dùng lệnh \\dfrac thay cho \\frac cho tất cả phân số, và dùng \\limits cho tổng, tích, giới hạn có cận (ví dụ: \\sum\\limits_{k=1}^n).\n\n" +
+          "Yêu cầu riêng theo dạng câu hỏi:\n";
+
+        if (qType === "true_false") {
+          promptText += "- Đây là câu hỏi Đúng/Sai có nhiều phát biểu. Bạn phải lần lượt lập luận chi tiết và chỉ ra tính Đúng/Sai cho từng mệnh đề a, b, c, d (hoặc các mệnh đề có trong đề bài).\n" +
+            "- Ở cuối lời giải, bạn BẮT BUỘC phải chốt lại đáp án cụ thể cho từng mệnh đề rõ ràng theo định dạng:\n" +
+            "  <strong>Kết luận:</strong>\n" +
+            "  - Mệnh đề a: Đúng (hoặc Sai)\n" +
+            "  - Mệnh đề b: Đúng (hoặc Sai)\n" +
+            "  - Mệnh đề c: Đúng (hoặc Sai)\n" +
+            "  - Mệnh đề d: Đúng (hoặc Sai)\n\n";
+        } else if (qType === "drag_drop") {
+          promptText += "- Đây là câu hỏi Kéo thả / Điền khuyết vào các vị trí ô trống [o1], [o2], [o3]... từ các nhãn kéo thích hợp.\n" +
+            "- Bạn phải lập luận logic rõ ràng để tìm ra nhãn/từ/số thích hợp điền vào từng ô trống [o1], [o2]...\n" +
+            "- Ở cuối lời giải, bạn BẮT BUỘC phải chốt lại đáp án cụ thể cho từng ô trống theo định dạng:\n" +
+            "  <strong>Kết luận:</strong>\n" +
+            "  - Ô [o1] điền: [Nhãn/Đáp án đúng]\n" +
+            "  - Ô [o2] điền: [Nhãn/Đáp án đúng]\n" +
+            "  - Ô [o3] điền: [Nhãn/Đáp án đúng]\n\n";
+        } else if (qType === "numeric_answer" || qType === "fill_blank") {
+          promptText += "- Đây là câu hỏi Điền số / Điền đáp án ngắn. Bạn phải giải chi tiết ra đáp số cuối cùng.\n" +
+            "- Ở cuối lời giải, bạn BẮT BUỘC phải chốt đáp án rõ ràng dạng: <strong>Đáp án đúng:</strong> [giá trị].\n\n";
+        } else {
+          promptText += "- Đây là câu hỏi Trắc nghiệm chọn phương án. Bạn phải lập luận để chỉ rõ tại sao chọn phương án đúng và tại sao loại trừ các phương án khác.\n" +
+            "- Ở cuối lời giải, bạn BẮT BUỘC phải chốt đáp án rõ ràng dạng: <strong>Đáp án đúng:</strong> [Chữ cái đáp án đúng, ví dụ: A].\n\n";
+        }
 
         if (passageText) {
           promptText += "NGỮ LIỆU ĐỀ BÀI:\n" + passageText + "\n\n";
         }
         promptText += "CÂU HỎI:\n" + qText + "\n\n";
         if (optionsText) {
-          promptText += "CÁC PHƯƠNG ÁN LỰA CHỌN:\n" + optionsText + "\n\n";
+          promptText += "CHI TIẾT PHƯƠNG ÁN / CÂU HỎI:\n" + optionsText + "\n\n";
+        }
+        if (correctValText) {
+          promptText += "ĐÁP ÁN ĐÃ THIẾT LẬP (Phải giải và chốt đúng đáp án này): " + correctValText + "\n\n";
         }
 
         var payload = {
@@ -9943,7 +10370,7 @@ function triggerChoiceImageUpload(btn) {
             }]
           }],
           generationConfig: {
-            temperature: 0.2
+            temperature: 0.15
           }
         };
         callGemini(payload)
@@ -10194,12 +10621,16 @@ function triggerChoiceImageUpload(btn) {
               bottomControls.id = "math-single-qb-controls";
               bottomControls.style.cssText = "display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1.5px solid #e2e8f0; width: 100%; font-family: inherit;";
               
+              var saveBtnHtml = window.isEditingStagedQuestion
+                ? `<button type="button" class="btn" onclick="window.saveStagedQuestionToBank()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; font-weight: 700; padding: 11px 32px; border-radius: 10px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(16,185,129,0.25); font-family: inherit;">Lưu vào ngân hàng câu hỏi</button>`
+                : `<button type="button" class="btn" onclick="saveMathWizardQuestion(false)" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; border: none; font-weight: 700; padding: 11px 32px; border-radius: 10px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit;">Lưu Thay Đổi</button>`;
+
               bottomControls.innerHTML = `
                 <div style="display: flex; gap: 12px; margin-right: auto; align-items: center; flex-wrap: wrap;">
                   <button type="button" class="btn" onclick="window.openTeacherAiPromptModal()" style="background: #ffffff; color: #4f46e5; border: 1.5px solid #c7d2fe; font-weight: 700; font-size: 13.5px; padding: 11px 18px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(79,70,229,0.1); transition: all 0.2s;" onmouseover="this.style.background='#f5f3ff';" onmouseout="this.style.background='#ffffff';">⚙️ Cấu hình Prompt AI</button>
                   <button type="button" class="btn" onclick="window.autoOptimizeMathQuestion()" style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; font-weight: 700; font-size: 13.5px; padding: 11px 20px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transition: all 0.2s;">✨ Tối ưu bằng AI</button>
                 </div>
-                <button type="button" class="btn" onclick="saveMathWizardQuestion(false)" style="background: linear-gradient(135deg, #c2272d 0%, #9b1c22 100%); color: white; border: none; font-weight: 700; padding: 11px 32px; border-radius: 10px; font-size: 13.5px; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 12px rgba(194,39,45,0.25); font-family: inherit;">Lưu Thay Đổi</button>
+                ${saveBtnHtml}
               `;
               var mathForm = document.getElementById("math-question-form");
               if (mathForm) mathForm.appendChild(bottomControls);
@@ -10214,6 +10645,25 @@ function triggerChoiceImageUpload(btn) {
               tabsContainer.innerHTML = `<span style="font-size: 14.5px; font-weight: 700; color: #475569; font-family: inherit;">Ngữ liệu ${sectionLabel}</span>`;
             }
           }
+        }
+
+        if (window.isEditingStagedQuestion && (sectionId === "reading" || sectionId === "science")) {
+          var btnRow = document.getElementById(sectionId + "-editor-save-btn-row");
+          if (btnRow && !document.getElementById(sectionId + "-save-staged-qb-btn")) {
+            var stagedBtn = document.createElement("button");
+            stagedBtn.id = sectionId + "-save-staged-qb-btn";
+            stagedBtn.type = "button";
+            stagedBtn.className = "btn";
+            stagedBtn.style.cssText = "background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-weight: 700; padding: 10px 24px; border-radius: 8px; font-size: 13.5px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.25); font-family: inherit; margin-left: 8px;";
+            stagedBtn.textContent = "Lưu vào ngân hàng câu hỏi";
+            stagedBtn.onclick = function() {
+              window.saveStagedGroupToBank(sectionId);
+            };
+            btnRow.appendChild(stagedBtn);
+          }
+        } else if (!window.isEditingStagedQuestion) {
+          var oldStagedBtn = document.getElementById(sectionId + "-save-staged-qb-btn");
+          if (oldStagedBtn) oldStagedBtn.remove();
         }
       };
 
@@ -10406,20 +10856,25 @@ function triggerChoiceImageUpload(btn) {
             <span>AI đang phân tích & giải đề...</span>
           `;
         }
+
+        var qType = getQuestionDraft("math")?.question_type || "single_choice";
         
         var systemInstruction = "Bạn là chuyên gia thẩm định và tối ưu câu hỏi kỳ thi đánh giá tư duy TSA Bách Khoa Việt Nam. " +
           "Nhiệm vụ của bạn là đọc câu hỏi toán thô được gửi lên, tối ưu lại câu từ cho chuyên nghiệp và chuẩn mực sư phạm (nếu cần thiết, nếu không hãy giữ nguyên ý), " +
           "sau đó giải bài toán này từng bước một cách chặt chẽ, dễ hiểu. " +
-          "Bạn cũng phải xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất cho câu hỏi và xác định mức độ khó thích hợp (1: Dễ, 2: Trung bình, 3: Khó). " +
+          "Bạn cũng phải xác định chủ đề chuẩn SGK Toán phổ thông phù hợp nhất cho câu hỏi và xác định mức độ khó thích hợp (1: Dễ, 2: Trung bình, 3: Khó).\n\n" +
+          "LƯU Ý ĐẶC BIỆT CHO CÁC DẠNG CÂU HỎI:\n" +
+          "- Đây là câu hỏi thuộc loại '" + qType + "'.\n" +
+          "- Nếu câu hỏi là dạng kéo thả (drag_drop), trong văn bản thô thường có một bảng (table) hoặc danh sách liệt kê các từ khóa/số dùng để lựa chọn kéo thả. Bạn BẮT BUỘC phải phát hiện và LOẠI BỎ hoàn toàn bảng hoặc danh sách các phương án đó khỏi trường \"optimized_question\". Chỉ giữ lại văn cảnh/mô tả câu hỏi, vì giao diện ứng dụng sẽ hiển thị các thẻ kéo này động ở dưới.\n\n" +
           "Đầu ra BẮT BUỘC là một đối tượng JSON chuẩn có cấu trúc sau, không chứa ký tự markdown hay văn bản ngoài JSON:\n" +
           "{\n" +
           "  \"optimized_question\": \"Nội dung câu hỏi đã tối ưu (giữ nguyên LaTeX nếu có)\",\n" +
-          "  \"explanation\": \"Lời giải chi tiết từng bước, sử dụng LaTeX chuẩn (dùng \\\\dfrac cho phân số, \\\\limits cho giới hạn)\",\n" +
+          "  \"explanation\": \"Lời giải chi tiết từng bước, sử dụng LaTeX chuẩn (dùng \\\\dfrac cho phân số, \\\\limits cho giới hạn). Đối với các câu hỏi có nhiều ý nhỏ như Đúng/Sai hoặc các ô kéo thả, ở cuối lời giải bạn BẮT BUỘC phải chốt rõ kết luận đáp án của từng mệnh đề hoặc ô trống.\",\n" +
           "  \"difficulty\": 1 | 2 | 3,\n" +
           "  \"topic\": \"Khảo sát hàm số\" | \"Mũ và Lôgarit\" | \"Nguyên hàm & Tích phân\" | \"Số phức\" | \"Tổ hợp & Xác suất\" | \"Hình học không gian\" | \"Hình học giải tích Oxyz\" | \"Lượng giác\" | \"Dãy số & Cấp số\" | \"Vectơ & Hệ tọa độ\" | \"Phương trình & Hệ phương trình\"\n" +
           "}\n\n" +
           "LƯU Ý CỰC KỲ QUAN TRỌNG VỀ ĐỊNH DẠNG & LATEX:\n" +
-          "- TUYỆT ĐỐI KHÔNG sử dụng ký tự dấu sao ** hay * để bôi đậm hay làm danh sách (vd: KHÔNG viết **Bước 1:** hay * Ý 1). Hãy dùng thẻ <strong>...</strong> cho các tiêu đề bước hoặc viết chữ thường 'Bước 1: ...'.\n" +
+          "- TUYỆT ĐỐI KHÔNG sử dụng ký tự dấu sao ** hay * để bôi đậm hay làm danh sách (vd: KHÔNG viết **Bước 1:** hay * Ý 1). Hãy dùng thẻ <strong>...</strong> cho các tiêu đề bước hoặc viết chữ thường 'Bước 1: ...'. Trình bày các bước rõ ràng và xuống dòng kép '\\n\\n' để tránh văn bản bị dính liền.\n" +
           "- Sử dụng ký hiệu \\\\( ... \\\\) cho công thức toán nội dòng (inline) và \\\\[ ... \\\\] cho công thức khối (display math).\n" +
           "- BẮT BUỘC escape ký tự gạch chéo ngược thành song song hai gạch chéo ngược (\\\\\\\\( ... \\\\\\\\) và \\\\\\\\[ ... \\\\\\\\]) trong chuỗi JSON để tránh lỗi cú pháp parse JSON.";
 
@@ -10501,14 +10956,28 @@ function triggerChoiceImageUpload(btn) {
         });
       };
 
-      window.editQbQuestion = function(index) {
+      window.editQbQuestion = function(index, isStaged) {
         window.isEditingSingleQbQuestion = true;
+        window.isEditingStagedQuestion = !!isStaged;
+        window.stagedQuestionIndex = index;
         window.currentEditingSubject = "math";
         
         var targetQNo = (index !== undefined && index >= 0) ? (index + 1) : 1;
         window.startEditingExam("Ngân hàng câu hỏi Luyện đề ngẫu nhiên", "TMA_RANDOM_001", "math");
-        if (typeof window.selectMathWizardQuestion === "function") {
-          window.selectMathWizardQuestion(targetQNo);
+        
+        if (isStaged) {
+          var stagedMath = [];
+          try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
+          var q = stagedMath[index];
+          if (q) {
+            editingQuestion["math"] = { index: index, question: clone(q) };
+            renderQuestionForm("math");
+            updatePreview("math");
+          }
+        } else {
+          if (typeof window.selectMathWizardQuestion === "function") {
+            window.selectMathWizardQuestion(targetQNo);
+          }
         }
         window.toggleSingleQuestionEditMode(true);
       };
@@ -10975,36 +11444,27 @@ function triggerChoiceImageUpload(btn) {
 
             var sectionId = directParsed.section_id || "math";
             if (sectionId === "math") {
-              var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
-              if (!mathSec) {
-                mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
-                examObj.sections.push(mathSec);
-              }
-              if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
-              
               var list = directParsed.questions || [];
               if (directParsed.data && Array.isArray(directParsed.data.questions)) {
                 list = directParsed.data.questions;
               }
+              var stagedMath = [];
+              try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
               var addedCount = 0;
               list.forEach(function(newQ) {
-                newQ.question_no = mathSec.questions.length + 1;
-                mathSec.questions.push(newQ);
+                stagedMath.push(newQ);
                 addedCount++;
               });
+              localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
 
               if (statusEl) {
                 statusEl.style.display = "block";
                 statusEl.style.color = "#166534";
-                statusEl.textContent = "✅ Đã nạp thành công " + addedCount + " câu hỏi Toán học từ file JSON!";
+                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
               }
             } else if (sectionId === "reading" || sectionId === "science") {
-              var sec = examObj.sections.find(function(s) { return s.section_id === sectionId; });
-              if (!sec) {
-                sec = { section_id: sectionId, section_label: sectionId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
-                examObj.sections.push(sec);
-              }
-              if (!Array.isArray(sec.groups)) sec.groups = [];
+              var stagedGroups = [];
+              try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + sectionId) || "[]"); } catch(e) {}
 
               var addedGroups = 0;
               var sourceGroups = [];
@@ -11038,23 +11498,22 @@ function triggerChoiceImageUpload(btn) {
                 } else if (newGroup.stimulus.image_url) {
                   newGroup.passage_image_url = newGroup.stimulus.image_url;
                 }
-                sec.groups.push(newGroup);
+                stagedGroups.push(newGroup);
                 addedGroups++;
               });
+              localStorage.setItem("tma_tsa_staged_" + sectionId, JSON.stringify(stagedGroups));
 
               if (statusEl) {
                 statusEl.style.display = "block";
                 statusEl.style.color = "#166534";
-                statusEl.textContent = "✅ Đã nạp thành công " + addedGroups + " ngữ liệu từ file JSON!";
+                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedGroups + " ngữ liệu!";
               }
             } else {
               throw new Error("Không xác định được môn thi (section_id).");
             }
 
-            localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
-            localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
-
             document.getElementById("qb-ai-raw-text").value = "";
+            window.currentQbViewMode = "staged"; // Automatically switch to Staged tab!
             setTimeout(function() {
               if (typeof renderPracticeRoom === "function") renderPracticeRoom();
             }, 800);
@@ -11076,12 +11535,10 @@ function triggerChoiceImageUpload(btn) {
           statusEl.textContent = "⏳ AI đang phân tích, giải đề và phân loại độ khó...";
         }
 
-        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.
-Nhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.
-- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).
-- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).
-- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.
-- Viết Lời giải chi tiết ("explanation") chia thành các bước rõ ràng (1. Xác định..., 2. Chuyển đổi..., 3. Thiết lập..., 4. Thực hiện...), KHÔNG dùng dấu sao ** để bôi đậm câu chữ trong công thức.
+        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.\nNhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.\n- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).\n- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).\n- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.\n- LƯU Ý ĐỐI VỚI DẠNG KÉO THẢ (drag_drop): Nếu đề bài gốc có một bảng hoặc danh sách liệt kê các từ khóa/số dùng để kéo thả, bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách đó khỏi trường "question" (chỉ định nghĩa chúng ở mảng "items") để tránh trùng lặp hiển thị.
+- ĐỐI VỚI CÂU HỎI ĐIỀN CHỮ TỰ DO (fill_blank): Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong đoạn văn hoặc câu hỏi (học sinh tự gõ từ bàn phím, không có thẻ từ kéo thả). Trường "question" chứa văn bản có ký hiệu ô trống [o1], [o2]... và trường "correct_answer" có dạng chuỗi "o1=đáp_án_1 | o2=đáp_án_2" hoặc đáp án đơn. KHÔNG tạo mảng "items" hay "body" cho loại này.
+- ĐỐI VỚI CÂU HỎI KÉO THẢ (drag_drop): Chỉ dùng dạng này khi đề bài có hộp/danh sách từ lựa chọn để kéo thả vào ô trống. Bắt buộc tạo mảng "items" chứa các từ lựa chọn kéo thả.
+- TUYỆT ĐỐI KHÔNG loại bỏ các ký hiệu đánh dấu số đoạn văn dạng [0], [1], [2], [3]... ở đầu các đoạn văn trong ngữ liệu nền (passage). Bạn BẮT BUỘC phải giữ nguyên chúng và bôi đậm chúng bằng thẻ <strong>[0]</strong>, <strong>[1]</strong>, <strong>[2]</strong>...\n- Viết Lời giải chi tiết ("explanation") chia thành các bước rõ ràng. TUYỆT ĐỐI KHÔNG dùng dấu sao ** hay * để bôi đậm hay làm danh sách (hãy dùng thẻ HTML <strong>...</strong> hoặc viết chữ thường 'Bước 1: ...'). Trình bày các bước rõ ràng và xuống dòng bằng hai ký tự xuống dòng kép '\\n\\n' để tránh dính liền văn bản. Đối với các câu hỏi có nhiều ý nhỏ như Đúng/Sai (true_false) hoặc các ô kéo thả (drag_drop), ở cuối lời giải bạn BẮT BUỘC phải chốt rõ kết luận đáp án của từng mệnh đề hoặc ô trống rõ ràng.
 
 Cấu trúc JSON đầu ra yêu cầu duy nhất:
 {
@@ -11136,7 +11593,7 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                     type: "OBJECT",
                     properties: {
                       question_no: { type: "INTEGER" },
-                      question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                      question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
                       question: { type: "STRING" },
                       options: {
                         type: "ARRAY",
@@ -11150,7 +11607,7 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                         }
                       },
                       correct_answer: { type: "STRING" },
-                      difficulty: { type: "INTEGER", enum: [1, 2, 3] },
+                      difficulty: { type: "INTEGER" },
                       topic: { type: "STRING" },
                       explanation: { type: "STRING" }
                     },
@@ -11168,7 +11625,7 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                         type: "OBJECT",
                         properties: {
                           question_no: { type: "INTEGER" },
-                          question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop"] },
+                          question_type: { type: "STRING", enum: ["single_choice", "multiple_choice", "true_false", "numeric_answer", "drag_drop", "fill_blank"] },
                           question: { type: "STRING" },
                           options: {
                             type: "ARRAY",
@@ -11220,64 +11677,36 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
           var jsonText = resData.candidates[0].content.parts[0].text;
           var result = safeParseGeminiJson(jsonText);
           
-          var targetCode = "TMA_RANDOM_001";
-          var examObj = null;
-          var stored = localStorage.getItem("tma_tsa_exam_" + targetCode) || localStorage.getItem("tma_tsa_teacher_draft_" + targetCode);
-          if (stored) {
-            try { examObj = JSON.parse(stored); } catch(e) {}
-          }
-          if (!examObj || !Array.isArray(examObj.sections)) {
-            examObj = {
-              exam_code: targetCode,
-              title: "Ngân hàng câu hỏi Luyện đề ngẫu nhiên",
-              duration_minutes: 150,
-              status: "published",
-              sections: [
-                { section_id: "math", section_label: "Tư duy Toán học", questions: [] },
-                { section_id: "reading", section_label: "Tư duy Đọc hiểu", groups: [] },
-                { section_id: "science", section_label: "Tư duy Khoa học", groups: [] }
-              ]
-            };
-          }
-
           if (result.section_id === "math") {
-            var mathSec = examObj.sections.find(function(s) { return s.section_id === "math"; });
-            if (!mathSec) {
-              mathSec = { section_id: "math", section_label: "Tư duy Toán học", questions: [] };
-              examObj.sections.push(mathSec);
-            }
-            if (!Array.isArray(mathSec.questions)) mathSec.questions = [];
-
+            var stagedMath = [];
+            try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
             var addedCount = 0;
             if (result.data && Array.isArray(result.data.questions)) {
               result.data.questions.forEach(function(newQ) {
-                newQ.question_no = mathSec.questions.length + 1;
-                mathSec.questions.push(newQ);
+                stagedMath.push(newQ);
                 addedCount++;
               });
             }
+            localStorage.setItem("tma_tsa_staged_math", JSON.stringify(stagedMath));
             
             if (statusEl) {
               statusEl.style.color = "#166534";
-              statusEl.textContent = "✅ Đã nạp thành công " + addedCount + " câu hỏi Toán học thông minh!";
+              statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt " + addedCount + " câu hỏi Toán học!";
             }
           } else if (result.section_id === "reading" || result.section_id === "science") {
             var secId = result.section_id;
-            var sec = examObj.sections.find(function(s) { return s.section_id === secId; });
-            if (!sec) {
-              sec = { section_id: secId, section_label: secId === "reading" ? "Tư duy Đọc hiểu" : "Tư duy Khoa học", groups: [] };
-              examObj.sections.push(sec);
-            }
-            if (!Array.isArray(sec.groups)) sec.groups = [];
+            var stagedGroups = [];
+            try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + secId) || "[]"); } catch(e) {}
 
             if (result.data && result.data.group) {
               var newGroup = result.data.group;
               newGroup.group_id = "g_" + Date.now();
-              sec.groups.push(newGroup);
+              stagedGroups.push(newGroup);
+              localStorage.setItem("tma_tsa_staged_" + secId, JSON.stringify(stagedGroups));
               
               if (statusEl) {
                 statusEl.style.color = "#166534";
-                statusEl.textContent = "✅ Đã nạp thành công Ngữ liệu nền Đọc hiểu/Khoa học kèm câu hỏi!";
+                statusEl.textContent = "✅ Đã nạp thành công vào hàng chờ duyệt Ngữ liệu nền kèm câu hỏi!";
               }
             } else {
               throw new Error("Dữ liệu ngữ liệu từ AI không đúng cấu trúc.");
@@ -11286,10 +11715,8 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
             throw new Error("Không xác định được môn thi (section_id).");
           }
 
-          localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
-          localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
-
           document.getElementById("qb-ai-raw-text").value = "";
+          window.currentQbViewMode = "staged"; // Automatically switch to Staged tab!
           setTimeout(function() {
             if (typeof renderPracticeRoom === "function") renderPracticeRoom();
           }, 800);

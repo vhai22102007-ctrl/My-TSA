@@ -74,7 +74,7 @@
     str = str.replace(/(^|\n)\s*[\*•]\s+/g, '$1&bull; ');
 
     // Force clean line break before numbered steps like " 2. ", " 3. ", " 4. "
-    str = str.replace(/([^\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
+    str = str.replace(/([^0-9,\n])\s*(\d+\.\s+)(?=[A-ZÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬĐÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴ])/g, '$1<br><br><strong>$2</strong>');
 
     return str;
   }
@@ -164,6 +164,25 @@
     return holder;
   }
 
+  function extractMultipleChoiceInstruction(question, rawText) {
+    var type = (question && (question.question_type || question.type)) || "";
+    var instruction = "";
+    
+    var regex = /(?:\(?(?:Chọn\s+(?:nhiều|hai|ba|bốn|các|hai|ba|bốn|HAI|BA|BỐN|\d+)\s+đáp\s+án(?:\s+đúng)?)\)?\.?)\s*$/i;
+    var match = rawText.match(regex);
+    if (match) {
+      instruction = match[0].trim();
+      rawText = rawText.replace(regex, "").trim();
+    } else if (type === "multiple_choice") {
+      instruction = "Chọn nhiều đáp án.";
+    }
+    
+    return {
+      cleanText: rawText,
+      instruction: instruction
+    };
+  }
+
   function renderQuestionText(question, bodyEl) {
     if (!bodyEl) return;
     clear(bodyEl);
@@ -173,10 +192,11 @@
     
     var rawText = (question && (question.question || question.prompt)) || "";
     
+    var res = extractMultipleChoiceInstruction(question, rawText);
+    rawText = res.cleanText;
+    
     // Auto bold instruction headers/titles
     var phrasesToBold = [
-      "\\(Chọn nhiều đáp án\\)",
-      "Chọn nhiều đáp án",
       "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
       "Kéo thả từ/cụm từ phù hợp vào chỗ trống:",
       "Điền số nguyên thích hợp vào chỗ trống:",
@@ -196,6 +216,14 @@
 
     lead.innerHTML = sanitizeHTML(rawText);
     bodyEl.appendChild(lead);
+
+    if (res.instruction) {
+      var instDiv = document.createElement("div");
+      instDiv.className = "question-instruction";
+      instDiv.style.cssText = "font-size: 15px; font-weight: normal; color: inherit; margin-top: 14px; margin-bottom: 2px; padding-left: 2px;";
+      instDiv.innerHTML = sanitizeHTML(res.instruction);
+      bodyEl.appendChild(instDiv);
+    }
 
     if (question && question.image_url) {
       bodyEl.appendChild(createImage(question.image_url, "Ảnh câu hỏi " + (question.question_no || ""), question.image_width));
@@ -484,7 +512,7 @@
           input.value = current[part.id] || "";
           input.placeholder = "";
 
-          input.style.width = "180px";
+          input.style.width = "120px";
 
           input.addEventListener("input", function () {
             current[part.id] = input.value;
@@ -771,7 +799,7 @@
             input.className = "inline-blank-input";
             input.value = currentAnswers[bId] || "";
             input.placeholder = "";
-            input.style.width = "180px";
+            input.style.width = "120px";
 
             input.addEventListener("input", function () {
               if (isMultiBlank) {
@@ -895,7 +923,7 @@
           </div>
           <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px;">
             <div style="font-weight: 700; color: #0f172a; font-size: 13.5px; margin-bottom: 8px;">Lời giải chi tiết:</div>
-            <div class="explanation-text-body" style="font-size: 13.5px; color: #334155; line-height: 1.75; text-align: left; word-break: break-word;">${safeExplanation}</div>
+            <div class="explanation-text-body" style="font-size: 13.5px; color: #334155; line-height: 1.75; text-align: left; word-break: break-word; white-space: pre-wrap;">${safeExplanation}</div>
           </div>
         </div>
       `;

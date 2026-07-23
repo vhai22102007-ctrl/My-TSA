@@ -1484,7 +1484,7 @@
 
                 <!-- Right: Question tools + Role Switcher -->
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                  <button type="button" class="clear-section-questions-btn" id="clear-math-questions-button" onclick="clearAllSectionQuestions('math')" title="Xóa toàn bộ câu hỏi Toán trong đề thi thử" hidden>
+                  <button type="button" class="clear-section-questions-btn" id="clear-math-questions-button" onclick="clearSectionContent('math')" title="Xóa toàn bộ câu hỏi Toán trong đề thi thử" hidden>
                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
                     <span>Xóa toàn bộ</span>
                   </button>
@@ -1615,7 +1615,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
               </button>
             </div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; align-self: center; margin-bottom: 8px;">
-              <button type="button" class="clear-section-questions-btn" id="clear-reading-questions-button" onclick="clearAllSectionQuestions('reading')" title="Xóa toàn bộ câu hỏi Đọc hiểu trong đề thi thử" hidden>
+              <button type="button" class="clear-section-questions-btn" id="clear-reading-questions-button" onclick="clearSectionContent('reading')" title="Xóa toàn bộ câu hỏi Đọc hiểu trong đề thi thử" hidden>
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
                 <span>Xóa toàn bộ</span>
               </button>
@@ -1697,7 +1697,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
               <button class="science-tab-btn" id="science-tab-btn-g8" type="button" onclick="switchScienceGroupTab('g8')">Ngữ liệu 8</button>
             </div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; align-self: center;">
-              <button type="button" class="clear-section-questions-btn" id="clear-science-questions-button" onclick="clearAllSectionQuestions('science')" title="Xóa toàn bộ câu hỏi Khoa học trong đề thi thử" hidden>
+              <button type="button" class="clear-section-questions-btn" id="clear-science-questions-button" onclick="clearSectionContent('science')" title="Xóa toàn bộ câu hỏi Khoa học trong đề thi thử" hidden>
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>
                 <span>Xóa toàn bộ</span>
               </button>
@@ -2009,7 +2009,7 @@ Câu 3 (Điền số). Tìm giá trị cực tiểu của hàm số... -> Đáp 
           </div>
           <div>
             <span style="font-weight: 800; color: #166534; font-size: 13px; display: block; margin-bottom: 6px;">💡 LỜI GIẢI CHI TIẾT (AI GENERATED):</span>
-            <div id="preview-q-explanation-content" style="font-size: 13.5px; color: #14532d; line-height: 1.7; font-family: inherit;">
+            <div id="preview-q-explanation-content" style="font-size: 13.5px; color: #14532d; line-height: 1.7; font-family: inherit; white-space: pre-wrap;">
               <!-- Explanations with LaTeX -->
             </div>
           </div>

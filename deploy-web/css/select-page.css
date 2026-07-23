@@ -7136,8 +7136,8 @@
     }
 
     .account-avatar-circle {
-      width: 80px !important;
-      height: 80px !important;
+      width: 96px !important;
+      height: 96px !important;
       border-radius: 50% !important;
       background: #cbd5e1 !important;
       color: #334155 !important;
@@ -7146,8 +7146,9 @@
       display: grid !important;
       place-items: center !important;
       margin-bottom: 12px !important;
-      border: 2px solid #ffffff !important;
-      box-shadow: 0 0 0 2px #e2e8f0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
     }
     .select-page[data-theme="dark"] .account-avatar-circle {
       background: #475569 !important;
@@ -7293,8 +7294,8 @@
     }
 
     .account-info-avatar {
-      width: 72px !important;
-      height: 72px !important;
+      width: 88px !important;
+      height: 88px !important;
       border-radius: 50% !important;
       background: #cbd5e1 !important;
       color: #334155 !important;
@@ -7302,7 +7303,8 @@
       font-weight: 700 !important;
       display: grid !important;
       place-items: center !important;
-      border: 1px solid #cbd5e1 !important;
+      border: none !important;
+      overflow: hidden !important;
     }
     .select-page[data-theme="dark"] .account-info-avatar {
       background: #475569 !important;
@@ -10393,5 +10395,14 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
+}
+
+#sidebar-avatar-img,
+#topbar-avatar-img,
+#logout-avatar-img,
+#account-avatar-img,
+#account-info-avatar-img {
+  transform: scale(1.32) !important;
+  transform-origin: center !important;
 }
 
