@@ -2570,7 +2570,7 @@
                   newSrc = "https://assets.tmastudy.io.vn/assets/" + src;
                 }
               }
-            } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+            } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/assets/") === 0) {
               newSrc = src.replace("https://assets.tmastudy.io.vn/", "");
             }
             return '<img ' + (prefix || '') + 'src=' + quote + newSrc + quote;
@@ -11683,9 +11683,7 @@ function triggerChoiceImageUpload(btn) {
           statusEl.textContent = "⏳ AI đang phân tích, giải đề và phân loại độ khó...";
         }
 
-        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.\nNhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.\n- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).\n- BẮT BUỘC tất cả các công thức, biểu thức, ký hiệu và biến số toán học phải được bọc trong dấu đô-la $ ... $ (ví dụ: $x^2 + 3 = 2$, $a, b \\in \\dots$, $\\dfrac{a+b}{\\pi}$). TUYỆT ĐỐI không được bỏ dấu bọc đô-la $ của công thức toán học.\n- TUYỆT ĐỐI KHÔNG bọc chữ tiếng Việt (plain text) bên trong khối ký hiệu LaTeX \\( ... \\) hoặc \\[ ... \\]. Chỉ được bọc công thức toán học thực tế. Tiếng Việt phải viết dạng text thuần ngoài khối toán.\n- Đối với câu hỏi Đúng/Sai (true_false): Nội dung các mệnh đề/phát biểu trong mảng "options" TUYỆT ĐỐI không chèn thêm các tiền tố như "Mệnh đề a:", "Mệnh đề b:", "Mệnh đề :", "a. ", "b. ", "c. ", "d. " hay "A. ", "B. ". Chỉ ghi duy nhất nội dung phát biểu đó.\n- Đối với câu hỏi trắc nghiệm (single_choice / multiple_choice): Nội dung phương án trong mảng "options" TUYỆT ĐỐI không có tiền tố "A. ", "B. ", "C. ", "D. " hay "A/B/C/D. ".\n- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).\n- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.\n- LƯU Ý ĐỐI VỚI DẠNG KÉO THẢ (drag_drop): Nếu đề bài gốc có một bảng hoặc danh sách liệt kê các từ khóa/số dùng để kéo thả, bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách đó khỏi trường "question" (chỉ định nghĩa chúng ở mảng "items") để tránh trùng lặp hiển thị.
-- ĐỐI VỚI CÂU HỎI ĐIỀN CHỮ TỰ DO (fill_blank): Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong đoạn văn hoặc câu hỏi (học sinh tự gõ từ bàn phím, không có thẻ từ kéo thả). Trường "question" chứa văn bản có ký hiệu ô trống [o1], [o2]... và trường "correct_answer" có dạng chuỗi "o1=đáp_án_1 | o2=đáp_án_2" hoặc đáp án đơn. KHÔNG tạo mảng "items" hay "body" cho loại này.
-- ĐỐI VỚI CÂU HỎI KÉO THẢ (drag_drop): Chỉ dùng dạng này khi đề bài có hộp/danh sách từ lựa chọn để kéo thả vào ô trống. Bắt buộc tạo mảng "items" chứa các từ lựa chọn kéo thả.
+        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.\nNhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.\n- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).\n- BẮT BUỘC tất cả các công thức, biểu thức, ký hiệu và biến số toán học phải được bọc trong dấu đô-la $ ... $ (ví dụ: $x^2 + 3 = 2$, $a, b \\in \\dots$, $\\dfrac{a+b}{\\pi}$). TUYỆT ĐỐI không được bỏ dấu bọc đô-la $ của công thức toán học.\n- TUYỆT ĐỐI KHÔNG bọc chữ tiếng Việt (plain text) bên trong khối ký hiệu LaTeX \\( ... \\) hoặc \\[ ... \\]. Chỉ được bọc công thức toán học thực tế. Tiếng Việt phải viết dạng text thuần ngoài khối toán.\n- Đối với câu hỏi Đúng/Sai (true_false): Nội dung các mệnh đề/phát biểu trong mảng "options" TUYỆT ĐỐI không chèn thêm các tiền tố như "Mệnh đề a:", "Mệnh đề b:", "Mệnh đề :", "a. ", "b. ", "c. ", "d. " hay "A. ", "B. ". Chỉ ghi duy nhất nội dung phát biểu đó.\n- Đối với câu hỏi trắc nghiệm (single_choice / multiple_choice): Nội dung phương án trong mảng "options" TUYỆT ĐỐI không có tiền tố "A. ", "B. ", "C. ", "D. " hay "A/B/C/D. ".\n- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).\n- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.\n- LƯU Ý ĐỐI VỚI DẠNG KÉO THẢ (drag_drop): Nếu đề bài gốc có một bảng hoặc danh sách liệt kê các từ khóa/số dùng để kéo thả, bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách đó khỏi trường "question" (chỉ định nghĩa chúng ở mảng "items") để tránh trùng lặp hiển thị.\n- ĐỐI VỚI CÂU HỎI KÉO THẢ (drag_drop): Chỉ dùng dạng này khi đề bài có hộp/danh sách từ lựa chọn để kéo thả vào ô trống. Bắt buộc tạo mảng "items" chứa các từ lựa chọn kéo thả (với id là "i1", "i2"...). Bắt buộc phân tích văn bản/bảng biểu thành mảng "body" gồm các phần tử "text" (kiểu text) và "blank" (kiểu blank, id là "o1", "o2"...). Đáp án correct_answer có dạng "o1=i1 | o2=i2".\n- ĐỐI VỚI CÂU HỎI ĐIỀN CHỮ TỰ DO (fill_blank): Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong đoạn văn hoặc câu hỏi (học sinh tự gõ từ bàn phím, không có thẻ từ kéo thả). Trường "question" chứa văn bản có ký hiệu ô trống [o1], [o2]... và trường "correct_answer" có dạng chuỗi "o1=đáp_án_1 | o2=đáp_án_2" hoặc đáp án đơn. KHÔNG tạo mảng "items" hay "body" cho loại này.
 - TUYỆT ĐỐI KHÔNG loại bỏ các ký hiệu đánh dấu số đoạn văn dạng [0], [1], [2], [3]... ở đầu các đoạn văn trong ngữ liệu nền (passage). Bạn BẮT BUỘC phải giữ nguyên chúng và bôi đậm chúng bằng thẻ <strong>[0]</strong>, <strong>[1]</strong>, <strong>[2]</strong>...\n- Viết Lời giải chi tiết ("explanation") chia thành các bước rõ ràng. Lời giải phải CHUẨN XÁC, NGẮN GỌN, gọn gàng, súc tích (tránh viết dài dòng lan man). Chỉ được phép sử dụng kiến thức bậc THPT (Cấp 3), tuyệt đối không dùng kiến thức nâng cao bậc đại học. TUYỆT ĐỐI KHÔNG dùng dấu sao ** hay * để bôi đậm hay làm danh sách (hãy dùng thẻ HTML <strong>...</strong> hoặc viết chữ thường 'Bước 1: ...'). Trình bày các bước rõ ràng và xuống dòng bằng hai ký tự xuống dòng kép '\\n\\n' để tránh dính liền văn bản. Đối với các câu hỏi có nhiều ý nhỏ như Đúng/Sai (true_false) hoặc các ô kéo thả (drag_drop), ở cuối lời giải bạn BẮT BUỘC phải chốt rõ kết luận đáp án của từng mệnh đề hoặc ô trống rõ ràng.
 
 Cấu trúc JSON đầu ra yêu cầu duy nhất:
@@ -11695,15 +11693,19 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
     "questions": [
       {
         "question_no": 1,
-        "question_type": "single_choice" | "multiple_choice" | "true_false" | "numeric_answer" | "drag_drop",
+        "question_type": "single_choice" | "multiple_choice" | "true_false" | "numeric_answer" | "drag_drop" | "fill_blank",
         "question": "Nội dung câu hỏi Toán...",
         "options": [
-          { "key": "A", "text": "Phương án A" },
-          { "key": "B", "text": "Phương án B" },
-          { "key": "C", "text": "Phương án C" },
-          { "key": "D", "text": "Phương án D" }
+          { "key": "A", "text": "Phương án A" }
         ],
-        "correct_answer": "A" | ["A", "B"] | { "a": true, "b": false } | 12.5,
+        "body": [
+          { "type": "text", "content": "Văn bản chứa ô trống " },
+          { "type": "blank", "id": "o1" }
+        ],
+        "items": [
+          { "id": "i1", "text": "Từ kéo thả 1" }
+        ],
+        "correct_answer": "A" | ["A", "B"] | "o1=i1" | 12.5,
         "difficulty": 1 | 2 | 3,
         "topic": "Chủ đề Toán học...",
         "explanation": "Lời giải từng bước chi tiết..."
@@ -11715,12 +11717,16 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
       "questions": [
         {
           "question_no": 1,
-          "question_type": "single_choice",
-          "question": "Câu hỏi số 1...",
-          "options": [
-            { "key": "A", "text": "..." }
+          "question_type": "drag_drop",
+          "question": "Nêu yêu cầu kéo thả...",
+          "body": [
+            { "type": "text", "content": "Văn bản trước ô trống " },
+            { "type": "blank", "id": "o1" }
           ],
-          "correct_answer": "A",
+          "items": [
+            { "id": "i1", "text": "Từ kéo thả 1" }
+          ],
+          "correct_answer": "o1=i1",
           "explanation": "Lời giải chi tiết..."
         }
       ]
@@ -11754,6 +11760,29 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                           required: ["key", "text"]
                         }
                       },
+                      body: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            type: { type: "STRING", enum: ["text", "blank"] },
+                            content: { type: "STRING" },
+                            id: { type: "STRING" }
+                          },
+                          required: ["type"]
+                        }
+                      },
+                      items: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            id: { type: "STRING" },
+                            text: { type: "STRING" }
+                          },
+                          required: ["id", "text"]
+                        }
+                      },
                       correct_answer: { type: "STRING" },
                       difficulty: { type: "INTEGER" },
                       topic: { type: "STRING" },
@@ -11784,6 +11813,29 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                                 text: { type: "STRING" }
                               },
                               required: ["key", "text"]
+                            }
+                          },
+                          body: {
+                            type: "ARRAY",
+                            items: {
+                              type: "OBJECT",
+                              properties: {
+                                type: { type: "STRING", enum: ["text", "blank"] },
+                                content: { type: "STRING" },
+                                id: { type: "STRING" }
+                              },
+                              required: ["type"]
+                            }
+                          },
+                          items: {
+                            type: "ARRAY",
+                            items: {
+                              type: "OBJECT",
+                              properties: {
+                                id: { type: "STRING" },
+                                text: { type: "STRING" }
+                              },
+                              required: ["id", "text"]
                             }
                           },
                           correct_answer: { type: "STRING" },
@@ -11859,6 +11911,9 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
               var addedCount = 0;
               list.forEach(function(newQ) {
+                if (typeof window.cleanTmaQuestionData === "function") {
+                  window.cleanTmaQuestionData(newQ);
+                }
                 stagedMath.push(newQ);
                 addedCount++;
               });
@@ -11878,6 +11933,9 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
 
               var addedCount = 0;
               list.forEach(function(newQ) {
+                if (typeof window.cleanTmaQuestionData === "function") {
+                  window.cleanTmaQuestionData(newQ);
+                }
                 var qNo = Number(newQ.question_no);
                 if (Number.isInteger(qNo) && qNo >= 1 && qNo <= 100) {
                   while (mathSec.questions.length < qNo) {
@@ -11914,13 +11972,34 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                 statusEl.textContent = "✅ Đã nạp trực tiếp " + addedCount + " câu hỏi Toán vào đề thi chính thức!";
               }
             }
-          } else if (result.section_id === "reading" || result.section_id === "science") {
-            var secId = result.section_id;
+          } else if (result.section_id === "reading" || result.section_id === "science" || (!result.section_id && (result.group || result.groups || result.data?.group || result.data?.groups || result.questions || result.data?.questions))) {
+            var secId = result.section_id || "reading";
             var sourceGroups = [];
-            if (result.data && result.data.group) {
+            
+            if (result.data && result.data.group && typeof result.data.group === "object") {
               sourceGroups = [result.data.group];
             } else if (result.data && Array.isArray(result.data.groups)) {
               sourceGroups = result.data.groups;
+            } else if (result.group && typeof result.group === "object") {
+              sourceGroups = [result.group];
+            } else if (Array.isArray(result.groups)) {
+              sourceGroups = result.groups;
+            } else if (result.data && (result.data.title || result.data.passage || result.data.stimulus) && Array.isArray(result.data.questions)) {
+              sourceGroups = [result.data];
+            } else if ((result.title || result.passage || result.stimulus) && Array.isArray(result.questions)) {
+              sourceGroups = [result];
+            } else if (result.data && Array.isArray(result.data.questions)) {
+              sourceGroups = [{
+                title: result.data.title || "",
+                passage: result.data.passage || result.data.stimulus?.content || "",
+                questions: result.data.questions
+              }];
+            } else if (Array.isArray(result.questions)) {
+              sourceGroups = [{
+                title: result.title || "",
+                passage: result.passage || result.stimulus?.content || "",
+                questions: result.questions
+              }];
             }
 
             if (isRandom) {
@@ -11928,11 +12007,19 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + secId) || "[]"); } catch(e) {}
               var addedGroups = 0;
               sourceGroups.forEach(function(g) {
+                var questionsVal = g.questions || [];
+                if (Array.isArray(questionsVal)) {
+                  questionsVal.forEach(function(newQ) {
+                    if (typeof window.cleanTmaQuestionData === "function") {
+                      window.cleanTmaQuestionData(newQ);
+                    }
+                  });
+                }
                 var newGroup = {
                   group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
-                  title: g.title || "Tiêu đề bài đọc",
-                  passage: g.passage || "",
-                  questions: g.questions || []
+                  title: g.title || g.group_title || "Tiêu đề bài đọc",
+                  passage: g.passage || g.stimulus?.content || g.content || "",
+                  questions: questionsVal
                 };
                 stagedGroups.push(newGroup);
                 addedGroups++;
@@ -11952,16 +12039,71 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               if (!Array.isArray(sec.groups)) sec.groups = [];
 
               var addedGroups = 0;
-              sourceGroups.forEach(function(g) {
-                var newGroup = {
-                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
-                  title: g.title || "Tiêu đề bài đọc",
-                  passage: g.passage || "",
-                  questions: g.questions || []
-                };
-                sec.groups.push(newGroup);
-                addedGroups++;
-              });
+              var activeGId = activeGroupIds[secId] || "g1";
+              var existingGroup = sec.groups.find(function(g) { return g.group_id === activeGId; });
+
+              if (sourceGroups.length > 0) {
+                var g = sourceGroups[0];
+                var titleVal = g.title || g.group_title || "";
+                var passageVal = g.passage || g.stimulus?.content || g.content || "";
+                var questionsVal = g.questions || [];
+
+                if (Array.isArray(questionsVal)) {
+                  questionsVal.forEach(function(newQ) {
+                    if (typeof window.cleanTmaQuestionData === "function") {
+                      window.cleanTmaQuestionData(newQ);
+                    }
+                  });
+                }
+
+                if (existingGroup) {
+                  existingGroup.title = titleVal || existingGroup.title;
+                  if (!existingGroup.stimulus) existingGroup.stimulus = {};
+                  existingGroup.stimulus.content = passageVal || existingGroup.stimulus.content || "";
+                  existingGroup.passage = existingGroup.stimulus.content;
+
+                  // Update questions
+                  if (Array.isArray(questionsVal) && questionsVal.length > 0) {
+                    var groupIndex = sec.groups.indexOf(existingGroup);
+                    if (groupIndex === -1) groupIndex = 0;
+                    var startQNo = (secId === "reading") 
+                      ? (groupIndex === 0 ? 1 : 11) 
+                      : (groupIndex === 0 ? 1 : (groupIndex === 1 ? 11 : 21));
+
+                    if (!Array.isArray(existingGroup.questions)) existingGroup.questions = [];
+
+                    questionsVal.forEach(function(newQ, idx) {
+                      var targetQNo = startQNo + idx;
+                      newQ.question_no = targetQNo;
+
+                      var existingQIdx = existingGroup.questions.findIndex(function(q) {
+                        return Number(q.question_no) === targetQNo;
+                      });
+
+                      if (existingQIdx !== -1) {
+                        existingGroup.questions[existingQIdx] = newQ;
+                      } else {
+                        existingGroup.questions.push(newQ);
+                      }
+                    });
+
+                    existingGroup.questions.sort(function(a, b) {
+                      return (Number(a.question_no) || 0) - (Number(b.question_no) || 0);
+                    });
+                  }
+                  addedGroups = 1;
+                } else {
+                  var newGroup = {
+                    group_id: activeGId,
+                    title: titleVal || "Tiêu đề bài đọc",
+                    passage: passageVal,
+                    stimulus: { type: "text", content: passageVal },
+                    questions: questionsVal
+                  };
+                  sec.groups.push(newGroup);
+                  addedGroups = 1;
+                }
+              }
               localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
               localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
 

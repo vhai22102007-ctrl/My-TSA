@@ -1,0 +1,119 @@
+{
+  "section_id": "science",
+  "section_label": "Khoa học",
+  "layout": "passage",
+  "groups": [
+    {
+      "group_id": "g_apoptosis",
+      "title": "Ngữ liệu 2: Apoptosis và Hoại tử",
+      "stimulus": {
+        "type": "text",
+        "content": "<strong>Văn bản 2: Apoptosis và Hoại tử</strong>\n\nCác tế bào trong cơ thể con người liên tục được đổi mới, và trong quá trình này, các tế bào ban đầu sẽ dần chết đi. Cái chết này bao gồm quá trình lão hóa tự nhiên và các con đường không lão hóa khác. Có nhiều phương thức chết tế bào khác nhau, bao gồm apoptosis, autophagy, pyroptosis, copper death, ferroptosis, v.v.\n\nBên cạnh apoptosis, hoại tử (necrosis) là một hình thức chết tế bào phổ biến nhưng mang tính thụ động và thường xảy ra do tác động từ bên ngoài như chấn thương, nhiễm độc, thiếu oxy hoặc nhiễm trùng. Khác với apoptosis – là quá trình chết tế bào có kiểm soát bởi gen – hoại tử xảy ra khi tế bào bị tổn thương nghiêm trọng, mất khả năng duy trì cân bằng nội môi. Trong hoại tử, màng tế bào bị phá vỡ, các thành phần bên trong tế bào tràn ra môi trường xung quanh, gây phản ứng viêm mạnh ở mô lân cận. Vì vậy, hoại tử thường liên quan đến tổn thương mô và các bệnh lý nghiêm trọng.\n\nApoptosis, còn được gọi là chết tế bào theo chương trình hoặc tự tử tế bào, là một quá trình chết tế bào chủ động dưới sự kiểm soát của gen. Không giống như hoại tử, apoptosis không giải phóng thành phần tế bào vào môi trường xung quanh. Apoptosis tồn tại rộng rãi trong thế giới sinh học và xảy ra trong điều kiện sinh lý và bệnh lý bình thường. Nó đóng vai trò quan trọng trong sự phát triển phôi, sự ổn định của mô, khả năng phòng vệ của cơ thể và phản ứng miễn dịch, và do đó đã trở thành một trong những điểm nóng trong nghiên cứu y sinh học.\n\n<strong>Phát hiện protein được kích hoạt trong quá trình apoptosis:</strong> Sau khi màng tế bào mất tính đối xứng, một số protein liên quan đến apoptosis trong tế bào được kích hoạt, chẳng hạn như Bcl-2, BAX, FASL/TNFSF6, TNF-a, v.v. Các protein được kích hoạt trong tế bào có thể được xác định bằng ELISA và các phương pháp khác để kết luận liệu các tế bào có đang trong trạng thái apoptosis hay không.\n\n<strong>Phát hiện hoạt động của enzyme caspase:</strong> Trong giai đoạn đầu của quá trình apoptosis, caspase có trong tế bào chất được kích hoạt, kích hoạt một loạt các phản ứng liên quan đến apoptosis. Quá trình apoptosis của tế bào có thể được xác định bằng cách phát hiện hoạt động của caspase.",
+        "image_url": "",
+        "image_width": 100
+      },
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "fill_blank",
+          "question": "Điền các từ thích hợp vào chỗ trống:\n\nThông qua các nghiên cứu liên quan về gen và các đột biến. Trong [o1], [o2] ức chế quá trình chết theo chương trình apoptosis đồng thời kéo dài thời gian và thúc đẩy sự [o3] các tế bào.",
+          "correct_answer": "o1=ung thư | o2=Bcl-2 | o3=sống sót",
+          "explanation": "Giải thích: Trong ung thư, Bcl-2 hoạt động như một protein chống apoptosis, ức chế quá trình tự hủy tế bào để kéo dài thời gian và thúc đẩy sự sống sót của các tế bào ung thư đột biến.",
+          "points": 1
+        },
+        {
+          "question_no": 2,
+          "question_type": "single_choice",
+          "question": "Chọn đáp án sai trong các đáp án sau:",
+          "options": [
+            { "key": "A", "text": "Quá trình apoptosis được kiểm soát có quy luật chặt chẽ" },
+            { "key": "B", "text": "Quá trình hoại tử và apoptosis khác nhau về bản chất" },
+            { "key": "C", "text": "Trong quá trình chết, các thành phần tế bào được giải phóng vào môi trường" },
+            { "key": "D", "text": "Đóng vai trò quan trọng trong sinh học cơ thể con người" }
+          ],
+          "correct_answer": "C",
+          "explanation": "Giải thích: Đoạn 3 ghi rõ 'Không giống như hoại tử, apoptosis không giải phóng thành phần tế bào vào môi trường xung quanh'. Vì vậy phương án C phát biểu sai.",
+          "points": 1
+        },
+        {
+          "question_no": 3,
+          "question_type": "drag_drop",
+          "question": "Dựa vào bài đọc hãy nối các giai đoạn xảy ra tương ứng với các hình ảnh dưới:",
+          "body": [
+            { "type": "text", "content": "1. [IMG: https://assets.tmastudy.io.vn/passages/temp/1784920436242.png] -> " },
+            { "type": "blank", "id": "o1" },
+            { "type": "text", "content": "\n2. [IMG: https://assets.tmastudy.io.vn/passages/temp/1784920605012.png] -> " },
+            { "type": "blank", "id": "o2" },
+            { "type": "text", "content": "\n3. [IMG: https://assets.tmastudy.io.vn/passages/temp/1784921089726.png] -> " },
+            { "type": "blank", "id": "o3" },
+            { "type": "text", "content": "\n4. [IMG: https://assets.tmastudy.io.vn/passages/temp/1784921505833.png] -> " },
+            { "type": "blank", "id": "o4" }
+          ],
+          "items": [
+            { "id": "i1", "text": "Giai đoạn 1: Co rút tế bào" },
+            { "id": "i2", "text": "Giai đoạn 2: Tạo bóng màng" },
+            { "id": "i3", "text": "Giai đoạn 3: Sụp đổ nhân" },
+            { "id": "i4", "text": "Giai đoạn 4: Hình thành thể apoptosis" }
+          ],
+          "correct_answer": "o1=i2 | o2=i1 | o3=i4 | o4=i3",
+          "explanation": "Giải thích:\n- Hình 1: Membrane blister tương ứng với Giai đoạn 2 (Tạo bóng màng) -> o1=i2\n- Hình 2: Cell shrinkage and chromatin condensation tương ứng với Giai đoạn 1 (Co rút tế bào) -> o2=i1\n- Hình 3: Apoptotic body formation tương ứng với Giai đoạn 4 (Hình thành thể apoptosis) -> o3=i4\n- Hình 4: Nuclear collapse tương ứng với Giai đoạn 3 (Sụp đổ nhân) -> o4=i3",
+          "points": 1
+        },
+        {
+          "question_no": 4,
+          "question_type": "drag_drop",
+          "question": "Hãy nối tương ứng với quá trình chết:",
+          "body": [
+            { "type": "text", "content": "1 Cytochrome -> " },
+            { "type": "blank", "id": "o1" },
+            { "type": "text", "content": "\n2 Đại thực bào -> " },
+            { "type": "blank", "id": "o2" },
+            { "type": "text", "content": "\n3 Caspase -> " },
+            { "type": "blank", "id": "o3" },
+            { "type": "text", "content": "\n4 Apoptosome -> " },
+            { "type": "blank", "id": "o4" },
+            { "type": "text", "content": "\n5 Bax -> " },
+            { "type": "blank", "id": "o5" }
+          ],
+          "items": [
+            { "id": "i1", "text": "Tạo lỗ trên màng ngoài ty thể" },
+            { "id": "i2", "text": "Thoát ra bào tương qua lỗ do Bax tạo" },
+            { "id": "i3", "text": "Bắt đầu quá trình chết" },
+            { "id": "i4", "text": "Phân cắt, phá hủy các cấu trúc tế bào" },
+            { "id": "i5", "text": "Thực bào, dọn dẹp các thành phần tế bào" }
+          ],
+          "correct_answer": "o1=i2 | o2=i5 | o3=i4 | o4=i3 | o5=i1",
+          "explanation": "Giải thích:\n- Cytochrome thoát ra bào tương qua lỗ do Bax tạo (o1=i2)\n- Đại thực bào thực hiện thực bào, dọn dẹp các thành phần tế bào chết (o2=i5)\n- Caspase phân cắt, phá hủy các cấu trúc tế bào (o3=i4)\n- Apoptosome bắt đầu quá trình chết tế bào (o4=i3)\n- Bax gắn vào màng ngoài ty thể để tạo lỗ (o5=i1)",
+          "points": 1
+        },
+        {
+          "question_no": 5,
+          "question_type": "drag_drop",
+          "question": "Hãy nối tương ứng với trước quá trình chết:",
+          "body": [
+            { "type": "text", "content": "1 Bax -> " },
+            { "type": "blank", "id": "o1" },
+            { "type": "text", "content": "\n2 Cytochrome c -> " },
+            { "type": "blank", "id": "o2" },
+            { "type": "text", "content": "\n3 BCL-2 -> " },
+            { "type": "blank", "id": "o3" },
+            { "type": "text", "content": "\n4 Apaf-1 -> " },
+            { "type": "blank", "id": "o4" },
+            { "type": "text", "content": "\n5 Caspase -> " },
+            { "type": "blank", "id": "o5" }
+          ],
+          "items": [
+            { "id": "i1", "text": "Ức chế bax, giữ màng ty thể ổn định" },
+            { "id": "i2", "text": "Gắn vào màng ngoài ty thể, tạo lỗ" },
+            { "id": "i3", "text": "Thoát ra bào tương qua lỗ" },
+            { "id": "i4", "text": "Kết hợp với cytochrome c tạo apoptosome" },
+            { "id": "i5", "text": "Kích hoạt quá trình apoptosis" }
+          ],
+          "correct_answer": "o1=i2 | o2=i3 | o3=i1 | o4=i4 | o5=i5",
+          "explanation": "Giải thích:\n- Bax gắn vào màng ngoài ty thể, tạo lỗ (o1=i2)\n- Cytochrome c thoát ra bào tương qua lỗ (o2=i3)\n- BCL-2 ức chế bax, giữ màng ty thể ổn định (o3=i1)\n- Apaf-1 kết hợp với cytochrome c tạo apoptosome (o4=i4)\n- Caspase kích hoạt quá trình apoptosis (o5=i5)",
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

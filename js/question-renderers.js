@@ -61,6 +61,7 @@
     str = str.replace(/\\\\/g, '\\');
     
     // Auto-prepend \displaystyle and auto-append \limits to operators for spacious display
+    str = str.replace(/\$\$/g, '___DOUBLE_DOLLAR___');
     str = str.replace(/\\\(/g, '\\(\\displaystyle ')
              .replace(/\$([^$]+)\$/g, '$\\displaystyle $1$')
              .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
@@ -68,6 +69,7 @@
              .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
              .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
              .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+    str = str.replace(/___DOUBLE_DOLLAR___/g, '$$$$');
 
     // Replace asterisks * or bullets • used in text with a clean bullet on a new line
     str = str.replace(/([^\n])\s*[\*•]\s+/g, '$1<br>&bull; ');
@@ -86,7 +88,7 @@
       return DOMPurify.sanitize(processed, {
         USE_PROFILES: { html: true, svg: true, mathMl: true },
         ADD_TAGS: ["style"],
-        ADD_ATTR: ["stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
+        ADD_ATTR: ["style", "stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
       });
     }
     return String(processed)
@@ -499,6 +501,121 @@
       ? Object.assign({}, savedAnswer)
       : {};
 
+    function openMatchingSelectionModal(blankId, rowNum) {
+      var overlay = document.createElement("div");
+      overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 99999; animation: tmaFadeIn 0.2s ease;";
+
+      var modal = document.createElement("div");
+      modal.style.cssText = "background: #fff; border-radius: 16px; width: 520px; max-width: 90%; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border: 1.5px solid #cbd5e1; box-sizing: border-box; position: relative; animation: tmaScaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);";
+
+      var header = document.createElement("div");
+      header.style.cssText = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1.5px solid #f1f5f9;";
+
+      var title = document.createElement("div");
+      title.style.cssText = "display: flex; align-items: center; gap: 8px; font-weight: 750; font-size: 16px; color: #1e293b;";
+      
+      var titleText = document.createElement("span");
+      titleText.textContent = "Chọn đáp án cho";
+      title.appendChild(titleText);
+
+      var titleCircle = document.createElement("span");
+      titleCircle.style.cssText = "display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1769d8; color: #fff; border-radius: 50%; font-size: 12px; font-weight: 800; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+      titleCircle.textContent = rowNum;
+      title.appendChild(titleCircle);
+
+      header.appendChild(title);
+
+      var closeBtn = document.createElement("button");
+      closeBtn.innerHTML = "&times;";
+      closeBtn.style.cssText = "background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; transition: color 0.15s ease; padding: 4px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;";
+      closeBtn.onclick = function() {
+        document.body.removeChild(overlay);
+      };
+      header.appendChild(closeBtn);
+      modal.appendChild(header);
+
+      var grid = document.createElement("div");
+      grid.style.cssText = "display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 4px;";
+
+      var usedItemIds = new Set();
+      Object.keys(current).forEach(function (key) {
+        if (current[key]) {
+          usedItemIds.add(current[key]);
+        }
+      });
+
+      ensureArray(question.items).forEach(function (item, idx) {
+        var isUsedByAnother = usedItemIds.has(item.id) && current[blankId] !== item.id;
+        if (isUsedByAnother) return;
+
+        var optionBtn = document.createElement("button");
+        var isCurrentSelection = current[blankId] === item.id;
+        optionBtn.style.cssText = "display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 12px 16px; border: 1.5px solid " + (isCurrentSelection ? "#1769d8" : "#e2e8f0") + "; border-radius: 8px; background: " + (isCurrentSelection ? "#eff6ff" : "#fff") + "; cursor: pointer; text-align: left; transition: all 0.15s ease; font-weight: 600; font-size: 14px; color: #334155; width: 100%; box-sizing: border-box;";
+        
+        optionBtn.addEventListener("mouseover", function() {
+          optionBtn.style.borderColor = "#1769d8";
+          optionBtn.style.background = "#eff6ff";
+        });
+        optionBtn.addEventListener("mouseout", function() {
+          if (!isCurrentSelection) {
+            optionBtn.style.borderColor = "#e2e8f0";
+            optionBtn.style.background = "#fff";
+          }
+        });
+
+        var letterCircle = document.createElement("span");
+        var letterLabel = String.fromCharCode(65 + idx);
+        letterCircle.style.cssText = "display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1769d8; color: #fff; border-radius: 50%; font-size: 12px; font-weight: 800; flex-shrink: 0;";
+        letterCircle.textContent = letterLabel;
+        optionBtn.appendChild(letterCircle);
+
+        var textSpan = document.createElement("span");
+        textSpan.style.cssText = "font-size: 13.5px; color: #334155; line-height: 1.4;";
+        var displayText = item.text || "";
+        if (typeof displayText === "string" && /^\d+\/\d+$/.test(displayText.trim())) {
+          displayText = "\\(\\dfrac{" + displayText.split("/")[0].trim() + "}{" + displayText.split("/")[1].trim() + "}\\)";
+        }
+        textSpan.innerHTML = sanitizeHTML(displayText);
+        optionBtn.appendChild(textSpan);
+
+        optionBtn.onclick = function() {
+          if (current[blankId] === item.id) {
+            // Deselect
+            delete current[blankId];
+          } else {
+            // Clear item from any other blanks it was selected in, then set it here
+            Object.keys(current).forEach(function (bId) {
+              if (current[bId] === item.id) {
+                delete current[bId];
+              }
+            });
+            current[blankId] = item.id;
+          }
+          notify(onAnswerChange, Object.assign({}, current));
+          container.innerHTML = "";
+          renderDragDrop(question, current, onAnswerChange, container);
+          if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+            window.MathJax.typesetPromise([container]).catch(function () {});
+          }
+          document.body.removeChild(overlay);
+        };
+
+        grid.appendChild(optionBtn);
+      });
+
+      modal.appendChild(grid);
+
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+
+      if (!document.getElementById("tma-matching-animations")) {
+        var styleEl = document.createElement("style");
+        styleEl.id = "tma-matching-animations";
+        styleEl.innerHTML = "@keyframes tmaFadeIn { from { opacity: 0; } to { opacity: 1; } }\n@keyframes tmaScaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }";
+        document.head.appendChild(styleEl);
+      }
+    }
+
     // If there are no items for dragging, render as inline text inputs directly
     if (!question.items || question.items.length === 0) {
       var textBlock = document.createElement("div");
@@ -532,17 +649,44 @@
       return;
     }
 
+    var isMatchingLayout = false;
+    var bodyParts = ensureArray(question.body);
+    for (var i = 0; i < bodyParts.length; i++) {
+      if (bodyParts[i] && bodyParts[i].type === "text" && /(?:→|->|=>|—>)/.test(bodyParts[i].content || "")) {
+        isMatchingLayout = true;
+        break;
+      }
+    }
+
     var mainWrap = document.createElement("div");
     mainWrap.className = "drag-drop-container";
 
-    var poolTitle = document.createElement("div");
-    poolTitle.className = "drag-pool-title";
-    poolTitle.textContent = "Các phương án lựa chọn (Kéo hoặc click để chọn):";
-    mainWrap.appendChild(poolTitle);
-
     var pool = document.createElement("div");
     pool.className = "drag-pool";
-    mainWrap.appendChild(pool);
+
+    if (isMatchingLayout) {
+      // Style pool as a flexbox column with padding and background border
+      pool.style.cssText = "background-color: #fff5f5; border: 1.5px solid #fee2e2; border-radius: 12px; padding: 18px 20px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;";
+      
+      var poolTitle = document.createElement("div");
+      poolTitle.className = "tma-matching-pool-title";
+      poolTitle.textContent = "Danh sách";
+      poolTitle.style.cssText = "display: block; font-size: 16px; font-weight: 800; color: #c2272d; font-family: inherit; margin: 0; text-align: left; width: 100%; align-self: flex-start;";
+      pool.appendChild(poolTitle);
+
+      var chipsGrid = document.createElement("div");
+      chipsGrid.className = "tma-matching-chips-grid";
+      chipsGrid.style.cssText = "display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; width: 100%; box-sizing: border-box;";
+      pool.appendChild(chipsGrid);
+
+      mainWrap.appendChild(pool);
+    } else {
+      var poolTitle = document.createElement("div");
+      poolTitle.className = "drag-pool-title";
+      poolTitle.textContent = "Các phương án lựa chọn (Kéo hoặc click để chọn):";
+      mainWrap.appendChild(poolTitle);
+      mainWrap.appendChild(pool);
+    }
 
     var usedItemIds = new Set();
     Object.keys(current).forEach(function (blankId) {
@@ -551,23 +695,53 @@
 
     var selectedChipId = null;
 
-    ensureArray(question.items).forEach(function (item) {
+    ensureArray(question.items).forEach(function (item, idx) {
       var chip = document.createElement("div");
       chip.className = "drag-chip";
+      
       var displayText = item.text || "";
       if (typeof displayText === "string" && /^\d+\/\d+$/.test(displayText.trim())) {
         displayText = "\\(\\dfrac{" + displayText.split("/")[0].trim() + "}{" + displayText.split("/")[1].trim() + "}\\)";
       }
-      chip.innerHTML = sanitizeHTML(displayText);
-      chip.setAttribute("draggable", "true");
-      chip.dataset.id = item.id;
 
-      if (usedItemIds.has(item.id)) {
-        chip.classList.add("is-used");
+      if (isMatchingLayout) {
+        chip.style.cssText = "background: #fff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.2s ease; margin: 0; min-height: 48px; box-sizing: border-box;";
+        
+        var letterLabel = String.fromCharCode(65 + idx); // A, B, C...
+        var letterCircle = document.createElement("span");
+        letterCircle.className = "tma-matching-letter-circle";
+        letterCircle.style.cssText = "display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #c2272d; color: #fff; border-radius: 50%; font-size: 13.5px; font-weight: 800; flex-shrink: 0;";
+        letterCircle.textContent = letterLabel;
+        chip.appendChild(letterCircle);
+        
+        var chipText = document.createElement("span");
+        chipText.style.cssText = "font-size: 14px; color: #334155; font-weight: 600; line-height: 1.4; flex-grow: 1;";
+        chipText.innerHTML = sanitizeHTML(displayText);
+        chip.appendChild(chipText);
+      } else {
+        chip.innerHTML = sanitizeHTML(displayText);
+      }
+
+      if (isMatchingLayout) {
         chip.setAttribute("draggable", "false");
+        chip.dataset.id = item.id;
+        if (usedItemIds.has(item.id)) {
+          chip.style.display = "none";
+        }
+      } else {
+        chip.setAttribute("draggable", "true");
+        chip.dataset.id = item.id;
+        if (usedItemIds.has(item.id)) {
+          chip.classList.add("is-used");
+          chip.setAttribute("draggable", "false");
+        }
       }
 
       chip.addEventListener("dragstart", function (e) {
+        if (isMatchingLayout) {
+          e.preventDefault();
+          return;
+        }
         if (usedItemIds.has(item.id)) {
           e.preventDefault();
           return;
@@ -582,28 +756,232 @@
       });
 
       chip.addEventListener("click", function () {
+        if (isMatchingLayout) return;
         if (usedItemIds.has(item.id)) return;
         
         if (selectedChipId === item.id) {
           selectedChipId = null;
           chip.classList.remove("is-selected");
-          chip.style.borderColor = "";
-          chip.style.backgroundColor = "";
         } else {
           pool.querySelectorAll(".drag-chip").forEach(function (c) {
             c.classList.remove("is-selected");
-            c.style.borderColor = "";
-            c.style.backgroundColor = "";
           });
           selectedChipId = item.id;
           chip.classList.add("is-selected");
-          chip.style.borderColor = "#1769d8";
-          chip.style.backgroundColor = "#eff6ff";
         }
       });
 
-      pool.appendChild(chip);
+      if (isMatchingLayout) {
+        chipsGrid.appendChild(chip);
+      } else {
+        pool.appendChild(chip);
+      }
     });
+
+    function bindZoneEvents(zone, blankId, placedItemId) {
+      zone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        zone.classList.add("hovered");
+      });
+
+      zone.addEventListener("dragleave", function () {
+        zone.classList.remove("hovered");
+      });
+
+      zone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        zone.classList.remove("hovered");
+        var itemId = e.dataTransfer.getData("text/plain");
+        if (!itemId) return;
+
+        Object.keys(current).forEach(function (bId) {
+          if (current[bId] === itemId) {
+            delete current[bId];
+          }
+        });
+
+        current[blankId] = itemId;
+        notify(onAnswerChange, Object.assign({}, current));
+        container.innerHTML = "";
+        renderDragDrop(question, current, onAnswerChange, container);
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([container]).catch(function () {});
+        }
+      });
+
+      zone.addEventListener("click", function () {
+        if (placedItemId) {
+          delete current[blankId];
+          notify(onAnswerChange, Object.assign({}, current));
+          container.innerHTML = "";
+          renderDragDrop(question, current, onAnswerChange, container);
+          if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+            window.MathJax.typesetPromise([container]).catch(function () {});
+          }
+        } else if (selectedChipId) {
+          var itemId = selectedChipId;
+          selectedChipId = null;
+
+          Object.keys(current).forEach(function (bId) {
+            if (current[bId] === itemId) {
+              delete current[bId];
+            }
+          });
+
+          current[blankId] = itemId;
+          notify(onAnswerChange, Object.assign({}, current));
+          container.innerHTML = "";
+          renderDragDrop(question, current, onAnswerChange, container);
+          if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+            window.MathJax.typesetPromise([container]).catch(function () {});
+          }
+        }
+      });
+    }
+
+    function parseMatchingText(text) {
+      let clean = String(text || "").trim();
+      clean = clean.replace(/^[\r\n\s]+/, "");
+      
+      let num = "";
+      const numMatch = clean.match(/^([0-9❶❷❸❹❺❻❼❽❾❿]+)[\.\)\s\-\:]*/);
+      if (numMatch) {
+        num = numMatch[1];
+        clean = clean.substring(numMatch[0].length).trim();
+      }
+      
+      clean = clean.replace(/\s*(?:→|->|=>|—>)\s*$/, "").trim();
+      return { num: num, clean: clean };
+    }
+
+    var isMatchingLayout = false;
+    var bodyParts = ensureArray(question.body);
+    for (var i = 0; i < bodyParts.length; i++) {
+      if (bodyParts[i] && bodyParts[i].type === "text" && /(?:→|->|=>|—>)/.test(bodyParts[i].content || "")) {
+        isMatchingLayout = true;
+        break;
+      }
+    }
+
+    if (isMatchingLayout) {
+      var rowsContainer = document.createElement("div");
+      rowsContainer.className = "tma-matching-container";
+      rowsContainer.style.cssText = "display: flex; flex-direction: column; gap: 14px; margin-top: 15px; margin-bottom: 20px; width: 100%;";
+
+      var currentTextPart = "";
+      var matchingRowIndex = 0;
+      for (var i = 0; i < bodyParts.length; i++) {
+        var part = bodyParts[i];
+        if (!part) continue;
+
+        if (part.type === "text") {
+          currentTextPart += (part.content || "");
+        } else if (part.type === "blank") {
+          matchingRowIndex++;
+          (function (rowNum, blankId, textContent) {
+            var cleanText = textContent.trim();
+            cleanText = cleanText.replace(/^[\r\n\s]+/, "");
+            // Strip any leading numbers/bullets if they exist
+            cleanText = cleanText.replace(/^([0-9❶❷❸❹❺❻❼❽❾❿]+)[\.\)\s\-\:]*/, "").trim();
+            // Strip trailing arrows
+            cleanText = cleanText.replace(/\s*(?:→|->|=>|—>)\s*$/, "").trim();
+
+            var row = document.createElement("div");
+            row.className = "tma-matching-row";
+            row.style.cssText = "display: flex; align-items: center; gap: 15px; width: 100%; flex-wrap: nowrap;";
+
+            var leftCard = document.createElement("div");
+            leftCard.className = "tma-matching-left";
+            leftCard.style.cssText = "position: relative; display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 16px 10px 30px; width: 300px; flex-shrink: 0; min-height: 56px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.2s ease; box-sizing: border-box;";
+
+            var numCircle = document.createElement("span");
+            numCircle.className = "tma-matching-num";
+            numCircle.style.cssText = "position: absolute; left: -15px; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #c2272d; color: #fff; border-radius: 50%; font-size: 13.5px; font-weight: 800; flex-shrink: 0; z-index: 5; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+            numCircle.textContent = rowNum;
+            leftCard.appendChild(numCircle);
+
+            var contentSpan = document.createElement("div");
+            contentSpan.className = "tma-matching-content";
+            contentSpan.style.cssText = "font-size: 14px; color: #334155; font-weight: 600; line-height: 1.5; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;";
+            contentSpan.innerHTML = sanitizeHTML(cleanText);
+            
+            contentSpan.querySelectorAll("img").forEach(function(img) {
+              img.style.cssText = "max-height: 120px; max-width: 100%; height: auto; width: auto; display: block; margin: 4px auto; border-radius: 6px;";
+            });
+            
+            leftCard.appendChild(contentSpan);
+            row.appendChild(leftCard);
+
+            var arrow = document.createElement("div");
+            arrow.className = "tma-matching-arrow";
+            arrow.style.cssText = "font-size: 18px; color: #94a3b8; font-weight: bold; flex-shrink: 0;";
+            arrow.textContent = "→";
+            row.appendChild(arrow);
+
+            var zone = document.createElement("span");
+            zone.className = "drop-zone";
+            zone.dataset.blankId = blankId;
+            zone.style.cssText = "position: relative; flex-grow: 1; flex-shrink: 1; min-width: 150px; min-height: 56px; display: inline-flex; align-items: center; justify-content: flex-start; border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; transition: all 0.2s ease; margin: 0; padding-left: 30px; padding-right: 12px; box-sizing: border-box;";
+
+            var emptyCircle = document.createElement("span");
+            emptyCircle.className = "tma-matching-empty-circle";
+            emptyCircle.style.cssText = "position: absolute; left: -15px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 2px dashed #cbd5e1; border-radius: 50%; background: #fff; box-sizing: border-box; z-index: 2;";
+            zone.appendChild(emptyCircle);
+
+             var placedItemId = current[blankId];
+            if (placedItemId) {
+              zone.classList.add("has-item");
+              zone.style.borderStyle = "solid";
+              zone.style.borderColor = "#cbd5e1";
+              emptyCircle.style.display = "none";
+
+              var matchedItem = ensureArray(question.items).find(function (item) {
+                return item.id === placedItemId;
+              });
+              if (matchedItem) {
+                var matchedIdx = ensureArray(question.items).findIndex(function(it) {
+                  return it.id === matchedItem.id;
+                });
+                if (matchedIdx !== -1) {
+                  var letterLabel = String.fromCharCode(65 + matchedIdx);
+                  var letterCircle = document.createElement("span");
+                  letterCircle.className = "tma-matching-num";
+                  letterCircle.style.cssText = "position: absolute; left: -15px; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #c2272d; color: #fff; border-radius: 50%; font-size: 13.5px; font-weight: 800; flex-shrink: 0; z-index: 5; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+                  letterCircle.textContent = letterLabel;
+                  zone.appendChild(letterCircle);
+                }
+                
+                var textSpan = document.createElement("span");
+                textSpan.style.cssText = "font-size: 14px; color: #334155; font-weight: 600; line-height: 1.4; text-align: left; white-space: normal; word-break: break-word; flex-grow: 1;";
+                var displayText = matchedItem.text || "";
+                if (typeof displayText === "string" && /^\d+\/\d+$/.test(displayText.trim())) {
+                  displayText = "\\(\\dfrac{" + displayText.split("/")[0].trim() + "}{" + displayText.split("/")[1].trim() + "\\)";
+                }
+                textSpan.innerHTML = sanitizeHTML(displayText);
+                zone.appendChild(textSpan);
+              }
+            } else {
+              var placeholderText = document.createElement("span");
+              placeholderText.className = "tma-matching-placeholder-text";
+              placeholderText.style.cssText = "font-size: 14px; color: #94a3b8; font-weight: 500; font-style: italic; line-height: 1.4; user-select: none;";
+              placeholderText.textContent = "Bấm chọn đáp án";
+              zone.appendChild(placeholderText);
+            }
+
+            zone.onclick = function() {
+              openMatchingSelectionModal(blankId, rowNum);
+            };
+            row.appendChild(zone);
+            rowsContainer.appendChild(row);
+          })(matchingRowIndex, part.id, currentTextPart);
+          currentTextPart = "";
+      }
+
+      mainWrap.appendChild(rowsContainer);
+      container.appendChild(mainWrap);
+      return;
+    }
 
     var textBlock = document.createElement("div");
     textBlock.className = "drag-drop-text";
@@ -628,66 +1006,7 @@
           }
         }
 
-        zone.addEventListener("dragover", function (e) {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-          zone.classList.add("hovered");
-        });
-
-        zone.addEventListener("dragleave", function () {
-          zone.classList.remove("hovered");
-        });
-
-        zone.addEventListener("drop", function (e) {
-          e.preventDefault();
-          zone.classList.remove("hovered");
-          var itemId = e.dataTransfer.getData("text/plain");
-          if (!itemId) return;
-
-          Object.keys(current).forEach(function (bId) {
-            if (current[bId] === itemId) {
-              delete current[bId];
-            }
-          });
-
-          current[part.id] = itemId;
-          notify(onAnswerChange, Object.assign({}, current));
-          container.innerHTML = "";
-          renderDragDrop(question, current, onAnswerChange, container);
-          if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-            window.MathJax.typesetPromise([container]).catch(function () {});
-          }
-        });
-
-        zone.addEventListener("click", function () {
-          if (placedItemId) {
-            delete current[part.id];
-            notify(onAnswerChange, Object.assign({}, current));
-            container.innerHTML = "";
-            renderDragDrop(question, current, onAnswerChange, container);
-            if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-              window.MathJax.typesetPromise([container]).catch(function () {});
-            }
-          } else if (selectedChipId) {
-            var itemId = selectedChipId;
-            selectedChipId = null;
-
-            Object.keys(current).forEach(function (bId) {
-              if (current[bId] === itemId) {
-                delete current[bId];
-              }
-            });
-
-            current[part.id] = itemId;
-            notify(onAnswerChange, Object.assign({}, current));
-            container.innerHTML = "";
-            renderDragDrop(question, current, onAnswerChange, container);
-            if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-              window.MathJax.typesetPromise([container]).catch(function () {});
-            }
-          }
-        });
-
+        bindZoneEvents(zone, part.id, placedItemId);
         textBlock.appendChild(zone);
         return;
       }
@@ -853,6 +1172,9 @@
       // Determine the answer string to display
       var answerStr = "";
       var corr = question.correct_answer;
+      if (typeof corr === "string" && (corr.startsWith("{") || corr.startsWith("[") || corr.startsWith('"'))) {
+        try { corr = JSON.parse(corr); } catch(e) {}
+      }
       if (corr !== undefined && corr !== null) {
         if (type === "single_choice" || type === "multiple_choice" || type === "single_choice_2") {
           if (Array.isArray(corr)) {

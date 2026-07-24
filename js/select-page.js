@@ -4023,13 +4023,24 @@
         var mathPool = [];
         var readingPool = [];
         var sciencePool = [];
+        
+        var mathSeen = new Set();
+        var readingSeen = new Set();
+        var scienceSeen = new Set();
 
         function collectFromExam(examObj) {
           if (!examObj) return;
           if (Array.isArray(examObj.questions)) {
             examObj.questions.forEach(function(q) {
               if (q && String(q.question || q.content || "").trim().length > 0) {
-                mathPool.push(q);
+                var textKey = String(q.question || q.content || "").trim() + "||" + 
+                              String(q.question_type || q.type || "") + "||" + 
+                              JSON.stringify(q.options || q.statements || q.body || []) + "||" +
+                              String(q.image_url || "");
+                if (!mathSeen.has(textKey)) {
+                  mathSeen.add(textKey);
+                  mathPool.push(q);
+                }
               }
             });
           }
@@ -4038,21 +4049,36 @@
               if (sec.section_id === "math" && Array.isArray(sec.questions)) {
                 sec.questions.forEach(function(q) {
                   if (q && String(q.question || q.content || "").trim().length > 0) {
-                    mathPool.push(q);
+                    var textKey = String(q.question || q.content || "").trim() + "||" + 
+                                  String(q.question_type || q.type || "") + "||" + 
+                                  JSON.stringify(q.options || q.statements || q.body || []) + "||" +
+                                  String(q.image_url || "");
+                    if (!mathSeen.has(textKey)) {
+                      mathSeen.add(textKey);
+                      mathPool.push(q);
+                    }
                   }
                 });
               }
               if (sec.section_id === "reading" && Array.isArray(sec.groups)) {
                 sec.groups.forEach(function(g) {
                   if (g && Array.isArray(g.questions) && g.questions.length > 0) {
-                    readingPool.push(g);
+                    var groupKey = String(g.title || "").trim() + "||" + String(g.stimulus?.content || "").trim();
+                    if (!readingSeen.has(groupKey)) {
+                      readingSeen.add(groupKey);
+                      readingPool.push(g);
+                    }
                   }
                 });
               }
               if (sec.section_id === "science" && Array.isArray(sec.groups)) {
                 sec.groups.forEach(function(g) {
                   if (g && Array.isArray(g.questions) && g.questions.length > 0) {
-                    sciencePool.push(g);
+                    var groupKey = String(g.title || "").trim() + "||" + String(g.stimulus?.content || "").trim();
+                    if (!scienceSeen.has(groupKey)) {
+                      scienceSeen.add(groupKey);
+                      sciencePool.push(g);
+                    }
                   }
                 });
               }
@@ -6824,16 +6850,15 @@
             // Tính số câu đúng từng môn
             let label1 = "Tư duy Toán học", label2 = "Tư duy Đọc hiểu", label3 = "Tư duy Khoa học";
             let c1 = 0, t1 = 40, c2 = 0, t2 = 20, c3 = 0, t3 = 40;
+            let mathCorrectNos = new Set();
+            let readingCorrectNos = new Set();
+            let scienceCorrectNos = new Set();
 
-            if (result.math_correct !== undefined) {
-              c1 = result.math_correct; t1 = result.math_total || 0;
-              c2 = result.reading_correct; t2 = result.reading_total || 0;
-              c3 = result.science_correct; t3 = result.science_total || 0;
-            } else if (supabaseClient) {
+            if (supabaseClient) {
               try {
                 const { data: answersData, error: answersError } = await supabaseClient
                   .from('exam_answers')
-                  .select('subject, is_correct')
+                  .select('subject, question_no, is_correct')
                   .eq('user_email', result.user_email)
                   .eq('exam_code', result.exam_code);
                   
@@ -6844,41 +6869,32 @@
 
                   t1 = mathRows.length;
                   c1 = mathRows.filter(a => a.is_correct === true).length;
+                  mathRows.filter(a => a.is_correct === true).forEach(a => mathCorrectNos.add(Number(a.question_no)));
 
                   t2 = readingRows.length;
                   c2 = readingRows.filter(a => a.is_correct === true).length;
+                  readingRows.filter(a => a.is_correct === true).forEach(a => readingCorrectNos.add(Number(a.question_no)));
 
                   t3 = scienceRows.length;
                   c3 = scienceRows.filter(a => a.is_correct === true).length;
-                } else {
-                  // Proportional Fallback
-                  if (category === "Bài thi HSA") {
-                    t1 = t2 = t3 = Math.round(grandTotal / 3);
-                    c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
-                  } else {
-                    t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
-                    c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
-                  }
+                  scienceRows.filter(a => a.is_correct === true).forEach(a => scienceCorrectNos.add(Number(a.question_no)));
+                } else if (result.math_correct !== undefined) {
+                  c1 = result.math_correct; t1 = result.math_total || 0;
+                  c2 = result.reading_correct; t2 = result.reading_total || 0;
+                  c3 = result.science_correct; t3 = result.science_total || 0;
                 }
               } catch (e) {
                 console.error("Lỗi khi tải chi tiết đáp án:", e);
-                if (category === "Bài thi HSA") {
-                  t1 = t2 = t3 = Math.round(grandTotal / 3);
-                  c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
-                } else {
-                  t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
-                  c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
+                if (result.math_correct !== undefined) {
+                  c1 = result.math_correct; t1 = result.math_total || 0;
+                  c2 = result.reading_correct; t2 = result.reading_total || 0;
+                  c3 = result.science_correct; t3 = result.science_total || 0;
                 }
               }
-            } else {
-              // Proportional Fallback
-              if (category === "Bài thi HSA") {
-                t1 = t2 = t3 = Math.round(grandTotal / 3);
-                c1 = Math.round(grandCorrect / 3); c2 = Math.round(grandCorrect / 3); c3 = grandCorrect - c1 - c2;
-              } else {
-                t1 = Math.round(grandTotal * 0.4); t2 = Math.round(grandTotal * 0.2); t3 = grandTotal - t1 - t2;
-                c1 = Math.round(grandCorrect * 0.4); c2 = Math.round(grandCorrect * 0.2); c3 = grandCorrect - c1 - c2;
-              }
+            } else if (result.math_correct !== undefined) {
+              c1 = result.math_correct; t1 = result.math_total || 0;
+              c2 = result.reading_correct; t2 = result.reading_total || 0;
+              c3 = result.science_correct; t3 = result.science_total || 0;
             }
 
             if (category === "Bài thi HSA") {
@@ -6886,7 +6902,7 @@
             }
 
             // Cập nhật từng thẻ phân môn
-            [[1,label1,c1,t1],[2,label2,c2,t2],[3,label3,c3,t3]].forEach(([i,lbl,c,t]) => {
+            [[1,label1,c1,t1,mathCorrectNos],[2,label2,c2,t2,readingCorrectNos],[3,label3,c3,t3,scienceCorrectNos]].forEach(([i,lbl,c,t,correctNos]) => {
               const pct = t > 0 ? (c/t)*100 : 0;
               const elLbl = document.getElementById(`result-modal-subject-label-${i}`);
               const elCnt = document.getElementById(`result-modal-subject-count-text-${i}`);
@@ -6922,7 +6938,14 @@
                   bubble.textContent = j;
                   
                   // Tô màu các ô câu hỏi theo kết quả (đúng: xanh lá, sai: đỏ, chưa làm: xám)
-                  if (j <= c) {
+                  let isCorrect = false;
+                  if (correctNos && correctNos.size > 0) {
+                    isCorrect = correctNos.has(j);
+                  } else {
+                    isCorrect = (j <= c);
+                  }
+
+                  if (isCorrect) {
                     bubble.classList.add("correct");
                   } else if (j <= t) {
                     bubble.classList.add("incorrect");

@@ -257,14 +257,15 @@
     // Replace standalone bullet points
     str = str.replace(/(^|\n)[\s]*[\*\-]\s+(.*?)(?=\n|$)/g, '$1&bull; $2');
 
-    return str
-      .replace(/\\\(/g, '\\(\\displaystyle ')
-      .replace(/\$([^$]+)\$/g, '$\\displaystyle $1$')
-      .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
-      .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
-      .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
-      .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
-      .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+    str = str.replace(/\$\$/g, '___DOUBLE_DOLLAR___');
+    str = str.replace(/\\\(/g, '\\(\\displaystyle ')
+             .replace(/\$([^$]+)\$/g, '$\\displaystyle $1$')
+             .replace(/\\frac(?![a-zA-Z])/g, '\\dfrac')
+             .replace(/\\int(?!\\limits)(?![a-zA-Z])/g, '\\int\\limits')
+             .replace(/\\sum(?!\\limits)(?![a-zA-Z])/g, '\\sum\\limits')
+             .replace(/\\prod(?!\\limits)(?![a-zA-Z])/g, '\\prod\\limits')
+             .replace(/\\lim(?!\\limits)(?![a-zA-Z])/g, '\\lim\\limits');
+    return str.replace(/___DOUBLE_DOLLAR___/g, '$$$$');
   }
 
   function sanitizeHtml(value) {
@@ -273,7 +274,7 @@
       return DOMPurify.sanitize(html, {
         USE_PROFILES: { html: true, svg: true, mathMl: true },
         ADD_TAGS: ["style"],
-        ADD_ATTR: ["stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
+        ADD_ATTR: ["style", "stroke-dasharray", "marker-end", "orient", "refX", "refY", "markerWidth", "markerHeight"]
       });
     }
     return esc(html);
@@ -619,13 +620,17 @@
       }
     }
 
+    if (isPreviewMode) {
+      rawExam = readLocalJson(`tma_tsa_teacher_draft_${examCode}`) || readLocalJson(`tma_tsa_exam_${examCode}`);
+    }
+
     if (!rawExam && targetFetchCode !== examCode) {
       try {
         rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(examCode)}.json`);
       } catch (e) {}
     }
     if (!rawExam) {
-      rawExam = readLocalJson(`tma_tsa_exam_${examCode}`) || readLocalJson(`tma_tsa_teacher_draft_${examCode}`);
+      rawExam = readLocalJson(`tma_tsa_teacher_draft_${examCode}`) || readLocalJson(`tma_tsa_exam_${examCode}`);
     }
     return { rawExam, examMeta };
   }
@@ -755,7 +760,7 @@
               newSrc = "https://assets.tmastudy.io.vn/assets/" + src;
             }
           }
-        } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+        } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/assets/") === 0) {
           newSrc = src.replace("https://assets.tmastudy.io.vn/", "");
         }
         return '<img ' + (prefix || '') + 'src=' + quote + newSrc + quote;
@@ -1820,8 +1825,17 @@
               examData.questions.forEach(q => {
                 const detail = solRes.details.find(d => d.question_no === q.question_no);
                 if (detail) {
-                  q.correct_answer = detail.correct_answer;
-                  q.explanation = detail.solution;
+                  let parsedCorr = detail.correct_answer;
+                  if (typeof parsedCorr === "string" && (parsedCorr.startsWith("{") || parsedCorr.startsWith("[") || parsedCorr.startsWith('"'))) {
+                    try { parsedCorr = JSON.parse(parsedCorr); } catch (e) {}
+                  }
+                  // Only overwrite if correct_answer is not already defined in the question (e.g., from local draft)
+                  if (q.correct_answer === undefined || q.correct_answer === null) {
+                    q.correct_answer = parsedCorr;
+                  }
+                  if (q.explanation === undefined || q.explanation === null || !q.explanation.trim()) {
+                    q.explanation = detail.solution;
+                  }
                 }
               });
             } else {
@@ -2366,8 +2380,35 @@
         });
       });
 
+      function convertHtmlImagesToTags(html) {
+        if (!html) return html;
+        return html.replace(/<img\s+([^>]*\s+)?src=(["'])([^"'\s]+)\2([^>]*)>/gi, function(match, part1, quote, src, part2) {
+          const attributes = (part1 || "") + (part2 || "");
+          
+          // Extract width from style
+          const styleMatch = attributes.match(/style=(["'])([^"']+)\1/i);
+          let width = "48%";
+          if (styleMatch) {
+            const widthMatch = styleMatch[2].match(/width\s*:\s*([^;'\s]+)/i);
+            if (widthMatch) {
+              width = widthMatch[1];
+            }
+          } else {
+            // Extract width attribute if present
+            const widthAttrMatch = attributes.match(/width=(["'])([^"'\s]+)\1/i);
+            if (widthAttrMatch) {
+              width = widthAttrMatch[2];
+              if (!width.endsWith("%") && !width.endsWith("px")) width += "%";
+            }
+          }
+          
+          return `[IMG: ${src} | ${width}]`;
+        });
+      }
+
       function updateQuestionTextFromDom(lead) {
-        const newText = lead.innerHTML;
+        let newText = lead.innerHTML;
+        newText = convertHtmlImagesToTags(newText);
         const currentQ = examData.questions[currentQuestionIndex];
         if (currentQ) {
           const originalNo = currentQ.original_question_no || currentQ.question_no;
@@ -2511,19 +2552,22 @@
 
       function findQuestionInRaw(originalNo) {
         if (!rawExamData) return null;
+        const targetNo = Number(originalNo);
+        if (isNaN(targetNo)) return null;
+
         if (Array.isArray(rawExamData.questions)) {
-          return rawExamData.questions.find(q => q.question_no === originalNo);
+          return rawExamData.questions.find(q => Number(q.question_no) === targetNo);
         }
         if (Array.isArray(rawExamData.sections)) {
           for (const sec of rawExamData.sections) {
             if (Array.isArray(sec.questions)) {
-              const found = sec.questions.find(q => q.question_no === originalNo);
+              const found = sec.questions.find(q => Number(q.question_no) === targetNo);
               if (found) return found;
             }
             if (Array.isArray(sec.groups)) {
               for (const grp of sec.groups) {
                 if (Array.isArray(grp.questions)) {
-                  const found = grp.questions.find(q => q.question_no === originalNo);
+                  const found = grp.questions.find(q => Number(q.question_no) === targetNo);
                   if (found) return found;
                 }
               }
@@ -2593,6 +2637,7 @@
             const startX = e.clientX;
             const startWidth = img.offsetWidth;
             const parentWidth = img.parentElement.offsetWidth;
+            let pct = Math.round((startWidth / parentWidth) * 100);
 
             function onMouseMove(moveEvent) {
               const deltaX = moveEvent.clientX - startX;
@@ -2606,7 +2651,7 @@
               if (newWidth < 20) newWidth = 20;
               if (newWidth > parentWidth) newWidth = parentWidth;
 
-              const pct = Math.round((newWidth / parentWidth) * 100);
+              pct = Math.round((newWidth / parentWidth) * 100);
 
               img.setAttribute("style", `width:${pct}%; max-width:100%; height:auto; display:block; margin:10px auto;`);
               img.style.width = `${pct}%`;
@@ -2621,8 +2666,33 @@
 
               const lead = img.closest(".question-lead");
               const passageContent = img.closest(".stimulus-content");
-              if (lead) updateQuestionTextFromDom(lead);
-              else if (passageContent) updatePassageTextFromDom(passageContent);
+              if (lead) {
+                updateQuestionTextFromDom(lead);
+              } else if (passageContent) {
+                updatePassageTextFromDom(passageContent);
+              } else {
+                // Standalone question or passage image
+                const currentQ = examData.questions[currentQuestionIndex];
+                if (currentQ) {
+                  const isPassageImage = img.closest("#passage-pane") || img.closest(".passage-pane");
+                  if (isPassageImage) {
+                    currentQ.passage_image_width = pct;
+                    if (currentQ.group_id) {
+                      const rawGroup = findGroupInRaw(currentQ.group_id);
+                      if (rawGroup && rawGroup.stimulus) {
+                        rawGroup.stimulus.image_width = pct;
+                      }
+                    }
+                  } else {
+                    currentQ.image_width = pct;
+                    const originalNo = currentQ.original_question_no || currentQ.question_no;
+                    const rawQ = findQuestionInRaw(originalNo);
+                    if (rawQ) {
+                      rawQ.image_width = pct;
+                    }
+                  }
+                }
+              }
             }
 
             document.addEventListener("mousemove", onMouseMove);

@@ -15,15 +15,23 @@
 
   function gradeSingleChoice(question, userAnswer) {
     if (userAnswer == null || question.correct_answer == null) return false;
-    return normalizeKey(userAnswer) === normalizeKey(question.correct_answer);
+    var correct = question.correct_answer;
+    if (typeof correct === "string") {
+      try { correct = JSON.parse(correct); } catch (e) {}
+    }
+    return normalizeKey(userAnswer) === normalizeKey(correct);
   }
 
   function gradeMultipleChoice(question, userAnswer) {
-    if (!Array.isArray(userAnswer) || !Array.isArray(question.correct_answer)) return false;
+    var correct = question.correct_answer;
+    if (typeof correct === "string") {
+      try { correct = JSON.parse(correct); } catch (e) {}
+    }
+    if (!Array.isArray(userAnswer) || !Array.isArray(correct)) return false;
     var user = userAnswer.map(normalizeKey).filter(Boolean).sort();
-    var correct = question.correct_answer.map(normalizeKey).filter(Boolean).sort();
-    if (user.length !== correct.length) return false;
-    return correct.every(function (key, index) { return key === user[index]; });
+    var corr = correct.map(normalizeKey).filter(Boolean).sort();
+    if (user.length !== corr.length) return false;
+    return corr.every(function (key, index) { return key === user[index]; });
   }
 
   function gradeTrueFalse(question, userAnswer) {
@@ -53,10 +61,14 @@
   function gradeFillBlank(question, userAnswer) {
     if (userAnswer && typeof userAnswer === "object" && !Array.isArray(userAnswer)) {
       var correct = {};
-      if (question.correct_answer && typeof question.correct_answer === "object") {
-        correct = question.correct_answer;
-      } else if (typeof question.correct_answer === "string") {
-        question.correct_answer.split("|").forEach(function (pair) {
+      var corrAns = question.correct_answer;
+      if (typeof corrAns === "string") {
+        try { corrAns = JSON.parse(corrAns); } catch (e) {}
+      }
+      if (corrAns && typeof corrAns === "object") {
+        correct = corrAns;
+      } else if (typeof corrAns === "string") {
+        corrAns.split("|").forEach(function (pair) {
           var parts = pair.split("=");
           if (parts.length === 2) {
             correct[parts[0].trim()] = parts[1].trim();
@@ -74,7 +86,11 @@
     if (!answer) return false;
 
     var accepted = [];
-    if (question.correct_answer != null) accepted.push(question.correct_answer);
+    var corrAnsSingle = question.correct_answer;
+    if (typeof corrAnsSingle === "string") {
+      try { corrAnsSingle = JSON.parse(corrAnsSingle); } catch (e) {}
+    }
+    if (corrAnsSingle != null) accepted.push(corrAnsSingle);
     if (Array.isArray(question.accepted_answers)) {
       accepted = accepted.concat(question.accepted_answers);
     }
@@ -84,12 +100,16 @@
 
   function gradeNumericAnswer(question, userAnswer) {
     if (userAnswer == null || userAnswer === "") return false;
+    var correct = question.correct_answer;
+    if (typeof correct === "string") {
+      try { correct = JSON.parse(correct); } catch (e) {}
+    }
     var user = Number(userAnswer);
-    var correct = Number(question.correct_answer);
-    if (!Number.isFinite(user) || !Number.isFinite(correct)) return false;
+    var corr = Number(correct);
+    if (!Number.isFinite(user) || !Number.isFinite(corr)) return false;
     var tolerance = Number(question.tolerance);
     if (!Number.isFinite(tolerance)) tolerance = 0;
-    return Math.abs(user - correct) <= tolerance;
+    return Math.abs(user - corr) <= tolerance;
   }
 
   function gradeDragDrop(question, userAnswer) {
