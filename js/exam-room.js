@@ -430,10 +430,31 @@
       const allMathQs = (section.questions || []);
       const filledQs = allMathQs.filter((q) => {
         const text = (q.question || "").trim();
-        if (!text) return false;
         // Reject default placeholder text like "Nội dung câu hỏi X chưa được nhập."
-        if (/^N\u1ed9i dung c\u00e2u h\u1ecfi\s+\d+\s+ch\u01b0a \u0111\u01b0\u1ee3c nh\u1eadp/i.test(text)) return false;
-        return true;
+        const isPlaceholder = /^N\u1ed9i dung c\u00e2u h\u1ecfi\s+\d+\s+ch\u01b0a \u0111\u01b0\u1ee3c nh\u1eadp/i.test(text);
+        if (isPlaceholder) return false;
+
+        // If it has a non-empty question lead text, it's valid
+        if (text) return true;
+
+        // If it has an image, it's valid
+        if (q.image_url && q.image_url.trim()) return true;
+
+        // For drag_drop: it is valid if the body has text parts containing the question
+        if (q.question_type === "drag_drop" || q.type === "drag_drop") {
+          if (Array.isArray(q.body) && q.body.some(part => part && part.type === "text" && (part.content || "").trim())) {
+            return true;
+          }
+        }
+
+        // For true_false: it is valid if there are statements with text
+        if (q.question_type === "true_false" || q.type === "true_false") {
+          if (Array.isArray(q.statements) && q.statements.some(st => st && (st.text || "").trim())) {
+            return true;
+          }
+        }
+
+        return false;
       });
       // Re-index sequentially from 1 so grid always starts at 1
       normalized.questions = filledQs.map((question, index) => ({
