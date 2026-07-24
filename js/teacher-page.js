@@ -9195,53 +9195,20 @@ YÊU CẦU QUAN TRỌNG:
       window.toggleTeacherOptionsAreImages = toggleTeacherOptionsAreImages;
 
       
-      function compressImage(file) {
-        return new Promise(function(resolve) {
-          if (!file || !file.type || file.type.indexOf('image') === -1) {
-            resolve(file);
-            return;
-          }
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var img = new Image();
-            img.onload = function() {
-              var canvas = document.createElement('canvas');
-              var max_width = 1000;
-              var width = img.width;
-              var height = img.height;
-              
-              if (width > max_width) {
-                height = Math.round((height * max_width) / width);
-                width = max_width;
-              }
-              
-              canvas.width = width;
-              canvas.height = height;
-              
-              var ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, width, height);
-              
-              canvas.toBlob(function(blob) {
-                if (blob) {
-                  var compressedFile = new File([blob], file.name ? file.name.replace(/\.[^/.]+$/, ".jpg") : "image.jpg", {
-                    type: "image/jpeg",
-                    lastModified: Date.now()
-                  });
-                  resolve(compressedFile);
-                } else {
-                  resolve(file);
-                }
-              }, "image/jpeg", 0.75);
-            };
-            img.onerror = function() { resolve(file); };
-            img.src = e.target.result;
-          };
-          reader.onerror = function() { resolve(file); };
-          reader.readAsDataURL(file);
-        });
+      function getFileExtension(file, defaultExt) {
+        if (file && file.type) {
+          if (file.type === "image/png") return ".png";
+          if (file.type === "image/gif") return ".gif";
+          if (file.type === "image/webp") return ".webp";
+          if (file.type === "image/svg+xml") return ".svg";
+        }
+        if (file && file.name) {
+          var match = file.name.match(/\.[^/.]+$/);
+          if (match) return match[0];
+        }
+        return defaultExt || ".jpg";
       }
 
-
       function compressImage(file) {
         return new Promise(function(resolve) {
           if (!file || !file.type || file.type.indexOf('image') === -1) {
@@ -9268,17 +9235,21 @@ YÊU CẦU QUAN TRỌNG:
               var ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
               
+              var isPng = (file.type === "image/png" || file.type === "image/gif" || file.type === "image/svg+xml");
+              var mimeType = isPng ? "image/png" : "image/jpeg";
+              var ext = isPng ? ".png" : ".jpg";
+              
               canvas.toBlob(function(blob) {
                 if (blob) {
-                  var compressedFile = new File([blob], file.name ? file.name.replace(/\.[^/.]+$/, ".jpg") : "image.jpg", {
-                    type: "image/jpeg",
+                  var compressedFile = new File([blob], file.name ? file.name.replace(/\.[^/.]+$/, ext) : ("image" + ext), {
+                    type: mimeType,
                     lastModified: Date.now()
                   });
                   resolve(compressedFile);
                 } else {
                   resolve(file);
                 }
-              }, "image/jpeg", 0.75);
+              }, mimeType, isPng ? undefined : 0.75);
             };
             img.onerror = function() { resolve(file); };
             img.src = e.target.result;
@@ -9314,7 +9285,7 @@ function triggerChoiceImageUpload(btn) {
           var file = await compressImage(rawFile);
           var examCode = window.exam?.exam_code || "temp";
           var questionId = getQuestionDraft(sectionId)?.id || "qtemp";
-          var imageUrl = await uploadToR2(file, "questions/" + examCode, questionId + "_" + key + "_" + Date.now() + ".jpg");
+          var imageUrl = await uploadToR2(file, "questions/" + examCode, questionId + "_" + key + "_" + Date.now() + getFileExtension(file, ".jpg"));
           
           // Update input value
           var textInput = uploadBtn.parentElement.querySelector('input[data-choice-key]');
@@ -9359,7 +9330,7 @@ function triggerChoiceImageUpload(btn) {
         try {
           var file = await compressImage(rawFile);
           var examCode = window.exam?.exam_code || "temp";
-          var publicUrl = await uploadToR2(file, "passages/" + examCode, Date.now() + ".jpg");
+          var publicUrl = await uploadToR2(file, "passages/" + examCode, Date.now() + getFileExtension(file, ".jpg"));
 
           var widthPercent = prompt("Ảnh tải lên thành công! Nhập kích thước ảnh (%) (Ví dụ: 30, 50, 80):", "80");
           if (widthPercent === null) widthPercent = "80"; // default if cancelled
@@ -12032,7 +12003,7 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                          "temp";
           examCode = String(examCode).trim().replace(/_TEACHER_DRAFT/g, "");
 
-          return uploadToR2(file, "passages/" + examCode, Date.now() + ".jpg")
+          return uploadToR2(file, "passages/" + examCode, Date.now() + getFileExtension(file, ".jpg"))
             .then(function(publicUrl) {
               // Replace placeholder with final tag
               var updatedText = textarea.value;
