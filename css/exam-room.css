@@ -1662,49 +1662,47 @@ body[data-subject="science"] .true-false-answer-shell {
 .drag-drop-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
   margin-top: 16px;
 }
 
 .drag-pool-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: -12px;
+  display: none !important;
 }
 
 .drag-pool {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 16px;
+  padding: 14px 16px;
   background-color: #ffffff; /* White background for the pool container */
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  min-height: 70px;
+  border-radius: 8px;
+  min-height: 58px;
   align-items: center;
 }
 
 .drag-chip {
-  background-color: #f3f4f6; /* Gray background for options */
-  border: none; /* No border for chips */
-  border-radius: 8px;
-  padding: 8px 18px;
+  background-color: #ffffff; /* White background for options */
+  border: 1px solid #e2e8f0; /* Thin border */
+  border-radius: 4px; /* Slightly rounded corners */
+  padding: 6px 14px;
   font-size: 14px;
   font-weight: 500;
   color: #334155;
   cursor: grab;
   user-select: none;
   transition: all 0.2s ease;
-  box-shadow: none; /* Removed shadow */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* Extremely subtle shadow */
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .drag-chip:hover:not(.is-used) {
-  background-color: #e5e7eb;
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
 }
 
 .drag-chip.is-dragging {
@@ -1754,16 +1752,16 @@ body[data-subject="science"] .true-false-answer-shell {
 }
 
 .drop-zone .drag-chip {
-  background-color: #f3f4f6; /* Gray background inside the slot */
+  background-color: #ffffff; /* White background inside the slot */
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   width: 100%;
   height: auto;
   min-height: 36px;
-  padding: 6px 16px; /* Vertical and horizontal padding to fit math equations */
+  padding: 6px 14px; /* Vertical and horizontal padding to fit math equations */
   margin: 0;
   cursor: pointer;
-  color: #374151; /* Match normal text or dark gray */
+  color: #1e293b; /* Match normal text or dark gray */
   font-weight: 500;
   display: inline-flex;
   align-items: center;
