@@ -2381,8 +2381,9 @@
         if (lead) {
           lead.setAttribute("contenteditable", enabled ? "true" : "false");
           lead.setAttribute("spellcheck", "false");
-          lead.style.border = enabled ? "1px dashed #cbd5e1" : "none";
-          lead.style.padding = enabled ? "8px" : "0";
+          const hasContent = lead.textContent.trim().length > 0;
+          lead.style.border = (enabled && hasContent) ? "1px dashed #cbd5e1" : "none";
+          lead.style.padding = (enabled && hasContent) ? "8px" : "0";
           lead.style.borderRadius = "4px";
           lead.style.outline = "none";
           
