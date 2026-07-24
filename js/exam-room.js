@@ -248,7 +248,7 @@
         src = "assets/" + folder + "/" + filename;
       }
 
-      return '<img class="tsa-auto-img" style="width: ' + width + '; max-width: 100%; height: auto; display: block; margin: 15px auto; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" src="' + src + '">';
+      return '<img class="tsa-auto-img" style="width: ' + width + '; max-width: 100%; height: auto; display: block; margin: 15px auto;" src="' + src + '">';
     });
 
     // Parse Markdown bold **text** or ++text++ -> <strong>text</strong>

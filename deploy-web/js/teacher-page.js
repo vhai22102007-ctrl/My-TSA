@@ -9269,12 +9269,22 @@ YÊU CẦU QUAN TRỌNG:
                   }
                 });
                 
+                var forcePng = false;
                 if (totalOpaquePoints > 0 && (darkPoints / totalOpaquePoints) > 0.6) {
+                  forcePng = true;
                   for (var i = 0; i < data.length; i += 4) {
                     if (data[i + 3] > 0) {
-                      data[i] = 255 - data[i];
-                      data[i + 1] = 255 - data[i + 1];
-                      data[i + 2] = 255 - data[i + 2];
+                      var r = data[i];
+                      var g = data[i + 1];
+                      var b = data[i + 2];
+                      var brightness = (r + g + b) / 3;
+                      if (brightness < 50) {
+                        data[i + 3] = 0;
+                      } else {
+                        data[i] = 255 - r;
+                        data[i + 1] = 255 - g;
+                        data[i + 2] = 255 - b;
+                      }
                     }
                   }
                   ctx.putImageData(imgData, 0, 0);
@@ -9283,7 +9293,7 @@ YÊU CẦU QUAN TRỌNG:
                 console.warn("Auto color invert failed:", ex.message);
               }
               
-              var isPng = (file.type === "image/png" || file.type === "image/gif" || file.type === "image/svg+xml");
+              var isPng = forcePng || (file.type === "image/png" || file.type === "image/gif" || file.type === "image/svg+xml");
               var mimeType = isPng ? "image/png" : "image/jpeg";
               var ext = isPng ? ".png" : ".jpg";
               
