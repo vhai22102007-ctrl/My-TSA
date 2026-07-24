@@ -1684,25 +1684,24 @@ body[data-subject="science"] .true-false-answer-shell {
 }
 
 .drag-chip {
-  background-color: #ffffff; /* White background for options */
-  border: 1px solid #e2e8f0; /* Thin border */
-  border-radius: 4px; /* Slightly rounded corners */
-  padding: 6px 14px;
+  background-color: #f1f5f9; /* Light gray background for options */
+  border: none; /* No border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 6px 16px;
   font-size: 14px;
   font-weight: 500;
   color: #334155;
   cursor: grab;
   user-select: none;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* Extremely subtle shadow */
+  box-shadow: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .drag-chip:hover:not(.is-used) {
-  background-color: #f8fafc;
-  border-color: #cbd5e1;
+  background-color: #e2e8f0;
 }
 
 .drag-chip.is-dragging {
@@ -1752,7 +1751,7 @@ body[data-subject="science"] .true-false-answer-shell {
 }
 
 .drop-zone .drag-chip {
-  background-color: #ffffff; /* White background inside the slot */
+  background-color: #f1f5f9; /* Light gray background inside the slot */
   border: none;
   border-radius: 4px;
   width: 100%;
@@ -1761,7 +1760,7 @@ body[data-subject="science"] .true-false-answer-shell {
   padding: 6px 14px; /* Vertical and horizontal padding to fit math equations */
   margin: 0;
   cursor: pointer;
-  color: #1e293b; /* Match normal text or dark gray */
+  color: #334155; /* Match normal text or dark gray */
   font-weight: 500;
   display: inline-flex;
   align-items: center;
