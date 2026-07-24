@@ -3110,12 +3110,9 @@
             '<input type="hidden" id="' + sectionId + '-q-no" value="' + attr(q.question_no || 1) + '">' +
             '<input type="hidden" id="' + sectionId + '-q-type" value="' + attr(q.question_type) + '">' +
 
-              // Question Type tabs (Only for non-math sections, as math has Vách 1 sidebar)
-              (sectionId === "math" ? "" :
-                '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
-                  typeTabsHtml(sectionId, q.question_type) +
-                '</div>'
-              ) +
+              '<div class="q-type-tabs-nav" style="width: 100%; margin-bottom: 8px;">' +
+                typeTabsHtml(sectionId, q.question_type) +
+              '</div>' +
               // Inputs
               '<div class="field full"><label>Nội dung câu hỏi</label><textarea class="textarea" id="' + sectionId + '-q-text" placeholder="Nhập nội dung câu hỏi">' + esc(q.question || "") + '</textarea></div>' +
               '<div class="field full" style="display: ' + (sectionId === "reading" ? 'none' : 'grid') + '; grid-template-columns: 360px 180px 1fr; gap: 10px; align-items: end; margin-bottom: 0;">' +
