@@ -9235,6 +9235,54 @@ YÊU CẦU QUAN TRỌNG:
               var ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
               
+              // Tự động phát hiện ảnh nền tối và đảo màu thành nền sáng
+              try {
+                var imgData = ctx.getImageData(0, 0, width, height);
+                var data = imgData.data;
+                var borderPixels = [
+                  {x: 0, y: 0},
+                  {x: Math.floor(width / 2), y: 0},
+                  {x: width - 1, y: 0},
+                  {x: 0, y: Math.floor(height / 2)},
+                  {x: width - 1, y: Math.floor(height / 2)},
+                  {x: 0, y: height - 1},
+                  {x: Math.floor(width / 2), y: height - 1},
+                  {x: width - 1, y: height - 1}
+                ];
+                var darkPoints = 0;
+                var totalOpaquePoints = 0;
+                
+                borderPixels.forEach(function(pt) {
+                  var idx = (pt.y * width + pt.x) * 4;
+                  if (idx >= 0 && idx < data.length - 3) {
+                    var r = data[idx];
+                    var g = data[idx + 1];
+                    var b = data[idx + 2];
+                    var a = data[idx + 3];
+                    if (a > 100) {
+                      totalOpaquePoints++;
+                      var brightness = (r + g + b) / 3;
+                      if (brightness < 80) {
+                        darkPoints++;
+                      }
+                    }
+                  }
+                });
+                
+                if (totalOpaquePoints > 0 && (darkPoints / totalOpaquePoints) > 0.6) {
+                  for (var i = 0; i < data.length; i += 4) {
+                    if (data[i + 3] > 0) {
+                      data[i] = 255 - data[i];
+                      data[i + 1] = 255 - data[i + 1];
+                      data[i + 2] = 255 - data[i + 2];
+                    }
+                  }
+                  ctx.putImageData(imgData, 0, 0);
+                }
+              } catch (ex) {
+                console.warn("Auto color invert failed:", ex.message);
+              }
+              
               var isPng = (file.type === "image/png" || file.type === "image/gif" || file.type === "image/svg+xml");
               var mimeType = isPng ? "image/png" : "image/jpeg";
               var ext = isPng ? ".png" : ".jpg";
