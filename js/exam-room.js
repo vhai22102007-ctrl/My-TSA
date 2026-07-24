@@ -494,9 +494,9 @@
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
 
-    // R2 is the canonical source. Browser cache prevents repeat downloads.
+    // Short TTL (5s for index, 10s for exam JSON) to prevent sticky caching during edits
     const isIndexFile = typeof path === 'string' && path.endsWith('index.json');
-    const cacheTtl = isIndexFile ? 30000 : 30 * 60 * 1000;
+    const cacheTtl = isIndexFile ? 5000 : 10000; 
     if (cachedData && cachedTime && (now - parseInt(cachedTime)) < cacheTtl) {
       try {
         console.log(`Loading cached JSON for ${path}`);
