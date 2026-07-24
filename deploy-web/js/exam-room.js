@@ -506,7 +506,9 @@
       }
     }
 
-    const response = await fetch(path, { cache: 'default' });
+    // Add cache-buster to bypass browser/CDN caches for real-time updates
+    const busterUrl = path.indexOf('?') !== -1 ? `${path}&_cb=${Date.now()}` : `${path}?_cb=${Date.now()}`;
+    const response = await fetch(busterUrl, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Không tải được ${path}`);
     const data = await response.json();
 
