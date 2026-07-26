@@ -372,7 +372,7 @@
   function showErrorMessage(msg) {
     const bodyEl = $("#question-body");
     if (bodyEl) {
-      bodyEl.innerHTML = `<div style="color:#ef4444;padding:20px;font-weight:700;border:1px dashed #fca5a5;background:#fef2f2;border-radius:8px;line-height:1.5;">${esc(msg)}</div>`;
+      bodyEl.innerHTML = `<div style="color:#ef4444;padding:20px;font-weight:700;border:1px dashed #fca5a5;background:#fef2f2;border-radius:8px;line-height:1.5;white-space:pre-wrap;font-family:monospace;">${esc(msg)}</div>`;
     }
     const ansEl = $("#answer-area");
     if (ansEl) ansEl.innerHTML = "";
@@ -546,7 +546,7 @@
 
     // Read the published index from Cloudflare R2 only.
     try {
-      const fetchedIndex = await fetchJson(`${examStorageUrl}index.json`);
+      const fetchedIndex = await fetchJson(`${examStorageUrl}index.json?t=${Date.now()}`);
       if (Array.isArray(fetchedIndex) && fetchedIndex.length > 0) {
         examsList = fetchedIndex;
         writeLocalJson("tma_tsa_exam_index", fetchedIndex);
@@ -576,7 +576,7 @@
 
     // Prefer the canonical combined exam so a normal load needs one R2 request.
     try {
-      rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(targetFetchCode)}.json`);
+      rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(targetFetchCode)}.json?t=${Date.now()}`);
     } catch (e) {}
 
     // Some entries point to a split subject file. Preserve its nested R2 path.
@@ -584,7 +584,7 @@
       const relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
       const encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
       try {
-        rawExam = await fetchJson(`${examStorageUrl}${encodedPath}`);
+        rawExam = await fetchJson(`${examStorageUrl}${encodedPath}?t=${Date.now()}`);
       } catch (e) {
         console.warn("Không tải được đề thi từ R2, thử bản cache cục bộ...");
       }
@@ -597,21 +597,21 @@
         try {
           const folderPath = `${examStorageUrl}${cCode}.json/`;
           const [mathData, readingData, scienceData] = await Promise.all([
-            fetchJson(folderPath + "math.json"),
-            fetchJson(folderPath + "reading.json"),
-            fetchJson(folderPath + "science.json")
+            fetchJson(folderPath + "math.json?t=" + Date.now()),
+            fetchJson(folderPath + "reading.json?t=" + Date.now()),
+            fetchJson(folderPath + "science.json?t=" + Date.now())
           ]);
           if (mathData && readingData && scienceData) {
             rawExam = {
-              exam_code: targetFetchCode,
-              title: mathData.title || targetFetchCode,
-              duration_minutes: mathData.duration_minutes || 150,
-              status: mathData.status || "published",
-              sections: [
-                (mathData.sections && mathData.sections[0]) ? mathData.sections[0] : mathData,
-                (readingData.sections && readingData.sections[0]) ? readingData.sections[0] : readingData,
-                (scienceData.sections && scienceData.sections[0]) ? scienceData.sections[0] : scienceData
-              ]
+               exam_code: targetFetchCode,
+               title: mathData.title || targetFetchCode,
+               duration_minutes: mathData.duration_minutes || 150,
+               status: mathData.status || "published",
+               sections: [
+                 (mathData.sections && mathData.sections[0]) ? mathData.sections[0] : mathData,
+                 (readingData.sections && readingData.sections[0]) ? readingData.sections[0] : readingData,
+                 (scienceData.sections && scienceData.sections[0]) ? scienceData.sections[0] : scienceData
+               ]
             };
             console.log("Loaded split exam sections from directory:", folderPath);
             break;
@@ -620,17 +620,54 @@
       }
     }
 
+    const codesToCheck = [examCode];
+    const fullCodeMatch = examCode.match(/^TSA_PRACTICE_FULL_(\d+)$/i);
+    if (fullCodeMatch) {
+      codesToCheck.push("TSA" + parseInt(fullCodeMatch[1], 10));
+    }
+    const tsaCodeMatch = examCode.match(/^TSA(\d+)$/i);
+    if (tsaCodeMatch) {
+      const numStr = String(tsaCodeMatch[1]).padStart(2, "0");
+      codesToCheck.push(`TSA_PRACTICE_FULL_${numStr}`);
+    }
+
     if (isPreviewMode) {
-      rawExam = readLocalJson(`tma_tsa_teacher_draft_${examCode}`) || readLocalJson(`tma_tsa_exam_${examCode}`);
+      for (const code of codesToCheck) {
+        rawExam = readLocalJson(`tma_tsa_teacher_draft_${code}`) || readLocalJson(`tma_tsa_exam_${code}`);
+        if (rawExam) break;
+      }
     }
 
     if (!rawExam && targetFetchCode !== examCode) {
       try {
-        rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(examCode)}.json`);
+        rawExam = await fetchJson(`${examStorageUrl}${encodeURIComponent(examCode)}.json?t=${Date.now()}`);
       } catch (e) {}
     }
     if (!rawExam) {
-      rawExam = readLocalJson(`tma_tsa_teacher_draft_${examCode}`) || readLocalJson(`tma_tsa_exam_${examCode}`);
+      for (const code of codesToCheck) {
+        rawExam = readLocalJson(`tma_tsa_teacher_draft_${code}`) || readLocalJson(`tma_tsa_exam_${code}`);
+        if (rawExam) break;
+      }
+      if (!rawExam) {
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith("tma_tsa_teacher_draft_") || key.startsWith("tma_tsa_exam_"))) {
+              const val = localStorage.getItem(key);
+              if (val) {
+                const parsed = JSON.parse(val);
+                if (parsed && (parsed.sections || parsed.questions)) {
+                  rawExam = parsed;
+                  console.log("Auto-fallback loaded draft from key:", key);
+                  break;
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Auto-fallback draft search error:", err);
+        }
+      }
     }
     return { rawExam, examMeta };
   }
@@ -1923,7 +1960,20 @@
       initSplitter();
     } catch (error) {
       console.error(error);
-      showErrorMessage(`Không tải được đề ${examCode} từ Cloudflare R2. Hãy kiểm tra data/exams/index.json và data/exams/${examCode}.json.`);
+      let availableDrafts = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("tma_tsa_teacher_draft_") || key.startsWith("tma_tsa_exam_"))) {
+            availableDrafts.push(key);
+          }
+        }
+      } catch (e) {}
+      const errMsg = `Không tải được đề ${examCode}.\n` +
+                     `Chi tiết lỗi: ${error.message}\n` +
+                     `Stack Trace: ${error.stack}\n` +
+                     `Danh sách mã đề có sẵn trong LocalStorage:\n${availableDrafts.map(k => "  - " + k).join("\n") || "  (Trống)"}`;
+      showErrorMessage(errMsg);
     }
   }
 

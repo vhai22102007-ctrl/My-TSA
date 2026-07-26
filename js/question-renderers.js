@@ -976,6 +976,7 @@
             rowsContainer.appendChild(row);
           })(matchingRowIndex, part.id, currentTextPart);
           currentTextPart = "";
+        }
       }
 
       mainWrap.appendChild(rowsContainer);
