@@ -4741,7 +4741,8 @@
              return String(code || "").trim().toUpperCase().replace(/_TEACHER_DRAFT/g, "");
            }
            
-           if (currentTsaPracticeSubtab === "tong-hop") {
+           /*
+if (false && currentTsaPracticeSubtab === "tong-hop") {
              // TMA002 to TMA010
              for (let i = 2; i <= 10; i++) {
                var numStr3 = String(i).padStart(3, "0");
@@ -4781,6 +4782,7 @@
                }
              }
            }
+            */
 
            // Filter out deleted
            examsToRender = examsToRender.filter(function(item) {
