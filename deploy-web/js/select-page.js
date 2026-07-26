@@ -3950,7 +3950,7 @@
 
         if (shouldFetchIndex) {
           // Cloudflare R2 is the only published exam source.
-          fetch(`${examStorageUrl}index.json`, { cache: "default" })
+          fetch(`${examStorageUrl}index.json?t=${Date.now()}`, { cache: "no-store" })
             .then(res => {
               if (!res.ok) throw new Error("Failed to fetch from R2");
               return res.json();
