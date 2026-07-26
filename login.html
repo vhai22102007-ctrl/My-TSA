@@ -1211,7 +1211,7 @@
                   token: authData.session.access_token
                 })
               );
-              window.location.href = "teacher.html";
+              window.location.href = "tma-teacher-portal-vault.html";
             } else {
               await supabaseClient.auth.signOut();
               teacherError.style.color = "#b91c1c";

@@ -2327,15 +2327,31 @@
                 console.error("Xác thực Token Giáo viên thất bại:", res.error);
                 localStorage.removeItem("teacherInfo");
                 window.location.href = "login.html#teacher";
+              } else {
+                window.isTeacherAuthenticated = true;
+                document.body.classList.add('authenticated');
+                if (typeof window.runTeacherInit === "function") {
+                  window.runTeacherInit();
+                }
               }
             })
             .catch(err => {
               console.error("Lỗi mạng khi xác thực token:", err);
+              // Trong trường hợp ngoại tuyến (mạng lỗi), cho phép hiển thị nếu có token sẵn
+              window.isTeacherAuthenticated = true;
+              document.body.classList.add('authenticated');
+              if (typeof window.runTeacherInit === "function") {
+                window.runTeacherInit();
+              }
             });
         } else {
           localStorage.removeItem("teacherInfo");
           window.location.href = "login.html#teacher";
         }
+      } else {
+        // Chạy offline/local không có cấu hình Supabase
+        window.isTeacherAuthenticated = true;
+        document.body.classList.add('authenticated');
       }
 
       var QUESTION_TYPES = [
@@ -4827,6 +4843,25 @@
         URL.revokeObjectURL(url);
       }
 
+      function cleanFolderName(title, code, allExams) {
+        var cleanTitle = String(title || "")
+          .replace(/[\\/:*?"<>|]/g, '')
+          .trim();
+        if (!cleanTitle) {
+          return String(code || "").trim();
+        }
+        return cleanTitle;
+      }
+
+      function formatIndexList(list) {
+        if (!Array.isArray(list)) return [];
+        list.forEach(function(item) {
+          var folder = cleanFolderName(item.title, item.exam_code, list);
+          item.file = "data/exams/Ngân hàng đề thi/" + folder + "/full.json";
+        });
+        return list;
+      }
+
       function getIndexListWithCurrent() {
         var draftList = [];
         try {
@@ -4852,11 +4887,11 @@
             if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_") || exam.exam_code.startsWith("TMA")) return "tong-hop";
             return "math";
           })(),
-          file: "data/exams/" + exam.exam_code + ".json"
+          file: ""
         };
         if (idx === -1) draftList.push(meta);
         else draftList[idx] = meta;
-        return draftList;
+        return formatIndexList(draftList);
       }
 
       async function toggleExamOpen(examCode, open) {
@@ -4941,7 +4976,19 @@
 
         if (!examData) {
           try {
-            var response = await fetch(`https://assets.tmastudy.io.vn/data/exams/${mockCode}.json`, { cache: "no-store" });
+            var indexList = [];
+            try {
+              var raw = localStorage.getItem("tma_tsa_exam_index");
+              if (raw) indexList = JSON.parse(raw);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === mockCode) : null;
+            var fetchUrl = `https://assets.tmastudy.io.vn/data/exams/${mockCode}.json`;
+            if (examMeta && examMeta.file) {
+              var relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+              var encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
+              fetchUrl = `https://assets.tmastudy.io.vn/data/exams/${encodedPath}`;
+            }
+            var response = await fetch(fetchUrl, { cache: "no-store" });
             if (response.ok) {
               examData = await response.json();
             }
@@ -5220,12 +5267,29 @@
 
           examCopy = window.TMAExamSecurity.createPublicExamCopy(examCopy);
 
-          // 1. Publish exam JSON to R2.
-          var examFileName = examCopy.exam_code + ".json";
-          await window.TMAR2.putJson('data/exams/' + examFileName, examCopy);
+          // 1. Publish exam JSON to R2 (full and split).
+          var indexList = getIndexListWithCurrent();
+          var currentFolder = cleanFolderName(examCopy.title, examCopy.exam_code, indexList);
+
+          // Full
+          await window.TMAR2.putJson('data/exams/Ngân hàng đề thi/' + currentFolder + '/full.json', examCopy);
+
+          // Split subject files
+          var subjects = ['math', 'reading', 'science'];
+          for (var idx = 0; idx < subjects.length; idx++) {
+            var sub = subjects[idx];
+            var secData = examCopy.sections[idx] || { section_id: sub, questions: [] };
+            var splitData = {
+              exam_code: examCopy.exam_code,
+              title: examCopy.title,
+              duration_minutes: examCopy.duration_minutes,
+              status: examCopy.status,
+              sections: [secData]
+            };
+            await window.TMAR2.putJson('data/exams/Ngân hàng đề thi/' + currentFolder + '/' + sub + '.json', splitData);
+          }
 
           // 2. Publish the R2 index.
-          var indexList = getIndexListWithCurrent();
           await window.TMAR2.putJson('data/exams/index.json', indexList);
 
           // Lưu index vào localStorage của giáo viên luôn để đồng bộ giao diện quản trị
@@ -5251,15 +5315,39 @@
           
           var dataHandle = await handle.getDirectoryHandle("data", { create: true });
           var examsHandle = await dataHandle.getDirectoryHandle("exams", { create: true });
+          var groupHandle = await examsHandle.getDirectoryHandle("Ngân hàng đề thi", { create: true });
 
-          // Write [exam_code].json
-          var examFile = await examsHandle.getFileHandle(exam.exam_code + ".json", { create: true });
-          var examWritable = await examFile.createWritable();
-          await examWritable.write(JSON.stringify(exam, null, 2));
-          await examWritable.close();
-
-          // Write index.json
           var indexList = getIndexListWithCurrent();
+          var currentFolder = cleanFolderName(exam.title, exam.exam_code, indexList);
+
+          // Get or create directory data/exams/Ngân hàng đề thi/[currentFolder]
+          var targetFolderHandle = await groupHandle.getDirectoryHandle(currentFolder, { create: true });
+
+          // 1. Write full.json
+          var fullFile = await targetFolderHandle.getFileHandle("full.json", { create: true });
+          var fullWritable = await fullFile.createWritable();
+          await fullWritable.write(JSON.stringify(exam, null, 2));
+          await fullWritable.close();
+
+          // 2. Write math.json, reading.json, science.json
+          var subjects = ['math', 'reading', 'science'];
+          for (var idx = 0; idx < subjects.length; idx++) {
+            var sub = subjects[idx];
+            var secData = exam.sections[idx] || { section_id: sub, questions: [] };
+            var splitData = {
+              exam_code: exam.exam_code,
+              title: exam.title,
+              duration_minutes: exam.duration_minutes,
+              status: exam.status,
+              sections: [secData]
+            };
+            var splitFile = await targetFolderHandle.getFileHandle(sub + ".json", { create: true });
+            var splitWritable = await splitFile.createWritable();
+            await splitWritable.write(JSON.stringify(splitData, null, 2));
+            await splitWritable.close();
+          }
+
+          // 3. Write index.json
           var indexFile = await examsHandle.getFileHandle("index.json", { create: true });
           var indexWritable = await indexFile.createWritable();
           await indexWritable.write(JSON.stringify(indexList, null, 2));
@@ -5268,7 +5356,7 @@
           // Also save in localStorage
           localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
 
-          window.alert("Đã ghi đè thành công các file sau vào thư mục dự án:\n1. data/exams/" + exam.exam_code + ".json\n2. data/exams/index.json");
+          window.alert("Đã ghi đè thành công đề thi vào thư mục dự án:\ndata/exams/" + currentFolder + "/\n1. full.json\n2. math/reading/science.json\n3. index.json");
         } catch (error) {
           console.error(error);
           window.alert("Không thể ghi file. Có thể bạn đã từ chối cấp quyền truy cập thư mục.");
@@ -5498,7 +5586,26 @@
           // 0a-2. Check if running locally and the exam is a split directory (e.g. data/exams/tsa001.json/math.json etc.)
           if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")) {
             try {
-              var folderPath = "data/exams/" + cleanCode.toLowerCase() + ".json/";
+              var indexList = [];
+              try {
+                var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+                if (rawIdx) indexList = JSON.parse(rawIdx);
+              } catch(e) {}
+              var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+              var folderPath = "";
+              if (examMeta && examMeta.file) {
+                var relativeDir = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+                var lastSlash = relativeDir.lastIndexOf('/');
+                if (lastSlash !== -1) {
+                  folderPath = "data/exams/" + relativeDir.substring(0, lastSlash + 1);
+                }
+              }
+              if (!folderPath) {
+                var title = (exam && exam.title) || code;
+                var folderName = cleanFolderName(title, code, indexList);
+                folderPath = "data/exams/Ngân hàng đề thi/" + folderName + "/";
+              }
+
               var [mathData, readingData, scienceData] = await Promise.all([
                 fetch(folderPath + "math.json").then(r => r.ok ? r.json() : null),
                 fetch(folderPath + "reading.json").then(r => r.ok ? r.json() : null),
@@ -5524,10 +5631,22 @@
 
           // 0b. If running locally on a server, try local file first to prioritize local updates
           if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
-            var possibleFiles = [
-              "data/exams/" + cleanCode.toLowerCase() + ".json",
-              "data/exams/" + cleanCode + ".json"
-            ];
+            var indexList = [];
+            try {
+              var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+              if (rawIdx) indexList = JSON.parse(rawIdx);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+            var possibleFiles = [];
+            if (examMeta && examMeta.file) {
+              possibleFiles.push(examMeta.file);
+            } else {
+              var folderName = cleanFolderName((exam && exam.title) || code, code, indexList);
+              possibleFiles.push("data/exams/Ngân hàng đề thi/" + folderName + "/full.json");
+            }
+            possibleFiles.push("data/exams/" + cleanCode.toLowerCase() + ".json");
+            possibleFiles.push("data/exams/" + cleanCode + ".json");
+
             for (var fPath of possibleFiles) {
               try {
                 var response = await fetch(fPath, { cache: "no-store" });
@@ -5547,10 +5666,23 @@
           // 1. Load the published exam from Cloudflare R2.
           if (!fetched) {
             var r2ExamsUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
-            var possibleUrls = [
-              r2ExamsUrl + cleanCode + ".json",
-              r2ExamsUrl + cleanCode.toLowerCase() + ".json"
-            ];
+            var indexList = [];
+            try {
+              var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+              if (rawIdx) indexList = JSON.parse(rawIdx);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+            var possibleUrls = [];
+            if (examMeta && examMeta.file) {
+              var relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+              var encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
+              possibleUrls.push(r2ExamsUrl + encodedPath);
+            } else {
+              var folderName = cleanFolderName((exam && exam.title) || code, code, indexList);
+              possibleUrls.push(r2ExamsUrl + "Ng%C3%A2n%20h%C3%A2ng%20%C4%91%E1%BB%81%20thi/" + encodeURIComponent(folderName) + "/full.json");
+            }
+            possibleUrls.push(r2ExamsUrl + cleanCode + ".json");
+            possibleUrls.push(r2ExamsUrl + cleanCode.toLowerCase() + ".json");
             
             // Cross-check fallback codes
             if (cleanCode === "TSA001") {
@@ -9584,7 +9716,13 @@ function triggerChoiceImageUpload(btn) {
       window.uploadAssetFile = uploadAssetFile;
       window.deleteLmsAsset = deleteLmsAsset;
 
-      document.addEventListener("DOMContentLoaded", init);
+      document.addEventListener("DOMContentLoaded", function() {
+        if (window.isTeacherAuthenticated) {
+          init();
+        } else {
+          window.runTeacherInit = init;
+        }
+      });
 
       function initSocialLinksForm() {
         var form = document.getElementById("social-links-form");

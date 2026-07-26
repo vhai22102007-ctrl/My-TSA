@@ -36,6 +36,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/teacher-page.css">
   <style>
+    body:not(.authenticated) {
+      display: none !important;
+    }
+
     /* Hide scrollbars ONLY in single question bank mode (Nhập đề ngẫu nhiên) */
     body.single-qb-mode #math-pane-editor::-webkit-scrollbar,
     body.single-qb-mode #math-pane-preview::-webkit-scrollbar {

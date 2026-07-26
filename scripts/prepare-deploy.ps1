@@ -15,7 +15,7 @@ New-Item -ItemType Directory -Path $deploy | Out-Null
 $files = @(
   "index.html",
   "login.html",
-  "teacher.html",
+  "tma-teacher-portal-vault.html",
   "select.html",
   "confirm.html",
   "waiting.html",

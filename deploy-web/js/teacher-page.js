@@ -2327,15 +2327,31 @@
                 console.error("Xác thực Token Giáo viên thất bại:", res.error);
                 localStorage.removeItem("teacherInfo");
                 window.location.href = "login.html#teacher";
+              } else {
+                window.isTeacherAuthenticated = true;
+                document.body.classList.add('authenticated');
+                if (typeof window.runTeacherInit === "function") {
+                  window.runTeacherInit();
+                }
               }
             })
             .catch(err => {
               console.error("Lỗi mạng khi xác thực token:", err);
+              // Trong trường hợp ngoại tuyến (mạng lỗi), cho phép hiển thị nếu có token sẵn
+              window.isTeacherAuthenticated = true;
+              document.body.classList.add('authenticated');
+              if (typeof window.runTeacherInit === "function") {
+                window.runTeacherInit();
+              }
             });
         } else {
           localStorage.removeItem("teacherInfo");
           window.location.href = "login.html#teacher";
         }
+      } else {
+        // Chạy offline/local không có cấu hình Supabase
+        window.isTeacherAuthenticated = true;
+        document.body.classList.add('authenticated');
       }
 
       var QUESTION_TYPES = [
@@ -2570,7 +2586,7 @@
                   newSrc = "https://assets.tmastudy.io.vn/assets/" + src;
                 }
               }
-            } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/") === 0) {
+            } else if (isLocalFile && src.indexOf("https://assets.tmastudy.io.vn/assets/") === 0) {
               newSrc = src.replace("https://assets.tmastudy.io.vn/", "");
             }
             return '<img ' + (prefix || '') + 'src=' + quote + newSrc + quote;
@@ -4827,6 +4843,25 @@
         URL.revokeObjectURL(url);
       }
 
+      function cleanFolderName(title, code, allExams) {
+        var cleanTitle = String(title || "")
+          .replace(/[\\/:*?"<>|]/g, '')
+          .trim();
+        if (!cleanTitle) {
+          return String(code || "").trim();
+        }
+        return cleanTitle;
+      }
+
+      function formatIndexList(list) {
+        if (!Array.isArray(list)) return [];
+        list.forEach(function(item) {
+          var folder = cleanFolderName(item.title, item.exam_code, list);
+          item.file = "data/exams/Ngân hàng đề thi/" + folder + "/full.json";
+        });
+        return list;
+      }
+
       function getIndexListWithCurrent() {
         var draftList = [];
         try {
@@ -4852,11 +4887,11 @@
             if (exam.exam_code.includes("_FULL_") || exam.exam_code.startsWith("TSA_EXAM_") || exam.exam_code.startsWith("TMA")) return "tong-hop";
             return "math";
           })(),
-          file: "data/exams/" + exam.exam_code + ".json"
+          file: ""
         };
         if (idx === -1) draftList.push(meta);
         else draftList[idx] = meta;
-        return draftList;
+        return formatIndexList(draftList);
       }
 
       async function toggleExamOpen(examCode, open) {
@@ -4941,7 +4976,19 @@
 
         if (!examData) {
           try {
-            var response = await fetch(`https://assets.tmastudy.io.vn/data/exams/${mockCode}.json`, { cache: "no-store" });
+            var indexList = [];
+            try {
+              var raw = localStorage.getItem("tma_tsa_exam_index");
+              if (raw) indexList = JSON.parse(raw);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === mockCode) : null;
+            var fetchUrl = `https://assets.tmastudy.io.vn/data/exams/${mockCode}.json`;
+            if (examMeta && examMeta.file) {
+              var relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+              var encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
+              fetchUrl = `https://assets.tmastudy.io.vn/data/exams/${encodedPath}`;
+            }
+            var response = await fetch(fetchUrl, { cache: "no-store" });
             if (response.ok) {
               examData = await response.json();
             }
@@ -5220,12 +5267,29 @@
 
           examCopy = window.TMAExamSecurity.createPublicExamCopy(examCopy);
 
-          // 1. Publish exam JSON to R2.
-          var examFileName = examCopy.exam_code + ".json";
-          await window.TMAR2.putJson('data/exams/' + examFileName, examCopy);
+          // 1. Publish exam JSON to R2 (full and split).
+          var indexList = getIndexListWithCurrent();
+          var currentFolder = cleanFolderName(examCopy.title, examCopy.exam_code, indexList);
+
+          // Full
+          await window.TMAR2.putJson('data/exams/Ngân hàng đề thi/' + currentFolder + '/full.json', examCopy);
+
+          // Split subject files
+          var subjects = ['math', 'reading', 'science'];
+          for (var idx = 0; idx < subjects.length; idx++) {
+            var sub = subjects[idx];
+            var secData = examCopy.sections[idx] || { section_id: sub, questions: [] };
+            var splitData = {
+              exam_code: examCopy.exam_code,
+              title: examCopy.title,
+              duration_minutes: examCopy.duration_minutes,
+              status: examCopy.status,
+              sections: [secData]
+            };
+            await window.TMAR2.putJson('data/exams/Ngân hàng đề thi/' + currentFolder + '/' + sub + '.json', splitData);
+          }
 
           // 2. Publish the R2 index.
-          var indexList = getIndexListWithCurrent();
           await window.TMAR2.putJson('data/exams/index.json', indexList);
 
           // Lưu index vào localStorage của giáo viên luôn để đồng bộ giao diện quản trị
@@ -5251,15 +5315,39 @@
           
           var dataHandle = await handle.getDirectoryHandle("data", { create: true });
           var examsHandle = await dataHandle.getDirectoryHandle("exams", { create: true });
+          var groupHandle = await examsHandle.getDirectoryHandle("Ngân hàng đề thi", { create: true });
 
-          // Write [exam_code].json
-          var examFile = await examsHandle.getFileHandle(exam.exam_code + ".json", { create: true });
-          var examWritable = await examFile.createWritable();
-          await examWritable.write(JSON.stringify(exam, null, 2));
-          await examWritable.close();
-
-          // Write index.json
           var indexList = getIndexListWithCurrent();
+          var currentFolder = cleanFolderName(exam.title, exam.exam_code, indexList);
+
+          // Get or create directory data/exams/Ngân hàng đề thi/[currentFolder]
+          var targetFolderHandle = await groupHandle.getDirectoryHandle(currentFolder, { create: true });
+
+          // 1. Write full.json
+          var fullFile = await targetFolderHandle.getFileHandle("full.json", { create: true });
+          var fullWritable = await fullFile.createWritable();
+          await fullWritable.write(JSON.stringify(exam, null, 2));
+          await fullWritable.close();
+
+          // 2. Write math.json, reading.json, science.json
+          var subjects = ['math', 'reading', 'science'];
+          for (var idx = 0; idx < subjects.length; idx++) {
+            var sub = subjects[idx];
+            var secData = exam.sections[idx] || { section_id: sub, questions: [] };
+            var splitData = {
+              exam_code: exam.exam_code,
+              title: exam.title,
+              duration_minutes: exam.duration_minutes,
+              status: exam.status,
+              sections: [secData]
+            };
+            var splitFile = await targetFolderHandle.getFileHandle(sub + ".json", { create: true });
+            var splitWritable = await splitFile.createWritable();
+            await splitWritable.write(JSON.stringify(splitData, null, 2));
+            await splitWritable.close();
+          }
+
+          // 3. Write index.json
           var indexFile = await examsHandle.getFileHandle("index.json", { create: true });
           var indexWritable = await indexFile.createWritable();
           await indexWritable.write(JSON.stringify(indexList, null, 2));
@@ -5268,7 +5356,7 @@
           // Also save in localStorage
           localStorage.setItem("tma_tsa_exam_index", JSON.stringify(indexList));
 
-          window.alert("Đã ghi đè thành công các file sau vào thư mục dự án:\n1. data/exams/" + exam.exam_code + ".json\n2. data/exams/index.json");
+          window.alert("Đã ghi đè thành công đề thi vào thư mục dự án:\ndata/exams/" + currentFolder + "/\n1. full.json\n2. math/reading/science.json\n3. index.json");
         } catch (error) {
           console.error(error);
           window.alert("Không thể ghi file. Có thể bạn đã từ chối cấp quyền truy cập thư mục.");
@@ -5498,7 +5586,26 @@
           // 0a-2. Check if running locally and the exam is a split directory (e.g. data/exams/tsa001.json/math.json etc.)
           if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")) {
             try {
-              var folderPath = "data/exams/" + cleanCode.toLowerCase() + ".json/";
+              var indexList = [];
+              try {
+                var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+                if (rawIdx) indexList = JSON.parse(rawIdx);
+              } catch(e) {}
+              var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+              var folderPath = "";
+              if (examMeta && examMeta.file) {
+                var relativeDir = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+                var lastSlash = relativeDir.lastIndexOf('/');
+                if (lastSlash !== -1) {
+                  folderPath = "data/exams/" + relativeDir.substring(0, lastSlash + 1);
+                }
+              }
+              if (!folderPath) {
+                var title = (exam && exam.title) || code;
+                var folderName = cleanFolderName(title, code, indexList);
+                folderPath = "data/exams/Ngân hàng đề thi/" + folderName + "/";
+              }
+
               var [mathData, readingData, scienceData] = await Promise.all([
                 fetch(folderPath + "math.json").then(r => r.ok ? r.json() : null),
                 fetch(folderPath + "reading.json").then(r => r.ok ? r.json() : null),
@@ -5524,10 +5631,22 @@
 
           // 0b. If running locally on a server, try local file first to prioritize local updates
           if (!fetched && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
-            var possibleFiles = [
-              "data/exams/" + cleanCode.toLowerCase() + ".json",
-              "data/exams/" + cleanCode + ".json"
-            ];
+            var indexList = [];
+            try {
+              var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+              if (rawIdx) indexList = JSON.parse(rawIdx);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+            var possibleFiles = [];
+            if (examMeta && examMeta.file) {
+              possibleFiles.push(examMeta.file);
+            } else {
+              var folderName = cleanFolderName((exam && exam.title) || code, code, indexList);
+              possibleFiles.push("data/exams/Ngân hàng đề thi/" + folderName + "/full.json");
+            }
+            possibleFiles.push("data/exams/" + cleanCode.toLowerCase() + ".json");
+            possibleFiles.push("data/exams/" + cleanCode + ".json");
+
             for (var fPath of possibleFiles) {
               try {
                 var response = await fetch(fPath, { cache: "no-store" });
@@ -5547,10 +5666,23 @@
           // 1. Load the published exam from Cloudflare R2.
           if (!fetched) {
             var r2ExamsUrl = window.TMA_STORAGE_CONFIG.examsBaseUrl;
-            var possibleUrls = [
-              r2ExamsUrl + cleanCode + ".json",
-              r2ExamsUrl + cleanCode.toLowerCase() + ".json"
-            ];
+            var indexList = [];
+            try {
+              var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+              if (rawIdx) indexList = JSON.parse(rawIdx);
+            } catch(e) {}
+            var examMeta = Array.isArray(indexList) ? indexList.find(e => normalizeCode(e.exam_code) === cleanCode) : null;
+            var possibleUrls = [];
+            if (examMeta && examMeta.file) {
+              var relativePath = String(examMeta.file).replace(/^\/?data\/exams\//i, "");
+              var encodedPath = relativePath.split('/').map(encodeURIComponent).join('/');
+              possibleUrls.push(r2ExamsUrl + encodedPath);
+            } else {
+              var folderName = cleanFolderName((exam && exam.title) || code, code, indexList);
+              possibleUrls.push(r2ExamsUrl + "Ng%C3%A2n%20h%C3%A2ng%20%C4%91%E1%BB%81%20thi/" + encodeURIComponent(folderName) + "/full.json");
+            }
+            possibleUrls.push(r2ExamsUrl + cleanCode + ".json");
+            possibleUrls.push(r2ExamsUrl + cleanCode.toLowerCase() + ".json");
             
             // Cross-check fallback codes
             if (cleanCode === "TSA001") {
@@ -9584,7 +9716,13 @@ function triggerChoiceImageUpload(btn) {
       window.uploadAssetFile = uploadAssetFile;
       window.deleteLmsAsset = deleteLmsAsset;
 
-      document.addEventListener("DOMContentLoaded", init);
+      document.addEventListener("DOMContentLoaded", function() {
+        if (window.isTeacherAuthenticated) {
+          init();
+        } else {
+          window.runTeacherInit = init;
+        }
+      });
 
       function initSocialLinksForm() {
         var form = document.getElementById("social-links-form");
@@ -11683,9 +11821,7 @@ function triggerChoiceImageUpload(btn) {
           statusEl.textContent = "⏳ AI đang phân tích, giải đề và phân loại độ khó...";
         }
 
-        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.\nNhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.\n- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).\n- BẮT BUỘC tất cả các công thức, biểu thức, ký hiệu và biến số toán học phải được bọc trong dấu đô-la $ ... $ (ví dụ: $x^2 + 3 = 2$, $a, b \\in \\dots$, $\\dfrac{a+b}{\\pi}$). TUYỆT ĐỐI không được bỏ dấu bọc đô-la $ của công thức toán học.\n- TUYỆT ĐỐI KHÔNG bọc chữ tiếng Việt (plain text) bên trong khối ký hiệu LaTeX \\( ... \\) hoặc \\[ ... \\]. Chỉ được bọc công thức toán học thực tế. Tiếng Việt phải viết dạng text thuần ngoài khối toán.\n- Đối với câu hỏi Đúng/Sai (true_false): Nội dung các mệnh đề/phát biểu trong mảng "options" TUYỆT ĐỐI không chèn thêm các tiền tố như "Mệnh đề a:", "Mệnh đề b:", "Mệnh đề :", "a. ", "b. ", "c. ", "d. " hay "A. ", "B. ". Chỉ ghi duy nhất nội dung phát biểu đó.\n- Đối với câu hỏi trắc nghiệm (single_choice / multiple_choice): Nội dung phương án trong mảng "options" TUYỆT ĐỐI không có tiền tố "A. ", "B. ", "C. ", "D. " hay "A/B/C/D. ".\n- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).\n- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.\n- LƯU Ý ĐỐI VỚI DẠNG KÉO THẢ (drag_drop): Nếu đề bài gốc có một bảng hoặc danh sách liệt kê các từ khóa/số dùng để kéo thả, bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách đó khỏi trường "question" (chỉ định nghĩa chúng ở mảng "items") để tránh trùng lặp hiển thị.
-- ĐỐI VỚI CÂU HỎI ĐIỀN CHỮ TỰ DO (fill_blank): Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong đoạn văn hoặc câu hỏi (học sinh tự gõ từ bàn phím, không có thẻ từ kéo thả). Trường "question" chứa văn bản có ký hiệu ô trống [o1], [o2]... và trường "correct_answer" có dạng chuỗi "o1=đáp_án_1 | o2=đáp_án_2" hoặc đáp án đơn. KHÔNG tạo mảng "items" hay "body" cho loại này.
-- ĐỐI VỚI CÂU HỎI KÉO THẢ (drag_drop): Chỉ dùng dạng này khi đề bài có hộp/danh sách từ lựa chọn để kéo thả vào ô trống. Bắt buộc tạo mảng "items" chứa các từ lựa chọn kéo thả.
+        var systemInstruction = `Bạn là một trợ lý AI EdTech chuyên khảo thí và xây dựng câu hỏi cho kỳ thi đánh giá tư duy TSA Bách Khoa.\nNhiệm vụ của bạn là phân tích và chuyển đổi văn bản thô (có thể là câu hỏi Toán học độc lập hoặc một ngữ liệu Đọc hiểu / Khoa học kèm các câu hỏi đi kèm) thành định dạng JSON có cấu trúc chuẩn xác 100%.\n- KHÔNG tự động chèn \\displaystyle vào bên trong \\( ... \\).\n- BẮT BUỘC tất cả các công thức, biểu thức, ký hiệu và biến số toán học phải được bọc trong dấu đô-la $ ... $ (ví dụ: $x^2 + 3 = 2$, $a, b \\in \\dots$, $\\dfrac{a+b}{\\pi}$). TUYỆT ĐỐI không được bỏ dấu bọc đô-la $ của công thức toán học.\n- TUYỆT ĐỐI KHÔNG bọc chữ tiếng Việt (plain text) bên trong khối ký hiệu LaTeX \\( ... \\) hoặc \\[ ... \\]. Chỉ được bọc công thức toán học thực tế. Tiếng Việt phải viết dạng text thuần ngoài khối toán.\n- Đối với câu hỏi Đúng/Sai (true_false): Nội dung các mệnh đề/phát biểu trong mảng "options" TUYỆT ĐỐI không chèn thêm các tiền tố như "Mệnh đề a:", "Mệnh đề b:", "Mệnh đề :", "a. ", "b. ", "c. ", "d. " hay "A. ", "B. ". Chỉ ghi duy nhất nội dung phát biểu đó.\n- Đối với câu hỏi trắc nghiệm (single_choice / multiple_choice): Nội dung phương án trong mảng "options" TUYỆT ĐỐI không có tiền tố "A. ", "B. ", "C. ", "D. " hay "A/B/C/D. ".\n- Với các phép tính phân số: sử dụng \\dfrac thay vì \\frac; dấu nhân dùng \\cdot hoặc \\times; đơn vị dùng \\text{...} (ví dụ: \\text{J/s}, \\text{K/s}).\n- Các ký tự Hy Lạp: \\Delta, \\alpha, \\beta, \\pi.\n- LƯU Ý ĐỐI VỚI DẠNG KÉO THẢ (drag_drop): Nếu đề bài gốc có một bảng hoặc danh sách liệt kê các từ khóa/số dùng để kéo thả, bạn BẮT BUỘC phải loại bỏ hoàn toàn bảng hoặc danh sách đó khỏi trường "question" (chỉ định nghĩa chúng ở mảng "items") để tránh trùng lặp hiển thị.\n- ĐỐI VỚI CÂU HỎI KÉO THẢ (drag_drop): Chỉ dùng dạng này khi đề bài có hộp/danh sách từ lựa chọn để kéo thả vào ô trống. Bắt buộc tạo mảng "items" chứa các từ lựa chọn kéo thả (với id là "i1", "i2"...). Bắt buộc phân tích văn bản/bảng biểu thành mảng "body" gồm các phần tử "text" (kiểu text) và "blank" (kiểu blank, id là "o1", "o2"...). Đáp án correct_answer có dạng "o1=i1 | o2=i2".\n- ĐỐI VỚI CÂU HỎI ĐIỀN CHỮ TỰ DO (fill_blank): Dùng dạng này khi đề bài yêu cầu điền từ/cụm từ hoặc số tự do vào ô trống trong đoạn văn hoặc câu hỏi (học sinh tự gõ từ bàn phím, không có thẻ từ kéo thả). Trường "question" chứa văn bản có ký hiệu ô trống [o1], [o2]... và trường "correct_answer" có dạng chuỗi "o1=đáp_án_1 | o2=đáp_án_2" hoặc đáp án đơn. KHÔNG tạo mảng "items" hay "body" cho loại này.
 - TUYỆT ĐỐI KHÔNG loại bỏ các ký hiệu đánh dấu số đoạn văn dạng [0], [1], [2], [3]... ở đầu các đoạn văn trong ngữ liệu nền (passage). Bạn BẮT BUỘC phải giữ nguyên chúng và bôi đậm chúng bằng thẻ <strong>[0]</strong>, <strong>[1]</strong>, <strong>[2]</strong>...\n- Viết Lời giải chi tiết ("explanation") chia thành các bước rõ ràng. Lời giải phải CHUẨN XÁC, NGẮN GỌN, gọn gàng, súc tích (tránh viết dài dòng lan man). Chỉ được phép sử dụng kiến thức bậc THPT (Cấp 3), tuyệt đối không dùng kiến thức nâng cao bậc đại học. TUYỆT ĐỐI KHÔNG dùng dấu sao ** hay * để bôi đậm hay làm danh sách (hãy dùng thẻ HTML <strong>...</strong> hoặc viết chữ thường 'Bước 1: ...'). Trình bày các bước rõ ràng và xuống dòng bằng hai ký tự xuống dòng kép '\\n\\n' để tránh dính liền văn bản. Đối với các câu hỏi có nhiều ý nhỏ như Đúng/Sai (true_false) hoặc các ô kéo thả (drag_drop), ở cuối lời giải bạn BẮT BUỘC phải chốt rõ kết luận đáp án của từng mệnh đề hoặc ô trống rõ ràng.
 
 Cấu trúc JSON đầu ra yêu cầu duy nhất:
@@ -11695,15 +11831,19 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
     "questions": [
       {
         "question_no": 1,
-        "question_type": "single_choice" | "multiple_choice" | "true_false" | "numeric_answer" | "drag_drop",
+        "question_type": "single_choice" | "multiple_choice" | "true_false" | "numeric_answer" | "drag_drop" | "fill_blank",
         "question": "Nội dung câu hỏi Toán...",
         "options": [
-          { "key": "A", "text": "Phương án A" },
-          { "key": "B", "text": "Phương án B" },
-          { "key": "C", "text": "Phương án C" },
-          { "key": "D", "text": "Phương án D" }
+          { "key": "A", "text": "Phương án A" }
         ],
-        "correct_answer": "A" | ["A", "B"] | { "a": true, "b": false } | 12.5,
+        "body": [
+          { "type": "text", "content": "Văn bản chứa ô trống " },
+          { "type": "blank", "id": "o1" }
+        ],
+        "items": [
+          { "id": "i1", "text": "Từ kéo thả 1" }
+        ],
+        "correct_answer": "A" | ["A", "B"] | "o1=i1" | 12.5,
         "difficulty": 1 | 2 | 3,
         "topic": "Chủ đề Toán học...",
         "explanation": "Lời giải từng bước chi tiết..."
@@ -11715,12 +11855,16 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
       "questions": [
         {
           "question_no": 1,
-          "question_type": "single_choice",
-          "question": "Câu hỏi số 1...",
-          "options": [
-            { "key": "A", "text": "..." }
+          "question_type": "drag_drop",
+          "question": "Nêu yêu cầu kéo thả...",
+          "body": [
+            { "type": "text", "content": "Văn bản trước ô trống " },
+            { "type": "blank", "id": "o1" }
           ],
-          "correct_answer": "A",
+          "items": [
+            { "id": "i1", "text": "Từ kéo thả 1" }
+          ],
+          "correct_answer": "o1=i1",
           "explanation": "Lời giải chi tiết..."
         }
       ]
@@ -11754,6 +11898,29 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                           required: ["key", "text"]
                         }
                       },
+                      body: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            type: { type: "STRING", enum: ["text", "blank"] },
+                            content: { type: "STRING" },
+                            id: { type: "STRING" }
+                          },
+                          required: ["type"]
+                        }
+                      },
+                      items: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            id: { type: "STRING" },
+                            text: { type: "STRING" }
+                          },
+                          required: ["id", "text"]
+                        }
+                      },
                       correct_answer: { type: "STRING" },
                       difficulty: { type: "INTEGER" },
                       topic: { type: "STRING" },
@@ -11784,6 +11951,29 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                                 text: { type: "STRING" }
                               },
                               required: ["key", "text"]
+                            }
+                          },
+                          body: {
+                            type: "ARRAY",
+                            items: {
+                              type: "OBJECT",
+                              properties: {
+                                type: { type: "STRING", enum: ["text", "blank"] },
+                                content: { type: "STRING" },
+                                id: { type: "STRING" }
+                              },
+                              required: ["type"]
+                            }
+                          },
+                          items: {
+                            type: "ARRAY",
+                            items: {
+                              type: "OBJECT",
+                              properties: {
+                                id: { type: "STRING" },
+                                text: { type: "STRING" }
+                              },
+                              required: ["id", "text"]
                             }
                           },
                           correct_answer: { type: "STRING" },
@@ -11859,6 +12049,9 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               try { stagedMath = JSON.parse(localStorage.getItem("tma_tsa_staged_math") || "[]"); } catch(e) {}
               var addedCount = 0;
               list.forEach(function(newQ) {
+                if (typeof window.cleanTmaQuestionData === "function") {
+                  window.cleanTmaQuestionData(newQ);
+                }
                 stagedMath.push(newQ);
                 addedCount++;
               });
@@ -11878,6 +12071,9 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
 
               var addedCount = 0;
               list.forEach(function(newQ) {
+                if (typeof window.cleanTmaQuestionData === "function") {
+                  window.cleanTmaQuestionData(newQ);
+                }
                 var qNo = Number(newQ.question_no);
                 if (Number.isInteger(qNo) && qNo >= 1 && qNo <= 100) {
                   while (mathSec.questions.length < qNo) {
@@ -11914,13 +12110,34 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
                 statusEl.textContent = "✅ Đã nạp trực tiếp " + addedCount + " câu hỏi Toán vào đề thi chính thức!";
               }
             }
-          } else if (result.section_id === "reading" || result.section_id === "science") {
-            var secId = result.section_id;
+          } else if (result.section_id === "reading" || result.section_id === "science" || (!result.section_id && (result.group || result.groups || result.data?.group || result.data?.groups || result.questions || result.data?.questions))) {
+            var secId = result.section_id || "reading";
             var sourceGroups = [];
-            if (result.data && result.data.group) {
+            
+            if (result.data && result.data.group && typeof result.data.group === "object") {
               sourceGroups = [result.data.group];
             } else if (result.data && Array.isArray(result.data.groups)) {
               sourceGroups = result.data.groups;
+            } else if (result.group && typeof result.group === "object") {
+              sourceGroups = [result.group];
+            } else if (Array.isArray(result.groups)) {
+              sourceGroups = result.groups;
+            } else if (result.data && (result.data.title || result.data.passage || result.data.stimulus) && Array.isArray(result.data.questions)) {
+              sourceGroups = [result.data];
+            } else if ((result.title || result.passage || result.stimulus) && Array.isArray(result.questions)) {
+              sourceGroups = [result];
+            } else if (result.data && Array.isArray(result.data.questions)) {
+              sourceGroups = [{
+                title: result.data.title || "",
+                passage: result.data.passage || result.data.stimulus?.content || "",
+                questions: result.data.questions
+              }];
+            } else if (Array.isArray(result.questions)) {
+              sourceGroups = [{
+                title: result.title || "",
+                passage: result.passage || result.stimulus?.content || "",
+                questions: result.questions
+              }];
             }
 
             if (isRandom) {
@@ -11928,11 +12145,19 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               try { stagedGroups = JSON.parse(localStorage.getItem("tma_tsa_staged_" + secId) || "[]"); } catch(e) {}
               var addedGroups = 0;
               sourceGroups.forEach(function(g) {
+                var questionsVal = g.questions || [];
+                if (Array.isArray(questionsVal)) {
+                  questionsVal.forEach(function(newQ) {
+                    if (typeof window.cleanTmaQuestionData === "function") {
+                      window.cleanTmaQuestionData(newQ);
+                    }
+                  });
+                }
                 var newGroup = {
                   group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
-                  title: g.title || "Tiêu đề bài đọc",
-                  passage: g.passage || "",
-                  questions: g.questions || []
+                  title: g.title || g.group_title || "Tiêu đề bài đọc",
+                  passage: g.passage || g.stimulus?.content || g.content || "",
+                  questions: questionsVal
                 };
                 stagedGroups.push(newGroup);
                 addedGroups++;
@@ -11952,16 +12177,71 @@ Cấu trúc JSON đầu ra yêu cầu duy nhất:
               if (!Array.isArray(sec.groups)) sec.groups = [];
 
               var addedGroups = 0;
-              sourceGroups.forEach(function(g) {
-                var newGroup = {
-                  group_id: g.group_id || ("g_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5)),
-                  title: g.title || "Tiêu đề bài đọc",
-                  passage: g.passage || "",
-                  questions: g.questions || []
-                };
-                sec.groups.push(newGroup);
-                addedGroups++;
-              });
+              var activeGId = activeGroupIds[secId] || "g1";
+              var existingGroup = sec.groups.find(function(g) { return g.group_id === activeGId; });
+
+              if (sourceGroups.length > 0) {
+                var g = sourceGroups[0];
+                var titleVal = g.title || g.group_title || "";
+                var passageVal = g.passage || g.stimulus?.content || g.content || "";
+                var questionsVal = g.questions || [];
+
+                if (Array.isArray(questionsVal)) {
+                  questionsVal.forEach(function(newQ) {
+                    if (typeof window.cleanTmaQuestionData === "function") {
+                      window.cleanTmaQuestionData(newQ);
+                    }
+                  });
+                }
+
+                if (existingGroup) {
+                  existingGroup.title = titleVal || existingGroup.title;
+                  if (!existingGroup.stimulus) existingGroup.stimulus = {};
+                  existingGroup.stimulus.content = passageVal || existingGroup.stimulus.content || "";
+                  existingGroup.passage = existingGroup.stimulus.content;
+
+                  // Update questions
+                  if (Array.isArray(questionsVal) && questionsVal.length > 0) {
+                    var groupIndex = sec.groups.indexOf(existingGroup);
+                    if (groupIndex === -1) groupIndex = 0;
+                    var startQNo = (secId === "reading") 
+                      ? (groupIndex === 0 ? 1 : 11) 
+                      : (groupIndex === 0 ? 1 : (groupIndex === 1 ? 11 : 21));
+
+                    if (!Array.isArray(existingGroup.questions)) existingGroup.questions = [];
+
+                    questionsVal.forEach(function(newQ, idx) {
+                      var targetQNo = startQNo + idx;
+                      newQ.question_no = targetQNo;
+
+                      var existingQIdx = existingGroup.questions.findIndex(function(q) {
+                        return Number(q.question_no) === targetQNo;
+                      });
+
+                      if (existingQIdx !== -1) {
+                        existingGroup.questions[existingQIdx] = newQ;
+                      } else {
+                        existingGroup.questions.push(newQ);
+                      }
+                    });
+
+                    existingGroup.questions.sort(function(a, b) {
+                      return (Number(a.question_no) || 0) - (Number(b.question_no) || 0);
+                    });
+                  }
+                  addedGroups = 1;
+                } else {
+                  var newGroup = {
+                    group_id: activeGId,
+                    title: titleVal || "Tiêu đề bài đọc",
+                    passage: passageVal,
+                    stimulus: { type: "text", content: passageVal },
+                    questions: questionsVal
+                  };
+                  sec.groups.push(newGroup);
+                  addedGroups = 1;
+                }
+              }
               localStorage.setItem("tma_tsa_exam_" + targetCode, JSON.stringify(examObj));
               localStorage.setItem("tma_tsa_teacher_draft_" + targetCode, JSON.stringify(examObj));
 

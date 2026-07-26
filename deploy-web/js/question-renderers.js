@@ -929,7 +929,7 @@
             emptyCircle.style.cssText = "position: absolute; left: -15px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 2px dashed #cbd5e1; border-radius: 50%; background: #fff; box-sizing: border-box; z-index: 2;";
             zone.appendChild(emptyCircle);
 
-            var placedItemId = current[blankId];
+             var placedItemId = current[blankId];
             if (placedItemId) {
               zone.classList.add("has-item");
               zone.style.borderStyle = "solid";

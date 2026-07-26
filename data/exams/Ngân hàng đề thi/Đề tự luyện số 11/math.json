@@ -1,0 +1,769 @@
+{
+  "exam_code": "TSA_PRACTICE_FULL_11",
+  "title": "Đề tự luyện số 11",
+  "duration_minutes": 150,
+  "status": "published",
+  "sections": [
+    {
+      "section_id": "math",
+      "section_label": "Tư duy Toán học",
+      "layout": "single",
+      "questions": [
+        {
+          "question_no": 1,
+          "question_type": "fill_blank",
+          "question": "Xét một bản đồ đường đi như hình dưới đây. Bạn Duy xuất phát từ điểm A và di chuyển dọc theo các tuyến đường, chọn ngẫu nhiên hướng đi khi tới ngã rẽ.\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784878158133.png]\n- Xác suất để bạn Duy đến được điểm F, biết rằng bạn đi theo hướng B ở ngã rẽ đầu tiên là [o1].\n- Xác suất để bạn Duy di chuyển theo hướng ABF là [o2].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 2,
+          "question_type": "fill_blank",
+          "question": "Một bảo tàng có dạng hình chóp với cạnh đáy 15m và chiều cao 10m. Do sự xói mòn về thời gian nên 60% diện tích xung quanh của bảo tàng đã bị hỏng và cần được bảo dưỡng.\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784880938298.png]\n- Diện tích xung quanh của bảo tàng là [o1] \\(m^2\\).\n- Biết rằng chi phí sửa chữa là 1,8 triệu / \\(m^2\\), số tiền tối thiểu cần bỏ ra để sửa chữa là [o2] triệu.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 3,
+          "question_type": "fill_blank",
+          "question": "Cho hình elip xác định bởi công thức \\(\\dfrac{x^2}{25} + \\dfrac{y^2}{16} = 1\\) (E) có hai tiêu cự \\(F_1, F_2\\). Lấy điểm \\(M \\in (E)\\).\n- Giá trị khoảng cách giữa hai tiêu cự \\(F_1F_2\\) = [o1].\n- Với mọi vị trí của \\(M \\in (E)\\), ta có \\(MF_1 + MF_2\\) = [o2].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 4,
+          "question_type": "fill_blank",
+          "question": "Cho 2 hình sau, hãy chọn đáp án đúng:\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784917903560.png | 94%]",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 5,
+          "question_type": "fill_blank",
+          "question": "Một chiếc gàu được gắn vào một guồng nước. Biết rằng cao độ của chiếc gàu so với mặt hồ theo thời gian \\(t\\) (tính bằng phút) được mô tả bởi phương trình \\(h = 1,5 + 2\\cos\\left[2\\pi(t - 0,25)\\right]\\) (m). Biết rằng thời điểm đầu tiên chiếc gàu này cách mặt nước một khoảng đúng bằng \\(1,5\\) m là \\(a\\) phút \\(b\\) giây (với \\(b < 60\\)). Giá trị của biểu thức \\(a \\cdot b\\) = [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 6,
+          "question_type": "fill_blank",
+          "question": "Cho một đa giác đều 10 cạnh trong không gian và một điểm nằm ngoài mặt phẳng chứa đa giác. Số mặt phẳng có thể lập được từ 11 điểm trên là [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 7,
+          "question_type": "fill_blank",
+          "question": "Cho tập hợp các điểm \\(A_1, A_2, A_3, \\dots, A_n\\) với \\(n \\in \\mathbb{N}^*\\) cùng nằm trên một đường thẳng thỏa mãn biểu thức \\(A_1A_2 = A_2A_3 = \\dots = A_{n-1}A_n\\). Tiến hành chọn ra 3 điểm phân biệt từ tập các điểm trên sao cho có một điểm là trung điểm đoạn thẳng nối hai điểm còn lại.\n- Với \\(n = 5\\), số cách chọn thỏa mãn là [o1].\n- Với \\(n = 2024\\), số cách chọn thỏa mãn là [o2].\n- Với \\(n = 2025\\), số cách chọn thỏa mãn là [o3].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 8,
+          "question_type": "true_false",
+          "question": "Ta có cách biểu diễn số \\(X\\) theo cơ số \\(q\\) được thực hiện như sau.\n\\[X = a_n \\cdot q^n + a_{n-1} \\cdot q^{n-1} + a_{n-2} \\cdot q^{n-2} + \\dots + a_0\\] với \\(a_0, a_1, a_2, \\dots, a_n < q \\quad \\forall n\\).\nKhi đó ta có thể ký hiệu \\(\\left[ a_n a_{n-1} a_{n-2} \\dots a_0 \\right]_q = X\\), ví dụ \\(\\left[ 101 \\right]_2 = 1 \\cdot 2^2 + 0 \\cdot 2^1 + 1 \\cdot 2^0 = 5\\).",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "\\(607 = \\left[ 1527 \\right]_7\\)"
+            },
+            {
+              "id": "b",
+              "text": "\\(\\left[ 1525 \\right]_7 = \\left[ 4412 \\right]_5\\)"
+            }
+          ]
+        },
+        {
+          "question_no": 9,
+          "question_type": "fill_blank",
+          "question": "Cho một đa giác đều 24 đỉnh. Chọn ngẫu nhiên ba đỉnh trên đa giác trên.\n- Xác suất chọn được tam giác vuông mà không có cạnh nào trùng cạnh của đa giác là [o1].\n- Xác suất chọn được tam giác đều là [o2].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 10,
+          "question_type": "fill_blank",
+          "question": "Cho một vật chịu tác dụng bởi ba lực cân bằng như hình dưới đây.\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784881579832.png]\nBiết rằng \\(\\left| \\overrightarrow{F_2} \\right| = 2\\left| \\overrightarrow{F_1} \\right|\\) và \\(F_3 = 2\\sqrt{5}\\), \\(\\left| \\overrightarrow{F_1} \\right|\\) = [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 11,
+          "question_type": "true_false",
+          "question": "Cho hình chóp tứ giác \\(S.ABCD\\) có đáy là hình chữ nhật với \\(SA\\) vuông góc với đáy thỏa mãn \\(AB = 3, BC = 4, (SC, (ABCD)) = 45^\\circ\\).",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "Chiều cao của hình chóp là \\(5\\sqrt{2}\\)"
+            },
+            {
+              "id": "b",
+              "text": "Thể tích khối chóp \\(S.BCD\\) là 30 (đơn vị thể tích)"
+            }
+          ]
+        },
+        {
+          "question_no": 12,
+          "question_type": "fill_blank",
+          "question": "Cho sơ đồ cây như hình dưới đây. \n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784882020242.png]\nXác suất biến cố B xảy ra là [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 13,
+          "question_type": "fill_blank",
+          "question": "Cho \\(f(x)\\) có \\(\\lim\\limits_{x\\to-\\infty} f(x) = -m\\) và \\(\\lim\\limits_{x\\to+\\infty} f(x) = m^3 - 3m^2 + 4m - 2\\), tổng các giá trị của \\(m\\) để \\(f(x)\\) chỉ có đúng một đường tiệm cận ngang là [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 14,
+          "question_type": "fill_blank",
+          "question": "Trong một nghiên cứu ở tỉnh X, người ta tìm ra rằng có 85% người dân trong tỉnh tham gia giao thông chấp hành đội mũ khi lái xe. Xác suất để những người đội mũ bị thương nặng khi xảy ra tai nạn giao thông là 0,1 và đối với những người không đội mũ là 0,6. Xác suất để một người bị thương nặng khi xảy ra tai nạn giao thông là [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 15,
+          "question_type": "true_false",
+          "question": "Cho hàm số $f(x) = \\begin{cases} 2a - 2 & x < 1 \\cr \\sin\\left(\\frac{\\pi}{2x}\\right) & x \\ge 1 \\end{cases}$",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "Tập xác định của \\(f(x)\\) là \\(\\mathbb{R} \\setminus \\{1\\}\\)"
+            },
+            {
+              "id": "b",
+              "text": "\\(f(0) = -2, f(1) = 1\\)"
+            },
+            {
+              "id": "c",
+              "text": "Để \\(f(x)\\) liên tục trên \\(\\mathbb{R}\\) thì \\(a = \\dfrac{3}{2}\\)"
+            }
+          ]
+        },
+        {
+          "question_no": 16,
+          "question_type": "true_false",
+          "question": "Cho đồ thị hai hàm số \\(f(x) = x^2\\) và \\(g(x) = 6 - x\\) như hình dưới đây. Trên mỗi hàm ta lần lượt lấy hai điểm M, N thỏa mãn MN song song với Oy sao cho MN nằm hoàn toàn trong vùng màu vàng.\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784882728430.png]",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "M và N có cùng hoành độ"
+            },
+            {
+              "id": "b",
+              "text": "\\(MN = x^2 + x - 6\\)"
+            },
+            {
+              "id": "c",
+              "text": "\\(MN_{max} = 6\\)"
+            }
+          ]
+        },
+        {
+          "question_no": 17,
+          "question_type": "single_choice",
+          "question": "Cho hàm số \\(f(x)\\) thỏa mãn \\(x f'(x) - f(x) = 2x^2 + 3x^3 \\quad \\forall x \\in \\text{TXD}\\) và \\(f(1) = \\dfrac{7}{2}\\). Giá trị của \\(f'(4)\\) là bao nhiêu?   ",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "512"
+            },
+            {
+              "key": "B",
+              "text": "32"
+            },
+            {
+              "key": "C",
+              "text": "88"
+            },
+            {
+              "key": "D",
+              "text": "128"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 18,
+          "question_type": "fill_blank",
+          "question": "Cho phương trình \\(x^2 + 3 = 2 \\left[ x + \\cos^2(ax + b) \\right]\\) với \\(a, b \\in \\left( 0, \\dfrac{\\pi}{2} \\right]\\). Để phương trình này có nghiệm thì giá trị của \\(\\dfrac{a+b}{\\pi}\\) = [o1].",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 19,
+          "question_type": "multiple_choice",
+          "question": "Cho đồ thị hai hàm $f(x) = 2 - x$ và $g(x) = -\\sqrt{x}$ được biểu diễn ở hình dưới. Ta gọi $(H)$ là miền phẳng xác định bởi $f(x)$, $g(x)$, $x = 4$ và $Ox$. \n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784884059757.png]\nNhững biểu thức nào dưới đây là đúng khi tính diện tích miền $(H)$ nói trên?",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "$\\int_{0}^{2} \\sqrt{x} dx + \\int_{2}^{4} 2 - x dx$"
+            },
+            {
+              "key": "B",
+              "text": "$\\int_{0}^{2} \\sqrt{x} dx - \\int_{2}^{4} 2 - x dx$"
+            },
+            {
+              "key": "C",
+              "text": "$\\int_{0}^{4} 2 - x + \\sqrt{x} dx$"
+            },
+            {
+              "key": "D",
+              "text": "$\\int_{0}^{4} \\sqrt{x} dx$"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 20,
+          "question_type": "true_false",
+          "question": "<b>Một học sinh tiến hành thí nghiệm</b><div><span style=\"background-color: transparent;\">Cho 2 giọt dung dịch Iodine lần lượt vào ống nghiệm (1) chứa 2 ml dung dịch hồ tinh bột amylose 1% và ống nghiệm (2) chứa 2 ml dung dịch hồ tinh bột amylopectin 1% ở nhiệt độ phòng. Sau đó đun nóng nhẹ cả hai ống lên 80 độ C, rồi để nguội về nhiệt độ phòng. </span><div><div><br></div><div><b>Xét tính đúng/sai của các nhận định liên quan đến thí nghiệm trên</b></div></div></div>",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "Dãy 1, 2, 3,..., n là một cấp số cộng."
+            },
+            {
+              "id": "o2",
+              "text": "$1 + 2 + 3 + \\dots + n = \\frac{n(n+1)}{3}$"
+            },
+            {
+              "id": "o3",
+              "text": "$\\lim_{n\\to\\infty} (A) = 0$"
+            }
+          ]
+        },
+        {
+          "question_no": 21,
+          "question_type": "true_false",
+          "question": "Cho hình chóp $S.ABCD$, $SA$ vuông góc với $(ABCD)$, $ABCD$ là hình chữ nhật. $M$ là trung điểm $AD$, $G$ là trọng tâm tam giác $SBC$. Biết $(ADG)$ vuông góc với $(SBC)$.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "$(SBC)$ vuông góc với $(SAB)$."
+            },
+            {
+              "id": "o2",
+              "text": "$MG$ vuông góc với $(SBC)$."
+            },
+            {
+              "id": "o3",
+              "text": "$SA = 2SB$."
+            }
+          ]
+        },
+        {
+          "question_no": 22,
+          "question_type": "true_false",
+          "question": "Cho dãy $u_n$ xác định bởi biểu thức $\\begin{cases} u_1 = 3 \\cr u_{n+1} = 2u_n \\end{cases}$",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "Dãy $u_n$ là một cấp số nhân"
+            },
+            {
+              "id": "o2",
+              "text": "$\\lim_{n\\to\\infty} \\frac{u_n}{2^n - 1} = \\frac{3}{2}$"
+            },
+            {
+              "id": "o3",
+              "text": "Giá trị $n$ nhỏ nhất để $u_n > 5^{100}$ là 232"
+            }
+          ]
+        },
+        {
+          "question_no": 23,
+          "question_type": "true_false",
+          "question": "Cho $a, b > 1$. Ta đặt $\\log_b a = m$.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "$\\log_{\\sqrt{a}} b = \\frac{2}{m}$"
+            },
+            {
+              "id": "o2",
+              "text": "$\\log_{\\sqrt[3]{a}} (ab^2) = \\frac{3m+6}{m}$"
+            }
+          ]
+        },
+        {
+          "question_no": 24,
+          "question_type": "true_false",
+          "question": "Gọi $A$ là tập hợp các số có 4 chữ số đôi một khác nhau lấy từ tập các số $\\{1, 2, 3, 4, 5, 6, 7\\}$.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "Có thể lập được 840 số thỏa mãn điều kiện trên."
+            },
+            {
+              "id": "o2",
+              "text": "Lấy ngẫu nhiên một số trong $A$. Xác suất chữ số 1 và 6 đồng thời có mặt trong số được chọn là $\\frac{1}{7}$"
+            }
+          ]
+        },
+        {
+          "question_no": 25,
+          "question_type": "single_choice",
+          "question": "Cho $P = \\left(1 + \\frac{1}{\\cos 2x}\\right)\\left(1 + \\frac{1}{\\cos 4x}\\right) \\dots \\left(1 + \\frac{1}{\\cos 2^n x}\\right)$. Biểu thức $P$ tương đương với hàm nào sau đây?",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "\\(P = \\tan 2^n x \\cdot \\cot x\\)"
+            },
+            {
+              "key": "B",
+              "text": "\\(P = \\tan 2^n x \\cdot \\tan x\\)"
+            },
+            {
+              "key": "C",
+              "text": "\\(P = \\tan 2^{n+1} x \\cdot \\cot x\\)"
+            },
+            {
+              "key": "D",
+              "text": "\\(P = \\tan 2^{n+1} x \\cdot \\tan x\\)"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 26,
+          "question_type": "single_choice",
+          "question": "Cho $A = \\cos^2 a - \\cos^2 b$. Biểu thức $A$ tương đương với hàm nào sau đây?",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "\\(A = \\sin(b - a)\\sin(a + b)\\)"
+            },
+            {
+              "key": "B",
+              "text": "\\(A = \\sin(a - b)\\sin(a + b)\\)"
+            },
+            {
+              "key": "C",
+              "text": "\\(A = \\cos(b - a)\\cos(a + b)\\)"
+            },
+            {
+              "key": "D",
+              "text": "\\(A = -\\sin(b - a)\\sin(a + b)\\)"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 27,
+          "question_type": "true_false",
+          "question": "Cho tam giác có ba cạnh <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"0\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-mn class=\"mjx-n\"><mjx-c class=\"mjx-c31\"></mjx-c></mjx-mn><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c2C\"></mjx-c></mjx-mo><mjx-mi class=\"mjx-i\" space=\"2\"><mjx-c class=\"mjx-c1D465 TEX-I\"></mjx-c></mjx-mi><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c2C\"></mjx-c></mjx-mo><mjx-mi class=\"mjx-i\" space=\"2\"><mjx-c class=\"mjx-c1D466 TEX-I\"></mjx-c></mjx-mi></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><mn>1</mn><mo>,</mo><mi>x</mi><mo>,</mo><mi>y</mi></mstyle></math></mjx-assistive-mml></mjx-container> có số đo góc ở đỉnh đối cạnh <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"1\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-mi class=\"mjx-i\"><mjx-c class=\"mjx-c1D466 TEX-I\"></mjx-c></mjx-mi></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><mi>y</mi></mstyle></math></mjx-assistive-mml></mjx-container> bằng <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"2\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-msup><mjx-mn class=\"mjx-n\"><mjx-c class=\"mjx-c31\"></mjx-c><mjx-c class=\"mjx-c31\"></mjx-c><mjx-c class=\"mjx-c30\"></mjx-c></mjx-mn><mjx-script style=\"vertical-align: 0.413em;\"><mjx-mo class=\"mjx-n\" size=\"s\"><mjx-c class=\"mjx-c2218\"></mjx-c></mjx-mo></mjx-script></mjx-msup></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><msup><mn>110</mn><mo>∘</mo></msup></mstyle></math></mjx-assistive-mml></mjx-container>.\n<img src=\"https://assets.tmastudy.io.vn/passages/temp/1784887459183.png\" style=\"width:33%; max-width:100%; height:auto; display:block; margin:10px auto;\" class=\"tsa-auto-img tma-editing-active\" data-has-listeners=\"true\">",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "o1",
+              "text": "$y = \\sqrt{1 + x^2 + 2x \\cos(110^\\circ)}$"
+            },
+            {
+              "id": "o2",
+              "text": "Nếu $x = 3$ thì $y \\approx 3,47$ (Làm tròn đến hàng phần trăm)"
+            },
+            {
+              "id": "o3",
+              "text": "$\\lim_{x\\to\\infty} (y - x) = 0$"
+            }
+          ]
+        },
+        {
+          "question_no": 28,
+          "question_type": "fill_blank",
+          "question": "Cho $\\frac{\\cos 6x}{\\cos 2x} = -1$. Tính giá trị của biểu thức $\\frac{\\sin 6x}{\\sin 2x}$.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 29,
+          "question_type": "true_false",
+          "question": "Từ xa xưa, các nhà triết học cho rằng vật chất được tạo thành từ 5 nguyên tố cơ bản là đất, nước, lửa, khí và ether (nguyên tố tạo nên khoảng không gian của vũ trụ). Các nguyên tố này tương ứng với các khối đa diện lồi đều trong hình học.\n<img src=\"https://assets.tmastudy.io.vn/passages/temp/1784887691718.png\" style=\"width:62%; max-width:100%; height:auto; display:block; margin:10px auto;\" class=\"tsa-auto-img tma-editing-active\" data-has-listeners=\"true\">\nXét tính đúng sai của các khẳng định sau:",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "Khối bát diện đều có số đỉnh là 8."
+            },
+            {
+              "id": "b",
+              "text": "Khối lập phương có số mặt là 6."
+            },
+            {
+              "id": "c",
+              "text": "Khối hai mươi mặt đều có số cạnh là 20."
+            }
+          ]
+        },
+        {
+          "question_no": 30,
+          "question_type": "fill_blank",
+          "question": "Cho một dãy các hình như dưới đây. Cứ vẽ thêm các hình vuông như quy luật trên thì hình <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"0\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-mi class=\"mjx-i\"><mjx-c class=\"mjx-c1D453 TEX-I\"></mjx-c></mjx-mi><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c28\"></mjx-c></mjx-mo><mjx-mn class=\"mjx-n\"><mjx-c class=\"mjx-c31\"></mjx-c><mjx-c class=\"mjx-c30\"></mjx-c><mjx-c class=\"mjx-c30\"></mjx-c></mjx-mn><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c29\"></mjx-c></mjx-mo></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><mi>f</mi><mo stretchy=\"false\">(</mo><mn>100</mn><mo stretchy=\"false\">)</mo></mstyle></math></mjx-assistive-mml></mjx-container> có bao nhiêu hình vuông?\n<img src=\"https://assets.tmastudy.io.vn/passages/temp/1784888002300.png\" style=\"width:72%; max-width:100%; height:auto; display:block; margin:10px auto;\" class=\"tsa-auto-img tma-editing-active\" data-has-listeners=\"true\">",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 31,
+          "question_type": "true_false",
+          "question": "Cho hình vẽ các tháp hình vuông xếp chồng. Các phát biểu sau là Đúng hay Sai?\n<img src=\"https://assets.tmastudy.io.vn/passages/temp/1784888106612.png\" style=\"width:84%; max-width:100%; height:auto; display:block; margin:10px auto;\" class=\"tsa-auto-img tma-editing-active\" data-has-listeners=\"true\">",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "$H_{2025}$ là một số chẵn"
+            },
+            {
+              "id": "b",
+              "text": "$H_{2025}$ là một số chính phương"
+            },
+            {
+              "id": "c",
+              "text": "$H_{2025}$ bằng tổng các số tự nhiên từ 1 đến 2025"
+            },
+            {
+              "id": "d",
+              "text": "$H_{2025}$ bằng tổng các số tự nhiên lẻ từ 1 đến 4049"
+            }
+          ]
+        },
+        {
+          "question_no": 32,
+          "question_type": "fill_blank",
+          "question": "Cho hai nửa mặt phẳng $(P)$, $(Q)$ có giao tuyến $d$. Gọi $A, B$ lần lượt là các điểm trên các mặt phẳng $(Q)$, $(P)$. Các đoạn $AC$, $BD$ lần lượt vuông góc với giao tuyến $d$ tại $C, D$. Biết rằng $BD = 11$, $CD = 3$, $AC = 7$, $AB = 16$. \n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784888373319.png]\nGóc phẳng nhị diện $[P, d, Q]$ bằng bao nhiêu độ? [o1]",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 33,
+          "question_type": "true_false",
+          "question": "Trong mô hình toán học, bề mặt Trái Đất là mặt cầu với bán kính $6371\\text{ km}$. Mỗi kinh tuyến là một nửa đường tròn có đường kính là trục của Trái Đất (đoạn thẳng nối cực Bắc N và cực Nam S). Kinh tuyến gốc là kinh tuyến đi qua Đài Thiên văn Greenwich ở London. Mặt phẳng chứa kinh tuyến gốc chia Trái Đất làm hai nửa là bán cầu Đông và bán cầu Tây, nước ta nằm ở bán cầu Đông.\n\nKinh độ của một điểm $P$ trên bề mặt Trái Đất là số đo của góc nhị diện có hai mặt tương ứng chứa kinh tuyến gốc và kinh tuyến đi qua $P$ (cạnh của góc nhị diện này là đường thẳng chứa trục Trái Đất). Kinh độ nhận giá trị trong đoạn từ $0^\\circ$ đến $180^\\circ$.\n\nVĩ độ của điểm $P$ là số đo của góc giữa mặt phẳng chứa đường xích đạo và đường thẳng đi qua $P$ và tâm $O$ của Trái Đất. Vĩ độ nhận giá trị trong đoạn từ $0^\\circ$ đến $90^\\circ$.\n\nMỗi điểm trên bề mặt Trái Đất thuộc một trong hai bán cầu Bắc hoặc Nam và thuộc một trong hai bán cầu Đông hoặc Tây. Vì vậy, đi kèm với vĩ độ, còn có chữ N hoặc S nếu vị trí đó tương ứng thuộc bán cầu Bắc hay bán cầu Nam và đi kèm với kinh độ có chữ E hoặc W nếu vị trí đó tương ứng thuộc bán cầu Đông hay bán cầu Tây. Chẳng hạn, hồ Hoàn Kiếm (Hà Nội) ở vị trí: $21^\\circ 01' 51''\\text{N}, 105^\\circ 51' 09''\\text{E}$. Vị trí trên mặt đất hoàn toàn xác định khi biết vĩ độ và kinh độ (bao gồm cả các kí hiệu N, S, E, W).\n[IMG: https://assets.tmastudy.io.vn/passages/temp/1784889190533.png]\n\nCoi bề mặt Trái Đất là mặt cầu có bán kính $6371\\text{ km}$. Chọn hệ trục tọa độ $Oxyz$ với gốc $O$ tại tâm Trái Đất và đơn vị độ dài trên mỗi trục tọa độ là $6371\\text{ km}$. Tia $Ox$ chứa giao điểm của kinh tuyến gốc và xích đạo, tia $Oz$ chứa điểm cực Bắc N, tia $Oy$ giao xích đạo tại điểm thuộc bán cầu Đông.\n\nHãy cho biết những khẳng định sau là đúng hay sai?",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "Vị trí $P$ có vĩ độ, kinh độ tương ứng là $\\alpha^\\circ\\text{N}, \\beta^\\circ\\text{E}$ ($0 < \\alpha < 90, 0 < \\beta < 180$) thì có toạ độ $P(\\cos\\alpha^\\circ \\cos\\beta^\\circ; \\cos\\alpha^\\circ \\sin\\beta^\\circ; \\sin\\alpha^\\circ)$, vị trí $Q$ có vĩ độ, kinh độ tương ứng là $\\alpha^\\circ\\text{N}, \\beta^\\circ\\text{W}$ ($0 < \\alpha < 90, 0 < \\beta < 180$) thì có toạ độ $Q(\\cos\\alpha^\\circ \\cos\\beta^\\circ; -\\cos\\alpha^\\circ \\sin\\beta^\\circ; \\sin\\alpha^\\circ)$."
+            },
+            {
+              "id": "b",
+              "text": "Khoảng cách trên mặt đất từ vị trí $P: 30^\\circ\\text{N}, 45^\\circ\\text{E}$ đến vị trí $Q: 60^\\circ\\text{N}, 45^\\circ\\text{E}$ là $3335,8475\\text{ km}$."
+            },
+            {
+              "id": "c",
+              "text": "Khoảng cách trên mặt đất từ vị trí $P: 10^\\circ\\text{N}, 15^\\circ\\text{E}$ đến vị trí $Q: 80^\\circ\\text{N}, 70^\\circ\\text{E}$ là $7702,865\\text{ km}$."
+            }
+          ]
+        },
+        {
+          "question_no": 34,
+          "question_type": "fill_blank",
+          "question": "Cho tam giác $ABC$ vuông cân tại $A$. Gọi $S_1$ là diện tích xung quanh của khối nón tròn xoay được tạo thành khi quay tam giác $ABC$ quanh cạnh $AB$. Gọi $S_2$ là diện tích xung quanh của khối nón tròn xoay được tạo thành khi quay tam giác $ABC$ quanh đường cao hạ từ đỉnh $A$. Tính tỉ số $\\frac{S_1}{S_2}$.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": []
+        },
+        {
+          "question_no": 35,
+          "question_type": "single_choice",
+          "question": "Sự sinh trưởng của một quần thể vi khuẩn E tuân theo quy luật tăng trưởng theo cấp số nhân. Biết rằng cứ sau 20 phút, số lượng vi khuẩn lại tăng gấp đôi. Tại thời điểm $t = 0$, số lượng vi khuẩn trong quần thể là $10^3$ cá thể. Hỏi sau 1 giờ ($t = 60$ phút), số lượng vi khuẩn trong quần thể là bao nhiêu?",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "$3 \\cdot 10^3$"
+            },
+            {
+              "key": "B",
+              "text": "$6 \\cdot 10^3$"
+            },
+            {
+              "key": "C",
+              "text": "$8 \\cdot 10^3$"
+            },
+            {
+              "key": "D",
+              "text": "$16 \\cdot 10^3$"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 36,
+          "question_type": "true_false",
+          "question": "Cho hàm số $f(x) = -x^3 + 6x^2 + 1$. Xét tính đúng, sai của các mệnh đề.",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "statements": [
+            {
+              "id": "a",
+              "text": "Hàm số đã cho đạt cực tiểu tại $x = 0$."
+            },
+            {
+              "id": "b",
+              "text": "Có 10 cặp số nguyên $(a,b)$ với $a < b$ để hàm số $f(x)$ đồng biến trên $(a,b)$."
+            }
+          ]
+        },
+        {
+          "question_no": 37,
+          "question_type": "drag_drop",
+          "question": "Kéo thả đáp án thích hợp",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": [
+            {
+              "id": "item1",
+              "text": "$9!$"
+            },
+            {
+              "id": "item2",
+              "text": "$4! \\cdot 5!$"
+            },
+            {
+              "id": "item3",
+              "text": "$2 \\cdot 4! \\cdot 5!$"
+            },
+            {
+              "id": "item4",
+              "text": "$2 \\cdot 5!$"
+            }
+          ],
+          "body": [
+            {
+              "type": "text",
+              "content": "Số cách xếp 4 cây bút chì giống nhau và 5 cây bút bi khác nhau vào một hàng ngang sao cho các cây bút cùng loại thì ở cạnh nhau là "
+            },
+            {
+              "type": "blank",
+              "id": "o1"
+            },
+            {
+              "type": "text",
+              "content": "."
+            }
+          ]
+        },
+        {
+          "question_no": 38,
+          "question_type": "drag_drop",
+          "question": "Kéo thả đáp án thích hợp",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "items": [
+            {
+              "id": "item1",
+              "text": "2"
+            },
+            {
+              "id": "item2",
+              "text": "4"
+            },
+            {
+              "id": "item3",
+              "text": "1"
+            },
+            {
+              "id": "item4",
+              "text": "5"
+            }
+          ],
+          "body": [
+            {
+              "type": "text",
+              "content": "Cho hàm số $f(x) = 2x^3 - 5x^2 + 3$. Giá trị của giới hạn $\\lim_{h\\to0} \\frac{f(2+h) - f(2)}{h}$ bằng "
+            },
+            {
+              "type": "blank",
+              "id": "o1"
+            },
+            {
+              "type": "text",
+              "content": "."
+            }
+          ]
+        },
+        {
+          "question_no": 39,
+          "question_type": "multiple_choice",
+          "question": "Cho hàm số <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"0\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-mi class=\"mjx-i\"><mjx-c class=\"mjx-c1D466 TEX-I\"></mjx-c></mjx-mi><mjx-mo class=\"mjx-n\" space=\"4\"><mjx-c class=\"mjx-c3D\"></mjx-c></mjx-mo><mjx-mi class=\"mjx-i\" space=\"4\"><mjx-c class=\"mjx-c1D453 TEX-I\"></mjx-c></mjx-mi><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c28\"></mjx-c></mjx-mo><mjx-mi class=\"mjx-i\"><mjx-c class=\"mjx-c1D465 TEX-I\"></mjx-c></mjx-mi><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c29\"></mjx-c></mjx-mo></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><mi>y</mi><mo>=</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo></mstyle></math></mjx-assistive-mml></mjx-container> xác định trên <mjx-container class=\"MathJax CtxtMenu_Attached_0\" jax=\"CHTML\" tabindex=\"0\" ctxtmenu_counter=\"1\" style=\"font-size: 123.5%; position: relative;\"><mjx-math class=\"MJX-TEX\" aria-hidden=\"true\"><mjx-mstyle><mjx-texatom texclass=\"ORD\"><mjx-mi class=\"mjx-ds mjx-b\"><mjx-c class=\"mjx-c211D TEX-A\"></mjx-c></mjx-mi></mjx-texatom><mjx-mo class=\"mjx-n\" space=\"3\"><mjx-c class=\"mjx-c2216\"></mjx-c></mjx-mo><mjx-mo class=\"mjx-n\" space=\"3\"><mjx-c class=\"mjx-c7B\"></mjx-c></mjx-mo><mjx-mn class=\"mjx-n\"><mjx-c class=\"mjx-c33\"></mjx-c></mjx-mn><mjx-mo class=\"mjx-n\"><mjx-c class=\"mjx-c7D\"></mjx-c></mjx-mo></mjx-mstyle></mjx-math><mjx-assistive-mml unselectable=\"on\" display=\"inline\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mstyle displaystyle=\"true\" scriptlevel=\"0\"><mrow data-mjx-texclass=\"ORD\"><mi mathvariant=\"double-struck\">R</mi></mrow><mo>∖</mo><mo fence=\"false\" stretchy=\"false\">{</mo><mn>3</mn><mo fence=\"false\" stretchy=\"false\">}</mo></mstyle></math></mjx-assistive-mml></mjx-container> và có bảng biến thiên như hình bên. Những mệnh đề nào sau đây đúng? \n<img src=\"https://assets.tmastudy.io.vn/passages/temp/1784911060998.png\" style=\"width:85%; max-width:100%; height:auto; display:block; margin:10px auto;\" class=\"tsa-auto-img tma-editing-active\" data-has-listeners=\"true\">",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "$\\min_{(-\\infty; 3]} f(x) = -\\infty$"
+            },
+            {
+              "key": "B",
+              "text": "$\\max_{(-4; 3)} f(x) = 4$"
+            },
+            {
+              "key": "C",
+              "text": "$\\max_{[5; 8]} f(x) = 2$"
+            },
+            {
+              "key": "D",
+              "text": "$\\max_{[4; +\\infty)} f(x) = f(7)$"
+            }
+          ],
+          "options_are_images": false
+        },
+        {
+          "question_no": 40,
+          "question_type": "single_choice",
+          "question": "Nếu $\\int_{0}^{3} 2f(x) \\, dx = 6$ thì $\\int_{0}^{3} \\left[ \\dfrac{1}{3}f(x) + 2x \\right] \\, dx$ bằng:",
+          "image_url": "",
+          "image_width": 100,
+          "points": 1,
+          "topic": "Khảo sát hàm số",
+          "options": [
+            {
+              "key": "A",
+              "text": "13"
+            },
+            {
+              "key": "B",
+              "text": "10"
+            },
+            {
+              "key": "C",
+              "text": "7"
+            },
+            {
+              "key": "D",
+              "text": "11"
+            }
+          ],
+          "options_are_images": false
+        }
+      ]
+    }
+  ]
+}

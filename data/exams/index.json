@@ -6,7 +6,7 @@
     "duration_minutes": 150,
     "is_open": true,
     "subject": "tong-hop",
-    "file": "data/exams/TSA_EXAM_01.json"
+    "file": "data/exams/Ngân hàng đề thi/Đề thi thử TSA/full.json"
   },
   {
     "exam_code": "TMA_011",
@@ -15,7 +15,7 @@
     "duration_minutes": 45,
     "is_open": false,
     "subject": "tong-hop",
-    "file": "data/exams/TMA_011.json"
+    "file": "data/exams/Ngân hàng đề thi/Test AI TMA 011/full.json"
   },
   {
     "exam_code": "TMA_012",
@@ -24,15 +24,15 @@
     "duration_minutes": 45,
     "is_open": false,
     "subject": "tong-hop",
-    "file": "data/exams/TMA_012.json"
+    "file": "data/exams/Ngân hàng đề thi/Test AI TMA 012/full.json"
   },
   {
     "exam_code": "TSA_PRACTICE_FULL_11",
-    "title": "Đề tổng hợp số 11",
+    "title": "Đề tự luyện số 11",
     "status": "published",
     "duration_minutes": 150,
     "is_open": true,
     "subject": "tong-hop",
-    "file": "data/exams/TSA_PRACTICE_FULL_11.json"
+    "file": "data/exams/Ngân hàng đề thi/Đề tự luyện số 11/full.json"
   }
 ]

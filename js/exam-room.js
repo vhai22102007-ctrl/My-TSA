@@ -595,7 +595,16 @@
       const cleanCodes = [targetFetchCode, examCode, "TSA001"].map(c => String(c || "").trim().toLowerCase()).filter(Boolean);
       for (const cCode of cleanCodes) {
         try {
-          const folderPath = `${examStorageUrl}${cCode}.json/`;
+          let folderPath = `${examStorageUrl}${cCode}.json/`;
+          const matchedMeta = examsList.find(item => String(item.exam_code || "").trim().toLowerCase() === cCode);
+          if (matchedMeta && matchedMeta.file) {
+            const relativeDir = String(matchedMeta.file).replace(/^\/?data\/exams\//i, "");
+            const lastSlash = relativeDir.lastIndexOf('/');
+            if (lastSlash !== -1) {
+              const dirName = relativeDir.substring(0, lastSlash + 1);
+              folderPath = `${examStorageUrl}${dirName.split('/').map(encodeURIComponent).join('/')}`;
+            }
+          }
           const [mathData, readingData, scienceData] = await Promise.all([
             fetchJson(folderPath + "math.json?t=" + Date.now()),
             fetchJson(folderPath + "reading.json?t=" + Date.now()),
