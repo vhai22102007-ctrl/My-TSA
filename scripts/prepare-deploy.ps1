@@ -28,7 +28,8 @@ $files = @(
   "ai-studio.html",
   "script.js",
   "style.css",
-  "_headers"
+  "_headers",
+  "_redirects"
 )
 
 foreach ($relativePath in $files) {

@@ -21,3 +21,8 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+[[redirects]]
+  from = "/tai-lieu"
+  to = "/select.html"
+  status = 200
