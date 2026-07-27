@@ -5623,6 +5623,7 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
       }
 
       window.switchTab = switchTab;
+      window.safePushState = safePushState;
       function switchTab(tabId) {
         if (typeof window.closeLibraryDetailView === "function") {
           window.closeLibraryDetailView();
