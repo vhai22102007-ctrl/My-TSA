@@ -617,7 +617,7 @@ button {
 }
 
 .legend-badge.is-answered {
-  background: #1769d8; /* Lighter blue */
+  background: #1890ff; /* Bright sky blue */
   color: #fff;
   border: none;
 }
@@ -672,11 +672,11 @@ button {
 }
 
 .question-index.is-answered {
-  background: #1769d8; /* Lighter blue */
+  background: #1890ff; /* Bright sky blue */
   color: #fff;
 }
 .question-index.is-answered:hover {
-  background: #155fc8;
+  background: #0076e4;
   color: #fff;
 }
 
@@ -700,7 +700,7 @@ button {
 
 /* Active question: nền xanh lam đậm, chữ trắng, hoặc có viền */
 .question-index.is-current {
-  background: #1769d8 !important;
+  background: #0b3a78 !important; /* Matches primary button deep blue */
   color: #fff !important;
   font-weight: 700;
   box-shadow: none !important; /* no double ring */
@@ -830,7 +830,7 @@ button {
   background: #0b3a78; /* Deep blue background */
   border: none;
   color: #fff;
-  padding: 0 24px;
+  padding: 0 12px !important;
 }
 .nav-button-primary:hover:not(:disabled) {
   background: #0b3670;
@@ -1264,7 +1264,7 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 }
 
 .drawer-legend-badge.is-answered {
-  background-color: #1769d8;
+  background-color: #1890ff;
   color: #fff;
 }
 
@@ -1662,9 +1662,9 @@ body[data-subject="science"] .true-false-answer-shell {
 .drag-drop-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 0px !important; /* Align with question number circle */
 }
 
 .drag-pool-title {
@@ -1675,22 +1675,25 @@ body[data-subject="science"] .true-false-answer-shell {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 16px;
+  padding: 14px 20px;
   background-color: #ffffff; /* White background for the pool container */
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  min-height: 70px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px !important; /* Moderate rounding */
+  min-height: 56px;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .drag-chip {
-  background-color: #f3f4f6; /* Gray background for options */
-  border: none; /* No border for chips */
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 14px;
+  background-color: #eaeaea !important; /* Neutral gray background matching Image 2 */
+  border: none !important; /* No border */
+  border-radius: 6px !important; /* Slightly rounded corners, squarish shape */
+  padding: 6px 14px !important; /* Chubbier padding */
+  font-size: 13.5px;
   font-weight: 500;
-  color: #334155;
+  color: #1e293b;
   cursor: grab;
   user-select: none;
   transition: all 0.2s ease;
@@ -1698,6 +1701,8 @@ body[data-subject="science"] .true-false-answer-shell {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 44px; /* Squarish base */
+  box-sizing: border-box;
 }
 
 .drag-chip:hover:not(.is-used) {
@@ -1751,16 +1756,16 @@ body[data-subject="science"] .true-false-answer-shell {
 }
 
 .drop-zone .drag-chip {
-  background-color: #f3f4f6; /* Gray background inside the slot */
-  border: none;
-  border-radius: 5px;
+  background-color: #eaeaea !important; /* Restored gray background inside the slot */
+  border: none !important; /* No border */
+  border-radius: 5px !important;
   width: 100%;
   height: auto;
   min-height: 36px;
-  padding: 6px 16px; /* Vertical and horizontal padding to fit math equations */
+  padding: 5px 12px !important; /* Vertical and horizontal padding to fit math equations */
   margin: 0;
   cursor: pointer;
-  color: #374151; /* Match normal text or dark gray */
+  color: #1e293b; /* Match normal text or dark gray */
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -1832,7 +1837,9 @@ input[type=number] {
 /* SPLIT SCROLL VIEW STYLES FOR READING & SCIENCE */
 .split-question-row {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
   padding: 16px 0;
   margin-bottom: 28px;
   background-color: transparent;
@@ -1876,7 +1883,7 @@ input[type=number] {
 }
 
 .split-q-action-box {
-  margin-left: 18px;
+  margin-left: auto !important;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;
@@ -1885,17 +1892,35 @@ input[type=number] {
 .split-question-row .question-body {
   flex: 1;
   min-width: 0;
-  margin-top: 8px; /* Slightly push down to align with circle badge */
+  margin-top: 0 !important; /* Align exactly at the top of the flex row */
   margin-bottom: 0;
+}
+
+.split-question-row .drag-drop-container {
+  margin-top: 0 !important; /* Prevent extra gap above the drag-drop pool/instructions */
 }
 
 .split-question-row .answer-area {
   width: auto;
   margin-top: 16px;
-  margin-left: 56px;
+  margin-left: 0 !important; /* Resets large indent since it is already inside split-q-middle */
 }
 
-/* Ensure choices container takes full width and lays out correctly */
+/* Matching drag pool chips background correction to white card styling */
+.tma-matching-chips-grid .drag-chip {
+  background-color: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 10px 16px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  color: #334155 !important;
+}
+
+/* Styling overrides for the left column layout alignment in Science and Reading question items */
+.split-q-num-box {
+  margin-right: 0 !important; /* Removed layout margin since row handles it with gap */
+}
+
 .split-question-row .choices-container {
   margin-top: 12px;
 }
@@ -1911,6 +1936,33 @@ input[type=number] {
   }
   .mobile-math-toggle-btn {
     display: none !important;
+  }
+
+  /* Desktop Math Sidebar matching Science drawer layout */
+  .exam-page[data-subject="math"] .exam-sidebar {
+    width: 440px !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .question-grid {
+    display: grid !important;
+    grid-template-columns: repeat(10, 1fr) !important;
+    column-gap: 8px !important;
+    row-gap: 12px !important;
+    padding: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .exam-page[data-subject="math"] .exam-sidebar .question-index {
+    width: 30px !important;
+    height: 30px !important;
+    aspect-ratio: 1 !important;
+    border-radius: 50% !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -2126,4 +2178,40 @@ input[type=number] {
     margin-top: auto !important;
     background: #fff !important;
   }
+}
+
+/* Spinner style for next question transition */
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2.2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: btn-spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+.nav-button.is-loading {
+  opacity: 0.75 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Show zoom icon on hover only, preventing it from covering image text/contents */
+.zoom-img-wrapper .image-zoom-btn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease !important;
+}
+
+.zoom-img-wrapper:hover .image-zoom-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
 }

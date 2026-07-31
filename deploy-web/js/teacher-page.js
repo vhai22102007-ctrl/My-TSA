@@ -5575,6 +5575,22 @@
           } catch (localRecoveryError) {
             console.warn("Không thể đọc bản đề đã xuất bản trong máy:", localRecoveryError);
           }
+          // 0a. Load dynamic fallback script if offline and data not loaded
+          if (!fetched && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {
+            if (!window.TSA001_FALLBACK_DATA) {
+              try {
+                await new Promise(function(resolve, reject) {
+                  var script = document.createElement("script");
+                  script.src = "js/tsa001-fallback.js";
+                  script.onload = resolve;
+                  script.onerror = reject;
+                  document.head.appendChild(script);
+                });
+              } catch (err) {
+                console.warn("Could not dynamically load fallback script in teacher page:", err);
+              }
+            }
+          }
           
           // 0a. If running via file:// protocol, prioritize pre-embedded fallback data
           if (!fetched && window.location.protocol === "file:" && window.TSA001_FALLBACK_DATA && (cleanCode === "TSA001" || cleanCode === "TSA_EXAM_01")) {

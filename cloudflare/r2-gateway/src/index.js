@@ -54,7 +54,7 @@ function isAllowedKey(key) {
 function isLegacyImageUpload(request) {
   if (request.method !== "POST") return false;
   const contentType = request.headers.get("Content-Type") || "";
-  const folder = cleanKey(request.headers.get("X-File-Path"));
+  const folder = cleanKey(decodeURIComponent(request.headers.get("X-File-Path") || ""));
   return contentType.startsWith("image/") && (folder.startsWith("questions/") || folder.startsWith("passages/"));
 }
 
@@ -166,8 +166,8 @@ async function handleAi(request, env) {
 }
 
 async function handleUpload(request, env) {
-  const fileName = cleanKey(request.headers.get("X-File-Name"));
-  const folder = cleanKey(request.headers.get("X-File-Path"));
+  const fileName = cleanKey(decodeURIComponent(request.headers.get("X-File-Name") || ""));
+  const folder = cleanKey(decodeURIComponent(request.headers.get("X-File-Path") || ""));
   const key = cleanKey((folder ? folder + "/" : "") + fileName);
   if (!fileName || !isAllowedKey(key)) return json(request, { success: false, error: "Duong dan R2 khong duoc phep." }, 400);
 

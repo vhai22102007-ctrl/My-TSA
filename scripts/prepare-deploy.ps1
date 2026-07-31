@@ -26,6 +26,7 @@ $files = @(
   "exam-reading.html",
   "exam-science.html",
   "ai-studio.html",
+  "tma-question-bank-vault.html",
   "script.js",
   "style.css",
   "_headers",

@@ -76,8 +76,8 @@ window.TMA_AI_CONFIG = {
       method: 'POST',
       headers: {
         'Content-Type': contentType || (body && body.type) || 'application/octet-stream',
-        'X-File-Name': fileName,
-        'X-File-Path': folder
+        'X-File-Name': encodeURIComponent(fileName),
+        'X-File-Path': encodeURIComponent(folder)
       },
       body: body
     });

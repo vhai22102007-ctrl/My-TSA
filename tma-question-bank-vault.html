@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Quản trị Ngân hàng câu hỏi TMA TSA sử dụng AI.">
+  <title>TMA TSA | Ngân hàng câu hỏi</title>
+  <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/ai-studio.css">
+  <link rel="stylesheet" href="css/exam-room.css">
+  <link rel="stylesheet" href="css/question-bank.css">
+  <style>
+    /* Reset clashing exam-room.css body styles */
+    body {
+      background-color: var(--surface-soft) !important;
+      font-family: Inter, Arial, sans-serif !important;
+      overflow: visible !important;
+      user-select: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      width: auto !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-shell">
+    <!-- Header -->
+    <header class="studio-header">
+      <div class="header-left">
+        <a class="icon-button" href="tma-teacher-portal-vault.html" aria-label="Quay lại trang giáo viên" title="Quay lại trang giáo viên">
+          <i data-lucide="arrow-left"></i>
+        </a>
+        <img class="studio-logo" src="https://assets.tmastudy.io.vn/assets/logo1.png" alt="TMA TSA">
+        <div class="product-title">
+          <strong>Ngân Hàng Câu Hỏi</strong>
+          <span>Soạn thảo &amp; Phân loại bằng AI</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="backend-state checking" id="backend-state">
+          <span class="state-dot"></span>
+          <span id="backend-state-text">Đang kiểm tra AI</span>
+        </span>
+        <button class="button primary" id="sync-btn" onclick="window.syncQuestionBankToCloud()" type="button">
+          <i data-lucide="cloud-lightning"></i>
+          <span>Đồng bộ R2 Cloud</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Layout -->
+    <div class="studio-layout">
+      
+      <!-- SCREEN 1: LIST VIEW (Datatable + Filters) -->
+      <div id="list-view" class="studio-main" style="max-width: 1400px; margin: 0 auto; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <span class="eyebrow">Kho Lưu Trữ</span>
+            <h1 style="font-size: 20px; font-weight: 800; color: #0f172a;" id="page-title">Ngân hàng câu hỏi Toán học</h1>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="button active-button" id="header-add-math-btn" onclick="window.addNewMathQuestion()" type="button">
+              <i data-lucide="plus"></i>
+              <span>Thêm câu hỏi Toán</span>
+            </button>
+            <button class="button primary" id="header-add-passage-btn" onclick="window.addNewPassage()" type="button" style="display: none;">
+              <i data-lucide="plus"></i>
+              <span>Thêm Ngữ liệu mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Large Subject Navigation Tabs -->
+        <div class="subject-tabs">
+          <button class="subject-tab active" id="tab-math" onclick="window.switchSubjectTab('math')" type="button">
+            <i data-lucide="calculator" style="width: 16px; height: 16px;"></i>
+            <span>Tư duy Toán học</span>
+          </button>
+          <button class="subject-tab" id="tab-reading" onclick="window.switchSubjectTab('reading')" type="button">
+            <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
+            <span>Tư duy Đọc hiểu</span>
+          </button>
+          <button class="subject-tab" id="tab-science" onclick="window.switchSubjectTab('science')" type="button">
+            <i data-lucide="flask-conical" style="width: 16px; height: 16px;"></i>
+            <span>Tư duy Khoa học</span>
+          </button>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="filter-bar">
+          <div class="filter-group search-group">
+            <span>Tìm kiếm nhanh</span>
+            <div style="position: relative;">
+              <input type="text" id="search-input" oninput="window.applyFilters()" class="filter-control" placeholder="Tìm kiếm theo từ khóa nội dung..." style="padding-left: 32px;">
+              <i data-lucide="search" style="position: absolute; left: 10px; top: 12px; width: 14px; height: 14px; color: var(--muted);"></i>
+            </div>
+          </div>
+          <div class="filter-group" id="filter-topic-wrapper">
+            <span>Chuyên đề</span>
+            <select id="filter-topic" onchange="window.applyFilters()" class="filter-control">
+              <option value="all">Tất cả chuyên đề</option>
+            </select>
+          </div>
+          <div class="filter-group" id="filter-difficulty-wrapper">
+            <span>Độ khó</span>
+            <select id="filter-difficulty" onchange="window.applyFilters()" class="filter-control">
+              <option value="all">Tất cả độ khó</option>
+              <option value="1">Mức 1 (Dễ)</option>
+              <option value="2">Mức 2 (Trung bình)</option>
+              <option value="3">Mức 3 (Khó)</option>
+            </select>
+          </div>
+          <div class="filter-group" id="filter-type-wrapper">
+            <span>Dạng câu hỏi</span>
+            <select id="filter-type" onchange="window.applyFilters()" class="filter-control">
+              <option value="all">Tất cả dạng</option>
+              <option value="single_choice">Trắc nghiệm 4 lựa chọn</option>
+              <option value="true_false">Đúng / Sai</option>
+              <option value="numeric_answer">Điền số tự do</option>
+              <option value="fill_blank">Điền khuyết ô trống</option>
+              <option value="drag_drop">Kéo thả thẻ từ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Datatable -->
+        <div class="table-container">
+          <table class="qb-table">
+            <thead id="qb-table-header">
+              <!-- Populated dynamically based on Math vs Passages -->
+            </thead>
+            <tbody id="qb-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div class="pagination-bar">
+          <div class="pagination-info" id="pagination-info">
+            Đang tải dữ liệu ngân hàng câu hỏi...
+          </div>
+          <div class="pagination-buttons">
+            <button class="button secondary" id="prev-page-btn" onclick="window.prevPage()" type="button" style="height: 34px;">
+              <i data-lucide="chevron-left"></i><span>Trang trước</span>
+            </button>
+            <button class="button secondary" id="next-page-btn" onclick="window.nextPage()" type="button" style="height: 34px;">
+              <span>Trang sau</span><i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="editor-view" class="studio-main">
+        <div class="editor-header-bar">
+          <button class="qb-action-btn" onclick="window.backToListView()" title="Quay lại danh sách" style="width: 34px; height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; margin-right: 12px; flex-shrink: 0;">
+            <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
+          </button>
+          <div style="min-width: 0; flex: 1;">
+            <div style="font-size: 10px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2;" id="editor-subtitle">TƯ DUY TOÁN HỌC</div>
+            <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2; display: flex; align-items: center; gap: 6px;">
+              <span id="editor-question-id">Math 001</span>
+              <span style="font-size: 12px; font-weight: 500; color: #64748b;" id="editor-question-no-text"> (Câu số 1)</span>
+            </h2>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+            <span class="backend-state checking" id="editor-backend-state" style="height: 30px; font-size: 11px;">
+              <span class="state-dot"></span>
+              <span id="editor-backend-state-text">EDITOR MODE</span>
+            </span>
+            <button class="button primary" onclick="window.syncQuestionBankToCloud()" type="button" style="height: 30px; font-size: 11px; padding: 0 10px;">
+              <i data-lucide="cloud-lightning" style="width: 12px; height: 12px;"></i>
+              <span>Đồng bộ Cloud</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="question-edit-layout">
+          <!-- Form Section -->
+          <section class="editor-section">
+            <!-- Form fields populated dynamically -->
+            <form id="question-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 14px;">
+              <!-- Populated dynamically via JS -->
+            </form>
+          </section>
+
+          <!-- Dedicated Preview Section (Right Column - Flat style!) -->
+          <section class="test-section">
+            <div style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+              <span>Xem trước hiển thị (Student Preview)</span>
+            </div>
+            <div class="latex-preview" style="overflow-y: auto; flex: 1; min-height: 480px; background: #ffffff;">
+              <div id="preview-area">
+                <!-- Live MathJax Preview -->
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating AI Chatbot Widget -->
+  <button class="ai-chatbot-trigger" id="ai-chatbot-trigger" onclick="window.toggleAiChatbot()" title="Trợ lý AI Thần Kỳ" type="button">
+    <i data-lucide="sparkles" style="width: 22px; height: 22px;"></i>
+  </button>
+
+  <div class="ai-chatbot-panel" id="ai-chatbot-panel">
+    <div class="ai-chatbot-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="state-dot" style="background: #10b981; width: 8px; height: 8px; border-radius: 50%;"></span>
+        <strong style="font-size: 13px;">Trợ Lý AI Soạn Đề</strong>
+      </div>
+      <button class="qb-action-btn" onclick="window.toggleAiChatbot()" style="color: #ffffff; width: 24px; height: 24px;">
+        <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+      </button>
+    </div>
+    
+    <div class="ai-chatbot-body" id="ai-chatbot-body">
+      <div class="ai-chatbot-message assistant">
+        Xin chào thầy cô! Tôi là Trợ lý AI TMA. Tôi có thể giúp phân tích phân loại câu hỏi, viết lời giải LaTeX hoặc đề xuất đề bài. Thầy cô cần hỗ trợ gì ạ?
+      </div>
+    </div>
+
+    <!-- Quick action buttons in chat -->
+    <div style="padding: 8px 12px; background: #ffffff; border-top: 1px solid #e2e8f0;">
+      <div class="ai-chat-quick-actions">
+        <button class="button test-button" onclick="window.runChatbotClassifier()" type="button" style="font-size: 11px; height: 32px; justify-content: center; padding: 0 4px;">
+          <i data-lucide="tag" style="width:12px; height:12px;"></i>
+          <span>Gắn thẻ chuyên đề</span>
+        </button>
+        <button class="button active-button" onclick="window.runChatbotSolver()" type="button" style="font-size: 11px; height: 32px; justify-content: center; padding: 0 4px;">
+          <i data-lucide="brain-circuit" style="width:12px; height:12px;"></i>
+          <span>Viết lời giải LaTeX</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="ai-chatbot-footer">
+      <input type="text" class="ai-chatbot-input" id="ai-chatbot-input" placeholder="Nhập câu hỏi nhờ AI hỗ trợ..." onkeydown="if(event.key==='Enter') window.sendChatbotMessage()">
+      <button class="ai-chatbot-send" onclick="window.sendChatbotMessage()" type="button">
+        <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"], ["$", "$"]],
+        displayMath: [["\\[", "\\]"], ["$$", "$$"]]
+      },
+      options: {
+        skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/ai-service.js?v=1.0.0"></script>
+  <script src="js/question-renderers.js"></script>
+  <script src="js/question-bank-page.js?v=1.1.9"></script>
+</body>
+</html>

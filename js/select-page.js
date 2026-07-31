@@ -4543,85 +4543,137 @@
           }
           if (subtabsContainer) subtabsContainer.style.display = "none";
 
-          var i = 1;
-          var numStr2 = String(i).padStart(2, "0");
-          var examCodeToCheck = category === "TSA" ? "TMA001" : (category + "01");
-          var hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
-          
-          var examTitle = category === "TSA" ? "Đề Số 01" : `Đề ${category} số ${numStr2}`;
-          var redirectUrl = category === "TSA" ? ("waiting.html?exam=" + examCodeToCheck) : (`confirm.html?exam=${examCodeToCheck}&single=true`);
+          var practiceIndexList = [];
+          try {
+            var rawIdx = localStorage.getItem("tma_tsa_exam_index");
+            if (rawIdx) practiceIndexList = JSON.parse(rawIdx) || [];
+          } catch(e) {}
 
-          var card = document.createElement("div");
-          card.className = "tsa-exam-item-card";
-          
-          var hasCompleted = completedExams && completedExams.has(examCodeToCheck);
-          var xemKetQuaHtml = hasCompleted 
-            ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
-            : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600; cursor: not-allowed;">Xem kết quả</span>`;
+          var freeExams = [];
+          if (Array.isArray(practiceIndexList)) {
+            practiceIndexList.forEach(function(e) {
+              var ec = String(e.exam_code || "").toUpperCase();
+              var categoryUpper = category.toUpperCase();
+              
+              var isFree = false;
+              if (categoryUpper === "TSA") {
+                isFree = (ec === "TMA001" || ec.startsWith("TMA_FREE_"));
+              } else {
+                isFree = ec.startsWith(categoryUpper);
+              }
 
-          card.innerHTML = `
-            <!-- Header Section -->
-            <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-              </svg>
-              <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
-                <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
-                <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
-              </div>
-            </div>
+              if (isFree) {
+                if (!freeExams.some(x => x.exam_code === e.exam_code)) {
+                  freeExams.push({
+                    exam_code: e.exam_code,
+                    title: e.title,
+                    is_open: e.is_open === true
+                  });
+                }
+              }
+            });
+          }
 
-            <!-- Body Section -->
-            <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
-              <!-- Row 1: Hình thức -->
-              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức thi:</span>
+          if (freeExams.length === 0) {
+            var defaultFreeCode = category === "TSA" ? "TMA001" : (category + "01");
+            freeExams.push({
+              exam_code: defaultFreeCode,
+              title: category === "TSA" ? "Đề Số 01" : `Đề ${category} số 01`,
+              is_open: true
+            });
+          }
+
+          let openStatus = {};
+          try { openStatus = JSON.parse(localStorage.getItem("tma_exam_open_status") || "{}"); } catch(e) {}
+
+          freeExams.forEach(function(item) {
+            var examCodeToCheck = item.exam_code;
+            var examTitle = item.title;
+            var redirectUrl = category === "TSA" ? ("waiting.html?exam=" + examCodeToCheck) : (`confirm.html?exam=${examCodeToCheck}&single=true`);
+            var hasLocalDraft = localStorage.getItem("tma_tsa_exam_" + examCodeToCheck) || localStorage.getItem("tma_tsa_teacher_draft_" + examCodeToCheck);
+            
+            var hasCompleted = completedExams && completedExams.has(examCodeToCheck);
+            var xemKetQuaHtml = hasCompleted 
+              ? `<a href="#" onclick="window.showHustResultModal('${examCodeToCheck}', \`${examTitle}\`); return false;" style="font-size: 13.5px; color: #c2272d !important; font-weight: 600; text-decoration: none; cursor: pointer;">Xem kết quả</a>`
+              : `<span style="font-size: 13.5px; color: #94a3b8; font-weight: 600; cursor: not-allowed;">Xem kết quả</span>`;
+
+            var isUploaded = (window.EXAMS_LIST || []).some(e => e.exam_code === examCodeToCheck) || hasLocalDraft || (examCodeToCheck === "TMA001");
+            var isOpen = isUploaded && (item.is_open === true || openStatus[examCodeToCheck] === true);
+
+            var card = document.createElement("div");
+            card.className = "tsa-exam-item-card";
+
+            var actionBtnHtml = "";
+            if (isUploaded && isOpen) {
+              actionBtnHtml = `<button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 600; padding: 8px 24px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>`;
+            } else {
+              actionBtnHtml = `<button class="btn" style="background: #e2e8f0; border: 1px solid #e2e8f0; color: #94a3b8; font-weight: 600; padding: 8px 24px; border-radius: 6px; cursor: not-allowed; font-size: 13.5px;" disabled>Bắt đầu</button>`;
+            }
+
+            card.innerHTML = `
+              <!-- Header Section -->
+              <div style="display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; width: 100%; box-sizing: border-box;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#c2272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                  <h3 style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0; text-transform: none; line-height: 1.3;">${examTitle}</h3>
+                  <span style="font-size: 12.5px; color: #64748b; font-weight: 500;">${category}</span>
                 </div>
-                <span style="background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px;">Tự do</span>
               </div>
 
-              <!-- Row 2: Thời gian đăng ký -->
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian đăng ký:</span>
+              <!-- Body Section -->
+              <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; width: 100%; box-sizing: border-box;">
+                <!-- Row 1: Hình thức -->
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Hình thức thi:</span>
+                  </div>
+                  <span style="background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px;">Tự do</span>
                 </div>
-                <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right; line-height: 1.3; white-space: nowrap;">31/05/2026 - 31/05/2027</span>
-              </div>
 
-              <!-- Row 3: Thời gian thi -->
-              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian thi:</span>
+                <!-- Row 2: Thời gian đăng ký -->
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian đăng ký:</span>
+                  </div>
+                  <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right; line-height: 1.3; white-space: nowrap;">31/05/2026 - 31/05/2027</span>
                 </div>
-                <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right;">31/05/2026 - 31/05/2027</span>
-              </div>
-            </div>
 
-            <!-- Footer Section -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box;">
-              ${xemKetQuaHtml}
-              <button class="btn" style="background: #c2272d; border: 1px solid #c2272d; color: white; font-weight: 600; padding: 8px 24px; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 13.5px;" onclick="window.startExamDirectly(\`${examTitle}\`, '${redirectUrl}')">Bắt đầu</button>
-            </div>
-          `;
-          grid.appendChild(card);
+                <!-- Row 3: Thời gian thi -->
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span style="color: #64748b; font-size: 13.5px; font-weight: 500;">Thời gian thi:</span>
+                  </div>
+                  <span style="color: #1f2937; font-size: 13px; font-weight: 600; text-align: right;">31/05/2026 - 31/05/2027</span>
+                </div>
+              </div>
+
+              <!-- Footer Section -->
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; width: 100%; box-sizing: border-box;">
+                ${xemKetQuaHtml}
+                ${actionBtnHtml}
+              </div>
+            `;
+            grid.appendChild(card);
+          });
           return;
         }
 
@@ -5622,6 +5674,16 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
         }
       }
 
+      function relocateFooter(tabId) {
+        try {
+          const footer = document.getElementById("select-site-footer");
+          if (!footer) return;
+          footer.style.display = "block";
+        } catch (err) {
+          console.warn("Could not relocate footer:", err);
+        }
+      }
+
       window.switchTab = switchTab;
       window.safePushState = safePushState;
       function switchTab(tabId) {
@@ -5791,6 +5853,9 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
             tsaContent.classList.remove('schedule-active');
           }
         }
+
+        // Move footer to the active tab-panel or dashboard column
+        relocateFooter(tabId);
       }
 
       // Bind menu item click listeners
@@ -7171,6 +7236,27 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
 
       window.addEventListener("popstate", () => {
         handleRouting();
+      });
+
+      // Wrap each tab-panel's children in a wrapper to push footer down
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        if (!panel.querySelector(".tab-content-wrapper")) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "tab-content-wrapper";
+          while (panel.firstChild) {
+            wrapper.appendChild(panel.firstChild);
+          }
+          panel.appendChild(wrapper);
+        }
+      });
+
+      // Handle footer relocation on window resize
+      window.addEventListener("resize", () => {
+        const activePanel = document.querySelector(".tab-panel.active");
+        if (activePanel) {
+          const tabId = activePanel.id.replace("tab-", "");
+          relocateFooter(tabId);
+        }
       });
 
       // Initial route handle

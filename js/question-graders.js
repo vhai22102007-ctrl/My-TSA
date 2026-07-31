@@ -25,8 +25,28 @@
   function gradeMultipleChoice(question, userAnswer) {
     var correct = question.correct_answer;
     if (typeof correct === "string") {
-      try { correct = JSON.parse(correct); } catch (e) {}
+      try {
+        if (correct.trim().startsWith("[")) {
+          correct = JSON.parse(correct);
+        } else {
+          correct = correct.split(",").map(function(s) { return s.trim(); });
+        }
+      } catch (e) {
+        correct = correct.split(",").map(function(s) { return s.trim(); });
+      }
     }
+    if (typeof userAnswer === "string") {
+      try {
+        if (userAnswer.trim().startsWith("[")) {
+          userAnswer = JSON.parse(userAnswer);
+        } else {
+          userAnswer = userAnswer.split(",").map(function(s) { return s.trim(); });
+        }
+      } catch (e) {
+        userAnswer = userAnswer.split(",").map(function(s) { return s.trim(); });
+      }
+    }
+
     if (!Array.isArray(userAnswer) || !Array.isArray(correct)) return false;
     var user = userAnswer.map(normalizeKey).filter(Boolean).sort();
     var corr = correct.map(normalizeKey).filter(Boolean).sort();
@@ -50,15 +70,21 @@
     if (!keys.length) return false;
 
     return keys.every(function (key) {
-      var userVal = userAnswer[key];
+      var normKey = key.toLowerCase();
+      var userKey = Object.keys(userAnswer).find(function(k) { return k.toLowerCase() === normKey; }) || normKey;
+      var userVal = userAnswer[userKey];
       var correctVal = correct[key];
-      var userBool = (userVal === true || userVal === 'true' || userVal === 1 || userVal === '1');
-      var correctBool = (correctVal === true || correctVal === 'true' || correctVal === 1 || correctVal === '1');
+      var userBool = (userVal === true || userVal === 'true' || userVal === 1 || userVal === '1' || String(userVal).toLowerCase() === 'đúng');
+      var correctBool = (correctVal === true || correctVal === 'true' || correctVal === 1 || correctVal === '1' || String(correctVal).toLowerCase() === 'đúng');
       return userBool === correctBool;
     });
   }
 
   function gradeFillBlank(question, userAnswer) {
+    if (typeof userAnswer === "string") {
+      try { userAnswer = JSON.parse(userAnswer); } catch (e) {}
+    }
+
     if (userAnswer && typeof userAnswer === "object" && !Array.isArray(userAnswer)) {
       var correct = {};
       var corrAns = question.correct_answer;
@@ -78,7 +104,8 @@
       var keys = Object.keys(correct);
       if (!keys.length) return false;
       return keys.every(function (key) {
-        return normalizeText(userAnswer[key]) === normalizeText(correct[key]);
+        var userKey = Object.keys(userAnswer).find(function(k) { return k.toLowerCase() === key.toLowerCase(); }) || key;
+        return normalizeText(userAnswer[userKey]) === normalizeText(correct[key]);
       });
     }
 
@@ -115,7 +142,32 @@
   function gradeDragDrop(question, userAnswer) {
     var correct = question.correct_answer;
     if (typeof correct === "string") {
-      try { correct = JSON.parse(correct); } catch (e) { correct = {}; }
+      try {
+        if (correct.trim().startsWith("{")) {
+          correct = JSON.parse(correct);
+        } else {
+          var parsed = {};
+          correct.split("|").forEach(function (pair) {
+            var parts = pair.split("=");
+            if (parts.length === 2) {
+              parsed[parts[0].trim()] = parts[1].trim();
+            }
+          });
+          correct = parsed;
+        }
+      } catch (e) {
+        correct = {};
+      }
+    }
+    if (typeof correct === "string") {
+      var parsed = {};
+      correct.split("|").forEach(function (pair) {
+        var parts = pair.split("=");
+        if (parts.length === 2) {
+          parsed[parts[0].trim()] = parts[1].trim();
+        }
+      });
+      correct = parsed;
     }
     correct = correct || {};
 
@@ -127,8 +179,46 @@
     var keys = Object.keys(correct);
     if (!keys.length) return false;
 
+    var items = Array.isArray(question.items) ? question.items : [];
+
     return keys.every(function (key) {
-      return normalizeText(userAnswer[key]) === normalizeText(correct[key]);
+      var normKey = key.toLowerCase();
+      var userKey = Object.keys(userAnswer).find(function(k) { return k.toLowerCase() === normKey; }) || normKey;
+      var userVal = userAnswer[userKey];
+      var corrVal = correct[key];
+      if (userVal === undefined || corrVal === undefined) return false;
+
+      var normUser = normalizeText(userVal);
+      var normCorr = normalizeText(corrVal);
+
+      // Direct ID or text match
+      if (normUser === normCorr) return true;
+
+      // Find item by ID to check its text/value
+      var userItem = items.find(function(it) { return normalizeText(it.id) === normUser; });
+      if (userItem) {
+        var itemText = normalizeText(userItem.text);
+        if (itemText === normCorr) return true;
+        if ("val_" + itemText === normCorr) return true;
+      }
+
+      // Find item by text if userAnswer saved the text instead of ID
+      var userItemByText = items.find(function(it) { return normalizeText(it.text) === normUser; });
+      if (userItemByText) {
+        var itemId = normalizeText(userItemByText.id);
+        if (itemId === normCorr) return true;
+        if ("val_" + normUser === normCorr) return true;
+      }
+
+      // Find item by ID in correct answer if correct answer saved the ID and userAnswer saved text
+      var corrItem = items.find(function(it) { return normalizeText(it.id) === normCorr; });
+      if (corrItem) {
+        var corrItemText = normalizeText(corrItem.text);
+        if (normUser === corrItemText) return true;
+        if (normUser === "val_" + corrItemText) return true;
+      }
+
+      return false;
     });
   }
 

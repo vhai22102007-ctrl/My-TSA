@@ -21,3 +21,10 @@ implementation_plan.md
 security_review.md
 _headers
 .netlifyignore
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example

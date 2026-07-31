@@ -678,6 +678,34 @@
         }
       }
     }
+
+    if (!rawExam && (examCode === "TSA001" || examCode === "TSA_EXAM_01" || examCode === "TSA_PRACTICE_FULL_01")) {
+      if (window.TSA001_FALLBACK_DATA) {
+        rawExam = window.TSA001_FALLBACK_DATA;
+        console.log("Loaded TSA001 exam from pre-embedded fallback data.");
+      } else {
+        try {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "js/tsa001-fallback.js";
+            script.onload = () => {
+              if (window.TSA001_FALLBACK_DATA) {
+                rawExam = window.TSA001_FALLBACK_DATA;
+                console.log("Loaded TSA001 exam dynamically from fallback script.");
+                resolve();
+              } else {
+                reject(new Error("Fallback script loaded but window.TSA001_FALLBACK_DATA is not defined"));
+              }
+            };
+            script.onerror = () => reject(new Error("Failed to load fallback script"));
+            document.head.appendChild(script);
+          });
+        } catch (e) {
+          console.warn("Could not dynamically load local fallback script:", e);
+        }
+      }
+    }
+
     return { rawExam, examMeta };
   }
 
@@ -1224,9 +1252,10 @@
             qRow.classList.add("is-active-row");
           }
 
-          // Question header row
-          const qHeader = document.createElement("div");
-          qHeader.className = "split-q-header";
+          // Middle container to hold body and answer form, ensuring drag pool aligns horizontally
+          const qMiddle = document.createElement("div");
+          qMiddle.className = "split-q-middle";
+          qMiddle.style.cssText = "flex: 1; min-width: 0;";
 
           // Question number circle/badge (on the left)
           const qNumBox = document.createElement("div");
@@ -1237,6 +1266,13 @@
           const qBody = document.createElement("div");
           qBody.className = "question-body";
           qBody.id = `q-body-${q.question_no}`;
+          qMiddle.appendChild(qBody);
+
+          // Answer form (appended inside qMiddle to align inline with the row)
+          const qAns = document.createElement("form");
+          qAns.className = "answer-area";
+          qAns.id = `q-ans-${q.question_no}`;
+          qMiddle.appendChild(qAns);
 
           // Bookmark action box (right)
           const qActionBox = document.createElement("div");
@@ -1261,17 +1297,9 @@
           });
           qActionBox.appendChild(qBookmarkBtn);
 
-          qHeader.appendChild(qNumBox);
-          qHeader.appendChild(qBody);
-          qHeader.appendChild(qActionBox);
-
-          // Answer form (bottom)
-          const qAns = document.createElement("form");
-          qAns.className = "answer-area";
-          qAns.id = `q-ans-${q.question_no}`;
-
-          qRow.appendChild(qHeader);
-          qRow.appendChild(qAns);
+          qRow.appendChild(qNumBox);
+          qRow.appendChild(qMiddle);
+          qRow.appendChild(qActionBox);
 
           // Handle click to set active question
           qRow.addEventListener("click", () => {
@@ -1422,7 +1450,7 @@
     clearFullscreenRequirement();
 
     const isPreview = urlParams.get("preview") === "true";
-    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingleSubject;
+    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_") || examCode.startsWith("TMA") || /^TSA\d+$/i.test(examCode)) && !isSingleSubject;
 
     if (isComposite && !isPreview) {
       let completed = {};
@@ -1563,7 +1591,7 @@
     clearInterval(timerInterval);
     clearFullscreenRequirement();
 
-    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_")) && !isSingleSubject;
+    const isComposite = (examCode.startsWith("TSA_PRACTICE_FULL_") || examCode.startsWith("TSA_EXAM_") || examCode.startsWith("TMA") || /^TSA\d+$/i.test(examCode)) && !isSingleSubject;
 
     if (isComposite) {
       let completed = {};
@@ -2839,33 +2867,39 @@
       nextBtn.addEventListener("click", () => {
         if (!examData) return;
         const navInfo = getGroupNavigationInfo();
-        if (navInfo) {
-          if (!navInfo.isLast) {
-            const nextGroup = navInfo.groups[navInfo.currentIndex + 1];
-            const nextIdx = examData.questions.findIndex(q => q.group_id === nextGroup);
-            if (nextIdx !== -1) {
-              currentQuestionIndex = nextIdx;
-              questionElapsedSeconds = 0;
-              renderActiveQuestion();
-            }
-          } else {
-            if (viewSolution) {
-              leaveExamRoom();
+        const isTransitioning = navInfo ? !navInfo.isLast : (currentQuestionIndex < examData.questions.length - 1);
+
+        if (isTransitioning) {
+          if (nextBtn.classList.contains("is-loading")) return;
+
+          nextBtn.classList.add("is-loading");
+          const spinner = document.createElement("span");
+          spinner.className = "btn-spinner";
+          nextBtn.insertBefore(spinner, nextBtn.firstChild);
+
+          setTimeout(() => {
+            if (navInfo) {
+              const nextGroup = navInfo.groups[navInfo.currentIndex + 1];
+              const nextIdx = examData.questions.findIndex(q => q.group_id === nextGroup);
+              if (nextIdx !== -1) {
+                currentQuestionIndex = nextIdx;
+              }
             } else {
-              submitExam();
+              currentQuestionIndex++;
             }
-          }
-        } else {
-          if (currentQuestionIndex < examData.questions.length - 1) {
-            currentQuestionIndex++;
             questionElapsedSeconds = 0;
             renderActiveQuestion();
+
+            // Dọn dẹp loader
+            spinner.remove();
+            nextBtn.classList.remove("is-loading");
+          }, 400);
+        } else {
+          // Câu cuối cùng: Nộp bài hoặc thoát phòng thi lập tức
+          if (viewSolution) {
+            leaveExamRoom();
           } else {
-            if (viewSolution) {
-              leaveExamRoom();
-            } else {
-              submitExam();
-            }
+            submitExam();
           }
         }
       });

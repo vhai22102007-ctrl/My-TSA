@@ -54,7 +54,6 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       font-size: 13px;
-      zoom: 1.05;
     }
 
     a {
@@ -87,7 +86,7 @@
       will-change: width;
       display: flex;
       flex-direction: column;
-      height: calc(100vh / 1.05) !important; /* Compensate for body zoom: 1.05 */
+      height: 100vh !important;
       overflow: hidden !important;
     }
 
@@ -2054,11 +2053,14 @@
     }
 
     .tab-panel.active {
-      display: block;
+      display: flex !important;
+      flex-direction: column;
       overflow-y: auto;
       flex: 1;
+      height: 100%;
+      min-height: 0;
       padding-top: 24px !important;
-      padding-bottom: 32px;
+      padding-bottom: 0px !important;
       transform-origin: top center;
       animation: magicTabIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) both;
     }
@@ -7427,67 +7429,147 @@
        INDEPENDENT SCROLLABLE COLUMNS FOR DASHBOARD (OVERVIEW) - V3 (BULLETPROOF)
        ========================================================================== */
     @media (min-width: 992px) {
-      /* Force the viewport container elements to lock height and disable scroll */
+      /* Lock body/html scrolling on desktop for independent column scroll */
       html, 
-      body, 
-      .tsa-shell, 
-      .tsa-content, 
-      .content-container {
+      body {
         height: 100vh !important;
         overflow: hidden !important;
       }
 
-      /* Lock the active tab panel and sub-panel container sizes */
-      #tab-overview.tab-panel.active,
-      .dashboard-sub-panel.active {
-        height: 100% !important;
+      .tsa-shell {
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: row !important;
+        height: calc(100vh - var(--topbar-height)) !important;
+        margin-top: var(--topbar-height) !important;
         overflow: hidden !important;
+        position: relative !important;
       }
 
-      /* Setup dashboard layout height to fill the remaining area */
-      .dashboard-layout {
+      .tsa-topbar {
+        z-index: 30 !important;
+      }
+
+      .tsa-sidebar {
+        position: relative !important;
+        top: 0 !important;
+        height: 100% !important;
+        width: var(--sidebar-width) !important;
+        flex-shrink: 0 !important;
+        z-index: 20 !important;
+        padding-top: 12px !important;
+        overflow-y: auto !important;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .tsa-sidebar::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+      }
+
+      .tsa-shell.sidebar-collapsed .tsa-sidebar {
+        width: var(--sidebar-collapsed-width) !important;
+      }
+
+      /* Always show the topbar logo on desktop and hide the sidebar logo */
+      .topbar-left-logo-search {
+        display: flex !important;
+        width: var(--sidebar-width) !important;
+      }
+      .topbar-left-logo-search .logo-full {
+        display: block !important;
+      }
+      .topbar-left-logo-search .logo-collapsed {
+        display: none !important;
+      }
+
+      .tsa-sidebar .tsa-logo {
+        display: none !important;
+      }
+
+      /* When collapsed on desktop */
+      .tsa-shell.sidebar-collapsed .topbar-left-logo-search {
+        width: var(--sidebar-collapsed-width) !important;
+        padding-left: 0 !important;
+        justify-content: center !important;
+      }
+      .tsa-shell.sidebar-collapsed .topbar-left-logo-search .logo-full {
+        display: none !important;
+      }
+      .tsa-shell.sidebar-collapsed .topbar-left-logo-search .logo-collapsed {
+        display: block !important;
+      }
+
+      /* Make tsa-content the main independent scroll container */
+      .tsa-content {
         flex: 1 !important;
         height: 100% !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        display: flex !important;
-        gap: 24px !important;
-      }
-
-      /* Force columns to have independent scrollbars */
-      .dashboard-main-col,
-      .dashboard-side-col {
-        height: 100% !important;
         overflow-y: auto !important;
-        padding-right: 8px !important;
-        scrollbar-width: thin !important;
-        scrollbar-color: #cbd5e1 transparent !important;
+        overflow-x: hidden !important;
+        margin-left: 0 !important;
+        padding-top: 24px !important;
       }
 
-      /* Webkit scrollbar visual customization */
-      .dashboard-main-col::-webkit-scrollbar,
-      .dashboard-side-col::-webkit-scrollbar {
-        width: 6px !important;
+      /* Allow the active tab panel and sub-panel container sizes to grow naturally */
+      #tab-overview.tab-panel.active,
+      .tab-panel.active {
+        height: auto !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
 
-      .dashboard-main-col::-webkit-scrollbar-track,
-      .dashboard-side-col::-webkit-scrollbar-track {
-        background: transparent !important;
+      /* Allow the wrapper to grow naturally */
+      .tab-content-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 0 auto !important;
+        min-height: calc(100vh - 94px) !important;
+        height: auto !important;
+        overflow: visible !important;
       }
 
-      .dashboard-main-col::-webkit-scrollbar-thumb,
-      .dashboard-side-col::-webkit-scrollbar-thumb {
-        background: #cbd5e1 !important;
-        border-radius: 99px !important;
+      .dashboard-sub-panel.active {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
       }
 
-      .dashboard-main-col::-webkit-scrollbar-thumb:hover,
-      .dashboard-side-col::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8 !important;
+      /* CRITICAL: make sure dashboard layout behaves as flex row and stretches naturally */
+      .dashboard-layout {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important; /* CRITICAL FOR STICKY */
+        gap: 24px !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* Make the columns height auto and overflow visible */
+      .dashboard-main-col {
+        flex: 1 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* Sticky consulting panel inside the scrolled tsa-content */
+      .dashboard-side-col {
+        position: sticky !important;
+        top: 24px !important; /* Sticky offset relative to the scrolling tsa-content container */
+        height: auto !important;
+        overflow: visible !important;
+        flex-shrink: 0 !important;
+        width: 330px !important;
+      }
+
+      /* Make the footer span the full width of the scrolled tsa-content area without margins */
+      .tsa-content .site-footer {
+        margin-left: -28px !important;
+        margin-right: -28px !important;
+        width: calc(100% + 56px) !important;
+        margin-top: 40px !important;
       }
     }
+
 
     /* Sidebar Social Link Items Hover */
     .sidebar-link-item {
@@ -10404,5 +10486,262 @@ box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 #account-info-avatar-img {
   transform: scale(1.32) !important;
   transform-origin: center !important;
+}
+
+/* SITE FOOTER IN BLUE */
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #094775 0%, #052c4a 100%);
+  color: #ffffff !important;
+  padding: 50px 0 0;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0 !important;
+  display: block !important;
+  clear: both !important;
+}
+
+.footer-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto 40px;
+  align-items: start;
+  box-sizing: border-box;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.footer-title {
+  margin: 0 0 20px;
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-align: left;
+}
+
+.footer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-list li {
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer-list a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.footer-list a:hover {
+  color: #ffffff !important;
+  transform: translateX(4px);
+}
+
+.footer-item-icon {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.footer-icon {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.footer-text.font-semibold {
+  font-weight: 600;
+  color: #ffffff !important;
+}
+
+.social-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.social-btn {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  text-decoration: none;
+  border: none;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.1);
+}
+
+.social-btn.facebook {
+  background: linear-gradient(135deg, #1877f2, #166fe5);
+}
+
+.social-btn.messenger {
+  background: linear-gradient(135deg, #0084ff, #a21fff, #ff5b7f);
+}
+
+.social-btn.tiktok {
+  background: #010101;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.social-btn.youtube {
+  background: linear-gradient(135deg, #ff0000, #c40000);
+}
+
+.newsletter-form {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+  padding: 4px 4px 4px 16px;
+  max-width: 260px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.newsletter-form:focus-within {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 13.5px;
+  width: 100%;
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.newsletter-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #094775;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  padding: 0;
+}
+
+.newsletter-btn:hover {
+  background: #f0f5fa;
+  transform: scale(1.05);
+}
+
+.footer-info-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+  text-align: left;
+}
+
+.footer-info-text.font-semibold {
+  font-weight: 600;
+  color: #ffffff !important;
+}
+
+.bct-badge img {
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+.bct-badge img:hover {
+  transform: scale(1.03);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 24px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+.footer-bottom-content {
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .site-footer {
+    padding: 40px 0 0;
+  }
+}
+
+/* TAB CONTENT WRAPPER FOR FOOTER PUSH */
+.tab-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1 0 auto;
+  min-height: calc(100vh - 94px);
+  box-sizing: border-box;
 }
 

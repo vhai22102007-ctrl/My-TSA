@@ -133,6 +133,255 @@
     if (node) node.innerHTML = "";
   }
 
+  function openImageZoomModal(url) {
+    var existing = document.getElementById("global-image-zoom-modal");
+    if (existing) existing.remove();
+
+    var modal = document.createElement("div");
+    modal.id = "global-image-zoom-modal";
+    modal.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; backdrop-filter: blur(4px); user-select: none;";
+
+    var closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    closeBtn.style.cssText = "position: absolute; top: 20px; right: 20px; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; transition: transform 0.2s;";
+    closeBtn.onclick = function() {
+      modal.remove();
+    };
+
+    var imgWrapper = document.createElement("div");
+    imgWrapper.style.cssText = "max-width: 90%; max-height: 80%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 8px;";
+
+    var largeImg = document.createElement("img");
+    largeImg.src = url;
+    largeImg.style.cssText = "max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; transition: transform 0.25s ease; background: #ffffff; padding: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: zoom-in;";
+    imgWrapper.appendChild(largeImg);
+
+    var toolbar = document.createElement("div");
+    toolbar.style.cssText = "position: absolute; bottom: 30px; display: flex; align-items: center; gap: 16px; background: rgba(255, 255, 255, 0.95); padding: 8px 20px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100000;";
+
+    var currentZoom = 1.0;
+    var currentRotation = 0;
+    var isDragging = false;
+    var startX = 0, startY = 0;
+    var translateX = 0, translateY = 0;
+
+    function updateTransform(useTransition) {
+      if (useTransition) {
+        largeImg.style.transition = "transform 0.25s ease";
+      } else {
+        largeImg.style.transition = "none";
+      }
+      largeImg.style.transform = "translate(" + translateX + "px, " + translateY + "px) scale(" + currentZoom + ") rotate(" + currentRotation + "deg)";
+    }
+
+    // Drag-to-pan events
+    largeImg.addEventListener("mousedown", function(e) {
+      if (currentZoom <= 1.0) return;
+      e.preventDefault();
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      largeImg.style.cursor = "grabbing";
+    });
+
+    window.addEventListener("mousemove", function(e) {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform(false); // No transition during drag for fluid responsiveness
+    });
+
+    window.addEventListener("mouseup", function() {
+      if (isDragging) {
+        isDragging = false;
+        largeImg.style.cursor = "grab";
+      }
+    });
+
+    // Support touch devices for dragging
+    largeImg.addEventListener("touchstart", function(e) {
+      if (currentZoom <= 1.0) return;
+      var touch = e.touches[0];
+      isDragging = true;
+      startX = touch.clientX - translateX;
+      startY = touch.clientY - translateY;
+    });
+
+    window.addEventListener("touchmove", function(e) {
+      if (!isDragging) return;
+      var touch = e.touches[0];
+      translateX = touch.clientX - startX;
+      translateY = touch.clientY - startY;
+      updateTransform(false);
+    });
+
+    window.addEventListener("touchend", function() {
+      isDragging = false;
+    });
+
+    function createToolBtn(iconSvg, title, onClick) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.innerHTML = iconSvg;
+      btn.title = title;
+      btn.style.cssText = "background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #334155; border-radius: 50%; transition: all 0.2s; padding: 0;";
+      btn.addEventListener("mouseenter", function() {
+        btn.style.background = "#e2e8f0";
+        btn.style.color = "#000";
+      });
+      btn.addEventListener("mouseleave", function() {
+        btn.style.background = "transparent";
+        btn.style.color = "#334155";
+      });
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    var btnZoomIn = createToolBtn(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
+      "Phóng to",
+      function(e) {
+        e.stopPropagation();
+        currentZoom = Math.min(3.0, currentZoom + 0.25);
+        if (currentZoom > 1.0) {
+          largeImg.style.cursor = "grab";
+        }
+        updateTransform(true);
+      }
+    );
+
+    var btnZoomOut = createToolBtn(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-out"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
+      "Thu nhỏ",
+      function(e) {
+        e.stopPropagation();
+        currentZoom = Math.max(0.5, currentZoom - 0.25);
+        if (currentZoom <= 1.0) {
+          translateX = 0;
+          translateY = 0;
+          largeImg.style.cursor = "zoom-in";
+        } else {
+          largeImg.style.cursor = "grab";
+        }
+        updateTransform(true);
+      }
+    );
+
+    var btnRotateLeft = createToolBtn(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+      "Xoay trái",
+      function(e) {
+        e.stopPropagation();
+        currentRotation -= 90;
+        updateTransform(true);
+      }
+    );
+
+    var btnRotateRight = createToolBtn(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>',
+      "Xoay phải",
+      function(e) {
+        e.stopPropagation();
+        currentRotation += 90;
+        updateTransform(true);
+      }
+    );
+
+    modal.onclick = function() {
+      modal.remove();
+    };
+
+    imgWrapper.onclick = function(e) {
+      e.stopPropagation();
+    };
+
+    toolbar.onclick = function(e) {
+      e.stopPropagation();
+    };
+
+    toolbar.appendChild(btnRotateLeft);
+    toolbar.appendChild(btnRotateRight);
+    toolbar.appendChild(btnZoomOut);
+    toolbar.appendChild(btnZoomIn);
+
+    modal.appendChild(closeBtn);
+    modal.appendChild(imgWrapper);
+    modal.appendChild(toolbar);
+
+    document.body.appendChild(modal);
+  }
+
+  function applyZoomToAllImages() {
+    var selectors = [
+      "#question-body img", 
+      "#passage-pane img", 
+      ".stimulus-card img",
+      ".question-text-content img"
+    ];
+    selectors.forEach(function(sel) {
+      var root = document;
+      root.querySelectorAll(sel).forEach(function(img) {
+        if (img.classList.contains("zoomed-enabled") || img.classList.contains("choice-image") || img.classList.contains("tma-matching-num")) {
+          return;
+        }
+        
+        img.classList.add("zoomed-enabled");
+        img.style.cursor = "zoom-in";
+        
+        img.onclick = function() {
+          openImageZoomModal(img.src);
+        };
+        
+        var parent = img.parentNode;
+        if (parent && !parent.classList.contains("zoom-img-wrapper")) {
+          var outer = document.createElement("div");
+          outer.className = "zoom-img-outer";
+          outer.style.cssText = "display: block; text-align: center; margin: 15px auto; width: 100%;";
+
+          var wrapper = document.createElement("div");
+          wrapper.className = "zoom-img-wrapper";
+          
+          var imgWidth = img.style.width || (img.getAttribute("width") ? img.getAttribute("width") + "px" : "auto");
+          wrapper.style.cssText = "position: relative; display: inline-block; max-width: 100%; width: " + imgWidth + "; text-align: center;";
+          
+          img.style.width = "100%";
+          img.style.margin = "0";
+          img.style.display = "block";
+          
+          parent.insertBefore(outer, img);
+          outer.appendChild(wrapper);
+          wrapper.appendChild(img);
+          
+          var zoomBtn = document.createElement("button");
+          zoomBtn.type = "button";
+          zoomBtn.className = "image-zoom-btn";
+          zoomBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>';
+          zoomBtn.style.cssText = "position: absolute; bottom: 8px; right: 8px; width: 28px; height: 28px; background: rgba(255,255,255,0.9); border: 1px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #334155; cursor: pointer; transition: all 0.2s ease; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 0;";
+          
+          zoomBtn.addEventListener("mouseenter", function() {
+            zoomBtn.style.background = "#ffffff";
+            zoomBtn.style.color = "#000000";
+            zoomBtn.style.transform = "scale(1.05)";
+          });
+          zoomBtn.addEventListener("mouseleave", function() {
+            zoomBtn.style.background = "rgba(255,255,255,0.9)";
+            zoomBtn.style.color = "#334155";
+            zoomBtn.style.transform = "scale(1.0)";
+          });
+          
+          zoomBtn.onclick = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            openImageZoomModal(img.src);
+          };
+          
+          wrapper.appendChild(zoomBtn);
+        }
+      });
+    });
+  }
+
   function createImage(url, altText, widthPercent) {
     var holder = document.createElement("div");
     holder.className = "question-image-wrap";
@@ -197,8 +446,34 @@
     var res = extractMultipleChoiceInstruction(question, rawText);
     rawText = res.cleanText;
     
+    var qType = (question && (question.question_type || question.type)) || "";
+    if (qType === "fill_blank") {
+      var hasInstruction = false;
+      var cleanLower = rawText.trim().toLowerCase();
+      var instructionKeywords = [
+        "điền từ", "điền số", "điền đáp án", "điền cụm từ", "kéo thả", "chọn từ", "chọn đáp án", "chọn cụm từ", "điền vào chỗ trống"
+      ];
+      for (var k = 0; k < instructionKeywords.length; k++) {
+        if (cleanLower.indexOf(instructionKeywords[k]) === 0 || cleanLower.includes("<strong>" + instructionKeywords[k])) {
+          hasInstruction = true;
+          break;
+        }
+      }
+      if (!hasInstruction) {
+        rawText = '<div class="default-instruction" style="margin-bottom: 8px; font-family: inherit; font-weight: 700; color: #1e293b;">Điền từ/cụm từ thích hợp vào chỗ trống:</div>' + rawText;
+      }
+    }
+
     // Auto bold instruction headers/titles
     var phrasesToBold = [
+      "Điền từ/cụm từ thích hợp vào chỗ trống:",
+      "Điền từ/ cụm từ thích hợp vào chỗ trống:",
+      "Điền từ hoặc cụm từ thích hợp vào chỗ trống:",
+      "Điền từ/cụm từ thích hợp vào ô trống:",
+      "Điền từ/ cụm từ thích hợp vào ô trống:",
+      "Điền từ hoặc cụm từ thích hợp vào ô trống:",
+      "Điền từ/cụm từ thích hợp vào các ô trống:",
+      "Điền từ/cụm từ thích hợp vào các chỗ trống:",
       "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
       "Kéo thả từ/cụm từ phù hợp vào chỗ trống:",
       "Điền số nguyên thích hợp vào chỗ trống:",
@@ -668,11 +943,31 @@
       // Style pool as a flexbox column with padding and background border
       pool.style.cssText = "background-color: #fff5f5; border: 1.5px solid #fee2e2; border-radius: 12px; padding: 18px 20px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;";
       
+      var poolHeader = document.createElement("div");
+      poolHeader.className = "tma-matching-pool-header";
+      poolHeader.style.cssText = "display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; margin-bottom: 4px;";
+
       var poolTitle = document.createElement("div");
       poolTitle.className = "tma-matching-pool-title";
       poolTitle.textContent = "Danh sách";
-      poolTitle.style.cssText = "display: block; font-size: 16px; font-weight: 800; color: #c2272d; font-family: inherit; margin: 0; text-align: left; width: 100%; align-self: flex-start;";
-      pool.appendChild(poolTitle);
+      poolTitle.style.cssText = "font-size: 16px; font-weight: 800; color: #c2272d; font-family: inherit; margin: 0;";
+      poolHeader.appendChild(poolTitle);
+
+      // Move bookmark button inside the pink table header if found
+      var qRow = container.closest(".split-question-row");
+      if (qRow) {
+        var bookmarkBtn = qRow.querySelector(".bookmark-button");
+        if (bookmarkBtn) {
+          // Clear any custom overrides to let it use the standard stylesheet styles (gray background, gray flag)
+          bookmarkBtn.removeAttribute("style");
+          bookmarkBtn.style.margin = "0";
+          bookmarkBtn.style.flexShrink = "0";
+          
+          poolHeader.appendChild(bookmarkBtn);
+        }
+      }
+
+      pool.appendChild(poolHeader);
 
       var chipsGrid = document.createElement("div");
       chipsGrid.className = "tma-matching-chips-grid";
@@ -867,7 +1162,7 @@
     if (isMatchingLayout) {
       var rowsContainer = document.createElement("div");
       rowsContainer.className = "tma-matching-container";
-      rowsContainer.style.cssText = "display: flex; flex-direction: column; gap: 14px; margin-top: 15px; margin-bottom: 20px; width: 100%;";
+      rowsContainer.style.cssText = "display: flex; flex-direction: column; gap: 14px; margin-top: 0px; margin-bottom: 20px; width: 100%;";
 
       var currentTextPart = "";
       var matchingRowIndex = 0;
@@ -979,6 +1274,12 @@
         }
       }
 
+      var dragInstruction = document.createElement("div");
+      dragInstruction.className = "drag-drop-instruction-text";
+      dragInstruction.innerHTML = "<strong><em>Kéo thả từ/ cụm từ phù hợp vào chỗ trống:</em></strong>";
+      dragInstruction.style.cssText = "font-size: 15px; color: #1e293b; margin: 0; font-family: inherit;";
+      mainWrap.appendChild(dragInstruction);
+
       mainWrap.appendChild(rowsContainer);
       container.appendChild(mainWrap);
       return;
@@ -1016,6 +1317,12 @@
       span.innerHTML = sanitizeHTML(part.content || "");
       textBlock.appendChild(span);
     });
+
+    var dragInstruction = document.createElement("div");
+    dragInstruction.className = "drag-drop-instruction-text";
+    dragInstruction.innerHTML = "<strong><em>Kéo thả từ/ cụm từ phù hợp vào chỗ trống:</em></strong>";
+    dragInstruction.style.cssText = "font-size: 15px; color: #1e293b; margin: 0; font-family: inherit;";
+    mainWrap.appendChild(dragInstruction);
 
     mainWrap.appendChild(textBlock);
     container.appendChild(mainWrap);
@@ -1056,7 +1363,23 @@
     
     var hasInlineBlanks = (type === "fill_blank" && /\[(o\d+|blank)\]/.test(rawText));
     if (hasInlineBlanks) {
+      var hasInstruction = false;
+      var cleanLower = rawText.trim().toLowerCase();
+      var instructionKeywords = [
+        "điền từ", "điền số", "điền đáp án", "điền cụm từ", "kéo thả", "chọn từ", "chọn đáp án", "chọn cụm từ", "điền vào chỗ trống"
+      ];
+      for (var k = 0; k < instructionKeywords.length; k++) {
+        if (cleanLower.indexOf(instructionKeywords[k]) === 0 || cleanLower.includes("<strong>" + instructionKeywords[k])) {
+          hasInstruction = true;
+          break;
+        }
+      }
+      if (!hasInstruction) {
+        rawText = '<div class="default-instruction" style="margin-bottom: 8px; font-family: inherit; font-weight: 700; color: #1e293b;">Điền từ/cụm từ thích hợp vào chỗ trống:</div>' + rawText;
+      }
+
       if (bodyEl) {
+        bodyEl.style.display = "";
         clear(bodyEl);
         
         var lead = document.createElement("div");
@@ -1065,6 +1388,14 @@
         var phrasesToBold = [
           "\\(Chọn nhiều đáp án\\)",
           "Chọn nhiều đáp án",
+          "Điền từ/cụm từ thích hợp vào chỗ trống:",
+          "Điền từ/ cụm từ thích hợp vào chỗ trống:",
+          "Điền từ hoặc cụm từ thích hợp vào chỗ trống:",
+          "Điền từ/cụm từ thích hợp vào ô trống:",
+          "Điền từ/ cụm từ thích hợp vào ô trống:",
+          "Điền từ hoặc cụm từ thích hợp vào ô trống:",
+          "Điền từ/cụm từ thích hợp vào các ô trống:",
+          "Điền từ/cụm từ thích hợp vào các chỗ trống:",
           "Kéo thả từ/ cụm từ phù hợp vào chỗ trống:",
           "Kéo thả từ/cụm từ phù hợp vào chỗ trống:",
           "Điền số nguyên thích hợp vào chỗ trống:",
@@ -1152,7 +1483,17 @@
         clear(answerEl);
       }
     } else {
-      renderQuestionText(question, bodyEl);
+      if (type === "drag_drop") {
+        if (bodyEl) {
+          clear(bodyEl);
+          bodyEl.style.display = "none";
+        }
+      } else {
+        if (bodyEl) {
+          bodyEl.style.display = "";
+        }
+        renderQuestionText(question, bodyEl);
+      }
       if (answerEl) {
         clear(answerEl);
         var renderer = QUESTION_RENDERERS[type];
@@ -1278,6 +1619,9 @@
     if (options.typeset !== false) {
       typesetMath([bodyEl, answerEl]);
     }
+    
+    // Auto apply zoom lightbox overlay to all images
+    setTimeout(applyZoomToAllImages, 100);
   }
 
   function renderQuestion(question, savedAnswer, onAnswerChange, options) {
@@ -1336,6 +1680,9 @@
     if (options.typeset !== false) {
       typesetMath([box]);
     }
+
+    // Auto apply zoom lightbox overlay to all images in stimulus
+    setTimeout(applyZoomToAllImages, 100);
 
     return box;
   }
