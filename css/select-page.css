@@ -7429,19 +7429,19 @@
        INDEPENDENT SCROLLABLE COLUMNS FOR DASHBOARD (OVERVIEW) - V3 (BULLETPROOF)
        ========================================================================== */
     @media (min-width: 992px) {
-      /* Lock body/html scrolling on desktop for independent column scroll */
+      /* Enable body scrolling on desktop for sticky layout */
       html, 
       body {
-        height: 100vh !important;
-        overflow: hidden !important;
+        height: auto !important;
+        overflow: visible !important;
       }
 
       .tsa-shell {
         display: flex !important;
         flex-direction: row !important;
-        height: calc(100vh - var(--topbar-height)) !important;
+        height: auto !important;
         margin-top: var(--topbar-height) !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         position: relative !important;
       }
 
@@ -7450,9 +7450,9 @@
       }
 
       .tsa-sidebar {
-        position: relative !important;
-        top: 0 !important;
-        height: 100% !important;
+        position: sticky !important;
+        top: var(--topbar-height) !important;
+        height: calc(100vh - var(--topbar-height)) !important;
         width: var(--sidebar-width) !important;
         flex-shrink: 0 !important;
         z-index: 20 !important;
@@ -7460,6 +7460,8 @@
         overflow-y: auto !important;
         -ms-overflow-style: none;
         scrollbar-width: none;
+        background: #ffffff !important;
+        border-right: 1px solid #e2e8f0 !important;
       }
       .tsa-sidebar::-webkit-scrollbar {
         display: none !important;
@@ -7499,14 +7501,14 @@
         display: block !important;
       }
 
-      /* Make tsa-content the main independent scroll container */
+      /* Allow content to grow naturally without internal scrolling */
       .tsa-content {
         flex: 1 !important;
-        height: 100% !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
+        height: auto !important;
+        overflow: visible !important;
         margin-left: 0 !important;
         padding-top: 24px !important;
+        padding-bottom: 60px !important;
       }
 
       /* Allow the active tab panel and sub-panel container sizes to grow naturally */
@@ -7543,30 +7545,18 @@
         height: auto !important;
         overflow: visible !important;
       }
-
-      /* Make the columns height auto and overflow visible */
       .dashboard-main-col {
         flex: 1 !important;
         height: auto !important;
         overflow: visible !important;
       }
-
-      /* Sticky consulting panel inside the scrolled tsa-content */
       .dashboard-side-col {
         position: sticky !important;
-        top: 24px !important; /* Sticky offset relative to the scrolling tsa-content container */
+        top: 94px !important;
         height: auto !important;
         overflow: visible !important;
         flex-shrink: 0 !important;
         width: 330px !important;
-      }
-
-      /* Make the footer span the full width of the scrolled tsa-content area without margins */
-      .tsa-content .site-footer {
-        margin-left: -28px !important;
-        margin-right: -28px !important;
-        width: calc(100% + 56px) !important;
-        margin-top: 40px !important;
       }
     }
 
