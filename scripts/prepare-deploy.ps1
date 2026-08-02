@@ -58,5 +58,5 @@ foreach ($folder in $forbidden) {
 }
 
 $size = (Get-ChildItem -LiteralPath $deploy -Recurse -File | Measure-Object Length -Sum).Sum
-Write-Host ("Netlify package ready: {0:N2} MB" -f ($size / 1MB))
+Write-Host ("Cloudflare Pages package ready: {0:N2} MB" -f ($size / 1MB))
 Write-Host "Large assets and exam JSON remain on Cloudflare R2."
