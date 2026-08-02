@@ -10,8 +10,217 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
 
-  <link rel="stylesheet" href="css/select-page.css?v=1.0.9">
+  <link rel="stylesheet" href="css/select-page.css?v=1.1.4">
+  <style>
+    /* Force collapsed sidebar layout to bypass local browser cache */
+    .tsa-shell.sidebar-collapsed .tsa-sidebar {
+      width: 80px !important;
+    }
+    .tsa-shell.sidebar-collapsed .tsa-content {
+      margin-left: 80px !important;
+    }
+    @media (min-width: 992px) {
+      .tsa-shell.sidebar-collapsed .tsa-content {
+        margin-left: 0 !important;
+      }
+      .tsa-shell.sidebar-collapsed .topbar-left-logo-search {
+        width: 80px !important;
+        padding-left: 0 !important;
+        justify-content: center !important;
+      }
+    }
+    .tsa-shell.sidebar-collapsed .tsa-topbar {
+      padding-left: 104px !important;
+    }
+    .tsa-shell.sidebar-collapsed .tsa-logo .logo-collapsed,
+    .tsa-shell.sidebar-collapsed .topbar-left-logo-search .logo-collapsed {
+      display: block !important;
+      width: 40px !important;
+      height: auto !important;
+      object-fit: contain !important;
+      margin: 8px auto 0 auto !important;
+    }
+    .tsa-shell.sidebar-collapsed .sidebar-profile {
+      width: 40px !important;
+      height: 40px !important;
+      margin: 12px auto 4px auto !important;
+    }
+    .tsa-shell.sidebar-collapsed .sidebar-profile .sidebar-avatar-circle-wrapper {
+      width: 32px !important;
+      height: 32px !important;
+    }
+    .social-circle-wrapper {
+      display: flex !important;
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 50% !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      color: #ffffff !important;
+      transition: transform 0.2s ease, filter 0.2s ease !important;
+    }
+    .social-circle-wrapper.facebook {
+      background: #1877f2 !important;
+    }
+    .social-circle-wrapper.messenger {
+      background: #0084ff !important;
+    }
+    .social-circle-wrapper.tiktok {
+      background: #010101 !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      box-sizing: border-box !important;
+    }
+    .social-circle-wrapper.youtube {
+      background: linear-gradient(135deg, #ff0000, #c40000) !important;
+    }
+    .sidebar-link-item .social-circle-wrapper svg,
+    .sidebar-link-item .social-circle-wrapper svg * {
+      stroke: none !important;
+      fill: #ffffff !important;
+    }
+
+    /* PREMIUM LIGHT BLUE SIDEBAR THEME (#eff3f8) */
+    .tsa-sidebar {
+      background: #eff3f8 !important;
+      border-right: 1px solid rgba(19, 92, 151, 0.08) !important;
+    }
+    .tsa-sidebar .tsa-logo {
+      background: #eff3f8 !important;
+      border-bottom: 1px solid rgba(19, 92, 151, 0.08) !important;
+    }
+    .tsa-shell.sidebar-collapsed .tsa-sidebar .tsa-logo {
+      border-bottom: 1px solid rgba(19, 92, 151, 0.08) !important;
+    }
+    
+    /* Profile Box */
+    .sidebar-profile {
+      background: rgba(19, 92, 151, 0.1) !important;
+      border: none !important;
+    }
+    .sidebar-profile:hover {
+      background: rgba(19, 92, 151, 0.16) !important;
+      border: none !important;
+    }
+    .sidebar-profile.active {
+      background: rgba(19, 92, 151, 0.12) !important;
+      border: none !important;
+    }
+    .sidebar-profile-name {
+      color: #135c97 !important;
+    }
+    .sidebar-profile-username {
+      color: #135c97 !important;
+      opacity: 0.7 !important;
+    }
+
+    /* Menu & Sidebar items default colors (dark blue `#135c97`) */
+    .tsa-menu .menu-item, 
+    .tsa-menu .submenu-item,
+    .sidebar-links-section .sidebar-links-title,
+    .sidebar-link-item,
+    .sidebar-link-item span {
+      color: #135c97 !important;
+    }
+    .sidebar-links-section .sidebar-links-title {
+      opacity: 0.8 !important;
+    }
+    .tsa-menu .menu-item svg,
+    .tsa-menu .submenu-item svg,
+    .sidebar-link-item svg,
+    .tsa-menu .group-arrow svg {
+      stroke: #135c97 !important;
+    }
+
+    /* Hover States (White card style) */
+    .tsa-menu .menu-item:hover,
+    .tsa-menu .submenu-item:hover,
+    .sidebar-link-item:hover {
+      background: #ffffff !important;
+      color: var(--brand-red, #dc2626) !important;
+    }
+    .tsa-menu .menu-item:hover svg,
+    .tsa-menu .submenu-item:hover svg,
+    .sidebar-link-item:hover svg,
+    .tsa-menu .group-arrow:hover svg {
+      stroke: var(--brand-red, #dc2626) !important;
+    }
+    .tsa-menu .menu-item:hover span,
+    .tsa-menu .submenu-item:hover span,
+    .sidebar-link-item:hover span {
+      color: var(--brand-red, #dc2626) !important;
+    }
+
+    /* Active States */
+    .tsa-menu a.active,
+    .submenu-item.active {
+      background: #ffffff !important;
+      color: var(--brand-red, #dc2626) !important;
+      font-weight: 600 !important;
+    }
+    .tsa-menu a.active svg,
+    .submenu-item.active svg {
+      stroke: var(--brand-red, #dc2626) !important;
+    }
+    .tsa-menu a.active span,
+    .submenu-item.active span {
+      color: var(--brand-red, #dc2626) !important;
+    }
+
+    /* Separators */
+    .tsa-sidebar > div[style*="border-top"] {
+      border-top: 1px solid rgba(19, 92, 151, 0.1) !important;
+    }
+
+    /* Footer "Trang chủ" Button */
+    .sidebar-footer {
+      border-top: 1px solid rgba(19, 92, 151, 0.08) !important;
+      background: #eff3f8 !important;
+    }
+    .sidebar-footer .btn-outline {
+      color: #135c97 !important;
+      border-color: #135c97 !important;
+      background: #ffffff !important;
+    }
+    .sidebar-footer .btn-outline:hover {
+      background: #eff6ff !important;
+      color: var(--brand-red, #dc2626) !important;
+      border-color: var(--brand-red, #dc2626) !important;
+    }
+  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+  <style>
+    /* CRITICAL FIX: Force dashboard 2-column layout on all screen sizes >= 769px */
+    @media (min-width: 769px) {
+      .dashboard-layout {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        gap: 24px !important;
+        flex-wrap: nowrap !important;
+      }
+      .dashboard-main-col {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        max-width: calc(100% - 354px) !important;
+      }
+      .dashboard-side-col {
+        width: 330px !important;
+        min-width: 330px !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .tab-panel.active {
+        overflow: visible !important;
+        height: auto !important;
+      }
+      #tab-overview {
+        overflow-y: auto !important;
+        height: 100% !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="select-page">
@@ -234,29 +443,36 @@
       <div class="sidebar-links-section" style="margin-bottom: 6px;">
         <div class="sidebar-links-title" style="font-size: 11px; font-weight: 700; color: #135c97; margin-bottom: 4px; padding: 0 16px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8;">Liên kết</div>
         <div class="sidebar-links-list" style="display: flex; flex-direction: column; gap: 2px; padding: 0 8px;">
-          <a id="social-link-facebook" href="https://facebook.com/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 12.5px; font-weight: 500;">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-            </svg>
+          <a id="social-link-facebook" href="https://facebook.com/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+            <span class="social-circle-wrapper facebook">
+              <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor">
+                <path d="M9.3 13.5v-5h1.7l.2-1.9H9.3V5.4c0-.6.1-.8.7-.8h1.1V2.8c-.2 0-.9-.1-1.6-.1-1.6 0-2.6.9-2.6 2.7v1.4H5.2v1.9h1.7v5H9.3z" />
+              </svg>
+            </span>
             <span id="social-link-facebook-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Facebook TMA Study</span>
           </a>
-          <a id="social-link-youtube" href="https://youtube.com/c/ThayVuNgocAnh" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 12.5px; font-weight: 500;">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
-              <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
-            </svg>
+          <a id="social-link-youtube" href="https://youtube.com/c/ThayVuNgocAnh" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+            <span class="social-circle-wrapper youtube">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.516 0-9.387.507A3.003 3.003 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.387.507 9.387.507s7.517 0 9.389-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.93 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </span>
             <span id="social-link-youtube-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Youtube TMA Study</span>
           </a>
-          <a id="social-link-tiktok" href="https://tiktok.com/@mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 12.5px; font-weight: 500;">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
-            </svg>
+          <a id="social-link-tiktok" href="https://tiktok.com/@mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+            <span class="social-circle-wrapper tiktok">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
+              </svg>
+            </span>
             <span id="social-link-tiktok-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Tiktok TMA Study</span>
           </a>
-          <a id="social-link-messenger" href="https://m.me/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 12.5px; font-weight: 500;">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
+          <a id="social-link-messenger" href="https://m.me/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+            <span class="social-circle-wrapper messenger">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.51 3.75 7.15V22l3.41-1.87c.88.24 1.8.37 2.84.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1 12.25l-2.5-2.67-4.8 2.67 5.3-5.63 2.5 2.67 4.8-2.67-5.3 5.63z"/>
+              </svg>
+            </span>
             <span id="social-link-messenger-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Messenger TMA Study</span>
           </a>
         </div>
@@ -283,7 +499,7 @@
       <div class="topbar-left-logo-search" style="position: absolute; left: 0; top: 0; bottom: 0; width: 240px; align-items: center; padding-left: 20px; border-right: 1px solid #e2e8f0; box-sizing: border-box; background: #ffffff; height: 100%;">
         <a href="#" style="display: flex; align-items: center; text-decoration: none;" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;">
           <img class="logo-full" src="https://assets.tmastudy.io.vn/assets/tmaaaa.png?v=2" alt="TMA Study" onerror="this.src='https://assets.tmastudy.io.vn/assets/logo1.png'" style="width: 195px; height: auto; object-fit: contain; margin-top: 8px;">
-          <img class="logo-collapsed" src="https://assets.tmastudy.io.vn/assets/logo_blue.png" alt="TMA" style="display: none; width: 34px; height: auto; object-fit: contain;">
+          <img class="logo-collapsed" src="https://assets.tmastudy.io.vn/assets/logo_blue.png" alt="TMA" style="display: none; width: 48px; height: auto; object-fit: contain;">
         </a>
       </div>
 
@@ -368,138 +584,587 @@
 
           <!-- Tab Content: Home -->
           <div id="dash-panel-home" class="dashboard-sub-panel active">
-            <div class="dashboard-layout">
+            <div class="dashboard-layout" style="display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:24px!important;">
               <!-- Main Content (Left Column) -->
               <div class="dashboard-main-col">
-                <!-- Banner Slider -->
-                <div class="dashboard-banner-wrapper">
-                  <img src="https://assets.tmastudy.io.vn/assets/ban.png?v=2" class="central-banner-img" alt="Banner">
+                
+                <!-- Sub-tabs: Trang chủ / Cộng đồng -->
+                <div class="dashboard-sub-tabs">
+                  <div class="sub-tab-indicator"></div>
+                  <button class="sub-tab-btn active" id="sub-tab-home-btn" onclick="switchSubTab('home')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; display: inline-block; vertical-align: middle;">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Trang chủ
+                  </button>
+                  <button class="sub-tab-btn" id="sub-tab-community-btn" onclick="switchSubTab('community')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; display: inline-block; vertical-align: middle;">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Cộng đồng
+                  </button>
                 </div>
 
-                <!-- Welcome Greeting -->
-                <div class="welcome-greeting-bar">
-                  <div class="welcome-text">
-                    Xin chào <strong id="welcome-student-name-bold">Học sinh</strong> !
-                  </div>
-                  <div class="welcome-date">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    <span id="welcome-current-date">Thứ Năm - 09/07/2026</span>
-                  </div>
-                </div>
+                <!-- Sub-panel Home Content -->
+                <div id="sub-panel-home-content" style="display: flex; flex-direction: column; gap: 20px;">
 
-                <!-- Metric Cards -->
-                <div class="metric-cards-grid">
-                  <div class="metric-card blue-card">
-                    <div class="metric-icon-circle">
-                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                    </div>
-                    <div class="metric-info">
-                      <span class="metric-val" id="metric-enrolled-count">2</span>
-                      <span class="metric-label">Khoá đang học</span>
-                    </div>
+                  <div class="dashboard-banner-wrapper">
+                    <img src="https://assets.tmastudy.io.vn/assets/ban.png?v=2" class="central-banner-img" alt="Banner">
                   </div>
-                  <div class="metric-card orange-card">
-                    <div class="metric-icon-circle">
-                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    </div>
-                    <div class="metric-info">
-                      <span class="metric-val" id="metric-study-hours">0</span>
-                      <span class="metric-label">Giờ học tuần này</span>
-                    </div>
-                  </div>
-                  <div class="metric-card purple-card">
-                    <div class="metric-icon-circle">
-                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                    </div>
-                    <div class="metric-info">
-                      <span class="metric-val" id="metric-lessons-completed">0</span>
-                      <span class="metric-label">Bài đã học tuần này</span>
-                    </div>
-                  </div>
-                </div>
 
-                <!-- Activity Contribution Graph (Hoạt động học tập) -->
-                <div class="recent-activity-section">
-                  <div class="activity-graph-header">
-                    <div class="year-badge">2026</div>
+                  <!-- Welcome Greeting -->
+                  <div class="welcome-greeting-bar">
+                    <div class="welcome-text">
+                      Xin chào <strong id="welcome-student-name-bold">Học sinh</strong> !
+                    </div>
+                    <div class="welcome-date">
+                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                      <span id="welcome-current-date">Thứ Năm - 09/07/2026</span>
+                    </div>
                   </div>
-                  <div class="activity-graph-container">
-                    <div class="month-labels">
-                      <span>Th.1</span>
-                      <span>Th.2</span>
-                      <span>Th.3</span>
-                      <span>Th.4</span>
-                      <span>Th.5</span>
-                      <span>Th.6</span>
-                      <span>Th.7</span>
-                      <span>Th.8</span>
-                      <span>Th.9</span>
-                      <span>Th.10</span>
-                      <span>Th.11</span>
-                      <span>Th.12</span>
+
+                  <!-- Metric Cards -->
+                  <div class="metric-cards-grid">
+                    <div class="metric-card blue-card">
+                      <div class="metric-icon-circle">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                      </div>
+                      <div class="metric-info">
+                        <span class="metric-val" id="metric-enrolled-count">2</span>
+                        <span class="metric-label">Khoá đang học</span>
+                      </div>
                     </div>
-                    <div class="graph-grid-wrapper">
-                      <div class="graph-grid" id="activity-graph-grid"></div>
+                    <div class="metric-card orange-card">
+                      <div class="metric-icon-circle">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                      </div>
+                      <div class="metric-info">
+                        <span class="metric-val" id="metric-study-hours">0</span>
+                        <span class="metric-label">Giờ học tuần này</span>
+                      </div>
                     </div>
-                    <div class="graph-footer">
-                      <span class="total-exams-count">40 bài thi trong năm</span>
-                      <div class="graph-legend">
-                        <span>Ít</span>
-                        <div class="legend-cells">
-                          <div class="legend-cell level-0"></div>
-                          <div class="legend-cell level-1"></div>
-                          <div class="legend-cell level-2"></div>
-                          <div class="legend-cell level-3"></div>
-                          <div class="legend-cell level-4"></div>
+                    <div class="metric-card purple-card">
+                      <div class="metric-icon-circle">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                      </div>
+                      <div class="metric-info">
+                        <span class="metric-val" id="metric-lessons-completed">0</span>
+                        <span class="metric-label">Bài đã học tuần này</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Activity Contribution Graph (Hoạt động học tập) -->
+                  <div class="recent-activity-section">
+                    <div class="activity-graph-header">
+                      <div class="year-badge">2026</div>
+                    </div>
+                    <div class="activity-graph-container">
+                      <div class="month-labels">
+                        <span>Th.1</span>
+                        <span>Th.2</span>
+                        <span>Th.3</span>
+                        <span>Th.4</span>
+                        <span>Th.5</span>
+                        <span>Th.6</span>
+                        <span>Th.7</span>
+                        <span>Th.8</span>
+                        <span>Th.9</span>
+                        <span>Th.10</span>
+                        <span>Th.11</span>
+                        <span>Th.12</span>
+                      </div>
+                      <div class="graph-grid-wrapper">
+                        <div class="graph-grid" id="activity-graph-grid"></div>
+                      </div>
+                      <div class="graph-footer">
+                        <span class="total-exams-count">40 bài thi trong năm</span>
+                        <div class="graph-legend">
+                          <span>Ít</span>
+                          <div class="legend-cells">
+                            <div class="legend-cell level-0"></div>
+                            <div class="legend-cell level-1"></div>
+                            <div class="legend-cell level-2"></div>
+                            <div class="legend-cell level-3"></div>
+                            <div class="legend-cell level-4"></div>
+                          </div>
+                          <span>Nhiều</span>
                         </div>
-                        <span>Nhiều</span>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Teacher Info Card -->
-                <div class="study-detail-card" style="margin-top: 20px;">
-                  <h3 class="study-card-heading">Thông tin giảng viên</h3>
-                  <div class="study-teacher-profile-layout" style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
-                    <!-- Left: image -->
-                    <div class="study-teacher-left" style="width: 240px; flex-shrink: 0; min-width: unset; display: block;">
-                      <div class="study-teacher-poster-wrap" style="width: 100%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <img src="https://assets.tmastudy.io.vn/assets/giangvien.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: auto; display: block; object-fit: contain;">
+                  <!-- Teacher Info Card -->
+                  <div class="study-detail-card" style="margin-top: 20px;">
+                    <h3 class="study-card-heading">Thông tin giảng viên</h3>
+                    <div class="study-teacher-profile-layout" style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+                      <!-- Left: image -->
+                      <div class="study-teacher-left" style="width: 240px; flex-shrink: 0; min-width: unset; display: block;">
+                        <div class="study-teacher-poster-wrap" style="width: 100%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                          <img src="https://assets.tmastudy.io.vn/assets/giangvien.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: auto; display: block; object-fit: contain;">
+                        </div>
                       </div>
+                      
+                      <!-- Right: content -->
+                      <div class="study-teacher-right" style="flex: 1; min-width: 280px;">
+                        <span style="font-size: 10px; font-weight: 800; color: #0f5a9e; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 6px;">
+                          <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
+                          <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900;">✓</span>
+                        </div>
+                        
+                        <p class="study-teacher-subtitle" style="color: #0f5a9e; font-size: 13.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
+                        
+                        <p class="study-teacher-bio" style="font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+                          Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
+                        </p>
+                        
+                        <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Cựu học sinh hệ Kỹ sư tài năng Đại học Bách Khoa Hà Nội.</li>
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Chủ đề gi�                  <!-- Post 1: Thầy Nghiêm Xuân Tân -->
+                  <div class="community-post-card" id="post-1">
+                    <div class="post-header">
+                      <div class="post-avatar-wrap" style="background: #ffffff; border: 1px solid #f1f5f9; padding: 2px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                        <img src="assets/logo-ftu.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: contain;">
+                      </div>
+                      <div class="post-header-info">
+                        <span class="post-author-name">Thầy Nghiêm Xuân Tân</span>
+                        <span class="post-time">1 ngày trước</span>
+                      </div>
+                    </div>
+                    <div class="post-content" style="font-family: inherit; line-height: 1.6; color: #1e293b;">
+                      <p style="margin-bottom: 12px; font-weight: 600; color: #0f172a; font-size: 15px;">📢 THÔNG BÁO KHAI MỞ KỲ THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) LẦN 1 - NĂM HỌC 2026-2027</p>
+                      <p style="margin-bottom: 12px; color: #334155;">Chào tất cả các em học sinh khóa 2K9 và các sĩ tử đang miệt mài ôn thi đánh giá tư duy! Nhằm tạo cơ hội cho các em cọ xát thực tế, đánh giá chính xác năng lực bản thân và làm quen với áp lực thời gian, hệ thống TMA Study kết hợp cùng ban cố vấn chính thức tổ chức <strong>Kỳ thi thử Đánh giá tư duy (TSA) Chuẩn Cấu trúc 3 Phần mới nhất của Đại học Bách Khoa Hà Nội</strong>.</p>
+                      
+                      <div style="background: #f8fafc; border-left: 4px solid #135c97; padding: 14px 18px; margin: 16px 0; border-radius: 6px; font-size: 13.5px; color: #334155;">
+                        <p style="font-weight: 700; color: #135c97; margin-bottom: 10px; font-size: 14px;">📋 CẤU TRÚC ĐỀ THI CHI TIẾT (CHUẨN 3 PHẦN - 150 PHÚT - 100 ĐIỂM):</p>
+                        
+                        <p style="font-weight: 600; color: #0f172a; margin-top: 8px;">Phần 1: Tư duy Toán học (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
+                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
+                          <li style="margin-bottom: 4px;">• Bao gồm các câu hỏi trắc nghiệm nhiều lựa chọn, đúng/sai, điền khuyết và kéo thả.</li>
+                          <li style="margin-bottom: 4px;">• Nội dung tập trung đánh giá khả năng mô hình hóa toán học, giải quyết vấn đề thực tiễn, tư duy hình học không gian, hàm số, giải tích, số học và tổ hợp xác suất nâng cao.</li>
+                        </ul>
+
+                        <p style="font-weight: 600; color: #0f172a; margin-top: 12px;">Phần 2: Tư duy Đọc hiểu (Thời gian làm bài: 30 phút | Điểm số: 20 điểm)</p>
+                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
+                          <li style="margin-bottom: 4px;">• Gồm các văn bản dài (từ 800 - 1000 từ) thuộc lĩnh vực khoa học kỹ thuật, công nghệ, y sinh hoặc văn học xã hội.</li>
+                          <li style="margin-bottom: 4px;">• Đánh giá năng lực đọc nhanh, phân tích logic, định vị luận điểm của tác giả, tổng hợp thông tin cốt lõi và rút ra kết luận chuẩn xác từ văn bản.</li>
+                        </ul>
+
+                        <p style="font-weight: 600; color: #0f172a; margin-top: 12px;">Phần 3: Tư duy Giải quyết vấn đề (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
+                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.5;">
+                          <li style="margin-bottom: 4px;">• Đề thi cung cấp các bảng số liệu, biểu đồ thực nghiệm, thông tin về các hiện tượng Vật lí, Hóa học, Sinh học hoặc quy trình kỹ thuật.</li>
+                          <li style="margin-bottom: 4px;">• Đánh giá kỹ năng đọc hiểu biểu đồ, xử lý số liệu đo đạc thực tế, xâu chuỗi thông tin đa chiều để giải quyết các bài toán khoa học mang tính thực tiễn.</li>
+                        </ul>
+                      </div>
+
+                      <div style="background: #eff6ff; border-radius: 6px; padding: 12px 16px; margin: 16px 0; border: 1px dashed #bfdbfe; font-size: 13.5px;">
+                        <p style="font-weight: 700; color: #1e40af; margin-bottom: 6px;">⏰ LỊCH THI VÀ QUY CHẾ THAM GIA:</p>
+                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.6; color: #1e3a8a;">
+                          <li>📅 <strong>Thời gian mở thi:</strong> Từ 08:00 sáng đến 22:00 tối Chủ Nhật, ngày 09/08/2026.</li>
+                          <li>💻 <strong>Hình thức:</strong> Thi online trực tiếp tại thẻ <strong>"Phòng luyện"</strong> -> <strong>"Đánh giá tư duy - TSA"</strong> trên website TMA Study.</li>
+                          <li>⏱️ <strong>Quy chế:</strong> Hệ thống đếm ngược thời gian độc lập cho từng phần y hệt kỳ thi thật của ĐHBK Hà Nội. Khi hết thời gian của mỗi phần, hệ thống tự động lưu bài và chuyển sang phần tiếp theo, thí sinh không thể quay lại làm phần trước đó.</li>
+                        </ul>
+                      </div>
+
+                      <p style="margin-top: 12px; font-weight: 500; color: #475569;">Kỳ thi thử hoàn toàn miễn phí cho tất cả học sinh đăng ký tài khoản ôn luyện trên hệ thống. Kết quả thi, đáp án chi tiết từng câu và bảng xếp hạng vinh danh sẽ được công bố vào lúc 08h00 sáng thứ Hai (10/08/2026). Các em hãy chủ động sắp xếp thời gian ôn tập và chuẩn bị giấy nháp, máy tính bỏ túi thật chu đáo nhé!</p>
+                    </div>
+                    <div class="post-actions-divider"></div>
+                    <div class="post-actions-row">
+                      <button class="post-action-btn" onclick="likePost(1)">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                        <span id="like-count-1">1452</span> đánh giá
+                      </button>
+                      <button class="post-action-btn" onclick="focusCommentInput(1)">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <span id="comment-count-1">12</span> bình luận
+                      </button>
+                      <button class="post-action-btn" onclick="sharePost(1)">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        Chia sẻ
+                      </button>
                     </div>
                     
-                    <!-- Right: content -->
-                    <div class="study-teacher-right" style="flex: 1; min-width: 280px;">
-                      <span style="font-size: 10px; font-weight: 800; color: #0f5a9e; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
-                      
-                      <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 6px;">
-                        <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
-                        <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900;">✓</span>
+                    <div class="post-comments-section">
+                      <div class="comment-list" id="comment-list-1">
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Nguyễn Văn Bình</div>
+                            <div class="comment-item-text">Em đăng ký tham gia rồi ạ, hy vọng đề thi thử lần này sẽ giúp em làm quen với áp lực phòng thi thật!</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Lê Thuỳ Trang</div>
+                            <div class="comment-item-text">Thầy ơi, phần 3 Giải quyết vấn đề có nhiều câu thực tế phân tích biểu đồ như đề năm ngoái không ạ?</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Phạm Minh Hoàng</div>
+                            <div class="comment-item-text">Em đang ôn tập phần Đọc hiểu mà vẫn hay bị nhầm luận điểm tác giả, mong đề thi thử lần này sát đề thật.</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Trần Minh Thư</div>
+                            <div class="comment-item-text">Thầy ơi thi thử lần này có giới hạn thời gian làm bài từng phần riêng như khi thi thật không ạ?</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar" style="background: #ffffff; border: 1px solid #f1f5f9; padding: 2px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+                            <img src="assets/logo-ftu.png" alt="User" style="width:100%; height:100%; object-fit:contain;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author" style="color: #135c97; font-weight: 600;">Thầy Nghiêm Xuân Tân</div>
+                            <div class="comment-item-text">Chào Thư, hệ thống phòng luyện của TMA Study đã thiết kế đồng hồ đếm ngược riêng biệt cho từng phần thi (Toán học 60 phút, Đọc hiểu 30 phút, Giải quyết vấn đề 60 phút) y hệt thi thật, hết thời gian mỗi phần hệ thống tự chuyển phần nên các em phải căn thời gian thật kỹ nhé.</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Hoàng Anh Tuấn</div>
+                            <div class="comment-item-text">Rủ cả nhóm bạn thân cùng thi xem ai điểm cao hơn, chúc các bạn 2K9 làm bài tốt!</div>
+                          </div>
+                        </div>
+                      </div>êm Xuân Tân</div>
+                            <div class="comment-item-text">Chào Thư, vì ba điểm S, H, K nằm trên các cạnh của hình chóp S.ABC và S.ADC tương ứng đó em. Khi dùng công thức Simson mở rộng cho khối đa diện S.AHKC, ta chia đôi thành S.AHK và S.AKC rồi cộng lại, từ đó có tỉ lệ diện tích đáy của ΔAHK trên tứ giác AHKC nhé.</div>
+                          </div>
+                        </div>
+                        <div class="comment-item">
+                          <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-item-content-box">
+                            <div class="comment-item-author">Hoàng Anh Tuấn</div>
+                            <div class="comment-item-text">Cảm ơn thầy Tân đẹp trai ạ! Em đã lưu bài về học rồi ạ.</div>
+                          </div>
+                        </div>
                       </div>
                       
-                      <p class="study-teacher-subtitle" style="color: #0f5a9e; font-size: 13.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
-                      
-                      <p class="study-teacher-bio" style="font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
-                        Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
-                      </p>
-                      
-                      <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
-                        <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
-                        <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
-                        <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
-                        <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Cựu học sinh hệ Kỹ sư tài năng Đại học Bách Khoa Hà Nội.</li>
-                        <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Chủ đề giảng dạy tiêu biểu: Vật lý 12, mô hình chủ đề du lịch, bài toán dao động điều hòa.</li>
-                      </ul>
+                      <div class="comment-input-area">
+                        <div class="comment-input-avatar">
+                          <img class="current-user-avatar" src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Chủ đề giảng dạy chuyên sâu: Phương pháp giải nhanh trắc nghiệm Vật lý và tư duy Đánh giá năng lực.</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
+
+                  <!-- Container for Community Sub-Panel -->
+                  <div id="sub-panel-community-content" style="display: none; flex-direction: column; gap: 15px;">
+
+                    <!-- Post 2: Admin Nguyễn Văn Hải - Lịch thi thử TSA -->
+                    <div class="community-post-card" id="post-2">
+                      <div class="post-header">
+                        <div class="post-avatar-wrap">
+                          <img src="assets/nam.png" alt="Admin Nguyễn Văn Hải" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="post-header-info">
+                          <span class="post-author-name" style="display: flex; align-items: center; gap: 4px;">Admin Nguyễn Văn Hải <span title="Admin" style="font-size: 13px;">🔑</span></span>
+                          <span class="post-time">2 ngày trước</span>
+                        </div>
+                      </div>
+                      <div class="post-content">
+                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🌿 THÔNG BÁO: LỊCH THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) ĐỢT 2 - KỲ THI NĂM HỌC 2026 - 2027</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45;">Chào các em học sinh khóa 2k9 và 2k8! Nhằm giúp các em rèn luyện kỹ năng làm bài và kiểm tra năng lực hiện tại trước khi bước vào kỳ thi chính thức của Đại học Bách Khoa Hà Nội, TMA TSA chính thức mở cổng thi thử đợt 2 vào cuối tuần này.</p>
+                        
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 CẤU TRÚC ĐỀ THI THỬ (Chuẩn cấu trúc ĐHBK Hà Nội):</p>
+                        <ul style="margin-bottom: 6px; padding-left: 20px; line-height: 1.45;">
+                          <li><strong>Phần 1 - Tư duy Toán học (60 phút | 40 điểm):</strong> Trắc nghiệm nhiều lựa chọn, Đúng/Sai, Điền khuyết. Tập trung vào tư duy logic toán, mô hình hóa và ứng dụng thực tiễn.</li>
+                          <li><strong>Phần 2 - Tư duy Đọc hiểu (30 phút | 20 điểm):</strong> Đọc và phân tích nhanh 2 bài đọc khoa học kỹ thuật và văn học dài (800-1000 từ).</li>
+                          <li><strong>Phần 3 - Tư duy Giải quyết vấn đề (60 phút | 40 điểm):</strong> Câu hỏi liên quan đến bảng số liệu thực nghiệm Vật lí, Hóa học, Sinh học và quy trình công nghệ.</li>
+                        </ul>
+
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🍃 LỊCH THI CHI TIẾT:</p>
+                        <ul style="margin-bottom: 6px; padding-left: 20px; line-height: 1.45;">
+                          <li>🕒 <strong>Mở đề thi:</strong> 08:00 sáng Thứ Bảy (08/08/2026)</li>
+                          <li>🕒 <strong>Đóng cổng thi:</strong> 22:00 tối Chủ Nhật (09/08/2026)</li>
+                        </ul>
+
+                        <p style="margin-bottom: 8px; line-height: 1.45;">🌾 <strong>Phần thưởng vinh danh:</strong> Top 3 bạn đạt điểm số cao nhất đợt này sẽ nhận được học bổng 100% khóa học <strong>Tống ôn TSA</strong> cùng bộ cẩm nang luyện đề chuyên sâu trị giá <strong>1.200.000 VNĐ</strong> từ TMA TSA!</p>
+                        
+                        <div class="post-image-container">
+                          <img src="assets/tongontsa.png" alt="Cẩm nang ôn thi TSA">
+                        </div>
+                      </div>
+                      
+                      <div class="post-actions-divider"></div>
+                      <div class="post-actions-row">
+                        <button class="post-action-btn" onclick="likePost(2)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                          <span id="like-count-2">524</span> đánh giá
+                        </button>
+                        <button class="post-action-btn" onclick="focusCommentInput(2)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                          <span id="comment-count-2">2</span> bình luận
+                        </button>
+                        <button class="post-action-btn" onclick="sharePost(2)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                          Chia sẻ
+                        </button>
+                      </div>
+                      
+                      <div class="post-comments-section">
+                        <div class="comment-list" id="comment-list-2">
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="assets/avt.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Lê Minh Tuấn</div>
+                              <div class="comment-item-text">Đề đợt 1 khó phết, đặc biệt là phần Khoa học nhiều biểu đồ lạ quá. Hy vọng đề lần này bám sát hơn nữa để em test trình! 🔥</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Hoàng Thảo Nguyên</div>
+                              <div class="comment-item-text">Quyết tâm giật học bổng thôi các bạn ơi. Có ai lập nhóm ôn chung không ạ?</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="comment-input-area">
+                          <div class="comment-input-avatar">
+                            <img class="current-user-avatar" src="assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-input-container">
+                            <textarea class="comment-textarea current-user-name-placeholder" id="comment-textarea-2" placeholder="Viết bình luận dưới tên Học sinh..." oninput="updateCharCount(2)" onkeydown="handleCommentKey(event, 2)"></textarea>
+                            <div class="comment-input-footer">
+                              <div class="comment-tools">
+                                <button class="comment-tool-btn" title="Thẻ băm">#</button>
+                                <button class="comment-tool-btn" title="Định dạng chữ">Aa</button>
+                                <button class="comment-tool-btn" title="Đính kèm ảnh">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </button>
+                                <button class="comment-tool-btn" title="Biểu cảm">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                </button>
+                              </div>
+                              <div class="comment-submit-row">
+                                <span class="comment-char-count" id="char-count-2">0/1000</span>
+                                <button class="comment-send-btn" onclick="submitComment(2)">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Post 3: Thầy Nghiêm Xuân Tân - Khai giảng khóa học Lý -->
+                    <div class="community-post-card" id="post-3">
+                      <div class="post-header">
+                        <div class="post-avatar-wrap">
+                          <img src="assets/giangvien.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="post-header-info">
+                          <span class="post-author-name">Thầy Nghiêm Xuân Tân</span>
+                          <span class="post-time">5 ngày trước</span>
+                        </div>
+                      </div>
+                      <div class="post-content">
+                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🌴 KHAI GIẢNG LỚP LUYỆN THI CHUYÊN SÂU TƯ DUY KHOA HỌC (TSA) VÀ VẬT LÝ THPTQG 2027</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45;">Chào các em học sinh thân yêu! Thầy Nghiêm Xuân Tân đây. Để chuẩn bị tốt nhất cho kỳ thi THPT Quốc Gia và kỳ thi Đánh giá tư duy Bách Khoa năm tới, thầy chính thức nhận đăng ký khóa học offline và online chất lượng cao.</p>
+                        
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 KHÓA HỌC GIÚP CÁC EM NHỮNG GÌ?</p>
+                        <ul style="margin-bottom: 6px; padding-left: 20px; line-height: 1.45;">
+                          <li>Hệ thống hóa toàn bộ kiến thức Vật lý từ cơ bản đến vận dụng cao của cả lớp 11 và 12.</li>
+                          <li>Luyện kỹ năng phân tích bảng số liệu, đọc hiểu các biểu đồ thực nghiệm - phần cốt lõi và chiếm điểm số lớn trong đề thi TSA.</li>
+                          <li>Cung cấp ngân hàng câu hỏi độc quyền với hơn 3000 bài tập tự luyện và phòng thi ảo thực chiến.</li>
+                        </ul>
+
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌵 Lịch học:</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45; padding-left: 10px;">Tối Thứ 3 và Thứ 6 hàng tuần (20h00 - 22h00) qua phòng học Zoom tương tác trực tiếp. Toàn bộ các buổi học đều có video record chất lượng HD để học sinh xem lại bất cứ lúc nào.</p>
+                        <p style="margin-bottom: 8px; font-weight: 500; color: #15803d; line-height: 1.45;">🪴 <strong>Đặc biệt ưu đãi giảm 20% học phí</strong> cho các nhóm đăng ký từ 3 bạn trở lên trước ngày 15/08/2026. Các em nhanh tay điền Form tư vấn ở cột bên phải nhé!</p>
+                        
+                        <div class="post-image-container">
+                          <img src="assets/ly.png" alt="Lớp học Vật lý thầy Nghiêm Xuân Tân">
+                        </div>
+                      </div>
+                      
+                      <div class="post-actions-divider"></div>
+                      <div class="post-actions-row">
+                        <button class="post-action-btn" onclick="likePost(3)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                          <span id="like-count-3">412</span> đánh giá
+                        </button>
+                        <button class="post-action-btn" onclick="focusCommentInput(3)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                          <span id="comment-count-3">1</span> bình luận
+                        </button>
+                        <button class="post-action-btn" onclick="sharePost(3)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                          Chia sẻ
+                        </button>
+                      </div>
+                      
+                      <div class="post-comments-section">
+                        <div class="comment-list" id="comment-list-3">
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Phan Hoàng Vy</div>
+                              <div class="comment-item-text">Em đã đăng ký học thử tuần trước, thầy giảng phần bài tập đồ thị dao động cực kỳ dễ hiểu luôn ạ! Highly recommend cho các bạn đăng ký học nha. 🥰</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="comment-input-area">
+                          <div class="comment-input-avatar">
+                            <img class="current-user-avatar" src="assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-input-container">
+                            <textarea class="comment-textarea current-user-name-placeholder" id="comment-textarea-3" placeholder="Viết bình luận dưới tên Học sinh..." oninput="updateCharCount(3)" onkeydown="handleCommentKey(event, 3)"></textarea>
+                            <div class="comment-input-footer">
+                              <div class="comment-tools">
+                                <button class="comment-tool-btn" title="Thẻ băm">#</button>
+                                <button class="comment-tool-btn" title="Định dạng chữ">Aa</button>
+                                <button class="comment-tool-btn" title="Đính kèm ảnh">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </button>
+                                <button class="comment-tool-btn" title="Biểu cảm">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                </button>
+                              </div>
+                              <div class="comment-submit-row">
+                                <span class="comment-char-count" id="char-count-3">0/1000</span>
+                                <button class="comment-send-btn" onclick="submitComment(3)">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Post 4: Trần Hoàng Long - Kinh nghiệm ôn thi TSA đạt 85+ -->
+                    <div class="community-post-card" id="post-4">
+                      <div class="post-header">
+                        <div class="post-avatar-wrap">
+                          <img src="assets/avt.png" alt="Trần Hoàng Long" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="post-header-info">
+                          <span class="post-author-name">Trần Hoàng Long</span>
+                          <span class="post-time">1 tuần trước</span>
+                        </div>
+                      </div>
+                      <div class="post-content">
+                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🪴 KINH NGHIỆM TỰ HỌC ĐẠT 85.6/100 ĐIỂM KỲ THI ĐÁNH GIÁ TƯ DUY (TSA)</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45;">Chào mọi người! Mình là Hoàng Long, cựu học sinh K68 Trường Công nghệ Thông tin & Truyền thông - ĐHBK Hà Nội. Vừa rồi mình có tham gia kỳ thi TSA và đạt điểm số 85.6 điểm. Mình xin chia sẻ lại một số kinh nghiệm ôn luyện thực chiến hy vọng giúp ích cho các bạn khóa sau:</p>
+                        
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 1. TƯ DUY TOÁN HỌC (Ôn nền tảng sớm):</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45; padding-left: 10px;">Toán TSA không nặng nề tính toán trâu bò mà đòi hỏi sự suy luận thông minh, giải quyết vấn đề mô hình thực tiễn. Hãy nắm chắc chuyên đề xác suất, hình học không gian và tích phân. Hãy tự giải lại các câu hỏi khó để hiểu sâu bản chất.</p>
+                        
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🍃 2. TƯ DUY ĐỌC HIỂU (Tốc độ đọc rất quan trọng):</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45; padding-left: 10px;">Hãy tập thói quen đọc nhanh bằng cách lướt qua câu hỏi trước để định vị từ khóa trong văn bản. Rèn luyện đọc các bài báo cáo khoa học dài mỗi ngày.</p>
+
+                        <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌵 3. GIẢI QUYẾT VẤN ĐỀ (Luyện đọc biểu đồ và bảng biểu):</p>
+                        <p style="margin-bottom: 6px; line-height: 1.45; padding-left: 10px;">Đây là phần chiếm tỷ lệ điểm cao. Các bạn hãy luyện thói quen phân tích thật kỹ các bảng số liệu đo đạc thực nghiệm Vật lí, Hóa học, Sinh học, chú ý đến các thông số biến thiên và chú giải biểu đồ.</p>
+
+                        <p style="margin-bottom: 8px; line-height: 1.45;">Chúc các em học sinh 2k9 và 2k8 tự tin ôn tập thật tốt và đạt ước mơ vào Bách Khoa nhé!</p>
+                        
+                        <div class="post-image-container">
+                          <img src="assets/anhnen.png" alt="Đại học Bách Khoa Hà Nội C1">
+                        </div>
+                      </div>
+                      
+                      <div class="post-actions-divider"></div>
+                      <div class="post-actions-row">
+                        <button class="post-action-btn" onclick="likePost(4)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                          <span id="like-count-4">684</span> đánh giá
+                        </button>
+                        <button class="post-action-btn" onclick="focusCommentInput(4)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                          <span id="comment-count-4">1</span> bình luận
+                        </button>
+                        <button class="post-action-btn" onclick="sharePost(4)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                          Chia sẻ
+                        </button>
+                      </div>
+                      
+                      <div class="post-comments-section">
+                        <div class="comment-list" id="comment-list-4">
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Nguyễn Tuấn Kiệt</div>
+                              <div class="comment-item-text">Bài viết siêu chi tiết luôn ạ! Cảm ơn anh Long rất nhiều, em đang hoang mang phần đọc biểu đồ may quá có hướng đi của anh. 💖</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="comment-input-area">
+                          <div class="comment-input-avatar">
+                            <img class="current-user-avatar" src="assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-input-container">
+                            <textarea class="comment-textarea current-user-name-placeholder" id="comment-textarea-4" placeholder="Viết bình luận dưới tên Học sinh..." oninput="updateCharCount(4)" onkeydown="handleCommentKey(event, 4)"></textarea>
+                            <div class="comment-input-footer">
+                              <div class="comment-tools">
+                                <button class="comment-tool-btn" title="Thẻ băm">#</button>
+                                <button class="comment-tool-btn" title="Định dạng chữ">Aa</button>
+                                <button class="comment-tool-btn" title="Đính kèm ảnh">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </button>
+                                <button class="comment-tool-btn" title="Biểu cảm">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                </button>
+                              </div>
+                              <div class="comment-submit-row">
+                                <span class="comment-char-count" id="char-count-4">0/1000</span>
+                                <button class="comment-send-btn" onclick="submitComment(4)">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
               </div>
 
               <!-- Right Column -->
               <div class="dashboard-side-col">
                 <!-- Activate Card Section (Kích hoạt thẻ) -->
-                <div class="activate-card-container" style="width: 100% !important; margin-bottom: 24px;">
+                <div class="activate-card-container" style="width: 100% !important; margin-bottom: 12px !important;">
                   <button class="activate-card-btn" type="button" onclick="switchTab('account')">
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" style="margin-right: 8px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
                     Kích hoạt thẻ
@@ -575,6 +1240,87 @@
                     </div>
                     <button class="consult-submit-btn" type="submit">Gửi</button>
                   </form>
+                </div>
+
+                <!-- COUNTDOWN EXAM BANNERS -->
+                <div class="countdown-banners-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; margin-top: -6px;">
+                  <!-- Banner TSA -->
+                  <div class="exam-countdown-card tsa" data-target="2027-06-15T08:00:00">
+                    <div class="countdown-overlay"></div>
+                    <div class="countdown-content">
+                      <div class="exam-label">TSA</div>
+                      <div class="timer-groups">
+                        <div class="timer-box">
+                          <div class="timer-num num-tsa">00</div>
+                          <div class="timer-unit">Ngày</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-tsa">00</div>
+                          <div class="timer-unit">Giờ</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-tsa">00</div>
+                          <div class="timer-unit">Phút</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-tsa">00</div>
+                          <div class="timer-unit">Giây</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Banner HSA -->
+                  <div class="exam-countdown-card hsa" data-target="2027-05-10T08:00:00">
+                    <div class="countdown-overlay"></div>
+                    <div class="countdown-content">
+                      <div class="exam-label">HSA</div>
+                      <div class="timer-groups">
+                        <div class="timer-box">
+                          <div class="timer-num num-hsa">00</div>
+                          <div class="timer-unit">Ngày</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-hsa">00</div>
+                          <div class="timer-unit">Giờ</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-hsa">00</div>
+                          <div class="timer-unit">Phút</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-hsa">00</div>
+                          <div class="timer-unit">Giây</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Banner THPTQG -->
+                  <div class="exam-countdown-card thptqg" data-target="2027-06-25T08:00:00">
+                    <div class="countdown-overlay"></div>
+                    <div class="countdown-content">
+                      <div class="exam-label">THPTQG</div>
+                      <div class="timer-groups">
+                        <div class="timer-box">
+                          <div class="timer-num num-thptqg">00</div>
+                          <div class="timer-unit">Ngày</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-thptqg">00</div>
+                          <div class="timer-unit">Giờ</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-thptqg">00</div>
+                          <div class="timer-unit">Phút</div>
+                        </div>
+                        <div class="timer-box">
+                          <div class="timer-num num-thptqg">00</div>
+                          <div class="timer-unit">Giây</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- News Section (Tin tức) -->
@@ -1343,8 +2089,8 @@
             </svg>
           </a>
           <a href="https://tiktok.com/@tma.tsa" target="_blank" class="social-btn tiktok" aria-label="TikTok">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.74-3.94-1.74-.22-.21-.42-.45-.6-.71-.11 1.71-.85 3.39-2.12 4.57-1.27 1.17-3.03 1.79-4.75 1.78-1.71.01-3.41-.6-4.57-1.78-1.28-1.18-2-2.87-2.11-4.59-.11-1.72.63-3.41 1.9-4.59 1.28-1.18 3.05-1.79 4.77-1.78v4.03c-.63-.01-1.29.21-1.77.65-.48.45-.75 1.09-.79 1.75-.04.66.19 1.33.64 1.78.46.45 1.12.7 1.78.68.66.01 1.3-.23 1.76-.69.47-.46.73-1.12.75-1.79-.01-2.99 0-5.97-.01-8.96z"/>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
             </svg>
           </a>
           <a href="https://youtube.com/" target="_blank" class="social-btn youtube" aria-label="Youtube">
@@ -2311,6 +3057,6 @@
   <!-- SITE FOOTER IN BLUE -->
   
 
-  <script src="js/select-page.js?v=1.0.9"></script>
+  <script src="js/select-page.js?v=1.1.2"></script>
 </body>
 </html>

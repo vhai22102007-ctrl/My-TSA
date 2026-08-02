@@ -33,7 +33,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: 32px 36px; /* Reduced padding */
-  border-radius: 16px; /* Slightly more rounded corners to match other dialogs */
+  border-radius: 8px; /* Slightly more rounded corners to match other dialogs */
   background: #ffffff;
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 8px 10px -6px rgb(0 0 0 / 10%);
 }
@@ -269,7 +269,7 @@
   width: 100%;
   max-width: 520px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   padding: 40px;
   text-align: center;

@@ -900,6 +900,14 @@
         if (typeof window.renderAccountRegisteredCourses === "function") {
           window.renderAccountRegisteredCourses();
         }
+
+        // Update community feed avatars and placeholders
+        document.querySelectorAll('.current-user-avatar').forEach(img => {
+          img.src = avatarUrl;
+        });
+        document.querySelectorAll('.current-user-name-placeholder').forEach(el => {
+          el.placeholder = `Viết bình luận dưới tên ${displayName}...`;
+        });
       }
 
       window.switchAccountSubTab = function(subTabId) {
@@ -5640,36 +5648,44 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
       function updateAppLogo(tabId) {
         const logoFullEl = document.querySelector(".tsa-sidebar .logo-full");
         const logoCollapsedEl = document.querySelector(".tsa-sidebar .logo-collapsed");
-        const topbarLogoEl = document.querySelector(".topbar-left-logo-search img");
+        const topbarLogoFullEl = document.querySelector(".topbar-left-logo-search .logo-full");
+        const topbarLogoCollapsedEl = document.querySelector(".topbar-left-logo-search .logo-collapsed");
         
         const isTsaPractice = (tabId === "tsa-practice");
         
         if (isTsaPractice) {
           const redLogoUrl = "https://assets.tmastudy.io.vn/assets/logo2.png?v=5";
+          const collapsedLogoUrl = "https://assets.tmastudy.io.vn/assets/logo1.png";
           if (logoFullEl) {
             logoFullEl.src = redLogoUrl;
             logoFullEl.removeAttribute("onerror");
           }
           if (logoCollapsedEl) {
-            logoCollapsedEl.src = redLogoUrl;
+            logoCollapsedEl.src = collapsedLogoUrl;
           }
-          if (topbarLogoEl) {
-            topbarLogoEl.src = redLogoUrl;
-            topbarLogoEl.removeAttribute("onerror");
+          if (topbarLogoFullEl) {
+            topbarLogoFullEl.src = redLogoUrl;
+            topbarLogoFullEl.removeAttribute("onerror");
+          }
+          if (topbarLogoCollapsedEl) {
+            topbarLogoCollapsedEl.src = collapsedLogoUrl;
           }
         } else {
           const blueLogoFullUrl = "https://assets.tmastudy.io.vn/assets/tmaaaa.png?v=2";
-          const blueLogoCollapsedUrl = "https://assets.tmastudy.io.vn/assets/logo_blue.png";
+          const collapsedLogoUrl = "https://assets.tmastudy.io.vn/assets/logo_blue.png";
           if (logoFullEl) {
             logoFullEl.src = blueLogoFullUrl;
             logoFullEl.onerror = function() { this.src = 'https://assets.tmastudy.io.vn/assets/logo1.png'; };
           }
           if (logoCollapsedEl) {
-            logoCollapsedEl.src = blueLogoCollapsedUrl;
+            logoCollapsedEl.src = collapsedLogoUrl;
           }
-          if (topbarLogoEl) {
-            topbarLogoEl.src = blueLogoFullUrl;
-            topbarLogoEl.onerror = function() { this.src = 'https://assets.tmastudy.io.vn/assets/logo1.png'; };
+          if (topbarLogoFullEl) {
+            topbarLogoFullEl.src = blueLogoFullUrl;
+            topbarLogoFullEl.onerror = function() { this.src = 'https://assets.tmastudy.io.vn/assets/logo1.png'; };
+          }
+          if (topbarLogoCollapsedEl) {
+            topbarLogoCollapsedEl.src = collapsedLogoUrl;
           }
         }
       }
@@ -7396,6 +7412,146 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
         }
       };
 
+      window.switchSubTab = function(subTabName) {
+        const homeBtn = document.getElementById('sub-tab-home-btn');
+        const commBtn = document.getElementById('sub-tab-community-btn');
+        const homeContent = document.getElementById('sub-panel-home-content');
+        const commContent = document.getElementById('sub-panel-community-content');
+        const tabsContainer = document.querySelector('.dashboard-sub-tabs');
+
+        if (subTabName === 'home') {
+          if (homeBtn) homeBtn.classList.add('active');
+          if (commBtn) commBtn.classList.remove('active');
+          if (tabsContainer) tabsContainer.classList.remove('show-community');
+          if (homeContent) {
+            homeContent.style.display = 'flex';
+            homeContent.classList.remove('animate-slide-left');
+            homeContent.classList.add('animate-slide-right');
+          }
+          if (commContent) {
+            commContent.style.display = 'none';
+          }
+        } else {
+          if (homeBtn) homeBtn.classList.remove('active');
+          if (commBtn) commBtn.classList.add('active');
+          if (tabsContainer) tabsContainer.classList.add('show-community');
+          if (homeContent) {
+            homeContent.style.display = 'none';
+          }
+          if (commContent) {
+            commContent.style.display = 'flex';
+            commContent.classList.remove('animate-slide-right');
+            commContent.classList.add('animate-slide-left');
+          }
+        }
+      };
+
+      // Mock posts data states
+      const likedPosts = new Set();
+      
+      window.likePost = function(postId) {
+        const likeCountEl = document.getElementById(`like-count-${postId}`);
+        if (!likeCountEl) return;
+        
+        let count = parseInt(likeCountEl.textContent, 10) || 0;
+        const btn = likeCountEl.closest('.post-action-btn');
+        
+        if (likedPosts.has(postId)) {
+          likedPosts.delete(postId);
+          count--;
+          if (btn) btn.classList.remove('liked');
+        } else {
+          likedPosts.add(postId);
+          count++;
+          if (btn) btn.classList.add('liked');
+        }
+        likeCountEl.textContent = count;
+      };
+
+      window.focusCommentInput = function(postId) {
+        const txt = document.getElementById(`comment-textarea-${postId}`);
+        if (txt) txt.focus();
+      };
+
+      window.updateCharCount = function(postId) {
+        const txt = document.getElementById(`comment-textarea-${postId}`);
+        const cnt = document.getElementById(`char-count-${postId}`);
+        if (txt && cnt) {
+          cnt.textContent = `${txt.value.length}/1000`;
+        }
+      };
+
+      window.handleCommentKey = function(event, postId) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          submitComment(postId);
+        }
+      };
+
+      window.submitComment = function(postId) {
+        const txt = document.getElementById(`comment-textarea-${postId}`);
+        if (!txt) return;
+        const text = txt.value.trim();
+        if (!text) return;
+        
+        const list = document.getElementById(`comment-list-${postId}`);
+        if (!list) return;
+        
+        // Retrieve current active student's info
+        let userDisplayName = "Học sinh";
+        let userAvatar = "https://assets.tmastudy.io.vn/assets/nam.png";
+        
+        if (studentInfo) {
+          userDisplayName = (studentInfo.name || studentInfo.username || studentInfo.email || "Học sinh").replace(/[▪■•]/g, "").trim();
+          const gender = studentInfo.gender || "Nam";
+          const avatarFileName = gender === "Nữ" ? "nu.png" : "nam.png";
+          userAvatar = `https://assets.tmastudy.io.vn/assets/${avatarFileName}`;
+        }
+        
+        // Append comment item
+        const commentItem = document.createElement('div');
+        commentItem.className = 'comment-item';
+        commentItem.innerHTML = `
+          <div class="comment-item-avatar">
+            <img src="${userAvatar}" alt="User" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          <div class="comment-item-content-box">
+            <div class="comment-item-author">${userDisplayName}</div>
+            <div class="comment-item-text">${text}</div>
+          </div>
+        `;
+        
+        list.appendChild(commentItem);
+        
+        // Reset comment textarea
+        txt.value = '';
+        updateCharCount(postId);
+        
+        // Increment comment count UI
+        const commentCountEl = document.getElementById(`comment-count-${postId}`);
+        if (commentCountEl) {
+          const currentCount = parseInt(commentCountEl.textContent, 10) || 0;
+          commentCountEl.textContent = currentCount + 1;
+        }
+      };
+
+      window.sharePost = function(postId) {
+        const url = `${window.location.origin}${window.location.pathname}?tab=cong-dong&post=${postId}`;
+        navigator.clipboard.writeText(url).then(() => {
+          if (window.showCustomAlert) {
+            window.showCustomAlert("Sao chép liên kết chia sẻ thành công!", "Chia sẻ");
+          } else {
+            alert("Sao chép liên kết chia sẻ thành công!");
+          }
+        }).catch(() => {
+          if (window.showCustomAlert) {
+            window.showCustomAlert("Sao chép liên kết chia sẻ thành công!", "Chia sẻ");
+          } else {
+            alert("Sao chép liên kết chia sẻ thành công!");
+          }
+        });
+      };
+
       window.handleConsultingSubmit = function(event) {
         event.preventDefault();
         const name = document.getElementById("consult-name").value;
@@ -8041,5 +8197,40 @@ if (false && currentTsaPracticeSubtab === "tong-hop") {
           window.switchDashboardTab("home");
         }
       };
+
+      // Ky thi Countdown Timers
+      function initCountdownTimers() {
+        const updateCountdowns = () => {
+          const cards = document.querySelectorAll('.exam-countdown-card');
+          cards.forEach(card => {
+            const targetStr = card.getAttribute('data-target');
+            if (!targetStr) return;
+            const targetDate = new Date(targetStr).getTime();
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            
+            let days = 0, hours = 0, minutes = 0, seconds = 0;
+            if (diff > 0) {
+              days = Math.floor(diff / (1000 * 60 * 60 * 24));
+              hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            }
+            
+            const numEls = card.querySelectorAll('.timer-num');
+            if (numEls.length === 4) {
+              numEls[0].textContent = String(days).padStart(2, '0');
+              numEls[1].textContent = String(hours).padStart(2, '0');
+              numEls[2].textContent = String(minutes).padStart(2, '0');
+              numEls[3].textContent = String(seconds).padStart(2, '0');
+            }
+          });
+        };
+        
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+      }
+      
+      initCountdownTimers();
 
     })();
