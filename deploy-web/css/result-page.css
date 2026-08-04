@@ -36,7 +36,7 @@ input {
   width: min(560px, 100%);
   overflow: hidden;
   border: 1px solid #d7e0ea;
-  border-radius: 15px;
+  border-radius: 8px;
   background: #fff;
   box-shadow: 0 14px 34px rgba(53, 68, 89, 0.08);
 }
@@ -71,15 +71,15 @@ h2 {
 .result-eyebrow {
   margin: 0 0 7px;
   color: var(--red);
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11.5px;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
 .result-intro {
   margin: 8px 0 20px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -87,8 +87,8 @@ label {
   display: block;
   margin-bottom: 12px;
   color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 18px;
   text-align: center;
 }
@@ -105,7 +105,7 @@ label {
   border-radius: 8px;
   outline: none;
   color: #26354a;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 1px;
   text-align: center;
@@ -130,8 +130,8 @@ label {
   align-items: center;
   justify-content: center;
   color: var(--red);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.35;
   text-align: center;
 }
@@ -143,7 +143,7 @@ label {
   border-radius: 8px;
   background: var(--red);
   color: #fff;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -162,7 +162,7 @@ label {
   justify-content: flex-end;
   margin-top: 16px;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13.5px;
   line-height: 20px;
   text-align: right;
 }
@@ -185,7 +185,7 @@ label {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 8px;
   background: #fff;
   color: var(--ink);
   text-align: left;
@@ -200,7 +200,7 @@ label {
 .result-exam-name {
   display: block;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -210,7 +210,7 @@ label {
   display: block;
   margin-top: 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .result-text-button {
@@ -221,7 +221,7 @@ label {
   border: 0;
   background: none;
   color: var(--blue);
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -235,7 +235,7 @@ label {
 .result-status-panel {
   padding: 24px 18px;
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 8px;
   background: #f8fafc;
   text-align: center;
 }
@@ -257,13 +257,13 @@ label {
 }
 
 .result-status-panel h2 {
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .result-status-panel p {
   margin: 8px auto 0;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
@@ -278,16 +278,16 @@ label {
 .released-name {
   margin-top: 6px;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 13.5px;
 }
 
 .released-badge {
   padding: 6px 9px;
-  border-radius: 5px;
+  border-radius: 8px;
   background: #dcfce7;
   color: #166534;
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11.5px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -302,7 +302,7 @@ label {
   min-height: 145px;
   place-items: center;
   border: 1px solid #f1c6ca;
-  border-radius: 7px;
+  border-radius: 8px;
   background: #fff7f8;
   text-align: center;
 }
@@ -310,15 +310,15 @@ label {
 .score-number {
   color: var(--red);
   font-size: 38px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
 }
 
 .score-total {
   margin-top: 6px;
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .score-stats {
@@ -330,22 +330,22 @@ label {
 .score-stat {
   padding: 11px;
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 8px;
   background: #fff;
 }
 
 .score-stat span {
   display: block;
   color: var(--muted);
-  font-size: 10.5px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 700;
 }
 
 .score-stat strong {
   display: block;
   margin-top: 5px;
   color: var(--ink);
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .result-actions {
@@ -395,7 +395,7 @@ label {
   }
 
   .result-input-wrap input::placeholder {
-    font-size: 14px;
+    font-size: 15px;
     letter-spacing: 2px;
   }
 

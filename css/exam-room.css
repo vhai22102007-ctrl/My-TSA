@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -44,7 +44,7 @@ button {
 
 .submit-confirmation-dialog {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 8px;
   max-width: 500px; /* Slightly wider to match long description */
   padding: 32px 28px;
   text-align: center;
@@ -54,7 +54,7 @@ button {
 
 .fullscreen-entry-dialog {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 8px;
   max-width: 440px; /* Compact width */
   padding: 28px 24px;
   text-align: center;
@@ -80,14 +80,14 @@ button {
 
 .submit-confirmation-dialog p {
   color: #475569;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   margin-bottom: 24px;
 }
 
 .fullscreen-entry-dialog p {
   color: #475569;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   margin-bottom: 24px;
 }
@@ -95,9 +95,9 @@ button {
 .submit-confirmation-submit {
   background: #cd1627; /* Theme red */
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   height: 44px;
   flex: 1;
@@ -114,9 +114,9 @@ button {
 .fullscreen-entry-button {
   background: #cd1627;
   border: 0;
-  border-radius: 12px; /* Rounded button corners matching Image 1 */
+  border-radius: 8px; /* Rounded button corners matching Image 1 */
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   width: 100%; /* Stretches wide like in Image 1 */
   height: 48px; /* Taller button */
@@ -156,9 +156,9 @@ button {
 .submit-confirmation-cancel {
   background: #0b3a78; /* Theme deep blue */
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   height: 44px;
   flex: 1;
@@ -221,14 +221,14 @@ button {
 
 .exam-title-text {
   color: #0f172a;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   margin-right: 12px;
 }
 
 .header-candidate-id {
   color: #cd1627;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -255,7 +255,7 @@ button {
 .question-card {
   background: #ffffff !important;
   border: none !important; /* Removed outer border line as requested */
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 32px 24px;
   height: fit-content;
   max-height: 100%;
@@ -282,7 +282,7 @@ button {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   color: #111827;
   flex-shrink: 0;
 }
@@ -297,8 +297,8 @@ button {
 
 .question-body {
   color: #0f172a;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.6;
   margin-bottom: 24px;
   white-space: pre-wrap;
@@ -313,8 +313,8 @@ button {
 }
 
 .question-lead {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 17px;
+  font-weight: 500;
   color: #0f172a;
   white-space: pre-wrap;
 }
@@ -387,7 +387,7 @@ button {
 }
 
 .choices-container.is-multiple-choice .choice-item::before {
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .choice-item:hover::before {
@@ -406,8 +406,8 @@ button {
 
 .choice-text {
   color: #0f172a;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   line-height: 1.5;
 }
 
@@ -421,8 +421,8 @@ button {
 
 .fill-input-label {
   color: #0f172a;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .fill-input {
@@ -431,8 +431,8 @@ button {
   border-bottom: 1px solid #cbd5e1; /* Underline only */
   border-radius: 0;
   color: #0f172a;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   outline: none;
   padding: 2px 8px;
   transition: border-color .2s ease-in-out;
@@ -445,8 +445,8 @@ button {
 
 .feedback-container {
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   margin-top: 24px;
   padding: 12px 16px;
   width: 100%;
@@ -483,7 +483,7 @@ button {
 
 .sidebar-title {
   color: #0f172a;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   margin: 0 0 12px 0;
 }
@@ -492,7 +492,7 @@ button {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .info-label {
@@ -527,7 +527,7 @@ button {
 
 .timer-label {
   color: #64748b;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .timer-value {
@@ -540,10 +540,10 @@ button {
 .submit-button {
   background: #b91c1c;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   color: #fff;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   height: 36px;
   padding: 0 18px;
@@ -580,8 +580,8 @@ button {
 
 .legend-label {
   color: #4b5563;
-  font-size: 15px; /* Increased slightly */
-  font-weight: 400;
+  font-size: 16px; /* Increased slightly */
+  font-weight: 500;
 }
 
 .legend-badges {
@@ -596,8 +596,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px; /* Increased slightly */
-  font-weight: 500;
+  font-size: 16px; /* Increased slightly */
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
@@ -654,8 +654,8 @@ button {
   border-radius: 50%;
   cursor: pointer;
   display: flex;
-  font-size: 15px; /* Increased slightly */
-  font-weight: 500;
+  font-size: 16px; /* Increased slightly */
+  font-weight: 600;
   justify-content: center;
   transition: all .2s ease-in-out;
   width: 100%;
@@ -730,12 +730,12 @@ button {
 
 .progress-title {
   color: #64748b;
-  font-size: 15px; /* Increased slightly */
+  font-size: 16px; /* Increased slightly */
 }
 
 .progress-count {
   color: #64748b;
-  font-size: 14px; /* Increased slightly */
+  font-size: 15px; /* Increased slightly */
   display: flex;
   align-items: baseline;
   gap: 2px;
@@ -773,7 +773,7 @@ button {
 
 .progress-percent {
   color: #64748b;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -800,10 +800,10 @@ button {
 
 .nav-button {
   align-items: center;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   gap: 8px;
   height: 44px; /* Big button height */
@@ -853,8 +853,8 @@ button {
 
 .footer-timer-label {
   color: #64748b;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .footer-timer-value {
@@ -916,8 +916,8 @@ button {
 
 .status-text {
   color: #22c55e;
-  font-size: 14px; /* Increased slightly */
-  font-weight: 500;
+  font-size: 15px; /* Increased slightly */
+  font-weight: 600;
 }
 
 /* CUSTOM SCROLLBARS */
@@ -932,7 +932,7 @@ button {
 .question-card::-webkit-scrollbar-thumb,
 .question-grid-scroll::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 .question-card::-webkit-scrollbar-thumb:hover,
 .question-grid-scroll::-webkit-scrollbar-thumb:hover {
@@ -990,7 +990,7 @@ body[data-subject="science"] .passage-pane {
   overflow-y: auto;
   padding-right: 16px;
   height: 100%;
-  font-size: 15px;
+  font-size: 16px;
   color: #334155;
   line-height: 1.6;
   scrollbar-width: none; /* Hide Firefox scrollbar */
@@ -1015,7 +1015,7 @@ body[data-subject="science"] .passage-pane p:last-child {
 
 body[data-subject="reading"] .passage-pane h2,
 body[data-subject="science"] .passage-pane h2 {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 16px;
@@ -1124,8 +1124,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 }
 
 .drawer-header-title {
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   color: #374151;
   margin: 0;
 }
@@ -1155,7 +1155,7 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  font-size: 15px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -1165,7 +1165,7 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-info-value {
   color: #1f2937;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .drawer-info-value.uppercase {
@@ -1196,12 +1196,12 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-timer-label {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .drawer-timer-value {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: #1c3664;
 }
 
@@ -1210,8 +1210,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   height: 100%;
   padding: 0 24px;
   cursor: pointer;
@@ -1238,8 +1238,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-legend-label {
   color: #1f2937;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .drawer-legend-badges {
@@ -1254,8 +1254,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .drawer-legend-badge.is-unanswered {
@@ -1299,8 +1299,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
   height: 30px !important;
   aspect-ratio: 1 !important;
   border-radius: 50% !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1327,17 +1327,17 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-progress-title {
   color: #1f2937;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .drawer-progress-count {
   color: #1c3664;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .drawer-progress-count strong {
   font-size: 28px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1;
   color: #0f172a;
 }
@@ -1366,8 +1366,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-progress-percent {
   color: #1f2937;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   min-width: 20px;
   text-align: right;
 }
@@ -1410,8 +1410,8 @@ body[data-subject="science"] .question-text-content::-webkit-scrollbar {
 
 .drawer-status-text {
   color: #22c55e;
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* Reading & Science Sidebar and Button overrides */
@@ -1424,8 +1424,8 @@ body[data-subject="science"] .exam-sidebar {
   background-color: #cd1627;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 700;
   height: 44px;
   padding: 0 16px;
@@ -1482,7 +1482,7 @@ body[data-subject="science"] .question-action-column {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   color: #111827;
   flex-shrink: 0;
 }
@@ -1491,8 +1491,8 @@ body[data-subject="science"] .question-action-column {
 .science-question-body {
   flex: 1;
   color: #0f172a;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.6;
   padding-top: 4px;
 }
@@ -1552,8 +1552,8 @@ body[data-subject="science"] .true-false-answer-shell {
 
 .statement-header-label {
   color: #1f2937;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.25;
   text-align: center;
 }
@@ -1561,7 +1561,7 @@ body[data-subject="science"] .true-false-answer-shell {
 .statement-table {
   background-color: #fff;
   border: 1px solid var(--statement-border);
-  border-radius: 9px;
+  border-radius: 8px;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
   overflow: hidden;
   width: 100%;
@@ -1582,8 +1582,8 @@ body[data-subject="science"] .true-false-answer-shell {
 .statement-cell-text {
   color: #020617;
   display: block;
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 500;
   line-height: 1.5;
   min-width: 0;
   padding: 18px 14px;
@@ -1648,7 +1648,7 @@ body[data-subject="science"] .true-false-answer-shell {
   }
 
   .statement-cell-text {
-    font-size: 15px;
+    font-size: 16px;
     padding: 18px 10px;
   }
 
@@ -1689,10 +1689,10 @@ body[data-subject="science"] .true-false-answer-shell {
 .drag-chip {
   background-color: #eaeaea !important; /* Neutral gray background matching Image 2 */
   border: none !important; /* No border */
-  border-radius: 6px !important; /* Slightly rounded corners, squarish shape */
+  border-radius: 8px !important; /* Slightly rounded corners, squarish shape */
   padding: 6px 14px !important; /* Chubbier padding */
-  font-size: 13.5px;
-  font-weight: 500;
+  font-size: 14.5px;
+  font-weight: 600;
   color: #1e293b;
   cursor: grab;
   user-select: none;
@@ -1720,7 +1720,7 @@ body[data-subject="science"] .true-false-answer-shell {
 
 .drag-drop-text {
   line-height: 2.0; /* Adjusted to look completely natural and normal */
-  font-size: 15px;
+  font-size: 16px;
   color: #1e293b;
   white-space: pre-wrap; /* Preserve leading spaces and respect newlines */
 }
@@ -1733,7 +1733,7 @@ body[data-subject="science"] .true-false-answer-shell {
   min-height: 38px;
   height: auto;
   border: 1px dashed #cbd5e1; /* Thinner border */
-  border-radius: 6px;
+  border-radius: 8px;
   margin: 4px 6px; /* Increased vertical margin for line spacing */
   padding: 0 12px;
   background-color: #ffffff; /* White background for drop zones */
@@ -1758,7 +1758,7 @@ body[data-subject="science"] .true-false-answer-shell {
 .drop-zone .drag-chip {
   background-color: #eaeaea !important; /* Restored gray background inside the slot */
   border: none !important; /* No border */
-  border-radius: 5px !important;
+  border-radius: 8px !important;
   width: 100%;
   height: auto;
   min-height: 36px;
@@ -1766,7 +1766,7 @@ body[data-subject="science"] .true-false-answer-shell {
   margin: 0;
   cursor: pointer;
   color: #1e293b; /* Match normal text or dark gray */
-  font-weight: 500;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1779,8 +1779,8 @@ body[data-subject="science"] .true-false-answer-shell {
   align-items: center;
   gap: 12px;
   margin-top: 16px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   color: #1e293b;
 }
 
@@ -1789,8 +1789,8 @@ body[data-subject="science"] .true-false-answer-shell {
   border-bottom: 1px solid #93c5fd !important; /* Thin light blue underline */
   background: transparent !important;
   outline: none !important;
-  font-size: 16px !important;
-  font-weight: 400 !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
   color: #000000 !important; /* Black text when filled */
   width: 120px !important;
   padding: 0px 8px 2px 8px !important; /* Zero top/bottom padding to bring text closer to border */
@@ -1807,8 +1807,8 @@ body[data-subject="science"] .true-false-answer-shell {
   border-bottom: 1px solid #93c5fd !important; /* Thin light blue underline */
   background: transparent !important;
   outline: none !important;
-  font-size: 15px !important;
-  font-weight: 500 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
   color: #000000 !important; /* Black text when filled */
   width: 100px !important;
   text-align: center !important;
@@ -1874,8 +1874,8 @@ input[type=number] {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 15px;
   color: #1f2937;
   margin-right: 18px;
   flex-shrink: 0;
@@ -1956,8 +1956,8 @@ input[type=number] {
     height: 30px !important;
     aspect-ratio: 1 !important;
     border-radius: 50% !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1980,7 +1980,7 @@ input[type=number] {
     width: auto !important;
   }
   .exam-title-text {
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
     max-width: 180px !important;
     overflow: hidden !important;
@@ -1998,7 +1998,7 @@ input[type=number] {
   .nav-button {
     height: 36px !important;
     padding: 0 10px !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
   .nav-button .button-label {
     display: none !important; /* Hide "Câu tiếp" / "Câu trước" text, icons are self-explanatory */
@@ -2010,10 +2010,10 @@ input[type=number] {
     display: none !important; /* Hide label to save space, digits are enough */
   }
   .footer-timer-value {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
   .exam-footer .footer-timer strong#countdown {
-    font-size: 16px !important;
+    font-size: 17px !important;
   }
 
   .question-pane {
@@ -2022,12 +2022,12 @@ input[type=number] {
   }
   .question-card {
     padding: 12px !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
   }
   .question-number-circle {
     width: 32px !important;
     height: 32px !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     margin-right: 8px !important;
   }
 
@@ -2116,7 +2116,7 @@ input[type=number] {
   .mobile-exam-tab {
     flex: 1 !important;
     padding: 10px 0 !important;
-    font-size: 12.5px !important;
+    font-size: 13.5px !important;
     font-weight: 700 !important;
     color: #475569 !important;
     background: none !important;
@@ -2147,7 +2147,7 @@ input[type=number] {
     flex: 1 !important;
     overflow-y: auto !important;
     padding-right: 0 !important;
-    font-size: 14px !important;
+    font-size: 15px !important;
     line-height: 1.5 !important;
   }
   .question-reading-split:not(.show-questions) .question-text-content {

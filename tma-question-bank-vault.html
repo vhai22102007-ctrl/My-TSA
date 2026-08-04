@@ -8,7 +8,7 @@
   <link rel="icon" href="https://assets.tmastudy.io.vn/assets/tsa.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/ai-studio.css">
   <link rel="stylesheet" href="css/exam-room.css">
   <link rel="stylesheet" href="css/question-bank.css">
@@ -16,7 +16,7 @@
     /* Reset clashing exam-room.css body styles */
     body {
       background-color: var(--surface-soft) !important;
-      font-family: Inter, Arial, sans-serif !important;
+      font-family: Quicksand, Arial, sans-serif !important;
       overflow: visible !important;
       user-select: auto !important;
       margin: 0 !important;
@@ -60,7 +60,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div>
             <span class="eyebrow">Kho Lưu Trữ</span>
-            <h1 style="font-size: 20px; font-weight: 800; color: #0f172a;" id="page-title">Ngân hàng câu hỏi Toán học</h1>
+            <h1 style="font-size: 20px; font-weight: 700; color: #0f172a;" id="page-title">Ngân hàng câu hỏi Toán học</h1>
           </div>
           <div style="display: flex; gap: 8px;">
             <button class="button active-button" id="header-add-math-btn" onclick="window.addNewMathQuestion()" type="button">
@@ -157,22 +157,22 @@
 
       <div id="editor-view" class="studio-main">
         <div class="editor-header-bar">
-          <button class="qb-action-btn" onclick="window.backToListView()" title="Quay lại danh sách" style="width: 34px; height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; margin-right: 12px; flex-shrink: 0;">
+          <button class="qb-action-btn" onclick="window.backToListView()" title="Quay lại danh sách" style="width: 34px; height: 34px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; margin-right: 12px; flex-shrink: 0;">
             <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i>
           </button>
           <div style="min-width: 0; flex: 1;">
-            <div style="font-size: 10px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2;" id="editor-subtitle">TƯ DUY TOÁN HỌC</div>
-            <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2; display: flex; align-items: center; gap: 6px;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2;" id="editor-subtitle">TƯ DUY TOÁN HỌC</div>
+            <h2 style="font-size: 17px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.2; display: flex; align-items: center; gap: 6px;">
               <span id="editor-question-id">Math 001</span>
-              <span style="font-size: 12px; font-weight: 500; color: #64748b;" id="editor-question-no-text"> (Câu số 1)</span>
+              <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="editor-question-no-text"> (Câu số 1)</span>
             </h2>
           </div>
           <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-            <span class="backend-state checking" id="editor-backend-state" style="height: 30px; font-size: 11px;">
+            <span class="backend-state checking" id="editor-backend-state" style="height: 30px; font-size: 12px;">
               <span class="state-dot"></span>
               <span id="editor-backend-state-text">EDITOR MODE</span>
             </span>
-            <button class="button primary" onclick="window.syncQuestionBankToCloud()" type="button" style="height: 30px; font-size: 11px; padding: 0 10px;">
+            <button class="button primary" onclick="window.syncQuestionBankToCloud()" type="button" style="height: 30px; font-size: 12px; padding: 0 10px;">
               <i data-lucide="cloud-lightning" style="width: 12px; height: 12px;"></i>
               <span>Đồng bộ Cloud</span>
             </button>
@@ -190,7 +190,7 @@
 
           <!-- Dedicated Preview Section (Right Column - Flat style!) -->
           <section class="test-section">
-            <div style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <div style="font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
               <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
               <span>Xem trước hiển thị (Student Preview)</span>
             </div>
@@ -215,7 +215,7 @@
     <div class="ai-chatbot-header">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span class="state-dot" style="background: #10b981; width: 8px; height: 8px; border-radius: 50%;"></span>
-        <strong style="font-size: 13px;">Trợ Lý AI Soạn Đề</strong>
+        <strong style="font-size: 14px;">Trợ Lý AI Soạn Đề</strong>
       </div>
       <button class="qb-action-btn" onclick="window.toggleAiChatbot()" style="color: #ffffff; width: 24px; height: 24px;">
         <i data-lucide="x" style="width: 16px; height: 16px;"></i>
@@ -231,11 +231,11 @@
     <!-- Quick action buttons in chat -->
     <div style="padding: 8px 12px; background: #ffffff; border-top: 1px solid #e2e8f0;">
       <div class="ai-chat-quick-actions">
-        <button class="button test-button" onclick="window.runChatbotClassifier()" type="button" style="font-size: 11px; height: 32px; justify-content: center; padding: 0 4px;">
+        <button class="button test-button" onclick="window.runChatbotClassifier()" type="button" style="font-size: 12px; height: 32px; justify-content: center; padding: 0 4px;">
           <i data-lucide="tag" style="width:12px; height:12px;"></i>
           <span>Gắn thẻ chuyên đề</span>
         </button>
-        <button class="button active-button" onclick="window.runChatbotSolver()" type="button" style="font-size: 11px; height: 32px; justify-content: center; padding: 0 4px;">
+        <button class="button active-button" onclick="window.runChatbotSolver()" type="button" style="font-size: 12px; height: 32px; justify-content: center; padding: 0 4px;">
           <i data-lucide="brain-circuit" style="width:12px; height:12px;"></i>
           <span>Viết lời giải LaTeX</span>
         </button>

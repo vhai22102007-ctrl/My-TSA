@@ -57,7 +57,7 @@
   margin: 8px 0 20px;
   color: #000000;
   font-size: 22px; /* Slightly smaller font */
-  font-weight: 600;
+  font-weight: 700;
   line-height: 30px;
   text-align: center;
 }
@@ -75,7 +75,7 @@
   width: 100%;
   align-items: center;
   color: #4b5563;
-  font-size: 15px; /* Slightly smaller font */
+  font-size: 16px; /* Slightly smaller font */
   line-height: 22px;
 }
 
@@ -91,7 +91,7 @@
   margin: 0;
   padding-right: 8px;
   color: #1f2937;
-  font-weight: 500;
+  font-weight: 600;
   text-align: right;
 }
 
@@ -99,7 +99,7 @@
   width: 100%;
   margin: 0 0 20px;
   color: #4b5563;
-  font-size: 14.5px; /* Slightly smaller font */
+  font-size: 15.5px; /* Slightly smaller font */
   font-style: italic;
   line-height: 22px;
   text-align: left;
@@ -121,8 +121,8 @@
   border-radius: 8px; /* Slightly more rounded */
   background: #cd1627; /* Unified TMA red */
   color: #ffffff;
-  font-size: 16px; /* Slightly smaller button font */
-  font-weight: 600;
+  font-size: 17px; /* Slightly smaller button font */
+  font-weight: 700;
   line-height: 24px;
   cursor: pointer;
   transition: background-color 150ms;
@@ -146,8 +146,8 @@
 .checking-panel p {
   margin: 0 0 12px;
   color: #d8232a;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 600;
   line-height: 24px;
   text-align: center;
 }
@@ -215,7 +215,7 @@
   border: 0;
   background: transparent;
   color: #cd1627; /* Unified TMA red */
-  font-size: 16px; /* Slightly smaller link font */
+  font-size: 17px; /* Slightly smaller link font */
   line-height: 24px;
   text-decoration: none;
   cursor: pointer;
@@ -344,9 +344,9 @@
 }
 
 .loading-subtitle {
-  font-size: 13.5px;
+  font-size: 14.5px;
   color: #64748b;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -363,13 +363,13 @@
   .confirm-row dt {
     width: 100% !important;
     flex: none !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
   .confirm-row dd {
     width: 100% !important;
     text-align: left !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
   }
   .confirm-card h1 {
     font-size: 19px !important;
@@ -422,7 +422,7 @@
   .confirm-card {
     max-width: 100% !important;
     padding: 20px 16px !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
   }
   
   .confirm-row {
@@ -434,19 +434,19 @@
   .confirm-row dt {
     width: 100% !important;
     flex: none !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
   
   .confirm-row dd {
     width: 100% !important;
     text-align: left !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
     padding-right: 0 !important;
   }
   
   .confirm-card h1 {
-    font-size: 18px !important;
+    font-size: 19px !important;
     margin: 8px 0 16px !important;
   }
 

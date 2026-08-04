@@ -2,14 +2,14 @@
   font-family: "Unused Lato";
   src: url("https://assets.tmastudy.io.vn/assets/fonts/lato-regular.ttf") format("truetype");
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 @font-face {
   font-family: "Unused Lato";
   src: url("https://assets.tmastudy.io.vn/assets/fonts/lato-medium.ttf") format("truetype");
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 @font-face {

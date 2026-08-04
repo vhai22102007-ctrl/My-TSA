@@ -31,7 +31,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Quicksand', sans-serif;
   background: var(--paper);
   color: var(--text);
   min-height: 100vh;
@@ -54,10 +54,10 @@ button { cursor: pointer; border: none; }
 .brand { display: flex; align-items: center; gap: 14px; }
 .brand-logo { width: 68px; height: 68px; object-fit: contain; }
 .brand-text { display: grid; gap: 4px; }
-.brand-name { font-size: 24px; font-weight: 800; }
-.brand-subtitle { font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.76); }
+.brand-name { font-size: 24px; font-weight: 700; }
+.brand-subtitle { font-size: 14px; font-weight: 700; color: rgba(0,0,0,0.76); }
 .main-nav { display: flex; gap: 16px; }
-.main-nav a { font-weight: 800; font-size: 16px; color: var(--blue-deep); transition: color .18s, transform .18s; }
+.main-nav a { font-weight: 700; font-size: 17px; color: var(--blue-deep); transition: color .18s, transform .18s; }
 .main-nav a:hover, .main-nav a:focus-visible { color: var(--accent); transform: translateY(-1px); }
 .login-nav { border-radius: 999px; background: var(--accent); color: var(--white) !important; padding: 11px 16px; box-shadow: 0 10px 22px rgba(0,0,0,.18); }
 .login-nav:hover, .login-nav:focus-visible { background: var(--blue-deep); }
@@ -88,8 +88,8 @@ button { cursor: pointer; border: none; }
 @keyframes heroOne { 0%,44%{opacity:1;transform:scale(1);}56%,90%{opacity:0;transform:scale(1.035);}100%{opacity:1;transform:scale(1);} }
 @keyframes heroTwo { 0%,44%{opacity:0;transform:scale(1.04);}56%,90%{opacity:1;transform:scale(1.012);}100%{opacity:0;transform:scale(1.04);} }
 .hero-inner { max-width: 1180px; margin: 0 auto; display: grid; gap: 48px; padding: 100px 0 130px; }
-.hero-title { font-size: clamp(2.5rem,5vw,4rem); font-weight: 800; line-height:1.1; }
-.btn { display: inline-block; padding: 10px 20px; border-radius: 999px; background: var(--accent); color: var(--white); font-weight: 800; transition: filter .2s; }
+.hero-title { font-size: clamp(2.5rem,5vw,4rem); font-weight: 700; line-height:1.1; }
+.btn { display: inline-block; padding: 10px 20px; border-radius: 999px; background: var(--accent); color: var(--white); font-weight: 700; transition: filter .2s; }
 .btn:hover { filter: brightness(.9); }
 
 /* Courses grid */

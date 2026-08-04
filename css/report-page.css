@@ -36,7 +36,7 @@ body {
   border: 0;
   background: none;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -44,7 +44,7 @@ body {
 
 .report-toolbar strong {
   margin-left: auto;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .report-viewer {
@@ -71,7 +71,7 @@ body {
   top: 52%;
   color: rgba(214, 21, 41, 0.025);
   font-size: 31cqw;
-  font-weight: 800;
+  font-weight: 700;
   transform: translate(-50%, -50%) rotate(-22deg);
   pointer-events: none;
 }
@@ -112,20 +112,20 @@ body {
   margin-top: 0.15cqw;
   color: var(--report-red);
   font-size: 0.72cqw;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .paper-brand-copy strong {
   margin-top: 0.75cqw;
   font-size: 2.28cqw;
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .paper-brand-copy i {
   margin-top: 0.25cqw;
   font-size: 1.1cqw;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .report-title-band {
@@ -135,14 +135,14 @@ body {
   background: var(--report-red);
   color: #fff;
   font-size: 2.75cqw;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .report-subtitle {
   margin: 2.1cqw 0 3.5cqw;
   color: var(--report-red);
   font-size: 2.35cqw;
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -183,7 +183,7 @@ body {
   border-radius: 0.35cqw;
   background: var(--report-gray);
   font-size: 1.62cqw;
-  font-weight: 800;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -218,7 +218,7 @@ body {
 .overall-score > i {
   display: block;
   font-size: 2.3cqw;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.15;
 }
 
@@ -232,7 +232,7 @@ body {
 .overall-score-line strong {
   font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 8.1cqw;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
 }
@@ -262,7 +262,7 @@ body {
 .section-summary h2 {
   margin: 0 0 0.37cqw;
   font-size: 1.85cqw;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.15;
 }
 
@@ -292,7 +292,7 @@ body {
 .section-score-value strong {
   font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 3.25cqw;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .section-score-value span {
@@ -331,7 +331,7 @@ body {
 
 .section-score-label strong {
   color: var(--report-red);
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -369,7 +369,7 @@ body {
 }
 
 .qr-column strong {
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .verification-copy {
@@ -389,7 +389,7 @@ body {
 .verification-title {
   margin-top: 1.45cqw !important;
   font-size: 1.8cqw !important;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .verification-en {
@@ -442,7 +442,7 @@ body {
 .center-seal text {
   fill: currentColor;
   font-family: 'Inter', Arial, sans-serif;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .center-seal .seal-arc {
@@ -451,7 +451,7 @@ body {
 }
 
 .center-seal .seal-star {
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .center-seal .seal-brand {
@@ -465,16 +465,16 @@ body {
 
 .center-seal .seal-copy,
 .center-seal .seal-verified {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .center-seal .seal-verified {
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 1.3px;
 }
 
 .center-seal .seal-bottom-star {
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .center-signature {
@@ -506,7 +506,7 @@ body {
 .center-role,
 .center-name {
   margin-bottom: 0.3cqw !important;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .center-role {
@@ -544,7 +544,7 @@ body {
   }
 
   .report-toolbar strong {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .report-viewer {

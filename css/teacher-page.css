@@ -14,7 +14,7 @@
       --blue: #2563eb;
       --blue-soft: #eff6ff;
       --sidebar: 260px;
-      --radius: 16px;
+      --radius: 8px;
       --shadow: 0 16px 38px rgba(15, 23, 42, 0.07);
     }
 
@@ -25,8 +25,8 @@
       min-height: 100vh;
       background: var(--page);
       color: var(--text);
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 13px;
+      font-family: "Quicksand", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
       -webkit-font-smoothing: antialiased;
       overflow-y: auto !important;
       overflow-x: hidden !important;
@@ -99,7 +99,7 @@
       height: 40px !important;
       min-height: 40px !important;
       margin: 0 auto 4px !important;
-      border-radius: 10px !important;
+      border-radius: 8px !important;
     }
 
     .sidebar {
@@ -169,13 +169,13 @@
     }
 
     .brand img { width: auto; max-width: 120px; max-height: 38px; }
-    .brand span { color: var(--brand); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .brand span { color: var(--brand); font-size: 11px; font-weight: 700; text-transform: uppercase; }
 
     .nav-label {
       margin: 18px 0 8px;
       color: #9ca3af;
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: .05em;
       padding-left: 10px;
@@ -189,7 +189,7 @@
       justify-content: flex-start !important;
       gap: 10px;
       border: 0;
-      border-radius: 10px;
+      border-radius: 8px;
       background: transparent;
       padding: 0 10px;
       color: #374151;
@@ -205,10 +205,10 @@
       height: 24px;
       place-items: center;
       border: 1px solid #d1d5db;
-      border-radius: 7px;
+      border-radius: 8px;
       color: #6b7280;
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .nav-button:hover, .nav-button.active {
@@ -236,12 +236,12 @@
       align-items: center;
       gap: 10px;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
       color: #374151;
       font-weight: 650;
-      font-size: 13.5px;
+      font-size: 14.5px;
       border: none;
       background: transparent;
       width: 100%;
@@ -302,7 +302,7 @@
       background: none;
       border: none;
       padding: 10px 4px;
-      font-size: 13.5px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--muted);
       cursor: pointer;
@@ -343,7 +343,7 @@
       background: none;
       border: none;
       padding: 8px 4px;
-      font-size: 13.5px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--muted);
       cursor: pointer;
@@ -382,9 +382,9 @@
       gap: 10px;
       padding: 0 10px;
       color: #374151;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 650;
-      border-radius: 10px;
+      border-radius: 8px;
       transition: all 0.15s ease;
       cursor: pointer;
     }
@@ -446,9 +446,9 @@
       gap: 8px;
       padding: 0 10px 0 12px;
       min-height: 36px;
-      font-size: 12.5px;
+      font-size: 13.5px;
       color: #475569;
-      font-weight: 500;
+      font-weight: 600;
       border-radius: 8px;
       transition: all 0.15s;
       position: relative;
@@ -467,7 +467,7 @@
     .submenu-item.active {
       background: var(--brand-soft);
       color: var(--brand);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .sub-icon svg {
@@ -484,7 +484,7 @@
 
     .menu-group.has-active .group-header {
       color: var(--brand);
-      font-weight: 600;
+      font-weight: 700;
       background: #fff5f5;
     }
 
@@ -514,7 +514,7 @@
       background: var(--green-soft);
       color: var(--green);
       padding: 8px 12px;
-      font-weight: 800;
+      font-weight: 700;
       white-space: nowrap;
     }
 
@@ -538,7 +538,7 @@
 
     .card-header h2, .card-header h3 {
       margin: 0;
-      font-size: 17px;
+      font-size: 18px;
     }
 
     .card-header p, .card-body p {
@@ -550,8 +550,8 @@
     .card-body { padding: 20px; }
     .eyebrow {
       color: var(--brand);
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: .06em;
       margin-bottom: 7px;
@@ -571,7 +571,7 @@
     .field label,
     .form-grid label {
       color: #c2272d !important;
-      font-size: 12.5px;
+      font-size: 13.5px;
       font-weight: 750;
     }
 
@@ -611,7 +611,7 @@
       border-radius: 8px;
       background: #fff;
       padding: 0 14px;
-      font-weight: 800;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -662,8 +662,8 @@
       background: #15803d;
     }
 
-    .btn-small { min-height: 32px; padding: 0 10px; border-radius: 10px; font-size: 12px; }
-    .btn-sm { min-height: 32px; padding: 0 12px; border-radius: 8px; font-size: 12px; }
+    .btn-small { min-height: 32px; padding: 0 10px; border-radius: 8px; font-size: 13px; }
+    .btn-sm { min-height: 32px; padding: 0 12px; border-radius: 8px; font-size: 13px; }
     .btn-full { width: 100%; }
 
     .summary-grid {
@@ -683,7 +683,7 @@
     .summary-item span {
       display: block;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 750;
       text-transform: uppercase;
       margin-bottom: 6px;
@@ -742,7 +742,7 @@
 
     .mini-item h4 {
       margin: 0 0 6px;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .mini-item p {
@@ -773,7 +773,7 @@
     th {
       background: #f9fafb;
       color: #374151;
-      font-size: 11px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: .04em;
       font-weight: 700;
@@ -781,7 +781,7 @@
 
     tr:last-child td { border-bottom: 0; }
     .table-main { font-weight: 750; }
-    .table-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .table-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
     .actions { display: flex; flex-wrap: wrap; gap: 6px; }
     .empty { color: var(--muted); text-align: center; padding: 28px; }
 
@@ -790,8 +790,8 @@
       align-items: center;
       border-radius: 999px;
       padding: 5px 9px;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .status.draft { background: var(--amber-soft); color: var(--amber); }
@@ -799,7 +799,7 @@
     .status.type { background: var(--blue-soft); color: var(--blue); }
 
     .question-lead {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 650;
       line-height: 1.75;
       white-space: pre-wrap;
@@ -825,7 +825,7 @@
     .short-answer { display: grid; gap: 7px; margin-top: 10px; font-weight: 750; }
     .short-answer input, .blank-select {
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 8px;
       min-height: 38px;
       padding: 0 10px;
       background: #fff;
@@ -842,15 +842,15 @@
       padding: 12px;
       font-weight: 750;
     }
-    .stimulus-card h3 { margin: 0 0 10px; font-size: 15px; }
+    .stimulus-card h3 { margin: 0 0 10px; font-size: 16px; }
     .stimulus-content { white-space: pre-wrap; line-height: 1.75; }
     code {
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: 8px;
       background: #f9fafb;
       padding: 2px 5px;
       font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-      font-size: 12px;
+      font-size: 13px;
     }
 
     /* CARD GRID LAYOUTS FOR PRACTICE ROOM (FROM SELECT.HTML) */
@@ -869,7 +869,7 @@
     .exam-card {
       border: none;
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
       display: flex;
@@ -880,7 +880,7 @@
       border-bottom: 1px solid #f3f4f6;
     }
     .exam-card-header h3 {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--text);
     }
@@ -897,7 +897,7 @@
       align-items: center;
       padding-bottom: 6px;
       border-bottom: 1px solid #f9fafb;
-      font-size: 12px;
+      font-size: 13px;
     }
     .exam-info-row:last-child {
       border-bottom: 0;
@@ -905,8 +905,8 @@
     }
     .exam-info-row .info-label {
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 13px;
+      font-weight: 600;
     }
     .exam-info-row .info-value {
       color: var(--text);
@@ -918,8 +918,8 @@
     .badge-green {
       background: #f0fdf4;
       color: #16a34a;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       padding: 2px 8px;
       border-radius: 9999px;
       border: 1px solid #dcfce7;
@@ -927,8 +927,8 @@
     .badge-red {
       background: #eff6ff;
       color: #e11d48;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       padding: 2px 8px;
       border-radius: 9999px;
       border: 1px solid #ffe4e6;
@@ -998,7 +998,7 @@
     }
     .brand-collapsed-logo {
       display: none;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 900;
       color: var(--brand);
       letter-spacing: 0.04em;
@@ -1032,7 +1032,7 @@
     }
     .teacher-shell.sidebar-collapsed .nav-number {
       margin: 0 !important;
-      font-size: 11px !important;
+      font-size: 12px !important;
     }
     .teacher-shell.sidebar-collapsed .menu-icon {
       margin: 0 !important;
@@ -1107,8 +1107,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 15px;
+      font-weight: 700;
+      font-size: 16px;
       box-shadow: 0 2px 4px rgba(19, 92, 151, 0.16);
     }
     #math-question-form, #reading-question-form, #science-question-form,
@@ -1125,7 +1125,7 @@
     }
     #math-question-form label, #reading-question-form label, #science-question-form label,
     #reading-group-form label, #science-group-form label {
-      font-size: 12.5px !important;
+      font-size: 13.5px !important;
       font-weight: 750 !important;
       color: #374151 !important;
       margin-bottom: 6px !important;
@@ -1137,16 +1137,16 @@
       min-height: 38px !important;
       height: 38px !important;
       padding: 0 16px !important;
-      border-radius: 10px !important;
-      font-size: 13.5px !important;
+      border-radius: 8px !important;
+      font-size: 14.5px !important;
       border: 1px solid #cbd5e1 !important;
     }
     #math-question-form .textarea, #reading-question-form .textarea, #science-question-form .textarea {
       min-height: 120px !important;
       height: 120px !important;
       padding: 10px 16px !important;
-      border-radius: 10px !important;
-      font-size: 13.5px !important;
+      border-radius: 8px !important;
+      font-size: 14.5px !important;
       line-height: 1.5 !important;
       border: 1px solid #cbd5e1 !important;
     }
@@ -1154,8 +1154,8 @@
       min-height: 180px !important;
       height: 180px !important;
       padding: 10px 12px !important;
-      border-radius: 10px !important;
-      font-size: 13.5px !important;
+      border-radius: 8px !important;
+      font-size: 14.5px !important;
       line-height: 1.5 !important;
       border: 1px solid #cbd5e1 !important;
     }
@@ -1206,7 +1206,7 @@
       border-radius: 8px;
       background-color: #ffffff;
       outline: none;
-      font-size: 13.5px;
+      font-size: 14.5px;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .choice-item .choice-input-field:focus {
@@ -1268,7 +1268,7 @@
     #math-question-form .statement-row .input-inline-editor, 
     #reading-question-form .statement-row .input-inline-editor, 
     #science-question-form .statement-row .input-inline-editor {
-      font-size: 13.5px !important;
+      font-size: 14.5px !important;
       border: none !important;
       background: transparent !important;
       outline: none !important;
@@ -1323,7 +1323,7 @@
     #math-question-form .statement-header-label, 
     #reading-question-form .statement-header-label, 
     #science-question-form .statement-header-label {
-      font-size: 12.5px !important;
+      font-size: 13.5px !important;
       font-weight: 750 !important;
       text-align: center !important;
       color: #374151 !important;
@@ -1340,7 +1340,7 @@
       border: none !important;
       color: #ef4444 !important;
       font-weight: 700 !important;
-      font-size: 12px !important;
+      font-size: 13px !important;
       cursor: pointer !important;
       padding: 0 !important;
       margin: 0 !important;
@@ -1372,8 +1372,8 @@
       min-height: 38px !important;
       height: 38px !important;
       padding: 0 16px !important;
-      font-size: 13.5px !important;
-      border-radius: 10px !important;
+      font-size: 14.5px !important;
+      border-radius: 8px !important;
     }
     #tab-math .btn-row, #tab-reading .btn-row, #tab-science .btn-row {
       margin-top: 14px !important;
@@ -1382,7 +1382,7 @@
     #tab-reading table th, #tab-reading table td,
     #tab-science table th, #tab-science table td {
       padding: 8px 12px !important;
-      font-size: 13px !important;
+      font-size: 14px !important;
     }
     #tab-reading .mini-list, #tab-science .mini-list {
       gap: 10px !important;
@@ -1390,14 +1390,14 @@
     }
     #tab-reading .mini-item, #tab-science .mini-item {
       padding: 12px 14px !important;
-      border-radius: 10px !important;
+      border-radius: 8px !important;
     }
     #tab-reading .mini-item h4, #tab-science .mini-item h4 {
       margin-bottom: 6px !important;
-      font-size: 13.5px !important;
+      font-size: 14.5px !important;
     }
     #tab-reading .mini-item p, #tab-science .mini-item p {
-      font-size: 12px !important;
+      font-size: 13px !important;
     }
     .main:has(#tab-math.active),
     .main:has(#tab-reading.active),
@@ -1424,7 +1424,7 @@
     }
     .table-row-active td {
       color: var(--brand) !important;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* Sidebar nav-button styling consistency override */
@@ -1437,10 +1437,10 @@
     }
     
     body .teacher-shell #sidebar-normal-nav .nav-button {
-      font-size: 13.5px !important;
+      font-size: 14.5px !important;
       font-weight: 650 !important;
       min-height: 40px !important;
-      border-radius: 10px !important;
+      border-radius: 8px !important;
       color: #374151 !important;
       background: transparent !important;
       box-shadow: none !important;
@@ -1487,7 +1487,7 @@
       background: none;
       border: none;
       padding: 8px 4px;
-      font-size: 13.5px;
+      font-size: 14.5px;
       font-weight: 750;
       color: var(--muted);
       cursor: pointer;
@@ -1572,8 +1572,8 @@
       min-height: 38px !important;
       height: 38px !important;
       padding: 0 16px !important;
-      font-size: 13.5px !important;
-      border-radius: 10px !important;
+      font-size: 14.5px !important;
+      border-radius: 8px !important;
     }
     #tab-math .btn-row, #tab-reading .btn-row, #tab-science .btn-row {
       margin-top: 14px !important;
@@ -1582,7 +1582,7 @@
     #tab-reading table th, #tab-reading table td,
     #tab-science table th, #tab-science table td {
       padding: 8px 12px !important;
-      font-size: 13px !important;
+      font-size: 14px !important;
     }
     #tab-reading .mini-list, #tab-science .mini-list {
       gap: 10px !important;
@@ -1590,14 +1590,14 @@
     }
     #tab-reading .mini-item, #tab-science .mini-item {
       padding: 12px 14px !important;
-      border-radius: 10px !important;
+      border-radius: 8px !important;
     }
     #tab-reading .mini-item h4, #tab-science .mini-item h4 {
       margin-bottom: 6px !important;
-      font-size: 13.5px !important;
+      font-size: 14.5px !important;
     }
     #tab-reading .mini-item p, #tab-science .mini-item p {
-      font-size: 12px !important;
+      font-size: 13px !important;
     }
     .main:has(#tab-math.active),
     .main:has(#tab-reading.active),
@@ -1624,7 +1624,7 @@
     }
     .table-row-active td {
       color: var(--brand) !important;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* Sidebar nav-button styling consistency override */
@@ -1637,10 +1637,10 @@
     }
     
     body .teacher-shell #sidebar-normal-nav .nav-button {
-      font-size: 13.5px !important;
+      font-size: 14.5px !important;
       font-weight: 650 !important;
       min-height: 40px !important;
-      border-radius: 10px !important;
+      border-radius: 8px !important;
       color: #374151 !important;
       background: transparent !important;
       box-shadow: none !important;
@@ -1687,7 +1687,7 @@
       background: none;
       border: none;
       padding: 8px 4px;
-      font-size: 13.5px;
+      font-size: 14.5px;
       font-weight: 750;
       color: var(--muted);
       cursor: pointer;
@@ -1802,7 +1802,7 @@
     
     .tree-node.course-node { border-left: 5px solid var(--brand); }
     .tree-node.chapter-node { border-left: 5px solid #3b82f6; }
-    .tree-node.lesson-node { border-left: 5px solid #10b981; font-weight: 500; font-size: 12px; }
+    .tree-node.lesson-node { border-left: 5px solid #10b981; font-weight: 600; font-size: 13px; }
     
     .tree-node .node-title {
       color: #1e293b;
@@ -1820,8 +1820,8 @@
       border-radius: 50%;
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
       margin-left: auto;
@@ -1893,7 +1893,7 @@
     .lms-courses-grid-container .course-card {
       background: #ffffff;
       border: none;
-      border-radius: 16px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.02);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -1921,15 +1921,15 @@
     
     .lms-courses-grid-container .course-name {
       margin: 0;
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 700;
       color: #1e293b;
       line-height: 1.4;
     }
     
     .lms-courses-grid-container .course-desc {
       margin: 6px 0 0;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--brand);
       text-transform: uppercase;
@@ -1953,16 +1953,16 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 13px;
       color: var(--muted);
-      font-weight: 600;
+      font-weight: 700;
     }
     
     .lms-courses-grid-container .enter-btn {
       padding: 8px 16px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 13px;
       border: none;
       cursor: pointer;
       background: #c2272d;
@@ -1978,15 +1978,15 @@
   border: 1px solid #e2e8f0 !important;
   color: #334155 !important;
   transition: all 0.2s ease !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
   padding: 8px 16px !important;
   border-radius: 8px !important;
   cursor: pointer !important;
-  font-size: 13.5px !important;
-  font-family: 'Inter', sans-serif !important;
+  font-size: 14.5px !important;
+  font-family: 'Quicksand', sans-serif !important;
 }
 
 .clear-section-questions-btn {
@@ -1997,11 +1997,11 @@
   gap: 6px;
   padding: 0 10px;
   border: 1px solid #fecdd3;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff5f6;
   color: #b91c1c;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -2065,11 +2065,11 @@
   color: #64748b !important;
   padding: 8px 16px !important;
   font-weight: 700 !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
   border-radius: 0 !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Quicksand', sans-serif !important;
 }
 .lib-sub-tab:hover {
   color: #0f5a9e !important;
@@ -2127,14 +2127,14 @@
 .tsa-exam-item-card {
   background: #ffffff !important;
   border: none !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   padding: 20px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
   display: flex !important;
   flex-direction: column !important;
   text-align: left !important;
   box-sizing: border-box !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Quicksand', sans-serif !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   width: 100% !important;
   max-width: none !important;
@@ -2153,7 +2153,7 @@
   gap: 10px !important;
 }
 .math-split-layout #math-question-form label {
-  font-size: 13.5px !important;
+  font-size: 14.5px !important;
   font-weight: 750 !important;
   color: #1e293b !important;
   margin-bottom: 8px !important;
@@ -2204,7 +2204,7 @@
   padding: 0;
   place-items: center;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: #334155;
   cursor: pointer;
@@ -2227,8 +2227,8 @@
 .mock-ops-eyebrow {
   margin: 0 0 4px;
   color: #c2272d;
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
@@ -2244,15 +2244,15 @@
 }
 
 .mock-section-heading h2 {
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .mock-ops-code {
   margin-top: 4px;
   color: #64748b;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .mock-ops-header-actions .btn,
@@ -2263,7 +2263,7 @@
   justify-content: center;
   gap: 7px;
   min-height: 36px;
-  border-radius: 6px;
+  border-radius: 8px;
   white-space: nowrap;
 }
 
@@ -2286,8 +2286,8 @@
   display: block;
   margin-bottom: 7px;
   color: #64748b;
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11.5px;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
@@ -2298,11 +2298,11 @@
   align-items: center;
   min-height: 27px;
   padding: 4px 9px;
-  border-radius: 5px;
+  border-radius: 8px;
   background: #e2e8f0;
   color: #475569;
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -2327,10 +2327,10 @@
   height: 36px;
   padding: 0 10px;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: #334155;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .mock-stats-grid {
@@ -2345,7 +2345,7 @@
   padding: 15px;
   border: 1px solid #dbe3ed;
   border-top: 3px solid #94a3b8;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
 }
 
@@ -2354,7 +2354,7 @@
   display: block;
   overflow: hidden;
   color: #64748b;
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2402,11 +2402,11 @@
 .mock-import-status {
   padding: 11px 13px;
   border: 1px dashed #b8c5d5;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #f8fafc;
   color: #64748b;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .mock-import-status.is-ready {
@@ -2423,7 +2423,7 @@
 .mock-preview-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11.5px;
+  font-size: 12.5px;
 }
 
 .mock-preview-table th,
@@ -2457,7 +2457,7 @@
 .mock-bar-count,
 .mock-bar-label {
   color: #64748b;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -2495,10 +2495,10 @@
   height: 36px;
   padding: 0 10px 0 32px;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border-radius: 8px;
   outline: none;
   color: #334155;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .mock-search-wrap input:focus {
@@ -2509,7 +2509,7 @@
 .mock-table-wrap {
   overflow: auto;
   border: 1px solid #dbe3ed;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .mock-results-table {
@@ -2517,7 +2517,7 @@
   min-width: 860px;
   border-collapse: collapse;
   background: #fff;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .mock-results-table th {
@@ -2528,8 +2528,8 @@
   border-bottom: 1px solid #dbe3ed;
   background: #f8fafc;
   color: #64748b;
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11.5px;
+  font-weight: 700;
   text-align: left;
   text-transform: uppercase;
   white-space: nowrap;
@@ -2557,14 +2557,14 @@
   margin-top: 3px;
   overflow: hidden;
   color: #94a3b8;
-  font-size: 10.5px;
+  font-size: 11.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .mock-score-cell {
   color: #c2272d;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .mock-empty-cell {

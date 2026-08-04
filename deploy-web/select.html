@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
 
-  <link rel="stylesheet" href="css/select-page.css?v=1.1.4">
+  <link rel="stylesheet" href="css/select-page.css?v=1.1.7">
   <style>
     /* Force collapsed sidebar layout to bypass local browser cache */
     .tsa-shell.sidebar-collapsed .tsa-sidebar {
@@ -80,47 +80,47 @@
       fill: #ffffff !important;
     }
 
-    /* PREMIUM LIGHT BLUE SIDEBAR THEME (#eff3f8) */
+    /* PREMIUM WHITE SIDEBAR THEME */
     .tsa-sidebar {
-      background: #eff3f8 !important;
-      border-right: 1px solid rgba(19, 92, 151, 0.08) !important;
+      background: #ffffff !important;
+      border-right: 1px solid #e2e8f0 !important;
     }
     .tsa-sidebar .tsa-logo {
-      background: #eff3f8 !important;
-      border-bottom: 1px solid rgba(19, 92, 151, 0.08) !important;
+      background: #ffffff !important;
+      border-bottom: 1px solid #e2e8f0 !important;
     }
     .tsa-shell.sidebar-collapsed .tsa-sidebar .tsa-logo {
-      border-bottom: 1px solid rgba(19, 92, 151, 0.08) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
     }
     
     /* Profile Box */
     .sidebar-profile {
-      background: rgba(19, 92, 151, 0.1) !important;
+      background: #f1f5f9 !important;
       border: none !important;
     }
     .sidebar-profile:hover {
-      background: rgba(19, 92, 151, 0.16) !important;
+      background: #e2e8f0 !important;
       border: none !important;
     }
     .sidebar-profile.active {
-      background: rgba(19, 92, 151, 0.12) !important;
+      background: #e2e8f0 !important;
       border: none !important;
     }
     .sidebar-profile-name {
-      color: #135c97 !important;
+      color: #334155 !important;
     }
     .sidebar-profile-username {
-      color: #135c97 !important;
-      opacity: 0.7 !important;
+      color: #64748b !important;
+      opacity: 0.8 !important;
     }
 
-    /* Menu & Sidebar items default colors (dark blue `#135c97`) */
+    /* Menu & Sidebar items default colors (slate gray `#475569`) */
     .tsa-menu .menu-item, 
     .tsa-menu .submenu-item,
     .sidebar-links-section .sidebar-links-title,
     .sidebar-link-item,
     .sidebar-link-item span {
-      color: #135c97 !important;
+      color: var(--brand-red, #135c97) !important;
     }
     .sidebar-links-section .sidebar-links-title {
       opacity: 0.8 !important;
@@ -129,63 +129,63 @@
     .tsa-menu .submenu-item svg,
     .sidebar-link-item svg,
     .tsa-menu .group-arrow svg {
-      stroke: #135c97 !important;
+      stroke: var(--brand-red, #135c97) !important;
     }
 
-    /* Hover States (White card style) */
+    /* Hover States (Light blue/gray background) */
     .tsa-menu .menu-item:hover,
     .tsa-menu .submenu-item:hover,
     .sidebar-link-item:hover {
-      background: #ffffff !important;
-      color: var(--brand-red, #dc2626) !important;
+      background: #f1f5f9 !important;
+      color: var(--brand-red, #135c97) !important;
     }
     .tsa-menu .menu-item:hover svg,
     .tsa-menu .submenu-item:hover svg,
     .sidebar-link-item:hover svg,
     .tsa-menu .group-arrow:hover svg {
-      stroke: var(--brand-red, #dc2626) !important;
+      stroke: var(--brand-red, #135c97) !important;
     }
     .tsa-menu .menu-item:hover span,
     .tsa-menu .submenu-item:hover span,
     .sidebar-link-item:hover span {
-      color: var(--brand-red, #dc2626) !important;
+      color: var(--brand-red, #135c97) !important;
     }
 
     /* Active States */
     .tsa-menu a.active,
     .submenu-item.active {
-      background: #ffffff !important;
-      color: var(--brand-red, #dc2626) !important;
-      font-weight: 600 !important;
+      background: #eff6ff !important;
+      color: var(--brand-red, #135c97) !important;
+      font-weight: 700 !important;
     }
     .tsa-menu a.active svg,
     .submenu-item.active svg {
-      stroke: var(--brand-red, #dc2626) !important;
+      stroke: var(--brand-red, #135c97) !important;
     }
     .tsa-menu a.active span,
     .submenu-item.active span {
-      color: var(--brand-red, #dc2626) !important;
+      color: var(--brand-red, #135c97) !important;
     }
 
     /* Separators */
     .tsa-sidebar > div[style*="border-top"] {
-      border-top: 1px solid rgba(19, 92, 151, 0.1) !important;
+      border-top: 1px solid #e2e8f0 !important;
     }
 
     /* Footer "Trang chủ" Button */
     .sidebar-footer {
-      border-top: 1px solid rgba(19, 92, 151, 0.08) !important;
-      background: #eff3f8 !important;
+      border-top: 1px solid #e2e8f0 !important;
+      background: #ffffff !important;
     }
     .sidebar-footer .btn-outline {
-      color: #135c97 !important;
-      border-color: #135c97 !important;
+      color: #475569 !important;
+      border-color: #cbd5e1 !important;
       background: #ffffff !important;
     }
     .sidebar-footer .btn-outline:hover {
-      background: #eff6ff !important;
-      color: var(--brand-red, #dc2626) !important;
-      border-color: var(--brand-red, #dc2626) !important;
+      background: #f1f5f9 !important;
+      color: var(--brand-red, #135c97) !important;
+      border-color: var(--brand-red, #135c97) !important;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
@@ -434,16 +434,16 @@
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </span>
-          <span>Tài khoản</span>
+          <span>Thông tin cá nhân</span>
         </a>
       </nav>
 
       <!-- Sidebar Separator & Links -->
       <div style="margin: 6px 16px; border-top: 1px solid #e5e7eb; opacity: 0.5;"></div>
       <div class="sidebar-links-section" style="margin-bottom: 6px;">
-        <div class="sidebar-links-title" style="font-size: 11px; font-weight: 700; color: #135c97; margin-bottom: 4px; padding: 0 16px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8;">Liên kết</div>
+        <div class="sidebar-links-title" style="font-size: 12px; font-weight: 700; color: #135c97; margin-bottom: 4px; padding: 0 16px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8;">Liên kết</div>
         <div class="sidebar-links-list" style="display: flex; flex-direction: column; gap: 2px; padding: 0 8px;">
-          <a id="social-link-facebook" href="https://facebook.com/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+          <a id="social-link-facebook" href="https://facebook.com/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 15px; font-weight: 600;">
             <span class="social-circle-wrapper facebook">
               <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor">
                 <path d="M9.3 13.5v-5h1.7l.2-1.9H9.3V5.4c0-.6.1-.8.7-.8h1.1V2.8c-.2 0-.9-.1-1.6-.1-1.6 0-2.6.9-2.6 2.7v1.4H5.2v1.9h1.7v5H9.3z" />
@@ -451,7 +451,7 @@
             </span>
             <span id="social-link-facebook-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Facebook TMA Study</span>
           </a>
-          <a id="social-link-youtube" href="https://youtube.com/c/ThayVuNgocAnh" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+          <a id="social-link-youtube" href="https://youtube.com/c/ThayVuNgocAnh" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 15px; font-weight: 600;">
             <span class="social-circle-wrapper youtube">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                 <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.516 0-9.387.507A3.003 3.003 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.387.507 9.387.507s7.517 0 9.389-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.93 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -459,7 +459,7 @@
             </span>
             <span id="social-link-youtube-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Youtube TMA Study</span>
           </a>
-          <a id="social-link-tiktok" href="https://tiktok.com/@mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+          <a id="social-link-tiktok" href="https://tiktok.com/@mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 15px; font-weight: 600;">
             <span class="social-circle-wrapper tiktok">
               <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
                 <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/>
@@ -467,7 +467,7 @@
             </span>
             <span id="social-link-tiktok-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #135c97 !important;">Tiktok TMA Study</span>
           </a>
-          <a id="social-link-messenger" href="https://m.me/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 14px; font-weight: 500;">
+          <a id="social-link-messenger" href="https://m.me/mapstudy" target="_blank" class="sidebar-link-item" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #135c97 !important; transition: all 0.15s; font-size: 15px; font-weight: 600;">
             <span class="social-circle-wrapper messenger">
               <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.51 3.75 7.15V22l3.41-1.87c.88.24 1.8.37 2.84.37 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1 12.25l-2.5-2.67-4.8 2.67 5.3-5.63 2.5 2.67 4.8-2.67-5.3 5.63z"/>
@@ -563,7 +563,7 @@
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
-              <span>Tài khoản</span>
+              <span>Thông tin cá nhân</span>
             </button>
             <button class="dropdown-item" type="button" id="logout-button" aria-haspopup="dialog" aria-controls="logout-dialog">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -711,171 +711,184 @@
                       
                       <!-- Right: content -->
                       <div class="study-teacher-right" style="flex: 1; min-width: 280px;">
-                        <span style="font-size: 10px; font-weight: 800; color: #0f5a9e; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
+                        <span style="font-size: 11px; font-weight: 700; color: #0f5a9e; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
                         
                         <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 6px;">
-                          <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
-                          <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900;">✓</span>
+                          <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 700; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
+                          <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900;">✓</span>
                         </div>
                         
-                        <p class="study-teacher-subtitle" style="color: #0f5a9e; font-size: 13.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
+                        <p class="study-teacher-subtitle" style="color: #0f5a9e; font-size: 14.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
                         
-                        <p class="study-teacher-bio" style="font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+                        <p class="study-teacher-bio" style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
                           Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
                         </p>
                         
-                        <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
+                        <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
                           <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
                           <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
                           <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
                           <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Cựu học sinh hệ Kỹ sư tài năng Đại học Bách Khoa Hà Nội.</li>
-                          <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Chủ đề gi�                  <!-- Post 1: Thầy Nghiêm Xuân Tân -->
-                  <div class="community-post-card" id="post-1">
-                    <div class="post-header">
-                      <div class="post-avatar-wrap" style="background: #ffffff; border: 1px solid #f1f5f9; padding: 2px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
-                        <img src="assets/logo-ftu.png" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: contain;">
-                      </div>
-                      <div class="post-header-info">
-                        <span class="post-author-name">Thầy Nghiêm Xuân Tân</span>
-                        <span class="post-time">1 ngày trước</span>
-                      </div>
-                    </div>
-                    <div class="post-content" style="font-family: inherit; line-height: 1.6; color: #1e293b;">
-                      <p style="margin-bottom: 12px; font-weight: 600; color: #0f172a; font-size: 15px;">📢 THÔNG BÁO KHAI MỞ KỲ THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) LẦN 1 - NĂM HỌC 2026-2027</p>
-                      <p style="margin-bottom: 12px; color: #334155;">Chào tất cả các em học sinh khóa 2K9 và các sĩ tử đang miệt mài ôn thi đánh giá tư duy! Nhằm tạo cơ hội cho các em cọ xát thực tế, đánh giá chính xác năng lực bản thân và làm quen với áp lực thời gian, hệ thống TMA Study kết hợp cùng ban cố vấn chính thức tổ chức <strong>Kỳ thi thử Đánh giá tư duy (TSA) Chuẩn Cấu trúc 3 Phần mới nhất của Đại học Bách Khoa Hà Nội</strong>.</p>
-                      
-                      <div style="background: #f8fafc; border-left: 4px solid #135c97; padding: 14px 18px; margin: 16px 0; border-radius: 6px; font-size: 13.5px; color: #334155;">
-                        <p style="font-weight: 700; color: #135c97; margin-bottom: 10px; font-size: 14px;">📋 CẤU TRÚC ĐỀ THI CHI TIẾT (CHUẨN 3 PHẦN - 150 PHÚT - 100 ĐIỂM):</p>
-                        
-                        <p style="font-weight: 600; color: #0f172a; margin-top: 8px;">Phần 1: Tư duy Toán học (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
-                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
-                          <li style="margin-bottom: 4px;">• Bao gồm các câu hỏi trắc nghiệm nhiều lựa chọn, đúng/sai, điền khuyết và kéo thả.</li>
-                          <li style="margin-bottom: 4px;">• Nội dung tập trung đánh giá khả năng mô hình hóa toán học, giải quyết vấn đề thực tiễn, tư duy hình học không gian, hàm số, giải tích, số học và tổ hợp xác suất nâng cao.</li>
-                        </ul>
-
-                        <p style="font-weight: 600; color: #0f172a; margin-top: 12px;">Phần 2: Tư duy Đọc hiểu (Thời gian làm bài: 30 phút | Điểm số: 20 điểm)</p>
-                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
-                          <li style="margin-bottom: 4px;">• Gồm các văn bản dài (từ 800 - 1000 từ) thuộc lĩnh vực khoa học kỹ thuật, công nghệ, y sinh hoặc văn học xã hội.</li>
-                          <li style="margin-bottom: 4px;">• Đánh giá năng lực đọc nhanh, phân tích logic, định vị luận điểm của tác giả, tổng hợp thông tin cốt lõi và rút ra kết luận chuẩn xác từ văn bản.</li>
-                        </ul>
-
-                        <p style="font-weight: 600; color: #0f172a; margin-top: 12px;">Phần 3: Tư duy Giải quyết vấn đề (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
-                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.5;">
-                          <li style="margin-bottom: 4px;">• Đề thi cung cấp các bảng số liệu, biểu đồ thực nghiệm, thông tin về các hiện tượng Vật lí, Hóa học, Sinh học hoặc quy trình kỹ thuật.</li>
-                          <li style="margin-bottom: 4px;">• Đánh giá kỹ năng đọc hiểu biểu đồ, xử lý số liệu đo đạc thực tế, xâu chuỗi thông tin đa chiều để giải quyết các bài toán khoa học mang tính thực tiễn.</li>
-                        </ul>
-                      </div>
-
-                      <div style="background: #eff6ff; border-radius: 6px; padding: 12px 16px; margin: 16px 0; border: 1px dashed #bfdbfe; font-size: 13.5px;">
-                        <p style="font-weight: 700; color: #1e40af; margin-bottom: 6px;">⏰ LỊCH THI VÀ QUY CHẾ THAM GIA:</p>
-                        <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.6; color: #1e3a8a;">
-                          <li>📅 <strong>Thời gian mở thi:</strong> Từ 08:00 sáng đến 22:00 tối Chủ Nhật, ngày 09/08/2026.</li>
-                          <li>💻 <strong>Hình thức:</strong> Thi online trực tiếp tại thẻ <strong>"Phòng luyện"</strong> -> <strong>"Đánh giá tư duy - TSA"</strong> trên website TMA Study.</li>
-                          <li>⏱️ <strong>Quy chế:</strong> Hệ thống đếm ngược thời gian độc lập cho từng phần y hệt kỳ thi thật của ĐHBK Hà Nội. Khi hết thời gian của mỗi phần, hệ thống tự động lưu bài và chuyển sang phần tiếp theo, thí sinh không thể quay lại làm phần trước đó.</li>
-                        </ul>
-                      </div>
-
-                      <p style="margin-top: 12px; font-weight: 500; color: #475569;">Kỳ thi thử hoàn toàn miễn phí cho tất cả học sinh đăng ký tài khoản ôn luyện trên hệ thống. Kết quả thi, đáp án chi tiết từng câu và bảng xếp hạng vinh danh sẽ được công bố vào lúc 08h00 sáng thứ Hai (10/08/2026). Các em hãy chủ động sắp xếp thời gian ôn tập và chuẩn bị giấy nháp, máy tính bỏ túi thật chu đáo nhé!</p>
-                    </div>
-                    <div class="post-actions-divider"></div>
-                    <div class="post-actions-row">
-                      <button class="post-action-btn" onclick="likePost(1)">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                        <span id="like-count-1">1452</span> đánh giá
-                      </button>
-                      <button class="post-action-btn" onclick="focusCommentInput(1)">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                        <span id="comment-count-1">12</span> bình luận
-                      </button>
-                      <button class="post-action-btn" onclick="sharePost(1)">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                        Chia sẻ
-                      </button>
-                    </div>
-                    
-                    <div class="post-comments-section">
-                      <div class="comment-list" id="comment-list-1">
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Nguyễn Văn Bình</div>
-                            <div class="comment-item-text">Em đăng ký tham gia rồi ạ, hy vọng đề thi thử lần này sẽ giúp em làm quen với áp lực phòng thi thật!</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Lê Thuỳ Trang</div>
-                            <div class="comment-item-text">Thầy ơi, phần 3 Giải quyết vấn đề có nhiều câu thực tế phân tích biểu đồ như đề năm ngoái không ạ?</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Phạm Minh Hoàng</div>
-                            <div class="comment-item-text">Em đang ôn tập phần Đọc hiểu mà vẫn hay bị nhầm luận điểm tác giả, mong đề thi thử lần này sát đề thật.</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nu.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Trần Minh Thư</div>
-                            <div class="comment-item-text">Thầy ơi thi thử lần này có giới hạn thời gian làm bài từng phần riêng như khi thi thật không ạ?</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar" style="background: #ffffff; border: 1px solid #f1f5f9; padding: 2px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
-                            <img src="assets/logo-ftu.png" alt="User" style="width:100%; height:100%; object-fit:contain;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author" style="color: #135c97; font-weight: 600;">Thầy Nghiêm Xuân Tân</div>
-                            <div class="comment-item-text">Chào Thư, hệ thống phòng luyện của TMA Study đã thiết kế đồng hồ đếm ngược riêng biệt cho từng phần thi (Toán học 60 phút, Đọc hiểu 30 phút, Giải quyết vấn đề 60 phút) y hệt thi thật, hết thời gian mỗi phần hệ thống tự chuyển phần nên các em phải căn thời gian thật kỹ nhé.</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Hoàng Anh Tuấn</div>
-                            <div class="comment-item-text">Rủ cả nhóm bạn thân cùng thi xem ai điểm cao hơn, chúc các bạn 2K9 làm bài tốt!</div>
-                          </div>
-                        </div>
-                      </div>êm Xuân Tân</div>
-                            <div class="comment-item-text">Chào Thư, vì ba điểm S, H, K nằm trên các cạnh của hình chóp S.ABC và S.ADC tương ứng đó em. Khi dùng công thức Simson mở rộng cho khối đa diện S.AHKC, ta chia đôi thành S.AHK và S.AKC rồi cộng lại, từ đó có tỉ lệ diện tích đáy của ΔAHK trên tứ giác AHKC nhé.</div>
-                          </div>
-                        </div>
-                        <div class="comment-item">
-                          <div class="comment-item-avatar">
-                            <img src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                          </div>
-                          <div class="comment-item-content-box">
-                            <div class="comment-item-author">Hoàng Anh Tuấn</div>
-                            <div class="comment-item-text">Cảm ơn thầy Tân đẹp trai ạ! Em đã lưu bài về học rồi ạ.</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="comment-input-area">
-                        <div class="comment-input-avatar">
-                          <img class="current-user-avatar" src="https://assets.tmastudy.io.vn/assets/nam.png" alt="User" style="width:100%; height:100%; object-fit:cover;">
-                        </div>
                           <li style="padding-left: 4px;"><span style="color: #0f5a9e; font-weight: 700; margin-right: 4px;">•</span> Chủ đề giảng dạy chuyên sâu: Phương pháp giải nhanh trắc nghiệm Vật lý và tư duy Đánh giá năng lực.</li>
                         </ul>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <!-- Container for Community Sub-Panel -->
+                <!-- Container for Community Sub-Panel -->
                   <div id="sub-panel-community-content" style="display: none; flex-direction: column; gap: 15px;">
+
+                    <!-- Post 1: Thầy Nghiêm Xuân Tân -->
+                    <div class="community-post-card" id="post-1">
+                      <div class="post-header">
+                        <div class="post-avatar-wrap">
+                          <img src="https://assets.tmastudy.io.vn/assets/logo-ftu.png?v=3" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div class="post-header-info">
+                          <span class="post-author-name">Thầy Nghiêm Xuân Tân</span>
+                          <span class="post-time">1 ngày trước</span>
+                        </div>
+                      </div>
+                      <div class="post-content" style="font-family: inherit; line-height: 1.6; color: #1e293b;">
+                        <p style="margin-bottom: 12px; font-weight: 700; color: #0f172a; font-size: 16px;">🌿 THÔNG BÁO KHAI MỞ KÝ THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) LẦN 1 - NĂM HỌC 2026-2027</p>
+                        <p style="margin-bottom: 12px; color: #334155;">Chào tất cả các em học sinh khóa 2K9 và các sĩ tử đang miệt mài ôn thi đánh giá tư duy! Nhằm tạo cơ hội cho các em cọ xát thực tế, đánh giá chính xác năng lực bản thân và làm quen với áp lực thời gian, hệ thống TMA Study kết hợp cùng ban cố vấn chính thức tổ chức <strong>Kỳ thi thử Đánh giá tư duy (TSA) Chuẩn Cấu trúc 3 Phần mới nhất của Đại học Bách Khoa Hà Nội</strong>.</p>
+                        
+                        <div style="background: #f8fafc; padding: 14px 18px; margin: 16px 0; border-radius: 8px; font-size: 14.5px; color: #334155;">
+                          <p style="font-weight: 700; color: #135c97; margin-bottom: 10px; font-size: 15px;">🌱 CẤU TRÚC ĐỀ THI CHI TIẾT (CHUẨN 3 PHẦN - 150 PHÚT - 100 ĐIỂM):</p>
+                          
+                          <p style="font-weight: 700; color: #0f172a; margin-top: 8px;">Phần 1: Tư duy Toán học (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
+                          <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
+                            <li style="margin-bottom: 4px;">• Bao gồm các câu hỏi trắc nghiệm nhiều lựa chọn, đúng/sai, điền khuyết và kéo thả.</li>
+                            <li style="margin-bottom: 4px;">• Nội dung tập trung đánh giá khả năng mô hình hóa toán học, giải quyết vấn đề thực tiễn, tư duy hình học không gian, hàm số, giải tích, số học và tổ hợp xác suất nâng cao.</li>
+                          </ul>
+
+                          <p style="font-weight: 700; color: #0f172a; margin-top: 12px;">Phần 2: Tư duy Đọc hiểu (Thời gian làm bài: 30 phút | Điểm số: 20 điểm)</p>
+                          <ul style="list-style-type: none; padding-left: 0; margin-bottom: 10px; line-height: 1.5;">
+                            <li style="margin-bottom: 4px;">• Gồm các văn bản dài (từ 800 - 1000 từ) thuộc lĩnh vực khoa học kỹ thuật, công nghệ, y sinh hoặc văn học xã hội.</li>
+                            <li style="margin-bottom: 4px;">• Đánh giá năng lực đọc nhanh, phân tích logic, định vị luận điểm của tác giả, tổng hợp thông tin cốt lõi và rút ra kết luận chuẩn xác từ văn bản.</li>
+                          </ul>
+
+                          <p style="font-weight: 700; color: #0f172a; margin-top: 12px;">Phần 3: Tư duy Giải quyết vấn đề (Thời gian làm bài: 60 phút | Điểm số: 40 điểm)</p>
+                          <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.5;">
+                            <li style="margin-bottom: 4px;">• Đề thi cung cấp các bảng số liệu, biểu đồ thực nghiệm, thông tin về các hiện tượng Vật lí, Hóa học, Sinh học hoặc quy trình kỹ thuật.</li>
+                            <li style="margin-bottom: 4px;">• Đánh giá kỹ năng đọc hiểu biểu đồ, xử lý số liệu đo đạc thực tế, xâu chuỗi thông tin đa chiều để giải quyết các bài toán khoa học mang tính thực tiễn.</li>
+                          </ul>
+                        </div>
+
+                        <div style="background: #eff6ff; border-radius: 8px; padding: 12px 16px; margin: 16px 0; border: 1px dashed #bfdbfe; font-size: 14.5px;">
+                          <p style="font-weight: 700; color: #1e40af; margin-bottom: 6px;">🍃 LỊCH THI VÀ QUY CHẾ THAM GIA:</p>
+                          <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0; line-height: 1.6; color: #1e3a8a;">
+                            <li>🌴 <strong>Thời gian mở thi:</strong> Từ 08:00 sáng đến 22:00 tối Chủ Nhật, ngày 09/08/2026.</li>
+                            <li>🌵 <strong>Hình thức:</strong> Thi online trực tiếp tại thẻ <strong>"Phòng luyện"</strong> -> <strong>"Đánh giá tư duy - TSA"</strong> trên website TMA Study.</li>
+                            <li>🌾 <strong>Quy chế:</strong> Hệ thống đếm ngược thời gian độc lập cho từng phần y hệt kỳ thi thật của ĐHBK Hà Nội. Khi hết thời gian của mỗi phần, hệ thống tự động lưu bài và chuyển sang phần tiếp theo, thí sinh không thể quay lại làm phần trước đó.</li>
+                          </ul>
+                        </div>
+
+                        <p style="margin-top: 12px; font-weight: 600; color: #475569;">Kỳ thi thử hoàn toàn miễn phí cho tất cả học sinh đăng ký tài khoản ôn luyện trên hệ thống. Kết quả thi, đáp án chi tiết từng câu và bảng xếp hạng vinh danh sẽ được công bố vào lúc 08h00 sáng thứ Hai (10/08/2026). Các em hãy chủ động sắp xếp thời gian ôn tập và chuẩn bị giấy nháp, máy tính bỏ túi thật chu đáo nhé!</p>
+                      </div>
+                      <div class="post-actions-divider"></div>
+                      <div class="post-actions-row">
+                        <button class="post-action-btn" onclick="likePost(1)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                          <span id="like-count-1">385</span> đánh giá
+                        </button>
+                        <button class="post-action-btn" onclick="focusCommentInput(1)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                          <span id="comment-count-1">6</span> bình luận
+                        </button>
+                        <button class="post-action-btn" onclick="sharePost(1)">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                          Chia sẻ
+                        </button>
+                      </div>
+                      
+                      <div class="post-comments-section">
+                        <div class="comment-list" id="comment-list-1">
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="https://assets.tmastudy.io.vn/assets/nam.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Nguyễn Văn Bình</div>
+                              <div class="comment-item-text">Em đăng ký tham gia rồi ạ, hy vọng đề thi thử lần này sẽ giúp em làm quen với áp lực phòng thi thật!</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="https://assets.tmastudy.io.vn/assets/nu.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Lê Thuỳ Trang</div>
+                              <div class="comment-item-text">Thầy ơi, phần 3 Giải quyết vấn đề có nhiều câu thực tế phân tích biểu đồ như đề năm ngoái không ạ?</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="https://assets.tmastudy.io.vn/assets/nam.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Phạm Minh Hoàng</div>
+                              <div class="comment-item-text">Em đang ôn tập phần Đọc hiểu mà vẫn hay bị nhầm luận điểm tác giả, mong đề thi thử lần này sát đề thật.</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="https://assets.tmastudy.io.vn/assets/nu.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Trần Minh Thư</div>
+                              <div class="comment-item-text">Thầy ơi thi thử lần này có giới hạn thời gian làm bài từng phần riêng như khi thi thật không ạ?</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                            <img src="https://assets.tmastudy.io.vn/assets/logo-ftu.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author" style="color: #135c97; font-weight: 700;">Thầy Nghiêm Xuân Tân</div>
+                              <div class="comment-item-text">Chào Thư, hệ thống phòng luyện của TMA Study đã thiết kế đồng hồ đếm ngược riêng biệt cho từng phần thi (Toán học 60 phút, Đọc hiểu 30 phút, Giải quyết vấn đề 60 phút) y hệt thi thật, hết thời gian mỗi phần hệ thống tự chuyển phần nên các em phải căn thời gian thật kỹ nhé.</div>
+                            </div>
+                          </div>
+                          <div class="comment-item">
+                            <div class="comment-item-avatar">
+                              <img src="https://assets.tmastudy.io.vn/assets/nam.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="comment-item-content-box">
+                              <div class="comment-item-author">Hoàng Anh Tuấn</div>
+                              <div class="comment-item-text">Rủ cả nhóm bạn thân cùng thi xem ai điểm cao hơn, chúc các bạn 2K9 làm bài tốt!</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="comment-input-area">
+                          <div class="comment-input-avatar">
+                            <img class="current-user-avatar" src="https://assets.tmastudy.io.vn/assets/nam.png?v=3" alt="User" style="width:100%; height:100%; object-fit:cover;">
+                          </div>
+                          <div class="comment-input-container">
+                            <textarea class="comment-textarea current-user-name-placeholder" id="comment-textarea-1" placeholder="Viết bình luận dưới tên Học sinh..." oninput="updateCharCount(1)" onkeydown="handleCommentKey(event, 1)"></textarea>
+                            <div class="comment-input-footer">
+                              <div class="comment-tools">
+                                <button class="comment-tool-btn" title="Thẻ băm">#</button>
+                                <button class="comment-tool-btn" title="Định dạng chữ">Aa</button>
+                                <button class="comment-tool-btn" title="Đính kèm ảnh">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </button>
+                                <button class="comment-tool-btn" title="Biểu cảm">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                </button>
+                              </div>
+                              <div class="comment-submit-row">
+                                <span class="comment-char-count" id="char-count-1">0/1000</span>
+                                <button class="comment-send-btn" onclick="submitComment(1)">
+                                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                     <!-- Post 2: Admin Nguyễn Văn Hải - Lịch thi thử TSA -->
                     <div class="community-post-card" id="post-2">
@@ -884,12 +897,12 @@
                           <img src="https://assets.tmastudy.io.vn/assets/nam.png?v=3" alt="Admin Nguyễn Văn Hải" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                         <div class="post-header-info">
-                          <span class="post-author-name" style="display: flex; align-items: center; gap: 4px;">Admin Nguyễn Văn Hải <span title="Admin" style="font-size: 13px;">🔑</span></span>
+                          <span class="post-author-name" style="display: flex; align-items: center; gap: 4px;">Admin Nguyễn Văn Hải <span title="Admin" style="font-size: 14px;">🔑</span></span>
                           <span class="post-time">2 ngày trước</span>
                         </div>
                       </div>
                       <div class="post-content">
-                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🌿 THÔNG BÁO: LỊCH THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) ĐỢT 2 - KỲ THI NĂM HỌC 2026 - 2027</p>
+                        <p style="margin-bottom: 6px; font-weight: 700; color: #1e3a8a; font-size: 15.5px; line-height: 1.4;">🌿 THÔNG BÁO: LỊCH THI THỬ ĐÁNH GIÁ TƯ DUY (TSA) ĐỢT 2 - KỲ THI NĂM HỌC 2026 - 2027</p>
                         <p style="margin-bottom: 6px; line-height: 1.45;">Chào các em học sinh khóa 2k9 và 2k8! Nhằm giúp các em rèn luyện kỹ năng làm bài và kiểm tra năng lực hiện tại trước khi bước vào kỳ thi chính thức của Đại học Bách Khoa Hà Nội, TMA TSA chính thức mở cổng thi thử đợt 2 vào cuối tuần này.</p>
                         
                         <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 CẤU TRÚC ĐỀ THI THỬ (Chuẩn cấu trúc ĐHBK Hà Nội):</p>
@@ -983,7 +996,7 @@
                     <div class="community-post-card" id="post-3">
                       <div class="post-header">
                         <div class="post-avatar-wrap">
-                          <img src="https://assets.tmastudy.io.vn/assets/giangvien.png?v=3" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: cover;">
+                          <img src="https://assets.tmastudy.io.vn/assets/logo-ftu.png?v=3" alt="Thầy Nghiêm Xuân Tân" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                         <div class="post-header-info">
                           <span class="post-author-name">Thầy Nghiêm Xuân Tân</span>
@@ -991,7 +1004,7 @@
                         </div>
                       </div>
                       <div class="post-content">
-                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🌴 KHAI GIẢNG LỚP LUYỆN THI CHUYÊN SÂU TƯ DUY KHOA HỌC (TSA) VÀ VẬT LÝ THPTQG 2027</p>
+                        <p style="margin-bottom: 6px; font-weight: 700; color: #1e3a8a; font-size: 15.5px; line-height: 1.4;">🌴 KHAI GIẢNG LỚP LUYỆN THI CHUYÊN SÂU TƯ DUY KHOA HỌC (TSA) VÀ VẬT LÝ THPTQG 2027</p>
                         <p style="margin-bottom: 6px; line-height: 1.45;">Chào các em học sinh thân yêu! Thầy Nghiêm Xuân Tân đây. Để chuẩn bị tốt nhất cho kỳ thi THPT Quốc Gia và kỳ thi Đánh giá tư duy Bách Khoa năm tới, thầy chính thức nhận đăng ký khóa học offline và online chất lượng cao.</p>
                         
                         <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 KHÓA HỌC GIÚP CÁC EM NHỮNG GÌ?</p>
@@ -1003,7 +1016,7 @@
 
                         <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌵 Lịch học:</p>
                         <p style="margin-bottom: 6px; line-height: 1.45; padding-left: 10px;">Tối Thứ 3 và Thứ 6 hàng tuần (20h00 - 22h00) qua phòng học Zoom tương tác trực tiếp. Toàn bộ các buổi học đều có video record chất lượng HD để học sinh xem lại bất cứ lúc nào.</p>
-                        <p style="margin-bottom: 8px; font-weight: 500; color: #15803d; line-height: 1.45;">🪴 <strong>Đặc biệt ưu đãi giảm 20% học phí</strong> cho các nhóm đăng ký từ 3 bạn trở lên trước ngày 15/08/2026. Các em nhanh tay điền Form tư vấn ở cột bên phải nhé!</p>
+                        <p style="margin-bottom: 8px; font-weight: 600; color: #15803d; line-height: 1.45;">🪴 <strong>Đặc biệt ưu đãi giảm 20% học phí</strong> cho các nhóm đăng ký từ 3 bạn trở lên trước ngày 15/08/2026. Các em nhanh tay điền Form tư vấn ở cột bên phải nhé!</p>
                         
                         <div class="post-image-container">
                           <img src="https://assets.tmastudy.io.vn/assets/ly.png?v=3" alt="Lớp học Vật lý thầy Nghiêm Xuân Tân">
@@ -1080,7 +1093,7 @@
                         </div>
                       </div>
                       <div class="post-content">
-                        <p style="margin-bottom: 6px; font-weight: 600; color: #1e3a8a; font-size: 14.5px; line-height: 1.4;">🪴 KINH NGHIỆM TỰ HỌC ĐẠT 85.6/100 ĐIỂM KỲ THI ĐÁNH GIÁ TƯ DUY (TSA)</p>
+                        <p style="margin-bottom: 6px; font-weight: 700; color: #1e3a8a; font-size: 15.5px; line-height: 1.4;">🪴 KINH NGHIỆM TỰ HỌC ĐẠT 85.6/100 ĐIỂM KỲ THI ĐÁNH GIÁ TƯ DUY (TSA)</p>
                         <p style="margin-bottom: 6px; line-height: 1.45;">Chào mọi người! Mình là Hoàng Long, cựu học sinh K68 Trường Công nghệ Thông tin & Truyền thông - ĐHBK Hà Nội. Vừa rồi mình có tham gia kỳ thi TSA và đạt điểm số 85.6 điểm. Mình xin chia sẻ lại một số kinh nghiệm ôn luyện thực chiến hy vọng giúp ích cho các bạn khóa sau:</p>
                         
                         <p style="margin-bottom: 4px; font-weight: 700; color: #0f172a; line-height: 1.4;">🌱 1. TƯ DUY TOÁN HỌC (Ôn nền tảng sớm):</p>
@@ -1402,14 +1415,14 @@
         <!-- TAB 3: PHÒNG LUYỆN -->
         <div id="tab-practice" class="tab-panel">
           <!-- Breadcrumb & Top Section -->
-          <div class="library-breadcrumb" id="practice-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+          <div class="library-breadcrumb" id="practice-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #64748b; margin-bottom: 12px; font-family: 'Quicksand', sans-serif;">
             <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #c2272d; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </a>
             <span>&gt;</span>
             <span style="color: #64748b; cursor: pointer;" onclick="switchTab('overview')">Phòng luyện</span>
             <span>&gt;</span>
-            <span id="practice-breadcrumb-category" style="color: #c2272d; font-weight: 600;">Đánh giá tư duy - TSA</span>
+            <span id="practice-breadcrumb-category" style="color: #c2272d; font-weight: 700;">Đánh giá tư duy - TSA</span>
           </div>
 
           <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; padding-right: 16px; padding-left: 8px;">
@@ -1422,12 +1435,12 @@
                   background: #eff3f8 !important;
                   color: #1e293b !important;
                   border: 1px solid transparent !important;
-                  font-weight: 500 !important;
+                  font-weight: 600 !important;
                   padding: 10px 16px 10px 38px !important;
                   border-radius: 8px !important;
                   height: 42px !important;
                   box-sizing: border-box !important;
-                  font-size: 13.5px !important;
+                  font-size: 14.5px !important;
                   transition: all 0.2s ease !important;
                 }
                 #practice-search-input:focus {
@@ -1484,12 +1497,12 @@
                   background: #eff3f8 !important;
                   color: #1e293b !important;
                   border: 1px solid transparent !important;
-                  font-weight: 500 !important;
+                  font-weight: 600 !important;
                   padding: 10px 16px 10px 38px !important;
                   border-radius: 8px !important;
                   height: 42px !important;
                   box-sizing: border-box !important;
-                  font-size: 13.5px !important;
+                  font-size: 14.5px !important;
                   transition: all 0.2s ease !important;
                 }
                 #practice-exam-search-input:focus {
@@ -1506,14 +1519,14 @@
                 .tsa-exam-item-card {
                   background: #ffffff !important;
                   border: 1.5px solid #cbd5e1 !important;
-                  border-radius: 12px !important;
+                  border-radius: 8px !important;
                   padding: 20px !important;
                   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
                   display: flex !important;
                   flex-direction: column !important;
                   text-align: left !important;
                   box-sizing: border-box !important;
-                  font-family: 'Inter', sans-serif !important;
+                  font-family: 'Quicksand', sans-serif !important;
                   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
                   width: 100% !important;
                   max-width: 380px !important;
@@ -1538,12 +1551,12 @@
         <div id="tab-documents" class="tab-panel">
           <div id="library-list-view">
             <!-- Breadcrumb & Top Section -->
-          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #64748b; margin-bottom: 12px; font-family: 'Quicksand', sans-serif;">
             <a href="#overview" onclick="safePushState({ route: 'homepage' }, '', '/'); switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </a>
             <span>&gt;</span>
-            <span style="color: #0f5a9e; font-weight: 600;">Tài liệu</span>
+            <span style="color: #0f5a9e; font-weight: 700;">Tài liệu</span>
           </div>
 
           <!-- Main Content Columns Layout (starting from title/header) -->
@@ -1553,7 +1566,7 @@
             <div class="library-left-col" style="flex: 1; min-width: 0;">
               
               <div class="tab-header-box" style="margin-bottom: 20px; padding-bottom: 4px;">
-                <h2 class="tab-header-title" style="font-size: 24px; font-weight: 700; color: #0f5a9e; margin: 0; text-transform: none; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">Tài liệu tham khảo TMA School</h2>
+                <h2 class="tab-header-title" style="font-size: 24px; font-weight: 700; color: #0f5a9e; margin: 0; text-transform: none; font-family: 'Quicksand', sans-serif; letter-spacing: -0.5px;">Tài liệu tham khảo TMA School</h2>
               </div>
 
               <!-- Category Pills -->
@@ -1619,7 +1632,7 @@
                 </div>
                 
                 <div class="library-search-box" style="position: relative; width: 260px; max-width: 100%;">
-                  <input type="text" id="lib-search-input" placeholder="Tìm kiếm" oninput="window.onLibrarySearchInput()" style="width: 100%; padding: 10px 38px 10px 16px; border: none; border-radius: 8px; font-size: 13.5px; outline: none; background: #eff3f8; color: var(--text); box-sizing: border-box;">
+                  <input type="text" id="lib-search-input" placeholder="Tìm kiếm" oninput="window.onLibrarySearchInput()" style="width: 100%; padding: 10px 38px 10px 16px; border: none; border-radius: 8px; font-size: 14.5px; outline: none; background: #eff3f8; color: var(--text); box-sizing: border-box;">
                   <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #0f5a9e; display: flex; align-items: center; pointer-events: none;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                   </span>
@@ -1636,8 +1649,8 @@
             <div class="library-right-col" style="width: 380px; flex-shrink: 0;">
               <div class="library-folder-card" style="background: transparent; border: none; border-radius: 0; padding: 0; box-shadow: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                  <h4 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif;">Kho tài liệu</h4>
-                  <a href="#" onclick="alert('Đang cập nhật thêm thư mục mới...'); return false;" style="font-size: 13px; color: var(--brand-red, #135c97); font-weight: 600; text-decoration: none;">Xem tất cả &gt;&gt;&gt;</a>
+                  <h4 style="margin: 0; font-size: 17.5px; font-weight: 700; color: #1e293b; font-family: 'Quicksand', sans-serif;">Kho tài liệu</h4>
+                  <a href="#" onclick="alert('Đang cập nhật thêm thư mục mới...'); return false;" style="font-size: 14px; color: var(--brand-red, #135c97); font-weight: 700; text-decoration: none;">Xem tất cả &gt;&gt;&gt;</a>
                 </div>
                 <div class="library-folders-list" id="library-folders-list">
                   <!-- Rendered dynamically -->
@@ -1650,14 +1663,14 @@
           <!-- New Detail View -->
           <div id="library-detail-view" style="display: none; padding-bottom: 60px;">
             <!-- Breadcrumbs -->
-            <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+            <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #64748b; margin-bottom: 20px; font-family: 'Quicksand', sans-serif;">
               <a href="javascript:void(0)" onclick="if(window.navigateToHome){window.navigateToHome();}else{if(window.closeLibraryDetailView){window.closeLibraryDetailView();} if(window.switchTab){window.switchTab('overview');}} return false;" style="display: flex; align-items: center; color: #64748b; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
               </a>
               <span>&gt;</span>
-              <a href="javascript:void(0)" onclick="if(window.navigateToLibrary){window.navigateToLibrary();}else{if(window.closeLibraryDetailView){window.closeLibraryDetailView();} if(window.switchTab){window.switchTab('documents');}} return false;" style="color: #64748b; text-decoration: none; font-weight: 500; cursor: pointer; transition: color 0.15s;" onmouseover="this.style.color='#0f5a9e'" onmouseout="this.style.color='#64748b'">Tài liệu</a>
+              <a href="javascript:void(0)" onclick="if(window.navigateToLibrary){window.navigateToLibrary();}else{if(window.closeLibraryDetailView){window.closeLibraryDetailView();} if(window.switchTab){window.switchTab('documents');}} return false;" style="color: #64748b; text-decoration: none; font-weight: 600; cursor: pointer; transition: color 0.15s;" onmouseover="this.style.color='#0f5a9e'" onmouseout="this.style.color='#64748b'">Tài liệu</a>
               <span>&gt;</span>
-              <span id="detail-breadcrumb-title" style="color: #0f5a9e; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">Chi tiết tài liệu</span>
+              <span id="detail-breadcrumb-title" style="color: #0f5a9e; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">Chi tiết tài liệu</span>
             </div>
 
             <!-- Main Layout (stretching height so right column aligns with left column top and bottom) -->
@@ -1667,12 +1680,12 @@
                 <!-- Title Block (Borderless, Compact) -->
                 <div style="background: #ffffff; border-radius: 8px; padding: 12px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 16px;">
                   <div>
-                    <h2 id="detail-doc-title" style="font-size: 20px; font-weight: 700; color: #0f5a9e; margin: 0 0 6px; font-family: 'Inter', sans-serif; letter-spacing: -0.5px;">Tiêu đề tài liệu</h2>
-                    <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: #64748b; font-family: 'Inter', sans-serif; flex-wrap: wrap;">
+                    <h2 id="detail-doc-title" style="font-size: 20px; font-weight: 700; color: #0f5a9e; margin: 0 0 6px; font-family: 'Quicksand', sans-serif; letter-spacing: -0.5px;">Tiêu đề tài liệu</h2>
+                    <div style="display: flex; align-items: center; gap: 16px; font-size: 14px; color: #64748b; font-family: 'Quicksand', sans-serif; flex-wrap: wrap;">
                       <!-- Subject -->
                       <span style="display: flex; align-items: center; gap: 4px;">
                         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <span id="detail-doc-subject" style="font-weight: 600;">TOÁN</span>
+                        <span id="detail-doc-subject" style="font-weight: 700;">TOÁN</span>
                       </span>
                       <!-- Date -->
                       <span style="display: flex; align-items: center; gap: 4px;">
@@ -1693,7 +1706,7 @@
                   </div>
                   
                   <!-- Download Button -->
-                  <a id="detail-download-btn-top" href="javascript:void(0)" style="background: #0f5a9e; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: flex; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(15,23,42,0.08); font-family: 'Inter', sans-serif;">
+                  <a id="detail-download-btn-top" href="javascript:void(0)" style="background: #0f5a9e; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: flex; align-items: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(15,23,42,0.08); font-family: 'Quicksand', sans-serif;">
                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Tải tài liệu
                   </a>
@@ -1709,7 +1722,7 @@
               <div style="width: 380px; flex-shrink: 0; position: sticky; top: 100px; align-self: flex-start;">
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; height: 530px;">
                   <!-- Title -->
-                  <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px;">
+                  <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b; font-family: 'Quicksand', sans-serif; display: flex; align-items: center; gap: 6px;">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="#0f5a9e" fill="none" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                     Bình luận
                   </h4>
@@ -1718,19 +1731,19 @@
                   <div id="comments-list-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; min-height: 0;">
                     <!-- Seed comment -->
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
-                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #93c5fd; color: #1e3a8a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #93c5fd; color: #1e3a8a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
                         T
                       </div>
                       <div style="flex: 1; min-width: 0;">
                         <div style="background: #eff6ff; border-radius: 8px; padding: 10px 14px; border: 1px solid #dbeafe;">
                           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                            <span style="font-size: 12.5px; font-weight: 700; color: #1e3a8a;">Trương Quang Huy</span>
-                            <span style="font-size: 10px; color: #94a3b8;">1 tháng trước</span>
+                            <span style="font-size: 13.5px; font-weight: 700; color: #1e3a8a;">Trương Quang Huy</span>
+                            <span style="font-size: 11px; color: #94a3b8;">1 tháng trước</span>
                           </div>
-                          <div style="font-size: 12.5px; color: #1e293b; line-height: 1.4;">có giải không ạ</div>
+                          <div style="font-size: 13.5px; color: #1e293b; line-height: 1.4;">có giải không ạ</div>
                         </div>
                         <div style="margin-top: 2px; padding-left: 6px;">
-                          <span style="font-size: 11px; color: #0f5a9e; font-weight: 700; cursor: pointer;" onclick="alert('Đang kết nối bình luận...');">Trả lời</span>
+                          <span style="font-size: 12px; color: #0f5a9e; font-weight: 700; cursor: pointer;" onclick="alert('Đang kết nối bình luận...');">Trả lời</span>
                         </div>
                       </div>
                     </div>
@@ -1740,11 +1753,11 @@
                   <div style="display: flex; flex-direction: column; gap: 4px; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: auto;">
                     <!-- Input Aa Pill -->
                     <div style="display: flex; gap: 8px; align-items: center;">
-                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #0f5a9e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;" id="comment-avatar">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #0f5a9e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;" id="comment-avatar">
                         H
                       </div>
                       <div style="flex: 1; display: flex; align-items: center; background: #f1f3f5; border-radius: 8px; padding: 6px 12px; gap: 8px; box-sizing: border-box;">
-                        <input type="text" id="comment-textarea" placeholder="Aa" style="flex: 1; border: none; background: transparent; outline: none; font-size: 13px; color: #1e293b; font-family: 'Inter', sans-serif; padding: 2px 0; margin: 0; box-sizing: border-box; width: 100%;" onkeyup="if(event.key === 'Enter') window.submitCommentClick()">
+                        <input type="text" id="comment-textarea" placeholder="Aa" style="flex: 1; border: none; background: transparent; outline: none; font-size: 14px; color: #1e293b; font-family: 'Quicksand', sans-serif; padding: 2px 0; margin: 0; box-sizing: border-box; width: 100%;" onkeyup="if(event.key === 'Enter') window.submitCommentClick()">
                       </div>
                       <button onclick="window.submitCommentClick()" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="#0f5a9e"><path d="M2 21l21-9L2 3v7l15 2-15 2z"></path></svg>
@@ -1820,12 +1833,12 @@
         <!-- TAB 7: LỊCH SỬ -->
         <div id="tab-history" class="tab-panel">
           <!-- Breadcrumb & Top Section -->
-          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #64748b; margin-bottom: 12px; font-family: 'Quicksand', sans-serif;">
             <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </a>
             <span>&gt;</span>
-            <span style="color: #0f5a9e; font-weight: 600; cursor: pointer;" onclick="switchTab('overview')">Lịch sử làm bài</span>
+            <span style="color: #0f5a9e; font-weight: 700; cursor: pointer;" onclick="switchTab('overview')">Lịch sử làm bài</span>
           </div>
 
           <div class="tab-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; padding-right: 16px; padding-left: 8px;">
@@ -1845,17 +1858,17 @@
         <!-- TAB 10: TÀI KHOẢN -->
         <div id="tab-account" class="tab-panel">
           <!-- Breadcrumb & Top Section -->
-          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+          <div class="library-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #64748b; margin-bottom: 20px; font-family: 'Quicksand', sans-serif;">
             <a href="#overview" onclick="switchTab('overview'); return false;" style="display: flex; align-items: center; color: #0f5a9e; text-decoration: none; transition: color 0.2s;" title="Trang chủ">
               <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="cursor: pointer;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </a>
             <span>&gt;</span>
-            <span style="color: #0f5a9e; font-weight: 600; cursor: pointer;" onclick="switchTab('overview')">Tài khoản</span>
+            <span style="color: #0f5a9e; font-weight: 700; cursor: pointer;" onclick="switchTab('overview')">Thông tin cá nhân</span>
           </div>
 
-          <div class="account-container-layout">
+          <div class="account-container-layout" style="display: flex !important; align-items: stretch !important; gap: 24px !important;">
             <!-- Left Column: Navigation Sidebar -->
-            <aside class="account-sidebar-card">
+            <aside class="account-sidebar-card" style="height: auto !important; align-self: flex-start !important;">
               <div class="account-profile-summary">
                 <div class="account-avatar-circle" id="account-avatar-placeholder">Y</div>
                 <h3 class="account-profile-name" id="account-profile-display-name">Nghiêm Đức Tùng</h3>
@@ -1901,7 +1914,7 @@
             </aside>
 
             <!-- Right Column: Active Content Panel -->
-            <main class="account-content-card">
+            <main class="account-content-card" style="height: auto !important; align-self: flex-start !important;">
               <!-- SUB-TAB 1: THÔNG TIN CÁ NHÂN -->
               <section id="account-sub-info" class="account-sub-panel active">
                 <h2 class="account-sub-title">Thông tin cá nhân</h2>
@@ -2003,7 +2016,7 @@
                     <path d="M50 110 v-10 c0 -5 -10 -5 -10 0 v10" stroke="#22c55e" stroke-width="3" fill="none"/>
                     <rect x="36" y="110" width="18" height="10" rx="2" fill="#d97706"/>
                   </svg>
-                  <p class="empty-text" style="margin-top: 16px; font-weight: 700; color: #1e293b; font-size: 15px;">Bạn chưa có vật phẩm nào</p>
+                  <p class="empty-text" style="margin-top: 16px; font-weight: 700; color: #1e293b; font-size: 16px;">Bạn chưa có vật phẩm nào</p>
                 </div>
               </section>
             </main>
@@ -2127,7 +2140,7 @@
         <p class="footer-info-text">Chuyên trang cung cấp tài liệu, đề thi thử và giải pháp luyện thi đại học tối ưu dành cho học sinh THPT.</p>
         <p class="footer-info-text text-sm opacity-80" style="margin-top: 8px;">Mã số quản lý: TSA-22102007 do TMA Study cấp lần đầu ngày 12/06/2024</p>
         <a href="http://online.gov.vn/" target="_blank" class="bct-badge" style="display: inline-block; margin-top: 15px; text-decoration: none;">
-          <img src="assets/bocongthuong.png" alt="Đã thông báo Bộ Công Thương" style="width: 190px; height: auto; display: block; border-radius: 4px; transition: transform 0.2s ease;">
+          <img src="https://assets.tmastudy.io.vn/assets/bocongthuong.png" alt="Đã thông báo Bộ Công Thương" style="width: 190px; height: auto; display: block; border-radius: 8px; transition: transform 0.2s ease;">
         </a>
       </div>
 
@@ -2274,31 +2287,31 @@
     <div class="tsa-modal-backdrop" id="classroom-modal-backdrop"></div>
     <div class="tsa-modal-content wide">
       <div class="tsa-modal-header" style="background: #ffffff; color: var(--text); border-bottom: 1px solid var(--border); border-top-left-radius: 14px; border-top-right-radius: 14px; padding: 18px 24px;">
-        <h3 id="classroom-modal-title" style="color: var(--text); margin: 0; font-size: 14px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px;">Lớp học: Nền tảng Toán TSA</h3>
+        <h3 id="classroom-modal-title" style="color: var(--text); margin: 0; font-size: 15px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.5px;">Lớp học: Nền tảng Toán TSA</h3>
         <button class="tsa-modal-close" id="close-classroom-modal" style="color: var(--muted); background: transparent;">&times;</button>
       </div>
       <div class="tsa-modal-body" style="padding: 20px;">
         <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
           <!-- Left side: Mock video/banner -->
           <div style="flex: 1.2; min-width: 280px;">
-            <div style="aspect-ratio: 16/9; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <div style="aspect-ratio: 16/9; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 700; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
               <img src="https://assets.tmastudy.io.vn/assets/anhnen.png" alt="Classroom Banner" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.65; position: absolute; inset: 0;">
               <div style="z-index: 1; text-align: center; padding: 20px;">
                 <div style="font-size: 32px; margin-bottom: 8px;">▶️</div>
                 <div>Bài học thử nghiệm trực tuyến</div>
-                <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Giảng viên: Thầy Nghiêm Xuân Tân</div>
+                <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">Giảng viên: Thầy Nghiêm Xuân Tân</div>
               </div>
             </div>
             <div style="margin-top: 14px;">
-              <h4 style="font-size: 14px; font-weight: 700; color: var(--text);">Mô tả khóa học</h4>
-              <p id="classroom-modal-desc" style="font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5;">
+              <h4 style="font-size: 15px; font-weight: 700; color: var(--text);">Mô tả khóa học</h4>
+              <p id="classroom-modal-desc" style="font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5;">
                 Khóa học giúp học sinh nắm vững toàn bộ kiến thức cốt lõi.
               </p>
             </div>
           </div>
           <!-- Right side: Lesson List -->
           <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 10px;">
-            <h4 style="font-size: 13px; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px;">Danh sách bài học</h4>
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px;">Danh sách bài học</h4>
             <div id="classroom-lessons-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto;">
               <!-- Mock lessons rendered by JS -->
             </div>
@@ -2321,7 +2334,7 @@
         z-index: 2000; overflow: hidden;
         background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,241,243,0.82) 100%),
                     url('https://assets.tmastudy.io.vn/assets/nen.png') center center / cover no-repeat fixed;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'Quicksand', system-ui, -apple-system, sans-serif;
       }
       #exam-result-modal .modal-grid {
         display: grid;
@@ -2344,8 +2357,8 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        font-size: 11px;
-        font-weight: 800;
+        font-size: 12px;
+        font-weight: 700;
         color: #475569;
         text-decoration: none;
         text-transform: uppercase;
@@ -2392,8 +2405,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 15px;
-        font-weight: 800;
+        font-size: 16px;
+        font-weight: 700;
         color: #0f172a;
       }
       #exam-result-modal .subject-card-bar-wrap {
@@ -2410,7 +2423,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2455,16 +2468,16 @@
       }
       #exam-result-modal .subject-card-header button {
         background: transparent;
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 5px 13px;
-        font-size: 11px;
-        font-weight: 800;
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         transition: all 0.2s ease;
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: 'Quicksand', system-ui, sans-serif;
       }
       #exam-result-modal .subject-card-header button:hover {
         transform: translateY(-1px);
@@ -2524,16 +2537,16 @@
         
         <!-- Center Title -->
         <div style="text-align: center;">
-          <h1 id="result-modal-title" style="margin: 0; font-size: 18px; font-weight: 850; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px; font-family: 'Inter', system-ui, sans-serif; display: inline;">Đề thi thử TSA</h1>
-          <span style="font-size: 13px; color: #475569; font-weight: 600; margin-left: 8px;">
+          <h1 id="result-modal-title" style="margin: 0; font-size: 19px; font-weight: 850; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px; font-family: 'Quicksand', system-ui, sans-serif; display: inline;">Đề thi thử TSA</h1>
+          <span style="font-size: 14px; color: #475569; font-weight: 700; margin-left: 8px;">
             • Thời gian hoàn thành: <span id="result-modal-time-text" style="color: #0f172a;">--:--:-- | --/--/----</span>
           </span>
         </div>
 
         <!-- Right Controls -->
         <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px;">
-          <select id="result-modal-attempt-select" style="background: rgba(255,255,255,0.9); border: 1.5px solid #e2e8f0; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #1e293b; cursor: pointer; outline: none; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.02);"></select>
-          <button id="result-redo-exam-btn" style="background: #d61030; color: #fff; border: none; padding: 9px 20px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', system-ui, sans-serif; box-shadow: 0 4px 12px rgba(214,16,48,0.15);">XEM ĐÁP ÁN</button>
+          <select id="result-modal-attempt-select" style="background: rgba(255,255,255,0.9); border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px 16px; font-size: 14px; font-weight: 700; color: #1e293b; cursor: pointer; outline: none; font-family: 'Quicksand', system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.02);"></select>
+          <button id="result-redo-exam-btn" style="background: #d61030; color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Quicksand', system-ui, sans-serif; box-shadow: 0 4px 12px rgba(214,16,48,0.15);">XEM ĐÁP ÁN</button>
         </div>
       </div>
 
@@ -2555,8 +2568,8 @@
                 <circle id="result-modal-circle-progress" cx="100" cy="100" r="82" stroke="#d61030" stroke-width="16" fill="transparent" stroke-dasharray="515" stroke-dashoffset="515" stroke-linecap="round" style="transition: stroke-dashoffset 0.8s ease-out;"></circle>
               </svg>
               <div style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; z-index: 12;">
-                <span style="font-size: 16px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">ĐIỂM BÀI THI</span>
-                <div id="result-modal-score" style="font-size: 68px; font-weight: 800; color: #0f172a; margin-top: 6px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">0/100</div>
+                <span style="font-size: 17px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">ĐIỂM BÀI THI</span>
+                <div id="result-modal-score" style="font-size: 68px; font-weight: 700; color: #0f172a; margin-top: 6px; font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: -0.5px;">0/100</div>
               </div>
             </div>
 
@@ -2574,12 +2587,12 @@
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-1">Tư duy Toán học</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <span id="result-modal-subject-count-text-1" style="font-weight: 800; color: #0f172a;">0/40</span>
-                  <span id="result-modal-subject-status-1" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <span id="result-modal-subject-count-text-1" style="font-weight: 700; color: #0f172a;">0/40</span>
+                  <span id="result-modal-subject-status-1" style="font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase;">--</span>
                   <button id="result-modal-detail-btn-1">XEM ĐÁP ÁN</button>
                 </div>
               </div>
-              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-1" style="height: 100%; background: #d61030; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-1" style="height: 100%; background: #d61030; border-radius: 8px; width: 0%; transition: width 0.6s ease-out;"></div></div>
               <div id="result-modal-subject-questions-1" class="questions-grid-container"></div>
             </div>
 
@@ -2588,12 +2601,12 @@
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-2">Tư duy Đọc hiểu</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <span id="result-modal-subject-count-text-2" style="font-weight: 800; color: #0f172a;">0/20</span>
-                  <span id="result-modal-subject-status-2" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <span id="result-modal-subject-count-text-2" style="font-weight: 700; color: #0f172a;">0/20</span>
+                  <span id="result-modal-subject-status-2" style="font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase;">--</span>
                   <button id="result-modal-detail-btn-2">XEM ĐÁP ÁN</button>
                 </div>
               </div>
-              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-2" style="height: 100%; background: #0f3a78; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-2" style="height: 100%; background: #0f3a78; border-radius: 8px; width: 0%; transition: width 0.6s ease-out;"></div></div>
               <div id="result-modal-subject-questions-2" class="questions-grid-container"></div>
             </div>
 
@@ -2602,12 +2615,12 @@
               <div class="subject-card-header">
                 <span id="result-modal-subject-label-3">Tư duy Khoa học</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <span id="result-modal-subject-count-text-3" style="font-weight: 800; color: #0f172a;">0/40</span>
-                  <span id="result-modal-subject-status-3" style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase;">--</span>
+                  <span id="result-modal-subject-count-text-3" style="font-weight: 700; color: #0f172a;">0/40</span>
+                  <span id="result-modal-subject-status-3" style="font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase;">--</span>
                   <button id="result-modal-detail-btn-3">XEM ĐÁP ÁN</button>
                 </div>
               </div>
-              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-3" style="height: 100%; background: #0d9488; border-radius: 5px; width: 0%; transition: width 0.6s ease-out;"></div></div>
+              <div class="subject-card-bar-wrap"><div id="result-modal-subject-bar-3" style="height: 100%; background: #0d9488; border-radius: 8px; width: 0%; transition: width 0.6s ease-out;"></div></div>
               <div id="result-modal-subject-questions-3" class="questions-grid-container"></div>
             </div>
 
@@ -2630,11 +2643,11 @@
         <button id="close-course-modal-btn" class="topbar-back-btn study-back-btn" style="padding: 6px; background: transparent; border: none; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>
-        <span id="study-topbar-lesson-name" class="study-topbar-lesson-label" style="color: #ffffff; font-weight: 700; font-size: 14px;">Tên khóa học</span>
+        <span id="study-topbar-lesson-name" class="study-topbar-lesson-label" style="color: #ffffff; font-weight: 700; font-size: 15px;">Tên khóa học</span>
       </div>
 
       <!-- CENTER: Static Teacher Title (Absolutely centered in the bar) -->
-      <div class="topbar-center" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; z-index: 5; pointer-events: none;">
+      <div class="topbar-center" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #ffffff; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; z-index: 5; pointer-events: none;">
         Giảng viên: Nghiêm Xuân Tân
       </div>
 
@@ -2660,9 +2673,9 @@
         <div class="study-profile-menu-container" style="position: relative;">
           <div id="study-profile-trigger" style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
             <div class="topbar-student-avatar study-avatar" style="margin: 0; width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-              <span id="study-avatar-char" style="color: #0f5a9e; font-weight: 700; font-size: 14px; text-transform: uppercase;">H</span>
+              <span id="study-avatar-char" style="color: #0f5a9e; font-weight: 700; font-size: 15px; text-transform: uppercase;">H</span>
             </div>
-            <span id="study-topbar-student-name" style="color: #ffffff; font-size: 13px; font-weight: 600; text-transform: capitalize;">Tên học sinh</span>
+            <span id="study-topbar-student-name" style="color: #ffffff; font-size: 14px; font-weight: 700; text-transform: capitalize;">Tên học sinh</span>
             <svg id="study-profile-chevron" viewBox="0 0 24 24" width="12" height="12" stroke="#ffffff" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9; margin-left: -2px; transition: transform 0.15s ease;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
           <!-- Dropdown menu -->
@@ -2776,20 +2789,20 @@
               
               <!-- Content block -->
               <div class="study-teacher-right">
-                <span style="font-size: 10px; font-weight: 800; color: #ef4444; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
+                <span style="font-size: 11px; font-weight: 700; color: #ef4444; letter-spacing: 0.1em; text-transform: uppercase;">GIẢNG VIÊN</span>
                 
                 <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0 6px;">
-                  <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
-                  <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900;">✓</span>
+                  <h4 class="study-teacher-name-title" style="font-size: 24px; font-weight: 700; color: #1e293b; margin: 0; font-family: system-ui, sans-serif;">Thầy Nghiêm Xuân Tân</h4>
+                  <span class="study-verified-badge" style="background: #10b981; color: #fff; width: 14px; height: 14px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900;">✓</span>
                 </div>
                 
-                <p class="study-teacher-subtitle" style="color: #ef4444; font-size: 13.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
+                <p class="study-teacher-subtitle" style="color: #ef4444; font-size: 14.5px; font-weight: 700; margin: 0 0 12px;">Thầy giáo, Th.s Vật lý · Giáo viên chủ nhiệm</p>
                 
-                <p class="study-teacher-bio" style="font-size: 13px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
+                <p class="study-teacher-bio" style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 16px;">
                   Phụ trách các chuyên đề Vật lý và Toán học nền tảng, giúp học sinh rèn tư duy giải bài, hiểu bản chất vấn đề và xây dựng chiến thuật ôn tập để tự tin chinh phục TSA, HSA cùng các kì thi THPT Quốc gia.
                 </p>
                 
-                <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
+                <ul class="study-teacher-list" style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; color: #334155; line-height: 1.5; list-style-type: disc;">
                   <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Giáo viên nhiều kinh nghiệm giảng dạy Vật lý THCS, Vật lý THPT và ôn thi Tốt nghiệp THPT.</li>
                   <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Tổ trưởng Tổ Lý - Hóa khối THPT MIS; nguyên Khối trưởng KHTN Trường Liên cấp MIS.</li>
                   <li style="padding-left: 4px;"><span style="color: #ef4444; font-weight: 700; margin-right: 4px;">•</span> Tốt nghiệp Thạc sĩ Đại học Aix Marseille - Pháp, được giới thiệu trong tư liệu là ĐH Marseille 3 - Pháp.</li>
@@ -2927,7 +2940,7 @@
             
             <!-- Central Input Pill -->
             <div style="flex: 1; display: flex; align-items: center; background: #e4e6eb; border-radius: 8px; padding: 6px 12px; gap: 8px; box-sizing: border-box; transition: background 0.2s;" id="course-comment-pill">
-              <input type="text" id="course-comment-textarea" placeholder="Aa" style="flex: 1; border: none; background: transparent; outline: none; font-size: 14px; color: #050505; padding: 2px 0; margin: 0; font-family: inherit; width: 100%;" onkeydown="handleCommentSubmitKey(event)" oninput="handleCommentInput(event)">
+              <input type="text" id="course-comment-textarea" placeholder="Aa" style="flex: 1; border: none; background: transparent; outline: none; font-size: 15px; color: #050505; padding: 2px 0; margin: 0; font-family: inherit; width: 100%;" onkeydown="handleCommentSubmitKey(event)" oninput="handleCommentInput(event)">
               
               <!-- Emoji Smile Icon -->
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f5a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
@@ -2961,11 +2974,11 @@
     <!-- HUST PRACTICE HISTORY MODAL -->
   <div class="tsa-modal-container" id="hust-history-modal" style="z-index: 2200;" hidden>
     <div class="tsa-modal-backdrop" id="hust-history-modal-backdrop" style="z-index: 2150; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);" onclick="window.closeHustHistoryModal()"></div>
-    <div class="modal" style="position: relative; width: min(850px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 2250; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; font-family: 'Inter', system-ui, -apple-system, sans-serif; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; border: 1px solid rgba(0,0,0,0.05); max-height: 85vh; color: #1a1a1a;">
+    <div class="modal" style="position: relative; width: min(850px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 2250; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; font-family: 'Quicksand', system-ui, -apple-system, sans-serif; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; border: 1px solid rgba(0,0,0,0.05); max-height: 85vh; color: #1a1a1a;">
       
       <!-- Header -->
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px;">
-        <h3 id="hust-history-title" style="margin: 0; font-weight: 800; font-size: 20px; color: #1e293b; text-transform: none; font-family: inherit;">Lịch sử làm bài</h3>
+        <h3 id="hust-history-title" style="margin: 0; font-weight: 700; font-size: 20px; color: #1e293b; text-transform: none; font-family: inherit;">Lịch sử làm bài</h3>
         <button type="button" onclick="window.closeHustHistoryModal()" style="background: transparent; border: none; cursor: pointer; color: #94a3b8; padding: 0; display: flex; align-items: center; justify-content: center; transition: color 0.15s; outline: none;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -2984,7 +2997,7 @@
 
   <div class="tsa-modal-container" id="hust-result-modal" style="z-index: 2100;" hidden>
     <div class="tsa-modal-backdrop" id="hust-result-modal-backdrop" style="z-index: 2050; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"></div>
-    <div class="modal" style="position: relative; width: min(680px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); z-index: 2100; padding: 25px 30px 30px 30px; box-sizing: border-box; display: flex; flex-direction: column; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; font-family: 'Inter', system-ui, -apple-system, sans-serif; border: 1px solid rgba(0,0,0,0.05); color: #1a1a1a;">
+    <div class="modal" style="position: relative; width: min(680px, calc(100% - 24px)); background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); z-index: 2100; padding: 25px 30px 30px 30px; box-sizing: border-box; display: flex; flex-direction: column; animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; font-family: 'Quicksand', system-ui, -apple-system, sans-serif; border: 1px solid rgba(0,0,0,0.05); color: #1a1a1a;">
       
       <!-- Circle Cross Close Button -->
       <button id="close-hust-modal" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; cursor: pointer; color: #adb5bd; transition: color 0.15s; padding: 0; display: flex; align-items: center; justify-content: center; outline: none; opacity: 0.85;">
@@ -2992,7 +3005,7 @@
       </button>
 
       <!-- Modal Title & Thin Line Separator -->
-      <h2 id="hust-modal-title" style="margin: 0; font-size: 22px; font-weight: 500; color: #111111; font-family: inherit; text-transform: none; text-align: left; padding-right: 32px; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 22px; letter-spacing: -0.2px;">Bài thi TSA 2026 chính thức - Đợt 3</h2>
+      <h2 id="hust-modal-title" style="margin: 0; font-size: 22px; font-weight: 600; color: #111111; font-family: inherit; text-transform: none; text-align: left; padding-right: 32px; border-bottom: 1px solid #dee2e6; padding-bottom: 12px; margin-bottom: 22px; letter-spacing: -0.2px;">Bài thi TSA 2026 chính thức - Đợt 3</h2>
 
       <!-- Modal Content Grid -->
       <div style="display: grid; grid-template-columns: 330px 1fr; gap: 24px; align-items: start; text-align: left;">
@@ -3007,13 +3020,13 @@
             <div style="display: grid; grid-template-columns: 85px 1fr; gap: 12px; align-items: start; margin-bottom: 12px;">
               <!-- Left: Score -->
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%;">
-                <div style="font-size: 13.5px; font-weight: 600; color: #212529; margin-bottom: 8px; font-family: inherit;">Điểm TSA</div>
-                <div id="hust-modal-score" style="font-size: 36px; font-weight: 500; color: #c92a2a; line-height: 1; letter-spacing: -0.5px; font-family: inherit;">61.49</div>
+                <div style="font-size: 14.5px; font-weight: 700; color: #212529; margin-bottom: 8px; font-family: inherit;">Điểm TSA</div>
+                <div id="hust-modal-score" style="font-size: 36px; font-weight: 600; color: #c92a2a; line-height: 1; letter-spacing: -0.5px; font-family: inherit;">61.49</div>
               </div>
               
               <!-- Right: breakdown list -->
-              <div style="text-align: left; display: flex; flex-direction: column; font-size: 11.5px; color: #212529; font-family: inherit; line-height: 1.45; letter-spacing: -0.1px; padding-top: 2px;">
-                <div style="font-weight: 600; color: #212529; margin-bottom: 4px;">Số câu đúng:</div>
+              <div style="text-align: left; display: flex; flex-direction: column; font-size: 12.5px; color: #212529; font-family: inherit; line-height: 1.45; letter-spacing: -0.1px; padding-top: 2px;">
+                <div style="font-weight: 700; color: #212529; margin-bottom: 4px;">Số câu đúng:</div>
                 <div style="margin-bottom: 1px;">
                   <span id="hust-modal-subject-lbl-1">Tư duy Toán học</span>: <strong id="hust-modal-subject-cnt-1" style="font-weight: 700; color: #212529;">28</strong>
                 </div>
@@ -3027,25 +3040,25 @@
             </div>
 
             <!-- Certificate Action Button (Inside Pink Box - Slim design) -->
-            <button id="hust-modal-cert-btn" style="width: 100%; background: #c92a2a; color: #ffffff; border: none; padding: 8px 0; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: none; outline: none; font-family: inherit;">XEM CHỨNG CHỈ</button>
+            <button id="hust-modal-cert-btn" style="width: 100%; background: #c92a2a; color: #ffffff; border: none; padding: 8px 0; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: none; outline: none; font-family: inherit;">XEM CHỨNG CHỈ</button>
           </div>
         </div>
 
         <!-- RIGHT COLUMN: Exam Information list -->
-        <div style="display: flex; flex-direction: column; font-size: 13.5px; color: #212529; line-height: 1.5; text-align: left; font-family: inherit; padding-top: 2px;">
-          <h3 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #212529; text-transform: none; text-align: left; font-family: inherit;">Thông tin dự thi</h3>
+        <div style="display: flex; flex-direction: column; font-size: 14.5px; color: #212529; line-height: 1.5; text-align: left; font-family: inherit; padding-top: 2px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 15.5px; font-weight: 700; color: #212529; text-transform: none; text-align: left; font-family: inherit;">Thông tin dự thi</h3>
           
-          <div style="margin-bottom: 10px; font-weight: 400;">Hội đồng thi: <span id="hust-modal-council" style="font-weight: 400; color: #212529;">Trường ĐH Thái Bình</span></div>
+          <div style="margin-bottom: 10px; font-weight: 500;">Hội đồng thi: <span id="hust-modal-council" style="font-weight: 500; color: #212529;">Trường ĐH Thái Bình</span></div>
           
-          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian làm thủ tục: <span id="hust-modal-prep-time" style="font-weight: 400; color: #212529;">07:00 16/05/2026</span></div>
+          <div style="margin-bottom: 10px; font-weight: 500;">Thời gian làm thủ tục: <span id="hust-modal-prep-time" style="font-weight: 500; color: #212529;">07:00 16/05/2026</span></div>
           
-          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian vào phòng thi: <span id="hust-modal-enter-time" style="font-weight: 400; color: #212529;">07:45 16/05/2026</span></div>
+          <div style="margin-bottom: 10px; font-weight: 500;">Thời gian vào phòng thi: <span id="hust-modal-enter-time" style="font-weight: 500; color: #212529;">07:45 16/05/2026</span></div>
           
-          <div style="margin-bottom: 10px; font-weight: 400;">Thời gian bắt đầu thi: <span id="hust-modal-start-time" style="font-weight: 400; color: #212529;">08:30 16/05/2026</span></div>
+          <div style="margin-bottom: 10px; font-weight: 500;">Thời gian bắt đầu thi: <span id="hust-modal-start-time" style="font-weight: 500; color: #212529;">08:30 16/05/2026</span></div>
           
-          <div style="margin-bottom: 10px; line-height: 1.4; font-weight: 400;">Phòng thi: <span id="hust-modal-room" style="font-weight: 400; color: #212529;">Phòng F-114, Tòa nhà F-Trường ĐH Thái Bình (Phường Thái Bình, tỉnh Hưng Yên)</span></div>
+          <div style="margin-bottom: 10px; line-height: 1.4; font-weight: 500;">Phòng thi: <span id="hust-modal-room" style="font-weight: 500; color: #212529;">Phòng F-114, Tòa nhà F-Trường ĐH Thái Bình (Phường Thái Bình, tỉnh Hưng Yên)</span></div>
           
-          <div style="margin-bottom: 10px; font-weight: 400;">Số báo danh: <span id="hust-modal-sbd" style="font-weight: 400; color: #212529; font-family: inherit;">TSA2603-04719</span></div>
+          <div style="margin-bottom: 10px; font-weight: 500;">Số báo danh: <span id="hust-modal-sbd" style="font-weight: 500; color: #212529; font-family: inherit;">TSA2603-04719</span></div>
         </div>
 
       </div>

@@ -47,8 +47,8 @@
   border-radius: 50%;
   background: #ffffff;
   color: #c91f2b;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .brand-logo::after {
@@ -75,7 +75,7 @@
 
 .brand-copy small {
   color: #5f6b7a;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
 }
 
@@ -87,7 +87,7 @@
 
 .site-nav a {
   color: #26364d;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 20px;
   white-space: nowrap;
@@ -111,8 +111,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 20px;
 }
 
@@ -160,7 +160,7 @@
 .login-card-heading p {
   margin: 0 0 10px;
   color: #c91f2b;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -178,8 +178,8 @@
   max-width: 590px;
   margin: 22px 0 0;
   color: #334155;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 600;
   line-height: 30px;
 }
 
@@ -215,8 +215,8 @@
   display: grid;
   gap: 7px;
   color: #334155;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .login-card input {
@@ -243,8 +243,8 @@
 
 .forgot-link {
   color: #1475d1;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -258,7 +258,7 @@
 
 .countdown-strip p {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
   line-height: 22px;
   text-align: center;
@@ -279,7 +279,7 @@
   border-radius: 8px;
   background: rgb(255 255 255 / 9%);
   color: #dbeafe;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -363,7 +363,7 @@
 .article-grid h3 {
   margin: 0;
   color: #111827;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 900;
   line-height: 26px;
 }
@@ -374,7 +374,7 @@
 .article-grid p {
   margin: 8px 0 0;
   color: #536173;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 22px;
 }
 
@@ -400,7 +400,7 @@
   border-radius: 8px;
   background: #eaf4ff;
   color: #1475d1;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 900;
 }
 
@@ -487,7 +487,7 @@
   padding: 24px;
   background: #111827;
   color: #dbeafe;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -541,7 +541,7 @@
   }
 
   .stage-description {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 26px;
   }
 

@@ -19,7 +19,7 @@ body {
   padding: 0;
   overflow: hidden;
   border: 1px solid #d7e0ea;
-  border-radius: 15px;
+  border-radius: 8px;
   background: #fff;
   box-shadow: 0 14px 34px rgba(53, 68, 89, 0.08);
 }
@@ -40,8 +40,8 @@ body {
   display: block;
   margin-bottom: 12px;
   color: #60738d;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 18px;
   text-align: center;
 }
@@ -59,7 +59,7 @@ body {
   outline: none;
   background: #fff;
   color: #26354a;
-  font: 700 17px/1 'Inter', sans-serif;
+  font: 700 17px/1 'Quicksand', sans-serif;
   letter-spacing: 1px;
   text-align: center;
   transition: border-color 0.18s, box-shadow 0.18s;
@@ -84,8 +84,8 @@ body {
   align-items: center;
   justify-content: center;
   color: #e01f26;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.35;
   text-align: center;
 }
@@ -97,7 +97,7 @@ body {
   border-radius: 8px;
   background: var(--portal-red);
   color: #fff;
-  font: 700 16px/1 'Inter', sans-serif;
+  font: 700 16px/1 'Quicksand', sans-serif;
   cursor: pointer;
   transition: background 0.18s;
 }
@@ -116,7 +116,7 @@ body {
   justify-content: flex-end;
   margin-top: 16px;
   color: #60738d;
-  font-size: 12.5px;
+  font-size: 13.5px;
   line-height: 20px;
   text-align: right;
 }
@@ -135,7 +135,7 @@ body {
 .exam-select-copy {
   margin: 0 auto 22px;
   color: var(--portal-muted);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   text-align: center;
 }
@@ -170,7 +170,7 @@ body {
   width: 40px;
   height: 40px;
   place-items: center;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff1f2;
   color: var(--portal-red);
 }
@@ -184,7 +184,7 @@ body {
 .exam-option-title {
   display: block;
   overflow: hidden;
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -194,7 +194,7 @@ body {
   display: block;
   margin-top: 4px;
   color: var(--portal-muted);
-  font-size: 11.5px;
+  font-size: 12.5px;
 }
 
 .portal-back {
@@ -206,7 +206,7 @@ body {
   border: 0;
   background: none;
   color: #135c97;
-  font: 700 12.5px/1 'Inter', sans-serif;
+  font: 700 12.5px/1 'Quicksand', sans-serif;
   cursor: pointer;
 }
 
@@ -233,7 +233,7 @@ body {
 
   .code-input {
     height: 54px;
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .code-input::placeholder {
@@ -242,7 +242,7 @@ body {
 
   .portal-submit {
     height: 50px;
-    font-size: 16px;
+    font-size: 17px;
   }
 }
 
@@ -252,7 +252,7 @@ body {
   }
 
   .code-input::placeholder {
-    font-size: 14px;
+    font-size: 15px;
     letter-spacing: 2px;
   }
 
